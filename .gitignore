@@ -1,0 +1,15 @@
+# executables
+*.exe
+
+# vim-files
+*~
+*.swp
+*.swo
+
+# rar-files
+*.rar
+*.zip
+
+# vs files
+/.vs
+/vs2019

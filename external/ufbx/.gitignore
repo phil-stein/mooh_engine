@@ -1,0 +1,10 @@
+
+# Project files
+proj/
+
+# Build output
+build/
+
+# Python cache files
+__pycache__/
+

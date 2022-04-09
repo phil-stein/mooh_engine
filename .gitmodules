@@ -1,0 +1,10 @@
+[submodule "src\\math"]
+	path = src\\math
+	url = https://github.com/phil-stein/math
+[submodule "src\\global"]
+	path = src\\global
+	url = https://github.com/phil-stein/global
+[submodule "external/ufbx"]
+	path = external/ufbx
+	url = https://github.com/bqqbarbhg/ufbx.git
+
