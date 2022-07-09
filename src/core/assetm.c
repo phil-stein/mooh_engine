@@ -63,9 +63,9 @@ static core_data_t* core_data = NULL;
 void assetm_init()
 {
 #ifdef ASSETM_NO_ZIP
-  P("-- ASSETM NO ZIP --");
+  ASSETM_P("-- ASSETM NO ZIP --");
 #else 
-  P("-- ASSETM ZIP --");
+  ASSETM_P("-- ASSETM ZIP --");
 #endif
 
   core_data = core_data_get();
@@ -158,7 +158,7 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, co
   t.handle = handle;
   t.width = w;
   t.height = h;
-  PF("[assetm] loaded texture '%s', handle: '%d'\n", name, handle);
+  ASSETM_PF("[assetm] loaded texture '%s', handle: '%d'\n", name, handle);
 
   // free(pixels);
   stbi_image_free(pixels);
@@ -423,7 +423,7 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
   glDeleteFramebuffers(1, &capture_fbo);
   glDeleteRenderbuffers(1, &capture_rbo);
   
-  PF("[assetm] loaded cubemap '%s''\n", path);
+  ASSETM_PF("[assetm] loaded cubemap '%s''\n", path);
 
   cubemap_t c;
   c.environment = cubemap;
@@ -490,7 +490,7 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
 
   // ---------------------------------------------------------
 
-  printf("[assetm] loaded mesh '%s'\n", name);
+  ASSETM_PF("[assetm] loaded mesh '%s'\n", name);
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
@@ -529,7 +529,7 @@ void assetm_create_shader_dbg(shader_template_type type, const char* file, const
   ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", file, line);
   shader_t s = assetm_create_shader_from_template_dbg(type, file, line);
 
-  PF("[assetm] loaded shader '%d'\n", type);
+  ASSETM_PF("[assetm] loaded shader '%d'\n", type);
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
@@ -601,7 +601,7 @@ void assetm_create_material(material_template_type type)
 
   // ---------------------------------------------------------
 
-  printf("[assetm] loaded material '%d'\n", type);
+  ASSETM_PF("[assetm] loaded material '%d'\n", type);
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array

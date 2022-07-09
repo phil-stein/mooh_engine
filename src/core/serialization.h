@@ -7,6 +7,13 @@
 #include "math/math_inc.h"
 
 
+// @NOTE: mute or show serialization messages
+// #define SERIALIZATION_P(txt) P(txt)
+// #define SERALIZATION_PF(...) PF(__VA_ARGS__)
+#define SERIALIZATION_P(txt)
+#define SERALIZATION_PF(...) 
+
+
 // used for shoving f32 into byte array
 typedef union f32_wrapper_t
 {

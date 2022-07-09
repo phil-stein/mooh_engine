@@ -92,7 +92,8 @@ void program_start(int width, int height, const char* title, window_type type, e
 void program_sync_phys()
 {
   int world_len = 0;
-  entity_t* world= state_get_entity_arr(&world_len);
+  int world_dead_len = 0;
+  entity_t* world= state_get_entity_arr(&world_len, &world_dead_len);
   u32 phys_objs_len = 0;
   phys_obj_t* phys_objs = phys_get_obj_arr(&phys_objs_len);
   for (u32 i = 0; i < phys_objs_len; ++i)

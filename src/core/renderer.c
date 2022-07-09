@@ -182,7 +182,8 @@ void renderer_update()
 
   // @TODO: get this in advance
   int world_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len);
+  int world_dead_len = 0;
+  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
   int dir_lights_len = 0;
   dir_light_t* dir_lights = state_get_dir_light_arr(&dir_lights_len);
   int point_lights_len = 0;
@@ -614,7 +615,8 @@ void renderer_draw_scene_mouse_pick(mat4 gizmo_model)
 
   // cycle all objects
   int entities_len = 0;
-  entity_t* entities = state_get_entity_arr(&entities_len);
+  int entities_dead_len = 0;
+  entity_t* entities = state_get_entity_arr(&entities_len, &entities_dead_len);
   shader_use(&core_data->mouse_pick_shader);
   for (int i = 0; i < entities_len; ++i)
   {
@@ -722,7 +724,7 @@ int renderer_mouse_position_mouse_pick_id()
   framebuffer_unbind();
 
   int id = pixel[0] -1;
-  PF("-> id: %d, pixel: %f\n", id, pixel[0]);
+  // PF("-> id: %d, pixel: %f\n", id, pixel[0]);
 
   return id;
 

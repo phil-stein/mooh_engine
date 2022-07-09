@@ -21,6 +21,10 @@ void phys_obj_make_rb(f32 mass, phys_obj_t* obj)
   obj->rb.mass = mass;
   vec3_copy(VEC3(0), obj->rb.velocity);
   vec3_copy(VEC3(0), obj->rb.force);
+  // @TODO: set these through arguments
+  obj->rb.restitution      = 1.0f;
+  obj->rb.static_friction  = 0.0f;
+  obj->rb.dynamic_friction = 0.0f;
 }
 void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
 {
@@ -122,11 +126,11 @@ void phys_update(f32 dt)
 
 			collision_info_t c = phys_collision_check(obj0, obj1);
       
-      if (c.collision)
-      {
-        debug_draw_sphere_register(obj0->pos, 0.35f, RGB_F(1, 0, 1));
-        // REMOVE_FLAG(obj0->flags, PHYS_HAS_RIGIDBODY);
-      }
+      // if (c.collision)
+      // {
+      //   debug_draw_sphere_register(obj0->pos, 0.35f, RGB_F(1, 0, 1));
+      //   // REMOVE_FLAG(obj0->flags, PHYS_HAS_RIGIDBODY);
+      // }
 
 		// ---- collision response ----
 		if (c.collision)

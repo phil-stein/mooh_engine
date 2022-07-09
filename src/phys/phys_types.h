@@ -7,7 +7,8 @@
 typedef struct collision_info_t
 {
   bool collision;
-  vec3 direction; // normal * depth of collision
+  vec3 direction; // normal of collision
+  f32  depth;
   int  obj_idx;   // idx into phys_objs array in phys_world.c, of other phys_obj_t
   bool trigger;
 
@@ -51,6 +52,9 @@ typedef struct rigidbody_t
   vec3 velocity;
   vec3 force;
   f32  mass;
+  f32  restitution;
+  f32  static_friction;
+  f32  dynamic_friction;
 }rigidbody_t;
 
 typedef enum phys_obj_flags_t 

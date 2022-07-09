@@ -13,6 +13,7 @@
 #include "core/serialization.h"
 #include "core/types/types.h"
 #include "core/debug/debug_timer.h"
+#include "core/debug/debug_draw.h"
 #include "data/entity_template.h"
 
 #include "GLAD/glad.h"
@@ -61,12 +62,15 @@ ui_rect hierarchy_win_rect;
 ui_rect hierarchy_win_ratio;
 ui_rect frameb_win_rect;
 ui_rect debug_win_rect;
+ui_rect light_hierarchy_win_rect;
+ui_rect light_hierarchy_win_ratio;
 
 framebuffer_t fb_preview;
 
-bool show_hierarchy_win = false;
-bool show_frameb_win    = false;
-bool show_debug_win     = false;
+bool show_hierarchy_win       = false;
+bool show_frameb_win          = false;
+bool show_debug_win           = false;
+bool show_light_hierarchy_win = false;
 
 static core_data_t* core_data = NULL;
 static app_data_t*  app_data   = NULL;
@@ -114,6 +118,9 @@ void gui_update()
   
   if (show_hierarchy_win)
   { gui_hierarchy_win(); }
+  
+  if (show_light_hierarchy_win)
+  { gui_light_hierarchy_win(); }
 
   if (show_frameb_win)
   { gui_framebuffer_win(); }
@@ -129,13 +136,14 @@ void gui_update()
   // mouse over gui -----------------------------------------------------------------------------------
 
   bool over_ui = false;
-  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, top_bar_win_rect)  ? true : over_ui;
-  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, prop_win_rect)     ? true : over_ui;
-  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, template_win_rect) ? true : over_ui;
+  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, top_bar_win_rect)   ? true : over_ui;
+  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, prop_win_rect)      ? true : over_ui;
+  over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, template_win_rect)  ? true : over_ui;
   
-  if (show_hierarchy_win) { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, hierarchy_win_rect) ? true : over_ui; }
-  if (show_frameb_win)    { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, frameb_win_rect) ? true : over_ui; }
-  if (show_debug_win)     { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, debug_win_rect) ? true : over_ui; }
+  if (show_hierarchy_win)       { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, hierarchy_win_rect)       ? true : over_ui; }
+  if (show_light_hierarchy_win) { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, light_hierarchy_win_rect) ? true : over_ui; }
+  if (show_frameb_win)          { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, frameb_win_rect)          ? true : over_ui; }
+  if (show_debug_win)           { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, debug_win_rect)           ? true : over_ui; }
 
   app_data->mouse_over_ui = over_ui;
 }
@@ -191,6 +199,8 @@ void gui_top_bar_win()
         nk_layout_row_static(ctx, 20, 90, 1);
         if (nk_menu_item_label(ctx, "hierarchy", NK_TEXT_LEFT))
         { show_hierarchy_win = !show_hierarchy_win; }
+        if (nk_menu_item_label(ctx, "light hierarchy", NK_TEXT_LEFT))
+        { show_light_hierarchy_win = !show_light_hierarchy_win; }
         if (nk_menu_item_label(ctx, "framebuffers", NK_TEXT_LEFT))
         { show_frameb_win = !show_frameb_win; }
         if (nk_menu_item_label(ctx, "debug", NK_TEXT_LEFT))
@@ -572,7 +582,8 @@ void gui_hierarchy_win()
   {
     nk_layout_row_dynamic(ctx, 30, 1);
     int e_len = 0;
-    entity_t* e = state_get_entity_arr(&e_len);
+    int e_dead_len = 0;
+    entity_t* e = state_get_entity_arr(&e_len, &e_dead_len);
     // int selected_id = app_get_selected_id();
     for (int i = 0; i < e_len; ++i)
     {
@@ -609,11 +620,104 @@ void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
     for (int i = 0; i < e->children_len; ++i)
     {
       bool err = false;
-      entity_t* c = state_get_entity(e->children[i], &err);
-      assert(!err);
+      entity_t* c = state_get_entity(e->children[i], &err); ASSERT(!err);
       gui_hierarchy_display_entity_and_children(c, offs); 
     }
   }   
+}
+
+void gui_light_hierarchy_win()
+{
+  int w, h;
+  window_get_size(&w, &h);
+
+  // less height because the window bar on top and below
+  light_hierarchy_win_ratio.w = 0.1f;
+  light_hierarchy_win_ratio.h = 1.0f - template_win_ratio.h;
+  light_hierarchy_win_ratio.x = 0.0f;
+  light_hierarchy_win_ratio.y = 0.0f; // @TODO: - menubar.h 
+
+  light_hierarchy_win_rect = nk_rect(light_hierarchy_win_ratio.x * w, light_hierarchy_win_ratio.y * h, 
+                                     light_hierarchy_win_ratio.w * w, light_hierarchy_win_ratio.h * h);
+  if (nk_begin(ctx, "light hierarchy", light_hierarchy_win_rect, window_flags)) 
+  {
+    nk_layout_row_dynamic(ctx, 30, 1);
+    int dl_len = 0;
+    dir_light_t* dl   = state_get_dir_light_arr(&dl_len);
+    int pl_len = 0;
+    point_light_t* pl = state_get_point_light_arr(&pl_len);
+
+    const int SEL_LIGHT_NONE  = 0;
+    const int SEL_LIGHT_DIR   = 1;
+    const int SEL_LIGHT_POINT = 2;
+
+    static int selected_type = SEL_LIGHT_NONE;
+    static int selected = -1;
+
+    if (nk_button_label(ctx, "add dir light")) { }  // @TODO:
+    if (nk_button_label(ctx, "add point light"))
+    {
+      vec3 front, pos;
+      camera_get_front(front);
+      camera_get_pos(pos);
+      vec3_mul_f(front, 8.0f, front);
+      vec3_add(front, pos, pos);
+      state_add_point_light(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);
+    }
+
+    if (nk_tree_push(ctx, NK_TREE_TAB, "hierarchy", NK_MAXIMIZED))
+    {
+      for (int i = 0; i < dl_len; ++i)
+      {
+        char buf[32];
+        sprintf(buf, "dir light: %d", i);
+        bool selec = i == selected && selected_type == SEL_LIGHT_DIR;
+        nk_selectable_label(ctx, buf, NK_TEXT_LEFT, &selec);
+        if (selec) { selected = i; selected_type = SEL_LIGHT_DIR; }     // select
+        if (!selec && i == selected && selected_type == SEL_LIGHT_DIR) 
+        { selected = -1; selected_type = SEL_LIGHT_NONE; }              // deselect
+      }
+      for (int i = 0; i < pl_len; ++i)
+      {
+        char buf[32];
+        sprintf(buf, "point light: %d", i);
+        bool selec = i == selected && selected_type == SEL_LIGHT_POINT;
+        nk_selectable_label(ctx, buf, NK_TEXT_LEFT, &selec);
+        if (selec) { selected = i; selected_type = SEL_LIGHT_POINT; debug_draw_sphere_register(pl[i].pos, 0.35f, pl[i].color); } // select
+        if (!selec && i == selected && selected_type == SEL_LIGHT_POINT) 
+        { selected = -1; selected_type = SEL_LIGHT_NONE; }                                                                       // deselect
+      }
+      nk_tree_pop(ctx);
+    }
+
+    if (selected >= 0 && selected_type == SEL_LIGHT_DIR && nk_tree_push(ctx, NK_TREE_TAB, "properties", NK_MAXIMIZED))
+    {
+      dir_light_t* l = &dl[selected];
+      nk_layout_row_dynamic(ctx, 30, 1);
+      nk_label(ctx, "direction", NK_TEXT_LEFT);
+      nk_property_float(ctx, "d.x", -2048.0f, &l->dir[0], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "d.y", -2048.0f, &l->dir[1], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "d.z", -2048.0f, &l->dir[2], 2048.0f, 0.1f, 0.01f);
+      
+      nk_tree_pop(ctx);
+    }
+    else if (selected >= 0 && selected_type == SEL_LIGHT_POINT && nk_tree_push(ctx, NK_TREE_TAB, "properties", NK_MAXIMIZED))
+    {
+      point_light_t* l = &pl[selected];
+      nk_layout_row_dynamic(ctx, 30, 1);
+      nk_label(ctx, "position", NK_TEXT_LEFT);
+      nk_property_float(ctx, "p.x", -2048.0f, &l->pos[0], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "p.y", -2048.0f, &l->pos[1], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "p.z", -2048.0f, &l->pos[2], 2048.0f, 0.1f, 0.01f);
+      
+      gui_color_selector(l->color);
+      
+      nk_property_float(ctx, "intens.", -2048.0f, &l->intensity, 2048.0f, 0.1f, 0.01f);
+      
+      nk_tree_pop(ctx);
+    }
+  }
+  nk_end(ctx); 
 }
 
 void gui_framebuffer_win()

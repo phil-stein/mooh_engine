@@ -37,6 +37,9 @@ void gui_template_browser_win();
 void gui_hierarchy_win();
 void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs);
 
+
+void gui_light_hierarchy_win();
+
 void gui_framebuffer_win();
 
 void gui_debug_win();

@@ -1,5 +1,6 @@
 #include "phys_response.h"
-
+#include "phys_debug_draw.h"
+#include "math/math_inc.h"
 
 // ---- collision response ----
 
@@ -16,6 +17,142 @@ void phys_collision_response(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_
 
 }
 
+// taken from winterdev's 'IwEngine' https://github.com/IainWinter/IwEngine/blob/master/IwEngine
+void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
+{
+  const f32 percent = 0.8f;
+  const f32 slop    = 0.01f;
+  
+  bool obj0_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj0);
+  bool obj1_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj1);
+  
+  // @TODO: replace 1 / mass by a inv_mass member in rigidbody_t
+  // inverse mass for dynamic and 0 for static
+  f32 inv_mass0 = obj0_has_rb ? 1.0f / obj0->rb.mass : 0.0f;
+  f32 inv_mass1 = obj1_has_rb ? 1.0f / obj1->rb.mass : 0.0f;
+  
+  // correction = direction * percent * max(depth - slop, 0) / (inv_mass0 + inv_mass1)
+  vec3 correction;
+  vec3_mul_f(info.direction, percent, correction);
+  vec3_mul_f(correction, MAX(info.depth - slop, 0.0f), correction);
+  vec3_div_f(correction, inv_mass0 + inv_mass1, correction);
+
+  vec3 delta0 = { 0, 0, 0 };  
+  vec3 delta1 = { 0, 0, 0 }; 
+  
+  if (obj0_has_rb) 
+  {
+    vec3_mul_f(correction, inv_mass0, delta0);
+    vec3_add(obj0->pos, delta0, obj0->pos);
+  }
+  if (obj1_has_rb) 
+  { 
+    vec3_mul_f(correction, inv_mass1, delta1); 
+    vec3_sub(obj1->pos, delta1, obj1->pos);
+  }
+  
+}
+// taken from winterdev's 'IwEngine' https://github.com/IainWinter/IwEngine/blob/master/IwEngine
+void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
+{
+  // @NOTE: unsure if already normalized
+  vec3_normalize(info.direction, info.direction);
+ 
+  bool obj0_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj0);
+  bool obj1_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj1);
+
+  vec3 velocity0, velocity1;
+  vec3_copy(obj0_has_rb ? obj0->rb.velocity : VEC3(0), velocity0); 
+  vec3_copy(obj1_has_rb ? obj1->rb.velocity : VEC3(0), velocity1);
+  vec3 r_velocity;
+  vec3_sub(velocity1, velocity0, r_velocity);
+  
+  f32 n_spd = vec3_dot(r_velocity, info.direction);
+  // P_F32(n_spd);
+  // negative impulse would drive objs further into each other
+  // if (n_spd >= 0) { return; } 
+  // if (n_spd < 0) { return; } 
+  // P(" -> passed n_spd"); 
+ 
+  // inverse mass for dynamic and 1 for static
+  f32 inv_mass0 = obj0_has_rb ? 1.0f / obj0->rb.mass : 1.0f;
+  f32 inv_mass1 = obj1_has_rb ? 1.0f / obj1->rb.mass : 1.0f;
+
+  // -- impulse --
+
+  f32 e = (obj0_has_rb ? obj0->rb.restitution : 1.0f) * 
+          (obj1_has_rb ? obj1->rb.restitution : 1.0f);
+
+  f32 j = -(1.0f + e) * n_spd / (inv_mass0 + inv_mass1);
+
+  vec3 impulse;
+  vec3_mul_f(info.direction, j, impulse);
+
+  if (obj0_has_rb)
+  {
+    vec3 imp_inv_mass;
+    vec3_mul_f(impulse, inv_mass0, imp_inv_mass);
+    vec3_sub(velocity0, imp_inv_mass, velocity0);
+  }
+  if (obj1_has_rb)
+  {
+    vec3 imp_inv_mass;
+    vec3_mul_f(impulse, inv_mass1, imp_inv_mass);
+    vec3_sub(velocity1, imp_inv_mass, velocity1);
+  }
+
+  // -- friction --
+ 
+  vec3_sub(velocity1, velocity0, r_velocity);
+  n_spd = vec3_dot(r_velocity, info.direction); 
+
+  vec3 tangent;
+  vec3_mul_f(info.direction, n_spd, tangent);
+  vec3_sub(tangent, r_velocity, tangent);
+
+  if (vec3_magnitude(tangent) > 0.0001f)
+  { vec3_normalize(tangent, tangent); }
+
+  f32 f_velocity = vec3_dot(r_velocity, tangent);
+
+  f32 static_f0  = obj0_has_rb ? obj0->rb.static_friction  : 0.0f;
+  f32 static_f1  = obj1_has_rb ? obj1->rb.static_friction  : 0.0f;
+  f32 dynamic_f0 = obj0_has_rb ? obj0->rb.dynamic_friction : 0.0f;
+  f32 dynamic_f1 = obj1_has_rb ? obj1->rb.dynamic_friction : 0.0f;
+
+  f32 mu = vec2_magnitude(VEC2_XY(static_f0, static_f1));
+
+  f32 f = -f_velocity / (inv_mass0 + inv_mass1);
+
+  vec3 friction;
+
+  if (fabsf(f) < j * mu)  // @UNSURE: if fabsf or abs
+  {
+    vec3_mul_f(tangent, f, friction);
+  }
+  else 
+  {
+    mu = vec2_magnitude(VEC2_XY(dynamic_f0, dynamic_f1));
+    vec3_mul_f(tangent, mu, friction);
+    vec3_mul_f(friction, -j, friction);
+  }
+
+  // -- apply --
+  
+  if (obj0_has_rb)
+  {
+    vec3_mul_f(friction, inv_mass0, obj0->rb.velocity);
+    vec3_sub(obj0->rb.velocity, velocity0, obj0->rb.velocity);
+  }
+  if (obj1_has_rb)
+  {
+    vec3_mul_f(friction, inv_mass1, obj1->rb.velocity);
+    vec3_add(obj1->rb.velocity, velocity1, obj1->rb.velocity);
+  }
+
+}
+
+#if 0
 void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {
 	// magnitude of vec3, didnt find a glm function
@@ -55,7 +192,11 @@ void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1
 		// vec3 s1_dist_vec = { s1_dist, s1_dist, s1_dist };
 		// vec3_mul(info.normal, s1_dist_vec, offset);
 
-		vec3_add(info.direction, obj0->pos, obj0->pos);
+    // tmp
+	  vec3 obj0_pre_pos;
+    vec3_copy(obj0->pos, obj0_pre_pos);
+
+    vec3_add(info.direction, obj0->pos, obj0->pos);
 
 		// vec3 norm_inv;
 		// vec3_copy(info.direction, norm_inv);
@@ -67,12 +208,17 @@ void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1
 		// vec3 s2_dist_vec = { s2_dist, s2_dist, s2_dist };
 		// vec3_mul(info.normal, s2_dist_vec, offset);
 
+    // tmp
+    vec3 obj1_pre_pos;
+    vec3_copy(obj1->pos, obj1_pre_pos);
+
 		vec3 norm_inv;
 		vec3_copy(info.direction, norm_inv);
 		vec3_negate(norm_inv, norm_inv);
 		vec3_add(norm_inv, obj1->pos, obj1->pos);
 
 		// vec3_add(info.direction, e2->pos, e2->pos);
+
 
 	}
 	else if (!PHYS_OBJ_HAS_RIGIDBODY(obj0) && PHYS_OBJ_HAS_RIGIDBODY(obj1))
@@ -226,3 +372,5 @@ void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1
 		// printf("rb2: \"%s\", v: x: %.2f, y: %.2f, z: %.2f\n", e2->name, e2->rb.velocity[0], e2->rb.velocity[1], e2->rb.velocity[2]);
 	}
 }
+
+#endif

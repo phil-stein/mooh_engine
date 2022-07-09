@@ -231,7 +231,7 @@ shader_t shader_create_from_file(const char* vert_path, const char* frag_path, u
   s.set_uniforms = set_uniforms;
 	// s.name = (char*)name;
 	s.has_error = has_error;
-	PF("made shader: name: '%s', handle: %d, has_error: %s\n", name, handle, STR_BOOL(has_error));
+	SHADER_PF("made shader: name: '%s', handle: %d, has_error: %s\n", name, handle, STR_BOOL(has_error));
 
 	// remember to free the memory allocated by read_text_file()
 	free(vert_src);

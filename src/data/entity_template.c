@@ -26,8 +26,9 @@ const template_t template_table[] =
     .mat  = MATERIAL_TEMPLATE_METALL,
     .init   = NULL,
     .update = NULL,
-    .phys_flags = ENTITY_HAS_RIGIDBODY,
-    .mass = 1.0f,
+    .phys_flags = 0,
+    // .phys_flags = ENTITY_HAS_RIGIDBODY,
+    // .mass = 1.0f,
   },
   {
     .name = "demon01",

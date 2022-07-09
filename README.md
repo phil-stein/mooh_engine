@@ -89,8 +89,9 @@ main resources:
  - [ ] structures (prefabs)
   - [ ] create / load
   - [ ] store ?
- - [ ] setup 32bit ??? (-m32)
- - [ ] level system ? 
+ - [ ] setup 32bit (-m32)
+ - [ ] level system ?
+  - not sure if necessary since only 1 level
   - [ ] structure
   - [x] serialization
   - [x] deserialization
@@ -123,10 +124,11 @@ main resources:
  - [x] shadows again 
  - [x] shadowmap view mat follow camera
  - [x] line draw !!!
+ - [ ] point lights ?
  - [ ] blending
   - learnopengl weighted blending 'OIT'
  - [ ] cascaded shadows
-  - from cherno video ?
+  - from cherno video 
   - also on learnopengl
  - [ ] tiling
  - [ ] ssao
@@ -144,8 +146,8 @@ main resources:
 
 ## level editor
  - [x] select entities
- - [ ] dont run init & update at start
-  - [ ] play / pause
+ - [x] dont run init & update at start
+  - [x] play / pause
  - [x] properties
   - [x] basics
   - [x] init & update
@@ -165,7 +167,7 @@ main resources:
  - [x] removing
  - [x] duplicating
  - [x] snapping
- - [ ] terrain editor
+ - [x] terrain editor
   - [x] select
   - [x] edit height
   - [x] gui
@@ -180,6 +182,7 @@ main resources:
   - seperate ?
  - [ ] particle system editor
   - seperate ?
+  - lights editor
 
 ## terrain generation
  - [x] generate mesh
@@ -193,7 +196,7 @@ main resources:
           or
           find something thats efficient and ram friendly
  - [x] normals
- - [ ] tangents
+ - [x] tangents
  - [ ] normals & tangents on edges
   - button in gui to calc for all chunks
  - [x] save & load

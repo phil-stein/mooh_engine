@@ -58,6 +58,7 @@ collision_info_t phys_collision_check_sphere_v_sphere(phys_obj_t* s1, phys_obj_t
 	return info;
 }
 
+// @TODO: redo this, way to botched
 collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2)
 {
 	// add position & offset to min & max of both colliders
@@ -190,6 +191,7 @@ collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2
 	vec3 dist = { dist1[0] >= dist2[0] ? dist1[0] : dist2[0],
 				        dist1[1] >= dist2[1] ? dist1[1] : dist2[1],
 				        dist1[2] >= dist2[2] ? dist1[2] : dist2[2] };
+  
   // @NOTE: fucks this supposed to mean ?
   // @TODO: collision could now also be max(dist) > 0 
 
@@ -262,7 +264,11 @@ collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2
 	// else { printf(" -> velocity wasnt checked\n"); }
 
 
+  // @TODO: dont dir * depth
+  info.depth = vec3_magnitude(axis);  // @NOTE: not sure id actually depth
+  vec3_normalize(axis, axis);
 	vec3_copy(axis, info.direction); // dist
+
 
 	return info;
 }

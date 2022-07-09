@@ -6,6 +6,12 @@
 #include "data/shader_template.h"
 
 
+// @NOTE: mute or show messages from assetmanager
+// #define ASSETM_P(txt)  P(txt)
+// #define ASSETM_PF(...) PF(__VA_ARGS__)
+#define ASSETM_P(txt)
+#define ASSETM_PF(...)
+
 void assetm_init();
 void assetm_cleanup();
 

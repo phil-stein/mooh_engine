@@ -39,17 +39,8 @@ int main(void)
   return 0;
 }
 
-typedef union value_t
-{
-  u32 u_val;
-  f32 f_val;
-}value_t;
-
 void app_init()
 {
-  // tmp
-  // serialization_test();
-
   core_data = core_data_get();
   // pause physics and scripts on start
   core_data->phys_act = false;
@@ -101,14 +92,15 @@ void app_init()
   // // state_add_point_light(VEC3_XYZ(-10, -10, 10), RGB_F_RGB(300), 1.0f);
   // // state_add_point_light(VEC3_XYZ( 10, -10, 10), RGB_F_RGB(300), 1.0f);
 
-  
+  // 
   // state_add_dir_light(VEC3_XYZ(0, 10, 0), VEC3_XYZ(0.2f, 1.0f, 0.2f), RGB_F(1.0f, 0.6f, 0.6f), 8.5f, true, 2048, 2048);
   // state_add_point_light(VEC3_XYZ(-10,  10, 10), RGB_F_RGB(300), 1.0f);
-  // 
-  // serialization_write_scene_to_file();
-  
-  serialization_load_scene_from_file("test.scene");
+ 
+  const char scene_name[] = "test.scene";
+  // serialization_write_scene_to_file(scene_name);
+  serialization_load_scene_from_file(scene_name);
 
+  // in game will be done by camera-controller
   // input_center_cursor_pos();
   camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
   camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));

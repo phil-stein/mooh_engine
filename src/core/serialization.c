@@ -113,19 +113,25 @@ void serialization_serialize_scene(u8** buffer)
   // -- entities --
 
   int world_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len);
+  int world_dead_len = 0;
+  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
 
-  serialization_serialize_u32(buffer, world_len);
+  serialization_serialize_u32(buffer, world_len - world_dead_len);
 
   for (u32 i = 0; i < world_len; ++i)
   {
+    if (world[i].is_dead) { continue; }
     serialization_serialize_entity(buffer, &world[i]);
   }
 
-  P("[serialization] serialized scene");
+  SERIALIZATION_P("[serialization] serialized scene");
 }
 void serialization_deserialize_scene(u8* buffer, u32* offset)
 {
+
+  // clear pre-existing scene
+  state_clear_scene();
+
   // -- dir lights --
   
   u32 dir_lights_len = serialization_deserialize_u32(buffer, offset);
@@ -156,7 +162,7 @@ void serialization_deserialize_scene(u8* buffer, u32* offset)
     serialization_deserialize_entity(buffer, offset);
   }
   
-  P("[serialization] deserialized scene");
+  SERIALIZATION_P("[serialization] deserialized scene");
 }
 
 // ---- terrain ----
@@ -201,7 +207,7 @@ void serialization_serialize_terrain(u8** buffer)
   {
     serialization_serialize_terrain_layout(buffer, &core_data->terrain_layout[i]);
   }
-  P("[serialization] serialized terrain");
+  SERIALIZATION_P("[serialization] serialized terrain");
 }
 void serialization_deserialize_terrain(u8* buffer, u32* offset)
 {
@@ -221,7 +227,7 @@ void serialization_deserialize_terrain(u8* buffer, u32* offset)
     arrput(core_data->terrain_layout, l);
     serialization_deserialize_terrain_layout(buffer, offset, &core_data->terrain_layout[i]);
   }
-  P("[serialization] deserialized terrain");
+  SERIALIZATION_P("[serialization] deserialized terrain");
 }
 
 // ---- complex types ----

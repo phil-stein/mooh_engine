@@ -93,6 +93,8 @@ typedef void (empty_callback)(void);
 // #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
 #define ERR_CHECK(c, ...) if(!(c)) { ERR(__VA_ARGS__); }
 
+#define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
+
 typedef enum pf_mode
 {
   PF_NORMAL     = 0,

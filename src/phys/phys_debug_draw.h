@@ -1,10 +1,13 @@
 #ifndef PHYS_DEBUG_DRAW_H
 #define PHYS_DEBUG_DRAW_H
 
+#include "core/debug/debug_draw.h"
+
 #ifdef PHYS_DEBUG
 
 #include "phys/phys_types.h"
 
+#define PHYS_DEBUG_VELOCITY_COLOR RGB_F(1, 0, 1)
 #define PHYS_DEBUG_COLLIDER_COLOR RGB_F(1, 0, 1)
 
 void phys_debug_draw_velocity_func(phys_obj_t* obj);

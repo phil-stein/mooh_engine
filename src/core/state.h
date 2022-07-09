@@ -13,7 +13,9 @@
 void state_init();
 void state_update(float dt);
 
-entity_t* state_get_entity_arr(int* len);
+void state_clear_scene();
+
+entity_t* state_get_entity_arr(int* len, int* dead_len);
 int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx);
 int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, init_callback* init_f, update_callback* update_f, int table_idx);
 int state_duplicate_entity(int id, vec3 offset);
@@ -23,7 +25,8 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line);
 void state_entity_add_child(int parent, int child);
 void state_entity_remove_child(int parent, int child);
 void state_entity_local_model(int id, mat4 out);
-void state_entity_update_global_model(int id);
+void state_entity_update_global_model_dbg(int id, char* file, int line);
+#define state_entity_update_global_model(id)  state_entity_update_global_model_dbg(id, __FILE__, __LINE__) 
 void state_entity_global_model_no_rotation(int id, mat4 out);
 void state_entity_model_no_scale(int id, mat4 out);
 void state_entity_model_no_scale_rotation(int id, mat4 out);

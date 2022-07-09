@@ -1,7 +1,6 @@
 #ifdef PHYS_DEBUG
 
 #include "phys/phys_debug_draw.h"
-#include "core/debug/debug_draw.h"
 
 void phys_debug_draw_velocity_func(phys_obj_t* obj)
 { 
@@ -11,7 +10,7 @@ void phys_debug_draw_velocity_func(phys_obj_t* obj)
 	vec3_copy(obj->rb.velocity, v_scaled);
 	vec3_mul_f(v_scaled, 0.2f, v_scaled);
 	vec3_add(obj->pos, v_scaled, v_pos);
-  debug_draw_line_register(obj->pos, v_pos, RGB_F(1, 0, 1)); 
+  debug_draw_line_register(obj->pos, v_pos,PHYS_DEBUG_VELOCITY_COLOR ); 
 }
 
 void phys_debug_draw_collider_func(phys_obj_t* obj)
@@ -19,6 +18,9 @@ void phys_debug_draw_collider_func(phys_obj_t* obj)
   switch (obj->collider.type)
   {
     case PHYS_COLLIDER_SPHERE:
+      P_INFO("sphere collider debug not implemented");
+      P_INT(obj->entity_idx);
+      // @NOTE: deserialized entites get wrong id in phys_obj_t
       break;
     case PHYS_COLLIDER_BOX:
       phys_debug_draw_box_collider_func(obj);

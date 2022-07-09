@@ -33,6 +33,8 @@ void state_update(float dt)
 {
   for (int i = 0; i < world_len; ++i)
   {
+    if (world[i].is_dead) { continue; }
+
     state_entity_update_global_model(i);
     
     if (world[i].update_f != NULL)
@@ -40,9 +42,24 @@ void state_update(float dt)
   }
 }
 
-entity_t* state_get_entity_arr(int* len)
+void state_clear_scene()
+{
+  arrfree(world);
+  world_len = 0;
+  world     = NULL;
+
+  arrfree(world_dead);
+  world_dead_len = 0;
+  world_dead     = NULL;
+
+  dir_lights_len   = 0;
+  point_lights_len = 0;
+}
+
+entity_t* state_get_entity_arr(int* len, int* dead_len)
 {
   *len = world_len;
+  *dead_len = world_dead_len;
   return world;
 }
 
@@ -126,7 +143,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, init_callb
 int state_duplicate_entity(int id, vec3 offset)
 {
   bool err = false;
-  entity_t* e = state_get_entity(id, &err); assert(!err);
+  entity_t* e = state_get_entity(id, &err); ASSERT(!err);
   vec3 pos;
   vec3_add(e->pos, offset, pos);
   return state_add_entity_from_template(pos, e->rot, e->scl, e->table_idx);
@@ -166,8 +183,8 @@ void state_entity_add_child(int parent, int child)
   }
   
   bool error = false;
-  entity_t* p = state_get_entity(parent, &error); assert(!error);
-  entity_t* c = state_get_entity(child, &error); assert(!error);
+  entity_t* p = state_get_entity(parent, &error); ASSERT(!error);
+  entity_t* c = state_get_entity(child, &error); ASSERT(!error);
 
   if (c->parent > -1) 
   { P_ERR("parenting child which is already parented."); return; } 
@@ -186,8 +203,8 @@ void state_entity_remove_child(int parent, int child)
   }
   
   bool error = false;
-  entity_t* p = state_get_entity(parent, &error); assert(!error);
-  entity_t* c = state_get_entity(child, &error); assert(!error);
+  entity_t* p = state_get_entity(parent, &error); ASSERT(!error);
+  entity_t* c = state_get_entity(child, &error); ASSERT(!error);
 
   for (int i = 0; i < p->children_len; ++i)
   {
@@ -208,10 +225,10 @@ void state_entity_local_model(int id, mat4 out)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
   mat4_make_model(e->pos, e->rot, e->scl, out);
 }
-void state_entity_update_global_model(int id)
+void state_entity_update_global_model_dbg(int id, char* file, int line)
 {
   if (id < 0 || id >= world_len) 
   { 
@@ -220,7 +237,7 @@ void state_entity_update_global_model(int id)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ERR_CHECK(!error, "state_get_entity() failed called from: '%s' line: %d\n", file, line);
 
   if (!e->is_moved) { return; }
 
@@ -228,7 +245,7 @@ void state_entity_update_global_model(int id)
   {
     // same as state_entity_local_model()
     mat4_make_model(e->pos, e->rot, e->scl, e->model);
-    entity_t* p = state_get_entity(e->parent, &error); assert(!error);
+    entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, e->model, e->model);
   }
   else
@@ -251,13 +268,13 @@ void state_entity_global_model_no_rotation(int id, mat4 out)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     mat4_make_model(e->pos, VEC3(0), e->scl, out);
-    entity_t* p = state_get_entity(e->parent, &error); assert(!error);
+    entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, e->model, out);
   }
   else
@@ -275,14 +292,14 @@ void state_entity_model_no_scale(int id, mat4 out)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     // mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
     mat4_make_model(e->pos, e->rot, VEC3(1), out);
-    entity_t* p = state_get_entity(e->parent, &error); assert(!error);
+    entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, out, out);
   }
   else
@@ -301,13 +318,13 @@ void state_entity_model_no_scale_rotation(int id, mat4 out)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
-    entity_t* p = state_get_entity(e->parent, &error); assert(!error);
+    entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, out, out);
   }
   else
@@ -325,7 +342,7 @@ void state_entity_global_scale(int id, vec3 out)
   }
   
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); assert(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
 
   if (e->parent <= -1) { vec3_copy(e->scl, out); return; }
   

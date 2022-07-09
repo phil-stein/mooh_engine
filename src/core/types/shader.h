@@ -5,6 +5,11 @@
 #include "math/math_inc.h"
 
 
+// @NOTE: mute or show shader messages
+// #define SHADER_PF(...) PF(__VA_ARGS__)
+#define SHADER_PF(...)
+
+
 struct shader_t;
 typedef void (uniforms_callback)(struct shader_t* shader, int tex_idx);
 
