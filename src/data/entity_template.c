@@ -2,7 +2,7 @@
 #include "data/test_comp.h"
 
 
-const template_t template_table[] = 
+const entity_template_t entity_template_table[] = 
 {
   {
     .name = "quad",
@@ -99,13 +99,13 @@ const template_t template_table[] =
   },
 };
 
-const template_t* template_get(int idx)
+const entity_template_t* entity_template_get(int idx)
 {
-  return &template_table[idx];
+  return &entity_template_table[idx];
 }
-const template_t* template_get_all(int* len)
+const entity_template_t* entity_template_get_all(int* len)
 {
-  *len = sizeof(template_table) / sizeof(template_table[0]);
-  return template_table;
+  *len = sizeof(entity_template_table) / sizeof(entity_template_table[0]);
+  return entity_template_table;
 }
 

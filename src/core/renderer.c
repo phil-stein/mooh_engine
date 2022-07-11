@@ -209,10 +209,12 @@ void renderer_update()
   vec3_mul_f(c_forward, 5.0f, c_forward);
   vec3_add(light_pos, c_forward, light_pos);
 
+  int shadow_caster_counter = 0;
   for (int i = 0; i < dir_lights_len; ++i)
   {
     dir_light_t* l = &dir_lights[i];
     if (!l->cast_shadow) { continue; }
+    shadow_caster_counter++;
     glViewport(0, 0, l->shadow_map_x, l->shadow_map_y);
     framebuffer_bind(&l->fb_shadow); // &fb_lighting
     glClear(GL_DEPTH_BUFFER_BIT);
@@ -234,8 +236,6 @@ void renderer_update()
       e = &world[i];
       if (e->is_dead) { continue; }
   
-      // state_update_global_model();
-
       shader_set_mat4(&core_data->shadow_shader, "model", e->model);
 
       mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh);
@@ -249,6 +249,7 @@ void renderer_update()
     }
     framebuffer_unbind();
   }
+  core_data->show_shadows = shadow_caster_counter > 0 ? true : false;
   glViewport(0, 0, w, h);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   TIMER_STOP();
@@ -369,6 +370,7 @@ void renderer_update()
     tex_index++;
 
     // lights ----------------------------------------------
+    // @UNSURE: limit shadow casters to 1 ??? 
     char buffer[28];
     shader_set_int(&core_data->shadow_pass_shader, "shadows_len", core_data->show_shadows ? 1 : 0);
     for (int i = 0; i < 1; ++i)

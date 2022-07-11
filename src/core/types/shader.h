@@ -6,8 +6,8 @@
 
 
 // @NOTE: mute or show shader messages
-// #define SHADER_PF(...) PF(__VA_ARGS__)
-#define SHADER_PF(...)
+#define SHADER_PF(...) PF(__VA_ARGS__)
+// #define SHADER_PF(...)
 
 
 struct shader_t;

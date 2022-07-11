@@ -73,6 +73,8 @@ typedef void (empty_callback)(void);
 
 // -- print --
 
+#define P_LINE()   printf("---------------------------\n") 
+
 #define PF(...)		  printf(__VA_ARGS__)
 
 #define P_INT(v) 	  PF("%s: %d\n", #v, v)

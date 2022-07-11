@@ -46,7 +46,7 @@ void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
 
 void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass)
 {
-  phys_obj_t obj = PHYS_OBJ_INIT();
+  phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(VEC3(1), obj.scl);
@@ -58,7 +58,7 @@ void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass)
 }
 void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 offset)
 {
-  phys_obj_t obj = PHYS_OBJ_INIT();
+  phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(scl, obj.scl);
@@ -70,7 +70,7 @@ void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 off
 }
 void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, vec3 aabb[2], vec3 offset)
 {
-  phys_obj_t obj = PHYS_OBJ_INIT();
+  phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(scl, obj.scl);
@@ -113,7 +113,6 @@ void phys_update(f32 dt)
 		if (!PHYS_OBJ_HAS_RIGIDBODY(obj0)) { continue; }
     phys_dynamics_simulate(obj0, dt);
 
-		
 		// // ---- collision ----
 		if (!PHYS_OBJ_HAS_COLLIDER(obj0)) { continue; }
   
@@ -132,29 +131,29 @@ void phys_update(f32 dt)
       //   // REMOVE_FLAG(obj0->flags, PHYS_HAS_RIGIDBODY);
       // }
 
-		// ---- collision response ----
-		if (c.collision)
-		{
-			// notify objects of collision
+		  // ---- collision response ----
+		  if (c.collision)
+		  {
+		  	// notify objects of collision
 
-			c.trigger = obj0->collider.is_trigger || obj1->collider.is_trigger;
+		  	c.trigger = obj0->collider.is_trigger || obj1->collider.is_trigger;
 
-			c.obj_idx = obj1->entity_idx;
-			arrput(obj0->collider.infos, c);
-			obj0->collider.infos_len++;
+		  	c.obj_idx = obj1->entity_idx;
+		  	arrput(obj0->collider.infos, c);
+		  	obj0->collider.infos_len++;
 
-			c.obj_idx = obj0->entity_idx;
-			arrput(obj1->collider.infos, c);
-			obj1->collider.infos_len++;
+		  	c.obj_idx = obj0->entity_idx;
+		  	arrput(obj1->collider.infos, c);
+		  	obj1->collider.infos_len++;
 
-		   if (!c.trigger && PHYS_OBJ_HAS_RIGIDBODY(obj0)) // no response on trigger collisions
-			{
-				// printf(" -> \"%s\" v. \"%s\"\n", e1->name, e2->name);
-				// printf(" -> dir: %.2f, %.2f, %.2f\n", c.direction[0], c.direction[1], c.direction[2]);
+		    if (!c.trigger && PHYS_OBJ_HAS_RIGIDBODY(obj0)) // no response on trigger collisions
+		  	{
+		  		// printf(" -> \"%s\" v. \"%s\"\n", e1->name, e2->name);
+		  		// printf(" -> dir: %.2f, %.2f, %.2f\n", c.direction[0], c.direction[1], c.direction[2]);
 
-				phys_collision_response(obj0, obj1, c);
-			}
-		}
+		  		phys_collision_response(obj0, obj1, c);
+		  	}
+		  }
 
 		}
 	}

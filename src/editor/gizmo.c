@@ -66,7 +66,7 @@ void gizmo_update()
   {
     int id = renderer_mouse_position_mouse_pick_id(); 
 
-    P_INT(id);
+    // P_INT(id);
     if (id >= 0)
     { 
       app_data->selected_id = id;

@@ -265,7 +265,7 @@ collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2
 
 
   // @TODO: dont dir * depth
-  info.depth = vec3_magnitude(axis);  // @NOTE: not sure id actually depth
+  info.depth = vec3_magnitude(axis); //  * 0.5f;  // @UNSURE: * 0.5f, also ->, @NOTE: not sure id actually depth
   vec3_normalize(axis, axis);
 	vec3_copy(axis, info.direction); // dist
 

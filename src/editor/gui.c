@@ -16,6 +16,9 @@
 #include "core/debug/debug_draw.h"
 #include "data/entity_template.h"
 
+// @NOTE: tmp
+#include "phys/phys_world.h"
+
 #include "GLAD/glad.h"
 
 #define NK_INCLUDE_FIXED_TYPES
@@ -66,6 +69,8 @@ ui_rect light_hierarchy_win_rect;
 ui_rect light_hierarchy_win_ratio;
 
 framebuffer_t fb_preview;
+
+bool top_bar_menu_hover       = false;   // mouse over menu in top bar
 
 bool show_hierarchy_win       = false;
 bool show_frameb_win          = false;
@@ -145,6 +150,10 @@ void gui_update()
   if (show_frameb_win)          { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, frameb_win_rect)          ? true : over_ui; }
   if (show_debug_win)           { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, debug_win_rect)           ? true : over_ui; }
 
+  // already hovering or hovewr check from top bar menu's
+  over_ui = over_ui || top_bar_menu_hover;  
+  top_bar_menu_hover = false;
+
   app_data->mouse_over_ui = over_ui;
 }
 
@@ -176,53 +185,87 @@ void gui_top_bar_win()
     // -- menubar --
     nk_menubar_begin(ctx);
     {
+      ui_rect bounds; // used for tracking mouse hover for 'top_bar_menu_hover'
       nk_layout_row_begin(ctx, NK_STATIC, 30, 4);
-      // @TODO: 
       nk_layout_row_push(ctx, 50);
       if (nk_menu_begin_label(ctx, "scene", NK_TEXT_LEFT, nk_vec2(80, 200)))
       {
         nk_layout_row_dynamic(ctx, 20, 1);
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "save", NK_TEXT_LEFT))
         {
           serialization_write_scene_to_file(SCENE_FILE_NAME); 
           serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
         }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+       
+        // @TODO: 
         if (nk_menu_item_label(ctx, "save as", NK_TEXT_LEFT))
         { }
         if (nk_menu_item_label(ctx, "import", NK_TEXT_LEFT))
         { }
+        
         nk_menu_end(ctx);
       }
       nk_layout_row_push(ctx, 55);
       if (nk_menu_begin_label(ctx, "windows", NK_TEXT_LEFT, nk_vec2(110, 200)))
       {
         nk_layout_row_static(ctx, 20, 90, 1);
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "hierarchy", NK_TEXT_LEFT))
         { show_hierarchy_win = !show_hierarchy_win; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "light hierarchy", NK_TEXT_LEFT))
         { show_light_hierarchy_win = !show_light_hierarchy_win; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "framebuffers", NK_TEXT_LEFT))
         { show_frameb_win = !show_frameb_win; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "debug", NK_TEXT_LEFT))
         { show_debug_win = !show_debug_win; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
         nk_menu_end(ctx);
       }
       nk_layout_row_push(ctx, 55);
       if (nk_menu_begin_label(ctx, "control", NK_TEXT_LEFT, nk_vec2(110, 200)))
       {
         nk_layout_row_static(ctx, 20, 90, 1);
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "play", NK_TEXT_LEFT))
         { core_data->phys_act = true; core_data->scripts_act = true; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+       
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "pause", NK_TEXT_LEFT))
         { core_data->phys_act = false; core_data->scripts_act = false; }
-        if (nk_menu_item_label(ctx, "phys play", NK_TEXT_LEFT))
-        { core_data->phys_act = true; }
-        if (nk_menu_item_label(ctx, "phys pause", NK_TEXT_LEFT))
-        { core_data->phys_act = false; }
-        if (nk_menu_item_label(ctx, "script play", NK_TEXT_LEFT))
-        { core_data->scripts_act = true; }
-        if (nk_menu_item_label(ctx, "script pause", NK_TEXT_LEFT))
-        { core_data->scripts_act = false; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "phys play", NK_TEXT_LEFT)) { core_data->phys_act = true; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "phys pause", NK_TEXT_LEFT))  { core_data->phys_act = false; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "script play", NK_TEXT_LEFT)) { core_data->scripts_act = true; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "script pause", NK_TEXT_LEFT))  { core_data->scripts_act = false; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
         nk_menu_end(ctx);
       }
     }
@@ -296,10 +339,10 @@ void gui_properties_win()
         nk_tree_pop(ctx);
       }
 
-      const template_t* def = template_get(e->table_idx);
+      const entity_template_t* def = entity_template_get(e->table_idx);
       if (def->phys_flags != 0 && nk_tree_push(ctx, NK_TREE_TAB, "physics", NK_MINIMIZED))
       {
-        gui_properties_physics(def);
+        gui_properties_physics(def, e);
         nk_tree_pop(ctx);
       }
 
@@ -428,13 +471,28 @@ void gui_properties_material(material_t* mat)
   nk_property_float(ctx, "metallic", 0.0f, &mat->metallic_f, 1.0f, 0.1f, 0.01f);
 
 }
-void gui_properties_physics(const template_t* def)
+void gui_properties_physics(const entity_template_t* def, entity_t* e)
 {
   nk_layout_row_dynamic(ctx, 30, 1);
   if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
   {
     nk_labelf(ctx, NK_TEXT_LEFT, " -- rigidbody --");
     nk_labelf(ctx, NK_TEXT_LEFT, "mass: %f", def->mass);
+
+    // @NOTE: tmp
+    u32 arr_len = 0;
+    phys_obj_t* arr = phys_get_obj_arr(&arr_len);
+    phys_obj_t* obj = NULL;
+    for (u32 i = 0; i < arr_len; ++i)
+    {
+      if (arr[i].entity_idx == e->id) { obj = &arr[i]; }
+    }
+    if (obj)
+    {
+      // P_VEC3(obj->pos);
+      nk_labelf(ctx, NK_TEXT_LEFT, "pos: %f, %f, %f", obj->pos[0], obj->pos[1], obj->pos[2]);
+      nk_labelf(ctx, NK_TEXT_LEFT, "vel: %f, %f, %f", obj->rb.velocity[0], obj->rb.velocity[1], obj->rb.velocity[2]);
+    }
   }
   if (HAS_FLAG(def->phys_flags, ENTITY_HAS_SPHERE))
   {
@@ -470,7 +528,7 @@ void gui_template_browser_win()
   {
   
     int len = 0;
-    const template_t* table = template_get_all(&len);
+    const entity_template_t* table = entity_template_get_all(&len);
     static int selected = -1;
     static vec3 cam_pos = { 0, 0, 10 };
 
@@ -523,7 +581,7 @@ void gui_template_browser_win()
         if (selected > -1)
         {
 
-          const template_t* def = template_get(selected);
+          const entity_template_t* def = entity_template_get(selected);
           mesh_t*    mesh = assetm_get_mesh(def->mesh);
           texture_t* tex  = assetm_get_texture_by_idx(assetm_get_material(def->mat)->albedo);
           
@@ -578,7 +636,7 @@ void gui_hierarchy_win()
 
   hierarchy_win_rect = nk_rect(hierarchy_win_ratio.x * w, hierarchy_win_ratio.y * h, 
                                hierarchy_win_ratio.w * w, hierarchy_win_ratio.h * h);
-  if (nk_begin(ctx, "entity hierarchy", hierarchy_win_rect, window_flags)) 
+  if (nk_begin(ctx, "entity hierarchy", hierarchy_win_rect, window_float_flags)) 
   {
     nk_layout_row_dynamic(ctx, 30, 1);
     int e_len = 0;
@@ -639,7 +697,7 @@ void gui_light_hierarchy_win()
 
   light_hierarchy_win_rect = nk_rect(light_hierarchy_win_ratio.x * w, light_hierarchy_win_ratio.y * h, 
                                      light_hierarchy_win_ratio.w * w, light_hierarchy_win_ratio.h * h);
-  if (nk_begin(ctx, "light hierarchy", light_hierarchy_win_rect, window_flags)) 
+  if (nk_begin(ctx, "light hierarchy", light_hierarchy_win_rect, window_float_flags)) 
   {
     nk_layout_row_dynamic(ctx, 30, 1);
     int dl_len = 0;
@@ -699,6 +757,17 @@ void gui_light_hierarchy_win()
       nk_property_float(ctx, "d.y", -2048.0f, &l->dir[1], 2048.0f, 0.1f, 0.01f);
       nk_property_float(ctx, "d.z", -2048.0f, &l->dir[2], 2048.0f, 0.1f, 0.01f);
       
+      gui_color_selector(l->color);
+      
+      nk_property_float(ctx, "intens.", -1.0f, &l->intensity, 2048.0f, 0.1f, 0.01f);
+
+      // bool tmp = &l->cast_shadow;
+      // l->cast_shadow = nk_checkbox_label(ctx, "cast shadows", &tmp);
+       nk_checkbox_label(ctx, "cast shadows", &l->cast_shadow);
+
+       nk_labelf(ctx, NK_TEXT_LEFT, "shadowmap");
+       nk_labelf(ctx, NK_TEXT_LEFT, "x: %d, y: %d", l->shadow_map_x, l->shadow_map_y);
+      
       nk_tree_pop(ctx);
     }
     else if (selected >= 0 && selected_type == SEL_LIGHT_POINT && nk_tree_push(ctx, NK_TREE_TAB, "properties", NK_MAXIMIZED))
@@ -712,7 +781,7 @@ void gui_light_hierarchy_win()
       
       gui_color_selector(l->color);
       
-      nk_property_float(ctx, "intens.", -2048.0f, &l->intensity, 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "intens.", -1.0f, &l->intensity, 2048.0f, 0.1f, 0.01f);
       
       nk_tree_pop(ctx);
     }

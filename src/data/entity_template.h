@@ -32,7 +32,7 @@ typedef enum entity_templyte_phys_flags
 
 
 // template for entites
-typedef struct template_t
+typedef struct entity_template_t
 {
   char* name;
 
@@ -52,11 +52,11 @@ typedef struct template_t
   };
   
 
-}template_t;
+}entity_template_t;
 
 
-const template_t* template_get(int idx);
+const entity_template_t* entity_template_get(int idx);
 
-const template_t* template_get_all(int* len);
+const entity_template_t* entity_template_get_all(int* len);
 
 #endif

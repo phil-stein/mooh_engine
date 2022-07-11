@@ -40,8 +40,12 @@ main resources:
  - [x] cant deselect objects
  - [x] terrain mesh culling accumulates memory, big boi words 
  - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
+ - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
+ - [x] parenting doesn't work anymore ._.
+ - [ ] phys_obj_t's pos, scl and velocity gets set weird or nan
 
 ## optimizations
+ - [ ] multithreading [link](#multithreading) 
  - [ ] use textures with r = roughness, g = metallic, ...
  - [x] entity_update_global_mat() 'dirtyflag'
  - [ ] change the white tex for no normal
@@ -49,6 +53,11 @@ main resources:
  - [ ] occlusion culling 
  - [ ] batch renderer
  - [ ] lod system ?
+
+## sus amogus
+ - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
+   it worked before and something changed in the code that made it no longer work that way
+   what exactly changed ??? 
 
 ## organization
  - [ ] factor out cubemap creating from assetm
@@ -60,7 +69,7 @@ main resources:
  - [ ] seperate draw funs from renderer
   - draw_quad(), draw_mesh(), ...
  - [x] make core_data.c load all non custom shaders, framebuffers, etc.
- - [ ] rename template_t to entity_template_t
+ - [x] rename template_t to entity_template_t
 
 ## base
  - [x] load shader
@@ -178,11 +187,14 @@ main resources:
   - [x] layouting
  - [x] saving
  - [x] loading
+ - [ ] lights editor
+  - [ ] set properties
+  - [ ] remove lights
+  - [ ] add lights
  - [ ] structure editor
   - seperate ?
  - [ ] particle system editor
   - seperate ?
-  - lights editor
 
 ## terrain generation
  - [x] generate mesh

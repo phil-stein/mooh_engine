@@ -65,7 +65,7 @@ entity_t* state_get_entity_arr(int* len, int* dead_len)
 
 int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
 {
-  const template_t* def = template_get(idx);
+  const entity_template_t* def = entity_template_get(idx);
   int mesh = assetm_get_mesh_idx(def->mesh);
   int mat  = assetm_get_material_idx(def->mat);
 
@@ -230,6 +230,7 @@ void state_entity_local_model(int id, mat4 out)
 }
 void state_entity_update_global_model_dbg(int id, char* file, int line)
 {
+  // if (id == 0 || id == 1) { P("brrrrrr"); }
   if (id < 0 || id >= world_len) 
   { 
     ERR("local model with invalid id. id'%d'", id); 
@@ -238,12 +239,11 @@ void state_entity_update_global_model_dbg(int id, char* file, int line)
   
   bool error = false;
   entity_t* e = state_get_entity(id, &error); ERR_CHECK(!error, "state_get_entity() failed called from: '%s' line: %d\n", file, line);
-
+  
   if (!e->is_moved) { return; }
 
   if (e->parent >= 0)
   {
-    // same as state_entity_local_model()
     mat4_make_model(e->pos, e->rot, e->scl, e->model);
     entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, e->model, e->model);
@@ -255,7 +255,12 @@ void state_entity_update_global_model_dbg(int id, char* file, int line)
   }
   for (int i = 0; i < e->children_len; ++i)
   {
-    state_entity_update_global_model(e->children[i]);
+    // @NOTE: setting 'is_moved' updates children next 'state_update()'
+    //        just updating doesn't work
+    // state_entity_update_global_model(e->children[i]);
+    bool err = false;
+    entity_t* c = state_get_entity(e->children[i], &err); ASSERT(!err);
+    c->is_moved = true;
   }
   e->is_moved = false;
 }
