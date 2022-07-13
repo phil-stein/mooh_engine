@@ -43,6 +43,10 @@ void gui_light_hierarchy_win();
 void gui_framebuffer_win();
 
 void gui_debug_win();
+void gui_shader_properties(shader_t* s, char* name);
+
+void gui_core_data_win();
+
 
 void gui_color_selector(rgbf color);
 

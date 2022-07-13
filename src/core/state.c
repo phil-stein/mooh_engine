@@ -1,5 +1,6 @@
 #include "core/state.h"
 #include "core/assetm.h"
+#include "core/core_data.h"
 #include "data/entity_template.h"
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
@@ -14,14 +15,18 @@ int* world_dead = NULL;
 int  world_dead_len = 0;
 
 dir_light_t dir_lights[DIR_LIGHTS_MAX];
-int          dir_lights_len = 0;
+int         dir_lights_len = 0;
 
 point_light_t point_lights[POINT_LIGHTS_MAX];
 int           point_lights_len = 0;
 
+static core_data_t* core_data = NULL;
+
 
 void state_init()
 {
+  core_data = core_data_get();
+
   for (int i = 0; i < world_len; ++i)
   {
     if (world[i].init_f != NULL)
@@ -37,7 +42,7 @@ void state_update(float dt)
 
     state_entity_update_global_model(i);
     
-    if (world[i].update_f != NULL)
+    if (core_data->scripts_act && world[i].update_f != NULL)
     { world[i].update_f(&world[i], dt); }
   }
 }
@@ -355,6 +360,8 @@ void state_entity_global_scale(int id, vec3 out)
   vec3_mul(out, e->scl, out);
 }
 
+// -- lights --
+
 dir_light_t* state_get_dir_light_arr(int* len)
 {
   *len = dir_lights_len;
@@ -375,11 +382,23 @@ bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool c
   l.cast_shadow  = cast_shadow;
   l.shadow_map_x = shadow_map_x;
   l.shadow_map_y = shadow_map_y;
-  if (cast_shadow)
+  if (cast_shadow && dir_lights_len == 0) // only light #0 can cast shadows
   { framebuffer_create_shadowmap(&l.fb_shadow.buffer, &l.fb_shadow.fbo, l.shadow_map_x, l.shadow_map_y); }
   
   dir_lights[dir_lights_len++] = l;
   return true;
+}
+
+void state_remove_dir_light(int idx)
+{
+  ERR_CHECK(idx >= 0 && idx < dir_lights_len, "'idx' passed to 'state_remove_dir_light()' invalid: '%d', max: '%d'", idx, dir_lights_len);
+ 
+  // move all lights down one to replace the given light
+  for (int i = idx; i < dir_lights_len +1; ++i)
+  {
+    dir_lights[i] = dir_lights[i +1];
+  }
+  dir_lights_len--;
 }
 
 point_light_t* state_get_point_light_arr(int* len)
@@ -399,4 +418,16 @@ bool state_add_point_light(vec3 pos, rgbf color, float intensity)
   
   point_lights[point_lights_len++] = l;
   return true;
+}
+
+void state_remove_point_light(int idx)
+{
+  ERR_CHECK(idx >= 0 && idx < point_lights_len, "'idx' passed to 'state_remove_point_light()' invalid: '%d', max: '%d'", idx, point_lights_len);
+ 
+  // move all lights down one to replace the given light
+  for (int i = idx; i < point_lights_len +1; ++i)
+  {
+    point_lights[i] = point_lights[i +1];
+  }
+  point_lights_len--;
 }

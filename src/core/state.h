@@ -34,9 +34,11 @@ void state_entity_global_scale(int id, vec3 out);
 
 dir_light_t* state_get_dir_light_arr(int* len);
 bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool cast_shadow, int shadow_map_x, int shadow_map_y);
+void state_remove_dir_light(int idx);
 
 
 point_light_t* state_get_point_light_arr(int* len);
 bool state_add_point_light(vec3 pos, rgbf color, float intensity);
+void state_remove_point_light(int idx);
 
 #endif

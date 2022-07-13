@@ -67,6 +67,7 @@ ui_rect frameb_win_rect;
 ui_rect debug_win_rect;
 ui_rect light_hierarchy_win_rect;
 ui_rect light_hierarchy_win_ratio;
+ui_rect core_data_win_rect;
 
 framebuffer_t fb_preview;
 
@@ -76,9 +77,10 @@ bool show_hierarchy_win       = false;
 bool show_frameb_win          = false;
 bool show_debug_win           = false;
 bool show_light_hierarchy_win = false;
+bool show_core_data_win       = false;
 
 static core_data_t* core_data = NULL;
-static app_data_t*  app_data   = NULL;
+static app_data_t*  app_data  = NULL;
 
 void gui_init()
 {
@@ -133,6 +135,8 @@ void gui_update()
    if (show_debug_win)
   { gui_debug_win(); } 
 
+   if (show_core_data_win)
+  { gui_core_data_win(); } 
  
    // --------------------------------------------------------------------------------------------------
 
@@ -149,6 +153,7 @@ void gui_update()
   if (show_light_hierarchy_win) { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, light_hierarchy_win_rect) ? true : over_ui; }
   if (show_frameb_win)          { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, frameb_win_rect)          ? true : over_ui; }
   if (show_debug_win)           { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, debug_win_rect)           ? true : over_ui; }
+  if (show_core_data_win)       { over_ui = nk_input_is_mouse_hovering_rect(&ctx->input, core_data_win_rect)       ? true : over_ui; }
 
   // already hovering or hovewr check from top bar menu's
   over_ui = over_ui || top_bar_menu_hover;  
@@ -231,6 +236,11 @@ void gui_top_bar_win()
         bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "debug", NK_TEXT_LEFT))
         { show_debug_win = !show_debug_win; }
+        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "core_data", NK_TEXT_LEFT))
+        { show_core_data_win = !show_core_data_win; }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
         nk_menu_end(ctx);
@@ -492,6 +502,11 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       // P_VEC3(obj->pos);
       nk_labelf(ctx, NK_TEXT_LEFT, "pos: %f, %f, %f", obj->pos[0], obj->pos[1], obj->pos[2]);
       nk_labelf(ctx, NK_TEXT_LEFT, "vel: %f, %f, %f", obj->rb.velocity[0], obj->rb.velocity[1], obj->rb.velocity[2]);
+      nk_labelf(ctx, NK_TEXT_LEFT, "f:   %f, %f, %f", obj->rb.force[0], obj->rb.force[1], obj->rb.force[2]);
+      // tmp
+      nk_property_float(ctx, "force.x", -2048.0f, &obj->rb.force[0], 2048.0f, 0.1f, 0.01f); 
+      nk_property_float(ctx, "force.y", -2048.0f, &obj->rb.force[1], 2048.0f, 0.1f, 0.01f); 
+      nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f); 
     }
   }
   if (HAS_FLAG(def->phys_flags, ENTITY_HAS_SPHERE))
@@ -712,7 +727,10 @@ void gui_light_hierarchy_win()
     static int selected_type = SEL_LIGHT_NONE;
     static int selected = -1;
 
-    if (nk_button_label(ctx, "add dir light")) { }  // @TODO:
+    if (nk_button_label(ctx, "add dir light")) 
+    {
+      state_add_dir_light(VEC3(0), VEC3_Y(-1), RGB_F(1, 1, 1), 1, false, 0, 0);
+    } 
     if (nk_button_label(ctx, "add point light"))
     {
       vec3 front, pos;
@@ -752,6 +770,13 @@ void gui_light_hierarchy_win()
     {
       dir_light_t* l = &dl[selected];
       nk_layout_row_dynamic(ctx, 30, 1);
+
+      if (nk_button_label(ctx, "remove")) 
+      {
+        state_remove_dir_light(selected);
+        selected = -1;
+      }
+      
       nk_label(ctx, "direction", NK_TEXT_LEFT);
       nk_property_float(ctx, "d.x", -2048.0f, &l->dir[0], 2048.0f, 0.1f, 0.01f);
       nk_property_float(ctx, "d.y", -2048.0f, &l->dir[1], 2048.0f, 0.1f, 0.01f);
@@ -761,12 +786,15 @@ void gui_light_hierarchy_win()
       
       nk_property_float(ctx, "intens.", -1.0f, &l->intensity, 2048.0f, 0.1f, 0.01f);
 
-      // bool tmp = &l->cast_shadow;
-      // l->cast_shadow = nk_checkbox_label(ctx, "cast shadows", &tmp);
-       nk_checkbox_label(ctx, "cast shadows", &l->cast_shadow);
+      if (selected == 0)
+      {
+        // bool tmp = &l->cast_shadow;
+        // l->cast_shadow = nk_checkbox_label(ctx, "cast shadows", &tmp);
+        nk_checkbox_label(ctx, "cast shadows", &l->cast_shadow);
 
-       nk_labelf(ctx, NK_TEXT_LEFT, "shadowmap");
-       nk_labelf(ctx, NK_TEXT_LEFT, "x: %d, y: %d", l->shadow_map_x, l->shadow_map_y);
+        nk_labelf(ctx, NK_TEXT_LEFT, "shadowmap");
+        nk_labelf(ctx, NK_TEXT_LEFT, "x: %d, y: %d", l->shadow_map_x, l->shadow_map_y);
+      }
       
       nk_tree_pop(ctx);
     }
@@ -774,6 +802,13 @@ void gui_light_hierarchy_win()
     {
       point_light_t* l = &pl[selected];
       nk_layout_row_dynamic(ctx, 30, 1);
+
+      if (nk_button_label(ctx, "remove")) 
+      {
+        state_remove_point_light(selected);
+        selected = -1;
+      }
+
       nk_label(ctx, "position", NK_TEXT_LEFT);
       nk_property_float(ctx, "p.x", -2048.0f, &l->pos[0], 2048.0f, 0.1f, 0.01f);
       nk_property_float(ctx, "p.y", -2048.0f, &l->pos[1], 2048.0f, 0.1f, 0.01f);
@@ -835,8 +870,6 @@ void gui_debug_win()
   debug_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
   if (nk_begin(ctx, "debug", debug_win_rect, window_float_flags)) 
   {
-    core_data_t* core_data = core_data_get();
-    
     #ifdef DEBUG_TIMER
     if (nk_tree_push(ctx, NK_TREE_TAB, "static timers", NK_MINIMIZED))
     {
@@ -903,6 +936,85 @@ void gui_debug_win()
   }
   nk_end(ctx);
 }
+
+void gui_core_data_win()
+{
+  int w, h;
+  window_get_size(&w, &h);
+
+  // less height because the window bar on top and below
+  const f32 w_ratio = 400.0f  / 1920.0f;
+  const f32 h_ratio = 1000.0f  / 1020.0f;
+  const f32 x_ratio = 10.0f / 1920.0f;
+  const f32 y_ratio = 10.0f  / 1020.0f;
+
+  core_data_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
+  if (nk_begin(ctx, "core_data", core_data_win_rect, window_float_flags)) 
+  {
+    nk_layout_row_dynamic(ctx, 20, 1);
+    nk_labelf(ctx, NK_TEXT_LEFT, "t_last_frame: %f", core_data->t_last_frame);   
+    nk_labelf(ctx, NK_TEXT_LEFT, "delta_t: %f", core_data->delta_t);   
+    nk_labelf(ctx, NK_TEXT_LEFT, "cur_fps: %f", core_data->cur_fps);
+        
+    nk_spacing(ctx, 1);
+    nk_checkbox_label(ctx, "wireframe_mode_enabled", &core_data->wireframe_mode_enabled);
+    nk_checkbox_label(ctx, "show_shadows", &core_data->show_shadows);
+   
+    // framebuffers, shaders & cubemap
+    nk_spacing(ctx, 1);
+    gui_shader_properties(&core_data->basic_shader, "basic_shader");
+    gui_shader_properties(&core_data->shadow_shader, "shadow_shader");
+    gui_shader_properties(&core_data->deferred_shader, "deferred_shader");
+    gui_shader_properties(&core_data->lighting_shader, "lighting_shader");
+    gui_shader_properties(&core_data->shadow_pass_shader, "shadow_pass_shader");
+    gui_shader_properties(&core_data->skybox_shader, "skybox_shader");
+    gui_shader_properties(&core_data->post_fx_shader, "post_fx_shader");
+    gui_shader_properties(&core_data->brdf_lut_shader, "brdf_lut_shader");
+    gui_shader_properties(&core_data->mouse_pick_shader, "mouse_pick_shader");
+
+
+    nk_spacing(ctx, 1);
+    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_x: %f", core_data->mouse_x);
+    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_y: %f", core_data->mouse_y);
+    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_delta_x: %f", core_data->mouse_delta_x);
+    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_delta_y: %f", core_data->mouse_delta_y);
+    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_x: %f", core_data->scroll_x);
+    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_y: %f", core_data->scroll_y);
+    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_delta_x: %f", core_data->scroll_delta_x);
+
+    // more shaders
+    nk_spacing(ctx, 1);
+    gui_shader_properties(&core_data->equirect_shader, "equirect_shader");
+    gui_shader_properties(&core_data->irradiance_map_shader, "irrandiance_map_shader");
+    gui_shader_properties(&core_data->prefilter_shader, "prefilter_shader");
+    
+    nk_spacing(ctx, 1);
+    gui_shader_properties(&core_data->terrain_shader, "terrain_shader");
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_materials_len: %d", core_data->terrain_materials_len);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_chunks_len: %d", core_data->terrain_chunks_len);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_scl: %f", core_data->terrain_scl);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_y_scl: %f", core_data->terrain_y_scl);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_x_len: %d", core_data->terrain_x_len);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_z_len: %d", core_data->terrain_z_len);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_layout_len: %d", core_data->terrain_layout_len);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_draw_dist: %d", core_data->terrain_draw_dist);
+    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_cull_dist: %d", core_data->terrain_cull_dist);
+    
+    nk_spacing(ctx, 1);
+    nk_checkbox_label(ctx, "phys_act", &core_data->phys_act);
+    nk_checkbox_label(ctx, "scripts_act", &core_data->scripts_act);
+
+  }
+  nk_end(ctx);
+}
+
+void gui_shader_properties(shader_t* s, char* name)
+{
+  nk_labelf(ctx, NK_TEXT_LEFT, "%s:", name);
+  nk_labelf(ctx, NK_TEXT_LEFT, "has_error: %s", STR_BOOL(s->has_error));
+  nk_labelf(ctx, NK_TEXT_LEFT, "handle: %d", s->handle);
+}
+
 
 // -- gui elems --
 

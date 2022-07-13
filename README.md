@@ -43,6 +43,9 @@ main resources:
  - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
  - [x] parenting doesn't work anymore ._.
  - [ ] phys_obj_t's pos, scl and velocity gets set weird or nan
+ - [ ] deserializing scene sometimes adds pink point light infront of camera
+ - [x] mouse-pick shader doesnt compile
+ - [ ] terrain-chunks dont get culled properly 
 
 ## optimizations
  - [ ] multithreading [link](#multithreading) 
@@ -187,14 +190,15 @@ main resources:
   - [x] layouting
  - [x] saving
  - [x] loading
- - [ ] lights editor
-  - [ ] set properties
-  - [ ] remove lights
-  - [ ] add lights
+ - [x] lights editor
+  - [x] set properties
+  - [x] remove lights
+  - [x] add lights
  - [ ] structure editor
   - seperate ?
  - [ ] particle system editor
   - seperate ?
+ - [ ] make gui less sh*t 
 
 ## terrain generation
  - [x] generate mesh
