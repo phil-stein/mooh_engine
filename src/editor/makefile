@@ -36,6 +36,7 @@ _OBJS =					 			\
 	mesh.o				 			\
 	renderer.o		 			\
 	framebuffer.o	 			\
+	camera.o			 			\
 	assetm.o			 			\
 	state.o				 			\
 	material.o		 			\
@@ -53,12 +54,11 @@ _OBJS += 							\
 	phys_world.o				\
 	phys_dynamics.o			\
 	phys_collision.o		\
-	phys_response.o			\
+	phys_resolution.o	  \
 	phys_debug_draw.o
 # app
 _OBJS += 				 			\
 	app.o					 			\
-	camera.o			 			\
 	gui.o					 			\
 	gizmo.o							\
 	terrain_edit.o
@@ -84,7 +84,7 @@ EXTERNAL_DIR = ../../external
 APP_INC			 = .
 
 _INC = 							  				\
-		$(EXTERNAL_DIR)	  				\
+		$(EXTERNAL_DIR)	  						\
  		$(SRC_DIR)								\
  		$(APP_INC)								\
 		$(DATA_DIR)								\

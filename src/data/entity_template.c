@@ -97,6 +97,16 @@ const entity_template_t entity_template_table[] =
     .mass = 1.0f,
     .aabb_size  = { 1, 1, 1 },
   },
+  {
+    .name = "player_test",
+    .mesh = "cube.fbx",
+    .mat  = MATERIAL_TEMPLATE_METALL,
+    .init   = player_init,
+    .update = player_update,
+    .phys_flags = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_BOX,
+    .mass = 5.0f,
+    .aabb_size  = { 1, 1, 1 },
+  },
 };
 
 const entity_template_t* entity_template_get(int idx)

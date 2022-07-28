@@ -129,8 +129,8 @@ typedef struct core_data_t
   .terrain_draw_dist = 2,           \
   .terrain_cull_dist = 3,           \
                                     \
-  .phys_act = true,                 \
-  .scripts_act = true,              \
+  .phys_act = false,                \
+  .scripts_act = false,             \
 }
 
 

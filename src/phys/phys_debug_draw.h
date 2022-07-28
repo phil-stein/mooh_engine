@@ -7,8 +7,9 @@
 
 #include "phys/phys_types.h"
 
-#define PHYS_DEBUG_VELOCITY_COLOR RGB_F(1, 0, 1)
-#define PHYS_DEBUG_COLLIDER_COLOR RGB_F(1, 0, 1)
+#define PHYS_DEBUG_VELOCITY_COLOR         RGB_F(1, 0, 1)
+#define PHYS_DEBUG_COLLIDER_COLOR_DYNAMIC RGB_F(1, 0, 1)
+#define PHYS_DEBUG_COLLIDER_COLOR_STATIC  RGB_F(1, 1, 0)
 
 void phys_debug_draw_velocity_func(phys_obj_t* obj);
 void phys_debug_draw_collider_func(phys_obj_t* obj);

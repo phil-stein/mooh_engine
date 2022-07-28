@@ -103,10 +103,22 @@ void program_sync_phys()
     // {
       // vec3_copy(world[obj->entity_idx].pos, obj->pos);  // update physics position after potential transform
       // vec3_copy(world[obj->entity_idx].scl, obj->scl);  // update physics scale after potential scaling
-      vec3_add(world[obj->entity_idx].delta_pos, obj->pos, obj->pos);  // update physics position after potential transform
-      vec3_add(world[obj->entity_idx].delta_scl, obj->scl, obj->scl);  // update physics scale after potential scaling
+      vec3_add(world[obj->entity_idx].delta_pos, obj->pos, obj->pos);         // update physics position after potential transform
+      vec3_add(world[obj->entity_idx].delta_scl, obj->scl, obj->scl);         // update physics scale after potential scaling
       vec3_copy(VEC3(0), world[obj->entity_idx].delta_pos);  
       vec3_copy(VEC3(0), world[obj->entity_idx].delta_scl);  
+      
+      if (PHYS_OBJ_HAS_RIGIDBODY(obj))
+      {
+        vec3_add(world[obj->entity_idx].delta_force, obj->rb.force, obj->rb.force);   // update physics forces after potential added forces
+        vec3_copy(VEC3(0), world[obj->entity_idx].delta_force);  
+        
+      }
+      if (PHYS_OBJ_HAS_COLLIDER(obj))
+      {
+        if (obj->entity_idx == 11) { P_BOOL(obj->collider.is_grounded); }
+        world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
+      }
     // }
     vec3_copy(obj->pos, world[obj->entity_idx].pos);  // update entity position after physics
     ENTITY_SET_POS(&world[obj->entity_idx], obj->pos);

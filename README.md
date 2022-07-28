@@ -42,13 +42,14 @@ main resources:
  - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
  - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
  - [x] parenting doesn't work anymore ._.
- - [ ] phys_obj_t's pos, scl and velocity gets set weird or nan
+ - [x] phys_obj_t's pos, scl and velocity gets set weird or nan
  - [ ] deserializing scene sometimes adds pink point light infront of camera
  - [x] mouse-pick shader doesnt compile
  - [ ] terrain-chunks dont get culled properly 
+ - [x] phys collision response extreme
 
 ## optimizations
- - [ ] multithreading [link](#multithreading) 
+ - [ ] [multithreading](#multithreading) 
  - [ ] use textures with r = roughness, g = metallic, ...
  - [x] entity_update_global_mat() 'dirtyflag'
  - [ ] change the white tex for no normal
@@ -60,7 +61,8 @@ main resources:
 ## sus amogus
  - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
    it worked before and something changed in the code that made it no longer work that way
-   what exactly changed ??? 
+   what exactly changed ???
+ - ENTITY_SET_POS() doesnt use vec3_copy(), and doesnt work properly in program_sync_physics()
 
 ## organization
  - [ ] factor out cubemap creating from assetm
@@ -136,7 +138,7 @@ main resources:
  - [x] shadows again 
  - [x] shadowmap view mat follow camera
  - [x] line draw !!!
- - [ ] point lights ?
+ - [x] point lights ?
  - [ ] blending
   - learnopengl weighted blending 'OIT'
  - [ ] cascaded shadows
@@ -147,7 +149,8 @@ main resources:
  - [ ] bloom
  - [ ] custom anti aliasing
  - [ ] water 
- - [ ] maybe do outlines ?      
+ - [ ] maybe do outlines ?     
+ - [ ] immediate mode renderer, for gui, etc.
 
 ## entity system
  - [x] define entity struct
@@ -155,6 +158,7 @@ main resources:
  - [x] add / remove / insert
  - [x] parent <-> child
  - [x] init & update
+ - [ ] structures ?
 
 ## level editor
  - [x] select entities
@@ -219,15 +223,19 @@ main resources:
  - [x] vert color texture blending
 
 ## physics engine
-- [x] dynamics
-- [ ] sphere
-- [ ] aabb
-- [ ] plane
-- [ ] resolution
-- [ ] array of dynamic objs, for optimization
-- [ ] sweeping collision
-- [ ] cylinder / capsule
-- [ ] raycasts ?
+ - [ ] remove objs
+ - [x] dynamics
+ - [x] api for forces
+ - [ ] sphere
+ - [x] aabb
+ - [ ] plane
+ - [x] resolution
+ - [x] array of dynamic objs, for optimization
+ - [x] basic chqar controller in game for testing 
+ - [ ] sweeping collision
+ - [ ] cylinder / capsule
+ - [ ] raycasts ?
+  - [ ] octree & ray v. triangle ?
 
 ## artstyle look-dev
  - [ ] draw sketch of scene
@@ -247,15 +255,21 @@ main resources:
 
 ## multithreading
  - pthreads
- - add profiler first
+ - add [profiler](#base) first
+ - architecture
+  - main (input, gameplay, etc.)
+  - worker (asset-loading, terrain, etc.)
+  - renderer
+  - physics
  - [ ] any multithreading
  - [ ] asset loading
  - [ ] physics
  - [ ] rendering
+  - decouple entities from main-thread
  - [ ] terrain
 
 ## audio system
-  - using miniaudio
+  - using miniaudio, soloud, etc.
  - [ ] clips
  - [ ] loops
  - [ ] sfx ?
@@ -279,5 +293,6 @@ main resources:
  - [ ] hook logic like ents
  - [ ] button
  - [ ] simple list ordering
+ - [ ] batch rendered
 
 

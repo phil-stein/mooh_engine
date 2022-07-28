@@ -1,5 +1,5 @@
 #include "phys_collision.h"
-
+#include "core/debug/debug_draw.h"
 
 // ---- collision checks ----
 
@@ -10,7 +10,10 @@ collision_info_t phys_collision_check(phys_obj_t* obj0, phys_obj_t* obj1)
 	collision_info_t c;
 	c.collision = false;
 
-	// same v same
+  // ERR_PHYS_OBJ_T_NAN(obj0);
+  // ERR_PHYS_OBJ_T_NAN(obj1);
+	
+  // same v same
 	if (obj0->collider.type == PHYS_COLLIDER_SPHERE && obj1->collider.type == PHYS_COLLIDER_SPHERE)
 	{
 		c = phys_collision_check_sphere_v_sphere(obj0, obj1);
@@ -29,6 +32,8 @@ collision_info_t phys_collision_check(phys_obj_t* obj0, phys_obj_t* obj1)
 		c = phys_collision_check_aabb_v_sphere(obj1, obj0);  // @NOTE: flipped for some reason, penetration ? 
 	}
 
+  // ERR_PHYS_OBJ_T_NAN(obj0);
+  // ERR_PHYS_OBJ_T_NAN(obj1);
 	return c;
 }
 
@@ -71,6 +76,7 @@ collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2
 	vec3_add(a_max, b1->pos, a_max);
 	vec3_add(a_min, b1->collider.offset, a_min);
 	vec3_add(a_max, b1->collider.offset, a_max);
+
 	vec3 b_min; vec3 b_max;
 	vec3_copy(b2->collider.box.aabb[0], b_min);
 	vec3_copy(b2->collider.box.aabb[1], b_max);
@@ -182,95 +188,159 @@ collision_info_t phys_collision_check_aabb_v_aabb(phys_obj_t* b1, phys_obj_t* b2
 	if (dist == 0) { glm_vec3_copy(all, normal); }
 	*/
 
-	// calc the distance both ways
-	vec3 dist1, dist2;
-	vec3_sub(b_min, a_max, dist1);
-	vec3_sub(a_min, b_max, dist2);
+  // @NOTE: second method
+	// // calc the distance both ways
+	// vec3 dist1, dist2;
+	// vec3_sub(b_min, a_max, dist1);
+	// vec3_sub(a_min, b_max, dist2);
 
-	// get the larges distances for each axis
-	vec3 dist = { dist1[0] >= dist2[0] ? dist1[0] : dist2[0],
-				        dist1[1] >= dist2[1] ? dist1[1] : dist2[1],
-				        dist1[2] >= dist2[2] ? dist1[2] : dist2[2] };
-  
-  // @NOTE: fucks this supposed to mean ?
-  // @TODO: collision could now also be max(dist) > 0 
-
-	vec3 dir;
-	vec3_sub(a_max, b_min, dir);
+	// // get the larges distances for each axis
+	// vec3 dist_v = { dist1[0] <= dist2[0] ? dist1[0] : dist2[0],
+	// 			          dist1[1] <= dist2[1] ? dist1[1] : dist2[1],
+	// 			          dist1[2] <= dist2[2] ? dist1[2] : dist2[2] };
 
 
-	// get axis by prior velocity
-	vec3 axis = VEC3_INIT(0);
-	if (HAS_FLAG(b1->flags, PHYS_HAS_RIGIDBODY))
-	{
-		// get biggest axis
-		// int a = fabsf(b1->rb.velocity[0]) >= fabsf(b1->rb.velocity[1]) && fabsf(b1->rb.velocity[0]) >= fabsf(b1->rb.velocity[2]) ? 1 :
-		// 		fabsf(b1->rb.velocity[1]) >= fabsf(b1->rb.velocity[0]) && fabsf(b1->rb.velocity[1]) >= fabsf(b1->rb.velocity[2]) ? 2 :
-		// 		fabsf(b1->rb.velocity[2]) >= fabsf(b1->rb.velocity[0]) && fabsf(b1->rb.velocity[2]) >= fabsf(b1->rb.velocity[1]) ? 3 : 0;
+  // // @NOTE: fucks this supposed to mean ?
+  // // @TODO: collision could now also be max(dist) > 0 
 
-		f32 x = fabsf(b1->rb.velocity[0]);
-		f32 y = fabsf(b1->rb.velocity[1]);
-		f32 z = fabsf(b1->rb.velocity[2]);
+	// // vec3 dir;
+	// // vec3_sub(a_max, b_min, dir);
 
-		int a = x >= y && x >= z ? 1 :
-			y >= x && y >= z ? 2 :
-			z >= x && z >= y ? 3 : 0;
-
-
-		if (a == 1) // x
-		{
-			f32 dist_x = b_max[0] - a_min[0];
-			vec3 v;
-			vec3_copy(b1->rb.velocity, v);
-			vec3_normalize(v, v);
-			v[0] *= -1; // invert x axis
-			vec3_mul_f(v, dist_x, v);
-			vec3_copy(v, axis);
-		}
-		else if (a == 2) // y
-		{
-			f32 dist_y = b_max[1] - a_min[1];
-			vec3 v;
-			vec3_copy(b1->rb.velocity, v);
-			vec3_normalize(v, v);
-			v[1] *= -1; // invert y axis
-			vec3_mul_f(v, dist_y, v);
-			vec3_copy(v, axis);
-			// printf(" -> dist_y: %.2f, b.y: %.2f\n", dist_y, b[1]);
-		}
-		else if (a == 3) // z
-		{
-			f32 dist_z = b_max[2] - a_min[2];
-			vec3 v;
-			vec3_copy(b1->rb.velocity, v);
-			vec3_normalize(v, v);
-			v[2] *= -1; // invert z axis
-			vec3_mul_f(v, dist_z, v);
-			vec3_copy(v, axis);
-		}
-
-		// printf(" -> velocity check, x: %.2f, y: %.2f, z: %.2f, a; %d, v.x: %.2f, v.y: %.2f, v.z: %.2f\n", axis[0], axis[1], axis[2], a, b1->rb.velocity[0], b1->rb.velocity[1], b1->rb.velocity[2]);
-
-	}
-	// else if (b2->has_rb && 0)
+	// // get axis by prior velocity
+	// vec3 axis = VEC3_INIT(0);
+  // f32 dist = 0.0f;
+	// if (HAS_FLAG(b1->flags, PHYS_HAS_RIGIDBODY))
 	// {
-	// 	// // get biggest axis
-	// 	// glm_vec3_copy(fabsf(b2->rb.velocity[0]) >= fabsf(b2->rb.velocity[1]) && fabsf(b2->rb.velocity[0]) >= fabsf(b2->rb.velocity[2]) ? x :
-	// 	// 			  fabsf(b2->rb.velocity[1]) >= fabsf(b2->rb.velocity[0]) && fabsf(b2->rb.velocity[1]) >= fabsf(b2->rb.velocity[2]) ? y :
-	// 	// 			  fabsf(b2->rb.velocity[2]) >= fabsf(b2->rb.velocity[0]) && fabsf(b2->rb.velocity[2]) >= fabsf(b2->rb.velocity[1]) ? z : GLM_VEC3_ZERO, axis);
-	// 	// 
-	// 	// glm_vec3_negate(axis);
+	// 	// get biggest axis
+	// 	// int a = fabsf(b1->rb.velocity[0]) >= fabsf(b1->rb.velocity[1]) && fabsf(b1->rb.velocity[0]) >= fabsf(b1->rb.velocity[2]) ? 1 :
+	// 	// 		fabsf(b1->rb.velocity[1]) >= fabsf(b1->rb.velocity[0]) && fabsf(b1->rb.velocity[1]) >= fabsf(b1->rb.velocity[2]) ? 2 :
+	// 	// 		fabsf(b1->rb.velocity[2]) >= fabsf(b1->rb.velocity[0]) && fabsf(b1->rb.velocity[2]) >= fabsf(b1->rb.velocity[1]) ? 3 : 0;
+
+	// 	f32 x = fabsf(b1->rb.velocity[0]);
+	// 	f32 y = fabsf(b1->rb.velocity[1]);
+	// 	f32 z = fabsf(b1->rb.velocity[2]);
+
+	// 	int a = x >= y && x >= z ? 1 :
+	// 		      y >= x && y >= z ? 2 :
+	// 		      z >= x && z >= y ? 3 : 0;
+
+
+	// 	if (a == 1) // x
+	// 	{
+	// 		f32 dist_x = b_max[0] - a_min[0];
+	// 		vec3 v;
+	// 		vec3_copy(b1->rb.velocity, v);
+	// 		vec3_normalize(v, v);
+	// 		v[0] *= -1; // invert x axis
+	// 		vec3_mul_f(v, dist_x, v);
+	// 		vec3_copy(v, axis);
+	// 		
+  //     // vec3_copy(VEC3_X(1.0f), axis);
+  //     
+  //     dist = dist_x;
+	// 	}
+	// 	else if (a == 2) // y
+	// 	{
+	// 		f32 dist_y = b_max[1] - a_min[1];
+	// 		vec3 v;
+	// 		vec3_copy(b1->rb.velocity, v);
+	// 		vec3_normalize(v, v);
+	// 		v[1] *= -1; // invert y axis
+	// 		vec3_mul_f(v, dist_y, v);
+	// 		vec3_copy(v, axis);
+	// 		// printf(" -> dist_y: %.2f, b.y: %.2f\n", dist_y, b[1]);
+  //     
+  //     // vec3_copy(VEC3_Y(1.0f), axis);
+  //     
+  //     dist = dist_y;
+	// 	}
+	// 	else if (a == 3) // z
+	// 	{
+	// 		f32 dist_z = b_max[2] - a_min[2];
+	// 		vec3 v;
+	// 		vec3_copy(b1->rb.velocity, v);
+	// 		vec3_normalize(v, v);
+	// 		v[2] *= -1; // invert z axis
+	// 		vec3_mul_f(v, dist_z, v);
+	// 		vec3_copy(v, axis);
+
+  //     // vec3_copy(VEC3_Z(1.0f), axis);
+  //     
+  //     dist = dist_z;
+	// 	}
+
+	// 	// printf(" -> velocity check, x: %.2f, y: %.2f, z: %.2f, a; %d, v.x: %.2f, v.y: %.2f, v.z: %.2f\n", axis[0], axis[1], axis[2], a, b1->rb.velocity[0], b1->rb.velocity[1], b1->rb.velocity[2]);
+	// 
+  //   // if (HAS_FLAG(b2->flags, PHYS_HAS_RIGIDBODY))
+  //   // {
+  //   //   // get biggest axis
+  //   //   vec3_copy(fabsf(b2->rb.velocity[0]) >= fabsf(b2->rb.velocity[1]) && fabsf(b2->rb.velocity[0]) >= fabsf(b2->rb.velocity[2]) ? VEC3_X(x) :
+  //   //             fabsf(b2->rb.velocity[1]) >= fabsf(b2->rb.velocity[0]) && fabsf(b2->rb.velocity[1]) >= fabsf(b2->rb.velocity[2]) ? VEC3_Y(y) :
+  //   //             fabsf(b2->rb.velocity[2]) >= fabsf(b2->rb.velocity[0]) && fabsf(b2->rb.velocity[2]) >= fabsf(b2->rb.velocity[1]) ? VEC3_Z(z) : VEC3(0), axis);
+
+  //   //   // vec3_negate(axis, axis);
+  //   //   vec3_mul_f(axis, 0.1f, axis);
+  //   // }
+
 	// }
-	// else { printf(" -> velocity wasnt checked\n"); }
+	// // else { printf(" -> velocity wasnt checked\n"); }
 
 
-  // @TODO: dont dir * depth
-  info.depth = vec3_magnitude(axis); //  * 0.5f;  // @UNSURE: * 0.5f, also ->, @NOTE: not sure id actually depth
-  vec3_normalize(axis, axis);
-	vec3_copy(axis, info.direction); // dist
+  // // @TODO: dont dir * depth
+  // // info.depth = vec3_magnitude(axis); //  * 0.5f;  // @UNSURE: * 0.5f, also ->, @NOTE: not sure id actually depth
+  // info.depth = dist;  // same as magnitude(axis) 
+  // // if (info.depth > 0.3f) { P_F32(info.depth); P_VEC3(dist_v); P_F32(dist); } 
+  // vec3_normalize(axis, axis);
+  // // if (axis[1] > 0.5f) { P_VEC3(axis); } 
+  // vec3_copy(axis, info.direction); // dist
+  // 
+
+  // //
+  // //  @NOTE: velocity way to big in oposite direction 
+  // //
+  
+
+  // @NOTE: new dist method --------
+
+  f32 x1 = a_min[0] - b_max[0];
+  f32 y1 = a_min[1] - b_max[1];
+  f32 z1 = a_min[2] - b_max[2];
+  f32 x2 = a_max[0] - b_min[0];
+  f32 y2 = a_max[1] - b_min[1];
+  f32 z2 = a_max[2] - b_min[2]; 
+
+  f32 ax1 = fabsf(x1);
+  f32 ay1 = fabsf(y1);
+  f32 az1 = fabsf(z1);
+  f32 ax2 = fabsf(x2);
+  f32 ay2 = fabsf(y2);
+  f32 az2 = fabsf(z2);
+
+  info.depth = ax1 < ay1 && ax1 < az1 && ax1 < ax2 && ax1 < ay2 && ax1 < az2 ? x1 :
+               ay1 < az1 && ay1 < ax2 && ay1 < ay2 && ay1 < az2              ? y1 : 
+               az1 < ax2 && az1 < ay2 && az1 < az2                           ? z1 :
+               ax2 < ay2 && ax2 < az2                                        ? x2 :
+               ay2 < az2                                                     ? y2 :
+                                                                               z2;
+
+  // @NOTE: mult by this and it sinks into the other aabb, mult by one zero less and it starts bouncing
+  //        something fishy is going on here, check values here, but defenitely also in resolution
+  // info.depth *= 1.00000001f;  // makes bouncy ._.
 
 
-	return info;
+  // @NOTE: the direction on everything but y1 hasn't been checked, and might be wrong
+  info.grounded = false;
+  if      (info.depth == x1) { vec3_copy(VEC3_X(-1), info.direction); }
+  else if (info.depth == y1) { vec3_copy(VEC3_Y(-1), info.direction); info.grounded = true; P("y1"); }
+  else if (info.depth == z1) { vec3_copy(VEC3_Z(-1), info.direction); }
+  else if (info.depth == x2) { vec3_copy(VEC3_X(1),  info.direction); }
+  else if (info.depth == y2) { vec3_copy(VEC3_Y(1),  info.direction); }
+  else                       { vec3_copy(VEC3_Z(1),  info.direction); }
+
+  // -------------------------------
+	
+
+  return info;
 }
 
 collision_info_t phys_collision_check_aabb_v_sphere(phys_obj_t* b, phys_obj_t* s)

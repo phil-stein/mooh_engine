@@ -120,6 +120,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, init_callb
   ent.is_moved     = true; 
   ent.mesh         = mesh;
   ent.mat          = mat;
+  ent.is_grounded  = false; 
   ent.init_f       = init_f;
   ent.update_f     = update_f;
   ent.children     = NULL;

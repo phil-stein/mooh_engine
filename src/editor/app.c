@@ -27,7 +27,7 @@
 app_data_t app_data = APP_DATA_INIT(); 
 
 
-static core_data_t* core_data;
+static core_data_t* core_data = NULL;
 
 void move_cam_by_keys();
 void rotate_cam_by_mouse();
@@ -35,6 +35,30 @@ void rotate_cam_by_mouse();
 int main(void)
 {
   program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update);  // WINDOW_FULL
+  
+  // P_LINE();
+  
+  // PF("PF\n");
+  // P("P");
+ 
+  // int a   = 12;    P_INT(a); 	  
+  // u32 b   = 12;    P_U32(b);	  
+  // f32 c   = 1.2f;  P_F32(c); 	  
+  // char* d = "hi";  P_STR(d); 	  
+  // char e  = '&';   P_CHAR(e); 	
+  // bool f  = true;  P_BOOL(f); 	
+  
+  /// P_TXT(txt)  
+  
+  // P_ERR(...)	
+  // ASSERT(c)   
+  // ERR(...)    
+  // ERR_CHECK(c, ...) 
+
+  // f32 g = 2 / 0; F32_NAN(g);  
+  // P_NAN(v)    
+
+  // P_INFO("hello this is info"); 
 
   return 0;
 }
@@ -43,8 +67,8 @@ void app_init()
 {
   core_data = core_data_get();
   // pause physics and scripts on start
-  core_data->phys_act = false;
-  core_data->scripts_act = false;
+  // core_data->phys_act = false;
+  // core_data->scripts_act = false;
   // @TODO: do this in program_start()
   //        maybe not, it'll be done load_scene()
   cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr");
@@ -148,9 +172,12 @@ void app_update()
   TIMER_FUNC(terrain_edit_update());
 
 
-  // @TODO: use debug_draw to drae box around selected objects box collider
-
   // -- input --
+
+  // @TMP:
+  if (input_get_key_pressed(KEY_ENTER))
+  { core_data->phys_act = !core_data->phys_act; }
+
 
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
   { 

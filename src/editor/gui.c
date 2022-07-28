@@ -18,6 +18,7 @@
 
 // @NOTE: tmp
 #include "phys/phys_world.h"
+#include "phys/phys_debug_draw.h"
 
 #include "GLAD/glad.h"
 
@@ -314,7 +315,7 @@ void gui_properties_win()
     if (id >= 0)  // entities
     {
       bool error = false;
-      entity_t* e     = state_get_entity(id, &error); assert(!error);
+      entity_t* e     = state_get_entity(id, &error); ASSERT(!error);
       
       nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, entity_idx: %d", id, e->table_idx);
       nk_labelf(ctx, NK_TEXT_LEFT, "parent: %d, #children: %d", e->parent, e->children_len);
@@ -483,41 +484,48 @@ void gui_properties_material(material_t* mat)
 }
 void gui_properties_physics(const entity_template_t* def, entity_t* e)
 {
-  nk_layout_row_dynamic(ctx, 30, 1);
-  if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
+  // @NOTE: tmp
+  u32 arr_len = 0;
+  phys_obj_t* arr = phys_get_obj_arr(&arr_len);
+  phys_obj_t* obj = NULL;
+  for (u32 i = 0; i < arr_len; ++i)
   {
-    nk_labelf(ctx, NK_TEXT_LEFT, " -- rigidbody --");
-    nk_labelf(ctx, NK_TEXT_LEFT, "mass: %f", def->mass);
+    if (arr[i].entity_idx == e->id) { obj = &arr[i]; }
+  }
+  if (obj)
+  {
+    nk_layout_row_dynamic(ctx, 30, 1);
+    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
+    {
+      nk_labelf(ctx, NK_TEXT_LEFT, " -- rigidbody --");
+      // nk_labelf(ctx, NK_TEXT_LEFT, "mass: %f", obj->rb.mass);
+      // nk_labelf(ctx, NK_TEXT_LEFT, "drag: %f", obj->rb.drag);
+      // nk_labelf(ctx, NK_TEXT_LEFT, "friction: %f", obj->rb.friction);
+      nk_property_float(ctx, "mass", 0.1f, &obj->rb.mass, 4096.0f, 0.1f, 0.01f); 
+      nk_property_float(ctx, "drag", 0.0001f, &obj->rb.drag, 2.0f, 0.1f, 0.01f); 
+      nk_property_float(ctx, "friction", 0.0001f, &obj->rb.friction, 2.0f, 0.1f, 0.01f); 
 
-    // @NOTE: tmp
-    u32 arr_len = 0;
-    phys_obj_t* arr = phys_get_obj_arr(&arr_len);
-    phys_obj_t* obj = NULL;
-    for (u32 i = 0; i < arr_len; ++i)
-    {
-      if (arr[i].entity_idx == e->id) { obj = &arr[i]; }
-    }
-    if (obj)
-    {
       // P_VEC3(obj->pos);
       nk_labelf(ctx, NK_TEXT_LEFT, "pos: %f, %f, %f", obj->pos[0], obj->pos[1], obj->pos[2]);
       nk_labelf(ctx, NK_TEXT_LEFT, "vel: %f, %f, %f", obj->rb.velocity[0], obj->rb.velocity[1], obj->rb.velocity[2]);
-      nk_labelf(ctx, NK_TEXT_LEFT, "f:   %f, %f, %f", obj->rb.force[0], obj->rb.force[1], obj->rb.force[2]);
+      // nk_labelf(ctx, NK_TEXT_LEFT, "f:   %f, %f, %f", obj->rb.force[0], obj->rb.force[1], obj->rb.force[2]);
       // tmp
       nk_property_float(ctx, "force.x", -2048.0f, &obj->rb.force[0], 2048.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "force.y", -2048.0f, &obj->rb.force[1], 2048.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f); 
     }
-  }
-  if (HAS_FLAG(def->phys_flags, ENTITY_HAS_SPHERE))
-  {
-    nk_labelf(ctx, NK_TEXT_LEFT, " -- sphere --");
-    nk_labelf(ctx, NK_TEXT_LEFT, "radius: %f", def->radius);
-  }
-  if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
-  {
-    nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
-    nk_labelf(ctx, NK_TEXT_LEFT, "[aabb] x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
+    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_SPHERE))
+    {
+      nk_labelf(ctx, NK_TEXT_LEFT, " -- sphere --");
+      nk_labelf(ctx, NK_TEXT_LEFT, "radius: %f", def->radius);
+    }
+    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
+    {
+      nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
+      nk_labelf(ctx, NK_TEXT_LEFT, "[aabb] x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
+      
+      phys_debug_draw_box_collider(obj);
+    }
   }
 
 }

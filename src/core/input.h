@@ -199,6 +199,12 @@ bool input_get_key_released(key _key);
 // returns true the first frame the Key is held/pressed
 bool input_get_key_pressed(key _key);
 
+// @NOTE: neat idea, but kinda unnecessary
+// checks multiple keys down with or logic opreator
+// e.g. input_get_keys_down_or(2, KEY_A, KEY_B);
+// count: amount of KEY_... enums
+bool input_get_keys_down_or(u32 count, ...);
+
 // sets the key states for the last frame
 // window is type GLFWwindow*
 void input_key_callback(void* window, key _key, int scancode, input_state state, int mods);

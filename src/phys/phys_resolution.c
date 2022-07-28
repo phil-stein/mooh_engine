@@ -1,14 +1,86 @@
-#include "phys_response.h"
+#include "phys_resolution.h"
 #include "phys_debug_draw.h"
 #include "math/math_inc.h"
 
+
 // ---- collision response ----
+
+
+void phys_collision_resolution(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
+{
+  
+  bool obj0_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj0);
+  bool obj1_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj1);
+
+	if (!obj0_has_rb) { return; }
+	
+  // position correction
+	vec3 dist;
+	vec3_mul_f(info.direction, info.depth * 0.5f, dist);
+	vec3_add(obj0->pos, dist, obj0->pos);
+
+	// @TODO: maybe use ellastic collision equation
+	// 	  or at least use mass to determine a ratio
+	//
+	// @NOTE: yeah, just use ellastic collisions
+	// 	  maybe mult by like 0.9 or use drag
+
+	// impact force
+	const f32 force_mult = 500.0f; // 1000.0f;
+	if (obj1_has_rb)
+	{
+		f32 ratio0 = obj1->rb.mass / obj0->rb.mass;
+		f32 ratio1 = obj0->rb.mass / obj1->rb.mass;
+		// if (ratio0 < ratio1)
+		// { ratio1 = 1 - ratio0; }
+		// else 
+		// { ratio0 = 1 - ratio1; }
+    
+    vec3 f0, f1;
+		vec3_mul_f(dist,  force_mult * ratio0, f0);
+		vec3_mul_f(dist, -force_mult * ratio1, f1);
+
+		// phys_obj_add_force(o0->idx, f0);
+		// phys_obj_add_force(o1->idx, f1);
+    vec3_add(obj0->rb.force, f0, obj0->rb.force);
+    vec3_add(obj1->rb.force, f1, obj1->rb.force); 
+	}
+	else
+	{
+		vec3 f0;
+		// 1.9 * force_mult, because not elastic
+		vec3_mul_f(dist, 1.9f * force_mult, f0);
+		// phys_obj_add_force(o0->idx, f0);
+    vec3_add(obj0->rb.force, f0, obj0->rb.force);
+	}
+	// @TODO: get working lol
+	// @TODO: put together
+	// friction
+	// if (info.grounded) // (o1->is_dynamic && o0->is_grounded)
+	// {
+	// 	vec3 f;
+	// 	vec3_mul_f(obj1->rb.velocity, 1, f);
+	// 	// phys_obj_add_force(o0->idx, f);
+  //   vec3_add(obj0->rb.velocity, f, obj0->rb.velocity);
+	// }
+	// if (o1->is_grounded) // (o1->is_dynamic && o0->is_grounded)
+	// {
+	// 	vec2 f;
+	// 	vec2_mul_f(o0->velocity, 1, f);
+	// 	// phys_obj_add_force(o1->idx, f);
+  //   vec3_add(obj0->rb.velocity, f0);
+	// }
+}
+
+
+// @NOTE: old resolution system, based on winter-dev's system
+/*
+
 
 void phys_collision_response(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {
 	if (!PHYS_OBJ_HAS_RIGIDBODY(obj0)) { return; }
-
-
+ 
 	// move the objects out of one another
 	phys_collision_response_resolve_position(obj0, obj1, info);
 
@@ -20,6 +92,18 @@ void phys_collision_response(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_
 // taken from winterdev's 'IwEngine' https://github.com/IainWinter/IwEngine/blob/master/IwEngine
 void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {
+  // ERR_CHECK(obj->rb.mass > 1.0f, "mass: %f, id: %d\n", obj->rb.mass, obj->entity_idx);
+  // PF("id: %d, mass: %f\n", obj->entity_idx, obj->rb.mass);
+  // PF("id: %d, ", obj->entity_idx); P_VEC3(obj->rb.velocity);
+  // P_COLLIDER_TYPE_T(obj->collider.type);
+  // P_COLLIDER_T(obj->collider);
+  // P_RIGIDBODY_T(obj->rb);
+  // P_PHYS_OBJ_FLAGS_T(obj->flags);
+  // P_PHYS_OBJ_T(obj0);
+  // P_PHYS_OBJ_T(obj1);
+  // P_PHYS_OBJ_T_NAN(obj0);
+  // P_PHYS_OBJ_T_NAN(obj1);
+
   const f32 percent = 0.8f;
   const f32 slop    = 0.01f;
   
@@ -36,38 +120,51 @@ void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1
   vec3_mul_f(info.direction, percent, correction);
   vec3_mul_f(correction, MAX(info.depth - slop, 0.0f), correction);
   vec3_div_f(correction, inv_mass0 + inv_mass1, correction);
-
+  
   vec3 delta0 = { 0, 0, 0 };  
   vec3 delta1 = { 0, 0, 0 }; 
   
   if (obj0_has_rb) 
   {
     vec3_mul_f(correction, inv_mass0, delta0);
-    vec3_add(obj0->pos, delta0, obj0->pos);
+    vec3_add(obj0->pos, delta0, obj0->pos);     
   }
   if (obj1_has_rb) 
   { 
     vec3_mul_f(correction, inv_mass1, delta1); 
     vec3_sub(obj1->pos, delta1, obj1->pos);
   }
-  
 }
 // taken from winterdev's 'IwEngine' https://github.com/IainWinter/IwEngine/blob/master/IwEngine
 void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {
   // @NOTE: unsure if already normalized
-  vec3_normalize(info.direction, info.direction);
- 
+  // vec3_normalize(info.direction, info.direction);
+
+  // P_VEC3(info.direction);
+
   bool obj0_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj0);
   bool obj1_has_rb = PHYS_OBJ_HAS_RIGIDBODY(obj1);
 
   vec3 velocity0, velocity1;
   vec3_copy(obj0_has_rb ? obj0->rb.velocity : VEC3(0), velocity0); 
   vec3_copy(obj1_has_rb ? obj1->rb.velocity : VEC3(0), velocity1);
+  
+  // P_VEC3(velocity0);
+  // P_VEC3(velocity1);
+
   vec3 r_velocity;
   vec3_sub(velocity1, velocity0, r_velocity);
-  
+
+  // P_VEC3(r_velocity);
+
+  // vec3 dir_norm; 
+  // vec3_copy(info.direction, dir_norm);
+  // vec3_normalize(dir_norm, dir_norm);
+  // P_VEC3(info.direction);
+  // P_VEC3(dir_norm);
   f32 n_spd = vec3_dot(r_velocity, info.direction);
+  // f32 n_spd = vec3_dot(r_velocity, dir_norm);
   // P_F32(n_spd);
   // negative impulse would drive objs further into each other
   // if (n_spd >= 0) { return; } 
@@ -141,6 +238,7 @@ void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1
   
   if (obj0_has_rb)
   {
+    // if (info.grounded) { velocity0[1] = MAX(velocity0[1], 0.0f); P_F32(velocity0[1]); }
     vec3_mul_f(friction, inv_mass0, obj0->rb.velocity);
     vec3_sub(obj0->rb.velocity, velocity0, obj0->rb.velocity);
   }
@@ -150,8 +248,13 @@ void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1
     vec3_add(obj1->rb.velocity, velocity1, obj1->rb.velocity);
   }
 
+  // if (info.grounded) { obj0->rb.velocity[1] = MAX(obj0->rb.velocity[1], 0.0f); P_F32(obj0->rb.velocity[1]); }
+
 }
 
+*/
+
+// @NOTE: even older resolution system, based on me poking around
 #if 0
 void phys_collision_response_resolve_position(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {
@@ -372,5 +475,6 @@ void phys_collision_response_resolve_velocity(phys_obj_t* obj0, phys_obj_t* obj1
 		// printf("rb2: \"%s\", v: x: %.2f, y: %.2f, z: %.2f\n", e2->name, e2->rb.velocity[0], e2->rb.velocity[1], e2->rb.velocity[2]);
 	}
 }
+
 
 #endif

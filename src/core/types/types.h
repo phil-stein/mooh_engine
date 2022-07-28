@@ -34,13 +34,16 @@ typedef struct entity_t
   vec3 scl;   // scale
   vec3 delta_pos;    // difference between last and current frame, used for physics sync 
   // vec3 delta_rot; // difference between last and current frame, used for physics sync 
-  vec3 delta_scl;    // difference between last and current frame, used for physics sync 
+  vec3 delta_scl;    // difference between last and current frame, used for physics sync
+  vec3 delta_force;  // difference between last and current frame, used for physics sync
 
   mat4 model;     // global space
   bool is_moved;  // specifies whether the entity has been moved since last model matrix update, used in 'state_entity_update_global_model()'
 
   int mat;  // index for assetm
   int mesh; // index for assetm
+
+  bool is_grounded; // only valid for ents with phys collider, otherwise always false
 
   // -> null or gets called at apropriate time
   init_callback*   init_f;
@@ -54,14 +57,14 @@ typedef struct entity_t
 }entity_t;
 
 // these set the 'is_moved' flag, these should always be used as otherwise the 'model' wont get updated, in 'state_entity_update_global_model()'
-#define ENTITY_SET_POS(e, vec)      { vec3 dif; vec3_sub((e)->pos, vec, dif), vec3_add(dif, (e)->delta_pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }
+#define ENTITY_SET_POS(e, vec)      { vec3 dif; vec3_sub((e)->pos, vec, dif), vec3_add(dif, (e)->delta_pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }  // @UNSURE: why is this not vec3_copy()
 #define ENTITY_SET_POS_X(e, x)      { (e)->delta_pos[0] += (e)->pos[0] - (x); (e)->pos[0] = (x);    (e)->is_moved = true; }
-#define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[0] += (e)->pos[1] - (y); (e)->pos[1] = (y);    (e)->is_moved = true; }
-#define ENTITY_SET_POS_Z(e, z)      { (e)->delta_pos[0] += (e)->pos[2] - (z); (e)->pos[2] = (z);    (e)->is_moved = true; }
+#define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[1] += (e)->pos[1] - (y); (e)->pos[1] = (y);    (e)->is_moved = true; }
+#define ENTITY_SET_POS_Z(e, z)      { (e)->delta_pos[2] += (e)->pos[2] - (z); (e)->pos[2] = (z);    (e)->is_moved = true; }
 #define ENTITY_MOVE(e, vec)         { vec3_add((e)->delta_pos, (vec), (e)->delta_pos); vec3_add((e)->pos,    (vec), (e)->pos); (e)->is_moved = true; }
 #define ENTITY_MOVE_X(e, x)         { (e)->delta_pos[0] += (x);   (e)->pos[0] += (x);   (e)->is_moved = true; }
-#define ENTITY_MOVE_Y(e, y)         { (e)->delta_pos[0] += (y);   (e)->pos[1] += (y);   (e)->is_moved = true; }
-#define ENTITY_MOVE_Z(e, z)         { (e)->delta_pos[0] += (z);   (e)->pos[2] += (z);   (e)->is_moved = true; }
+#define ENTITY_MOVE_Y(e, y)         { (e)->delta_pos[1] += (y);   (e)->pos[1] += (y);   (e)->is_moved = true; }
+#define ENTITY_MOVE_Z(e, z)         { (e)->delta_pos[2] += (z);   (e)->pos[2] += (z);   (e)->is_moved = true; }
 #define ENTITY_MOVE_AXIS(e, a, v)   { (e)->delta_pos[(a)] += (v); (e)->pos[(a)] += (v); (e)->is_moved = true; } // move on axis ' a '  from 0 -> 1
 
 #define ENTITY_SET_ROT(e, vec)      { vec3_copy((vec),      (e)->rot); (e)->is_moved = true; }
@@ -76,13 +79,23 @@ typedef struct entity_t
 
 #define ENTITY_SET_SCL(e, vec)      { vec3 dif; vec3_sub((e)->scl, vec, dif), vec3_add(dif, (e)->delta_scl, (e)->delta_scl); vec3_copy((vec), (e)->scl); (e)->is_moved = true; }
 #define ENTITY_SET_SCL_X(e, x)      { (e)->delta_scl[0] += (e)->scl[0] - (x); (e)->scl[0] = (x);    (e)->is_moved = true; }
-#define ENTITY_SET_SCL_Y(e, y)      { (e)->delta_scl[0] += (e)->scl[1] - (y); (e)->scl[1] = (y);    (e)->is_moved = true; }
-#define ENTITY_SET_SCL_Z(e, z)      { (e)->delta_scl[0] += (e)->scl[2] - (z); (e)->scl[2] = (z);    (e)->is_moved = true; }
+#define ENTITY_SET_SCL_Y(e, y)      { (e)->delta_scl[1] += (e)->scl[1] - (y); (e)->scl[1] = (y);    (e)->is_moved = true; }
+#define ENTITY_SET_SCL_Z(e, z)      { (e)->delta_scl[2] += (e)->scl[2] - (z); (e)->scl[2] = (z);    (e)->is_moved = true; }
 #define ENTITY_SCALE(e, vec)        { vec3_add((e)->delta_scl, (vec), (e)->delta_scl); vec3_add((e)->scl,    (vec), (e)->scl); (e)->is_moved = true; }
 #define ENTITY_SCALE_X(e, x)        { (e)->delta_scl[0] += (x);   (e)->scl[0] += (x);   (e)->is_moved = true; }
-#define ENTITY_SCALE_Y(e, y)        { (e)->delta_scl[0] += (y);   (e)->scl[1] += (y);   (e)->is_moved = true; }
-#define ENTITY_SCALE_Z(e, z)        { (e)->delta_scl[0] += (z);   (e)->scl[2] += (z);   (e)->is_moved = true; }
+#define ENTITY_SCALE_Y(e, y)        { (e)->delta_scl[1] += (y);   (e)->scl[1] += (y);   (e)->is_moved = true; }
+#define ENTITY_SCALE_Z(e, z)        { (e)->delta_scl[2] += (z);   (e)->scl[2] += (z);   (e)->is_moved = true; }
 #define ENTITY_SCALE_AXIS(e, a, v)  { (e)->delta_scl[(a)] += (v); (e)->scl[(a)] += (v); (e)->is_moved = true; } // scale on axis ' a '  from 0 -> 1
+
+#define ENTITY_SET_FORCE(e, vec)    { vec3_copy((vec), (e)->delta_force); }
+#define ENTITY_SET_FORCE_X(e, x)    { (e)->delta_force[0] = (x);   }
+#define ENTITY_SET_FORCE_Y(e, y)    { (e)->delta_force[1] = (y);   }
+#define ENTITY_SET_FORCE_Z(e, z)    { (e)->delta_force[2] = (z);   }
+#define ENTITY_FORCE(e, vec)        { vec3_add((e)->delta_force, (vec), (e)->delta_force); }
+#define ENTITY_FORCE_X(e, x)        { (e)->delta_force[0] += (x);   }
+#define ENTITY_FORCE_Y(e, y)        { (e)->delta_force[1] += (y);   }
+#define ENTITY_FORCE_Z(e, z)        { (e)->delta_force[2] += (z);   }
+#define ENTITY_FORCE_AXIS(e, a, v)  { (e)->delta_force[(a)] += (v); } // scale on axis ' a '  from 0 -> 1
 
 // @TODO:
 typedef struct structure_t

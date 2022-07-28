@@ -40,7 +40,7 @@ typedef long long		        s64;
 typedef unsigned char		    u8;
 typedef unsigned short		  u16;
 typedef unsigned int 		    u32;
-typedef unsigned long long	u64;
+typedef unsigned long	long  u64;
 
 typedef float 			        f32;
 typedef double			        f64;
@@ -94,6 +94,10 @@ typedef void (empty_callback)(void);
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
 #define ERR_CHECK(c, ...) if(!(c)) { ERR(__VA_ARGS__); }
+
+// print is f32 is nan
+#define F32_NAN(v)  (isnan(v) != 0)
+#define P_NAN(v)    { if (F32_NAN(v)) { PF("%s is nan\n", #v); } }
 
 #define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
 

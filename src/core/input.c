@@ -5,6 +5,7 @@
 #include "GLFW/glfw3.h"
 // #include "stb/stb_ds.h"
 
+#include <stdarg.h>
 
 // ---- vars ----
  
@@ -102,22 +103,37 @@ input_state input_get_key_state(key _key)
   core_data_t* core_data = core_data_get();  
 	return glfwGetKey(core_data->window, _key);
 }
-
 bool input_get_key_down(key _key)
 {
 	return input_get_key_state(_key) == STATE_PRESS;
 }
-
 bool is_key_released(key _key)
 {
 	return input_get_key_state(_key) == STATE_RELEASED;
 
 }
-
 bool input_get_key_pressed(key _key)
 {
     return input_get_key_down(_key) && input_get_last_key_state(_key);
 }
+
+// @NOTE: neat idea, but kinda unnecessary
+// bool input_get_keys_down_or(u32 count, ...)
+// {
+//   va_list args;
+//   va_start(args, count);
+// 
+//   bool result = false;
+//   for (u32 i = 0; i < count; ++i)
+//   {
+//     key _key = va_arg(args, key);
+//     result = result || input_get_key_down(_key);
+//   }
+// 
+//   va_end(args);
+// 
+//   return result;
+// }
 
 bool input_get_last_key_state(key _key)
 {

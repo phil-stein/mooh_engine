@@ -81,7 +81,7 @@ void phys_debug_draw_box_collider_func(phys_obj_t* obj)
   };
 #undef V
 
-  debug_draw_box_register(points, PHYS_DEBUG_COLLIDER_COLOR);
+  debug_draw_box_register(points, PHYS_OBJ_HAS_RIGIDBODY(obj) ? PHYS_DEBUG_COLLIDER_COLOR_DYNAMIC : PHYS_DEBUG_COLLIDER_COLOR_STATIC);
 
   // debug_draw_sphere_register(top0, 0.25f, RGB_F(1, 1, 0));
   // debug_draw_sphere_register(top1, 0.25f, RGB_F(1, 0, 0));
