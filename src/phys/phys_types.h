@@ -14,6 +14,16 @@ typedef struct collision_info_t
   bool grounded;  // currently colliding in -y direction
 
 }collision_info_t;
+#define COLLISION_INFO_T_INIT() \
+{                               \
+  .collision = false,           \
+  .direction = { 0, 0, 0 },     \
+  .depth     = 0,               \
+  .obj_idx   = -1,              \
+  .trigger   = false,           \
+  .grounded  = false,           \
+}
+
 #define P_COLLISION_INFO_T(a)   { PF("collision_info_t: %s\n", #a); P_BOOL((a).collision); P_VEC3((a).direction); \
                                   P_F32((a).depth); P_INT((a).obj_idx); P_BOOL((a).trigger); }
 

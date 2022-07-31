@@ -38,6 +38,11 @@ void phys_debug_draw_box_collider_func(phys_obj_t* obj)
   vec3_copy(aabb[1], max);
   vec3_mul(obj->scl, min, min);
   vec3_mul(obj->scl, max, max);
+ 	vec3_add(min, obj->collider.offset, min);
+	vec3_add(max, obj->collider.offset, max); 
+  
+  vec3_add(obj->pos, min, min);
+  vec3_add(obj->pos, max, max);
   
   vec3 top0 = { max[0], max[1], max[2] };
   vec3 top1 = { max[0], max[1], min[2] }; 
@@ -49,14 +54,14 @@ void phys_debug_draw_box_collider_func(phys_obj_t* obj)
   vec3 bot2 = { min[0], min[1], min[2] };
   vec3 bot3 = { min[0], min[1], max[2] };
   
-  vec3_add(obj->pos, top0, top0);
-  vec3_add(obj->pos, top1, top1);
-  vec3_add(obj->pos, top2, top2);
-  vec3_add(obj->pos, top3, top3);
-  vec3_add(obj->pos, bot0, bot0);
-  vec3_add(obj->pos, bot1, bot1);
-  vec3_add(obj->pos, bot2, bot2);
-  vec3_add(obj->pos, bot3, bot3);
+  // vec3_add(obj->pos, top0, top0);
+  // vec3_add(obj->pos, top1, top1);
+  // vec3_add(obj->pos, top2, top2);
+  // vec3_add(obj->pos, top3, top3);
+  // vec3_add(obj->pos, bot0, bot0);
+  // vec3_add(obj->pos, bot1, bot1);
+  // vec3_add(obj->pos, bot2, bot2);
+  // vec3_add(obj->pos, bot3, bot3);
   
   // debug_draw_line_register(top0, top1, PHYS_DEBUG_COLLIDER_COLOR); 
   // debug_draw_line_register(top1, top2, PHYS_DEBUG_COLLIDER_COLOR); 

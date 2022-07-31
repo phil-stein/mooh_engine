@@ -24,6 +24,11 @@ void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 off
 // add physics object with box collider and rigidbody
 void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, vec3 aabb[2], vec3 offset);
 
+// remove object, by the entity its attached to
+void phys_remove_obj(u32 entity_idx);
+// remove all objects
+void phys_clear_state();
+
 phys_obj_t* phys_get_obj_arr(u32* len);
 
 #endif

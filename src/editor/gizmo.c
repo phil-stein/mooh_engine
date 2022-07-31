@@ -7,6 +7,7 @@
 #include "core/debug/debug_draw.h"
 #include "core/state.h"
 #include "core/assetm.h"
+#include "core/core_data.h"
 
 
 // TODO: get static pointer
@@ -293,6 +294,8 @@ void gizmo_update()
 // e: entity defining the model-space used
 void gizmo_calc_dist_screen_to_model(vec2 p0, vec2 p1, vec3 entity_pos, mat4 entity_model, vec3 out)
 {
+  core_data_t* core_data = core_data_get();
+  
   int w, h;
   window_get_size(&w, &h);
   mat4 view, proj;
@@ -312,7 +315,7 @@ void gizmo_calc_dist_screen_to_model(vec2 p0, vec2 p1, vec3 entity_pos, mat4 ent
   camera_get_pos(cam_pos);
   vec3_sub(entity_pos, cam_pos, dist);
   float depth = vec3_magnitude(dist);
-  depth = (depth / camera_get_f_plane()) * 2 -1;
+  depth = (depth / core_data->far_plane) * 2 -1;
   space_screen_to_world(view, proj, pos_norm, depth, pos0); 
 
   mat4 model;

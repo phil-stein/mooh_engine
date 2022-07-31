@@ -23,6 +23,17 @@ typedef struct core_data_t
   f32 delta_t;
   f32 cur_fps;
 
+  // -- camera --
+  vec3 cam_pos;
+  vec3 cam_front;
+  vec3 cam_up;
+  vec3 cam_target;
+  const f32 cam_fov; 
+  const f32 cam_fov_rad;     
+  const f32 near_plane; 
+  const f32 far_plane;  
+
+
   // -- renderer --
 
   bool wireframe_mode_enabled;
@@ -93,44 +104,53 @@ typedef struct core_data_t
 
 }core_data_t;
 
-#define CORE_DATA_INIT()            \
-{                                   \
-  .program_quit = false,            \
-                                    \
-  .monitor = NULL,                  \
-  .window  = NULL,                  \
-                                    \
-  .t_last_frame = 0.0f,             \
-  .delta_t = 0.0f,                  \
-  .cur_fps = 0.0f,                  \
-                                    \
-  .wireframe_mode_enabled = false,  \
-  .show_shadows  = true,            \
-                                    \
-  .mouse_x = 0,                     \
-  .mouse_y = 0,                     \
-  .mouse_delta_x = 0,               \
-  .mouse_delta_y = 0,               \
-  .scroll_x = 0,                    \
-  .scroll_y = 0,                    \
-  .scroll_delta_x = 0,              \
-  .scroll_delta_y = 0,              \
-                                    \
-  .terrain_materials = NULL,        \
-  .terrain_materials_len = 0,       \
-  .terrain_chunks = NULL,           \
-  .terrain_chunks_len = 0,          \
-  .terrain_scl   = 100,             \
-  .terrain_y_scl = 0.02f / 256.0f,  \
-  .terrain_x_len = 100,             \
-  .terrain_z_len = 100,             \
-  .terrain_layout = NULL,           \
-  .terrain_layout_len = 0,          \
-  .terrain_draw_dist = 2,           \
-  .terrain_cull_dist = 3,           \
-                                    \
-  .phys_act = false,                \
-  .scripts_act = false,             \
+#define CORE_DATA_INIT()                      \
+{                                             \
+  .program_quit = false,                      \
+                                              \
+  .monitor = NULL,                            \
+  .window  = NULL,                            \
+                                              \
+  .t_last_frame = 0.0f,                       \
+  .delta_t = 0.0f,                            \
+  .cur_fps = 0.0f,                            \
+                                              \
+  .cam_pos     = { 0, 0, 0 },                 \
+  .cam_front   = { 0, 0, -1 },                \
+  .cam_up      = { 0, 1, 0 },                 \
+  .cam_target  = { 0, 0, 0 },                 \
+  .cam_fov     = 45.0f,                       \
+  .cam_fov_rad = 45.0f * M_PI_F / 180.0f,     \
+  .near_plane  = 0.1f,                        \
+  .far_plane   = 1000.0f,                     \
+                                              \
+  .wireframe_mode_enabled = false,            \
+  .show_shadows  = true,                      \
+                                              \
+  .mouse_x = 0,                               \
+  .mouse_y = 0,                               \
+  .mouse_delta_x = 0,                         \
+  .mouse_delta_y = 0,                         \
+  .scroll_x = 0,                              \
+  .scroll_y = 0,                              \
+  .scroll_delta_x = 0,                        \
+  .scroll_delta_y = 0,                        \
+                                              \
+  .terrain_materials = NULL,                  \
+  .terrain_materials_len = 0,                 \
+  .terrain_chunks = NULL,                     \
+  .terrain_chunks_len = 0,                    \
+  .terrain_scl   = 100,                       \
+  .terrain_y_scl = 0.02f / 256.0f,            \
+  .terrain_x_len = 100,                       \
+  .terrain_z_len = 100,                       \
+  .terrain_layout = NULL,                     \
+  .terrain_layout_len = 0,                    \
+  .terrain_draw_dist = 2,                     \
+  .terrain_cull_dist = 3,                     \
+                                              \
+  .phys_act = false,                          \
+  .scripts_act = false,                       \
 }
 
 

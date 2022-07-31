@@ -110,6 +110,8 @@ void mesh_free(mesh_t* m)
 // -- ufbx --
 mesh_t mesh_load(const char* path)
 {
+  ERR("refactor this to use mesh_load_from_memory()");
+  /*
   ufbx_load_opts opts = { NULL }; // Optional, pass NULL for defaults
   ufbx_error error; // Optional, pass NULL if you don't care about errors
   ufbx_scene *scene = ufbx_load_file(path, &opts, &error);
@@ -144,23 +146,37 @@ mesh_t mesh_load(const char* path)
       ufbx_vec3 normal = ufbx_get_vertex_vec3(&m->vertex_normal, index);
       ufbx_vec2 uv     = m->vertex_uv.data[m->vertex_uv.indices[index]];
 
+      // arrput(verts, pos.v[0]);
+      // arrput(verts, pos.v[1]);
+      // arrput(verts, pos.v[2]);
+      // arrput(verts, normal.v[0]);
+      // arrput(verts, normal.v[1]);
+      // arrput(verts, normal.v[2]);
+      // arrput(verts, uv.v[0]);
+      // arrput(verts, uv.v[1]);
+      
+      // @NOTE: flip to go from blender coord sys to the engines
       arrput(verts, pos.v[0]);
-      arrput(verts, pos.v[1]);
       arrput(verts, pos.v[2]);
+      arrput(verts, -pos.v[1]);
       arrput(verts, normal.v[0]);
-      arrput(verts, normal.v[1]);
       arrput(verts, normal.v[2]);
+      arrput(verts, -normal.v[1]);
       arrput(verts, uv.v[0]);
       arrput(verts, uv.v[1]);
+      arrput(verts, tan[0]);
+      arrput(verts, tan[2]);
+      arrput(verts, -tan[1]);
 
     }
   }
 
   ufbx_free_scene(scene);
+  */
   mesh_t mesh;
-  mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
-  arrfree(verts);
-  arrfree(indices);
+  // mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
+  // arrfree(verts);
+  // arrfree(indices);
   return mesh;
 
 }
@@ -197,6 +213,9 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
     vec3 pos0 = { _pos0.x, _pos0.y, _pos0.z };
     vec3 pos1 = { _pos1.x, _pos1.y, _pos1.z };
     vec3 pos2 = { _pos2.x, _pos2.y, _pos2.z };
+    // vec3 pos0 = { _pos0.x, _pos0.z, _pos0.y };
+    // vec3 pos1 = { _pos1.x, _pos1.z, _pos1.y };
+    // vec3 pos2 = { _pos2.x, _pos2.z, _pos2.y };
 
     ufbx_vec2 _tex0 = m->vertex_uv.data[m->vertex_uv.indices[i0]];
     ufbx_vec2 _tex1 = m->vertex_uv.data[m->vertex_uv.indices[i1]];
@@ -239,18 +258,30 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
       ufbx_vec3 pos    = m->vertex_position.data[m->vertex_position.indices[index]];
       ufbx_vec3 normal = ufbx_get_vertex_vec3(&m->vertex_normal, index);
       ufbx_vec2 uv     = m->vertex_uv.data[m->vertex_uv.indices[index]];
-      
+     
+      // @NOTE: flip to go from blender coord sys to the engines
+      // arrput(verts, pos.v[0]);
+      // arrput(verts, pos.v[1]);
+      // arrput(verts, pos.v[2]);
+      // arrput(verts, normal.v[0]);
+      // arrput(verts, normal.v[1]);
+      // arrput(verts, normal.v[2]);
+      // arrput(verts, uv.v[0]);
+      // arrput(verts, uv.v[1]);
+      // arrput(verts, tan[0]);
+      // arrput(verts, tan[1]);
+      // arrput(verts, tan[2]);
       arrput(verts, pos.v[0]);
-      arrput(verts, pos.v[1]);
       arrput(verts, pos.v[2]);
+      arrput(verts, -pos.v[1]);
       arrput(verts, normal.v[0]);
-      arrput(verts, normal.v[1]);
       arrput(verts, normal.v[2]);
+      arrput(verts, -normal.v[1]);
       arrput(verts, uv.v[0]);
       arrput(verts, uv.v[1]);
       arrput(verts, tan[0]);
-      arrput(verts, tan[1]);
       arrput(verts, tan[2]);
+      arrput(verts, -tan[1]);
     }
   }
 

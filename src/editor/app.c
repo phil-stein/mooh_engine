@@ -174,11 +174,6 @@ void app_update()
 
   // -- input --
 
-  // @TMP:
-  if (input_get_key_pressed(KEY_ENTER))
-  { core_data->phys_act = !core_data->phys_act; }
-
-
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
   { 
     serialization_write_scene_to_file(SCENE_FILE_NAME); 
@@ -229,7 +224,9 @@ void app_update()
 	}
   if (input_get_key_pressed(KEY_EXIT))
   {
-    program_quit();
+    if (core_data->scripts_act || core_data->phys_act)
+    { core_data->scripts_act = false;  core_data->phys_act = false; }
+    else { program_quit(); }
   }
 
 }

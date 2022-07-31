@@ -88,13 +88,25 @@ void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, vec3 aabb
   phys_objs_len++;
 }
 
-// @TODO: 
+// @UNSURE: 
 void phys_remove_obj(u32 entity_idx)
 {
   for (u32 i = 0; i < phys_objs_len; ++i)
   {
-    if (phys_objs[i].entity_idx == entity_idx) { arrdel(phys_objs, i); }
+    if (phys_objs[i].entity_idx == entity_idx) 
+    { 
+      arrdel(phys_objs, i); 
+      phys_objs_len--;
+    }
   }
+}
+
+// @TODO:
+void phys_clear_state()
+{
+  arrfree(phys_objs);
+  phys_objs = NULL;
+  phys_objs_len = 0;
 }
 
 phys_obj_t* phys_get_obj_arr(u32* len)
@@ -116,8 +128,6 @@ void phys_update(f32 dt)
 	for (u32 i = 0; i < phys_objs_len; ++i) // array of rigidbodies
 	{
     phys_obj_t* obj0 = &phys_objs[i];
-    
-    phys_debug_draw_collider(obj0);
 
 		// ---- dynamics ----
 		if (!PHYS_OBJ_HAS_RIGIDBODY(obj0)) { continue; }
@@ -125,8 +135,13 @@ void phys_update(f32 dt)
 
 		// // ---- collision ----
 		if (!PHYS_OBJ_HAS_COLLIDER(obj0)) { continue; }
-  
-		// test with all other colliders
+    
+    // phys_debug_draw_collider(obj0);
+    
+    obj0->collider.is_colliding = false; 
+	  obj0->collider.is_grounded  = false; 	
+
+    // test with all other colliders
 		for (int j = 0; j < phys_objs_len; ++j) // array of colliders
 		{
 			if (j == i) { continue; }
@@ -134,8 +149,8 @@ void phys_update(f32 dt)
       phys_obj_t* obj1 = &phys_objs[j];
 
 			collision_info_t c = phys_collision_check(obj0, obj1);
-      obj0->collider.is_colliding = c.collision;
-      obj0->collider.is_grounded  = c.grounded;
+      obj0->collider.is_colliding = obj0->collider.is_colliding || c.collision;
+      obj0->collider.is_grounded  = obj0->collider.is_grounded  || c.grounded;
       
       // ---- collision response ----
 		  if (c.collision)

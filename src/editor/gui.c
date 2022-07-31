@@ -522,7 +522,8 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
     if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
-      nk_labelf(ctx, NK_TEXT_LEFT, "[aabb] x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
+      nk_labelf(ctx, NK_TEXT_LEFT, "[aabb]   x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
+      nk_labelf(ctx, NK_TEXT_LEFT, "[offset] x: %.2f y: %.2f, z: %.2f", obj->collider.offset[0], obj->collider.offset[1], obj->collider.offset[2]);
       
       phys_debug_draw_box_collider(obj);
     }

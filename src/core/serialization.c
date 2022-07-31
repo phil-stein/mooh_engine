@@ -9,6 +9,9 @@
 #define STR_BUF_MAX 256
 char str_buf[STR_BUF_MAX] = "";
 
+#define CUR_SCENE_NAME_MAX 128
+char cur_scene_name[CUR_SCENE_NAME_MAX] = "";
+
 static core_data_t* core_data = NULL;
 
 void serialization_test()
@@ -66,6 +69,7 @@ void serialization_write_scene_to_file(const char* name)
   sprintf(path, ASSET_PATH"%s", name);
   file_write(path, (const char*)buffer, (int)arrlen(buffer));
 
+
   arrfree(buffer);
 }
 
@@ -80,6 +84,7 @@ void serialization_load_scene_from_file(const char* name)
   
   serialization_deserialize_scene(buffer, &offset);
 
+  strcpy(cur_scene_name, name);
 
   free(buffer);
 }

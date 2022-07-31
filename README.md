@@ -57,12 +57,13 @@ main resources:
  - [ ] occlusion culling 
  - [ ] batch renderer
  - [ ] lod system ?
+ - [ ] precompute brdf, etc.
 
 ## sus amogus
  - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
    it worked before and something changed in the code that made it no longer work that way
    what exactly changed ???
- - ENTITY_SET_POS() doesnt use vec3_copy(), and doesnt work properly in program_sync_physics()
+ - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
 
 ## organization
  - [ ] factor out cubemap creating from assetm
@@ -78,9 +79,10 @@ main resources:
 
 ## base
  - [x] load shader
- - [x] load mesh
  - [x] multiple apps
- - [ ] triangularize mesh
+ - [x] load mesh
+  - [ ] triangularize mesh
+  - [x] blender coord sys to mine
  - [ ] asset manager
   - [x] guid
   - [x] dynamic array
@@ -103,17 +105,26 @@ main resources:
  - [ ] structures (prefabs)
   - [ ] create / load
   - [ ] store ?
- - [ ] setup 32bit (-m32)
- - [ ] level system ?
-  - not sure if necessary since only 1 level
-  - [ ] structure
+ - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
+ - [ ] serialization
   - [x] serialization
   - [x] deserialization
+  - [x] reload
+  - [ ] reset all dynamic objects ? 
+    - this way we don't have to reload the entire thing 
+    - not sure if needed in final game though
+    - requires restructuring probably
+    - reload suprisingly fast
+  - [ ] game saves system
+    - single map file, never changed
+    - multiple variants of that with changes
+      - i.e. 'save01.scene', 'mygame.scene', etc.
  - [ ] particle system
  - [x] set cam pos in program_start()
  - [ ] debug tools
   - [x] make debug timer 
   - [ ] add profiler
+ - [ ] controller support ? 
 
 ## renderer
  - [x] render mesh basic
@@ -198,11 +209,28 @@ main resources:
   - [x] set properties
   - [x] remove lights
   - [x] add lights
+ - [ ] go back to inital state after play
  - [ ] structure editor
   - seperate ?
  - [ ] particle system editor
   - seperate ?
  - [ ] make gui less sh*t 
+
+## physics engine
+ - [x] remove objs
+ - [x] dynamics
+ - [x] api for forces
+ - [ ] sphere
+ - [x] aabb
+ - [ ] plane
+ - [x] resolution
+ - [ ] fix buoancy in resolution, actually in phys_debug_draw()
+ - [x] array of dynamic objs, for optimization
+ - [x] basic char controller in game for testing 
+ - [ ] sweeping collision
+ - [ ] cylinder / capsule
+ - [ ] raycasts ?
+  - [ ] octree & ray v. triangle ?
 
 ## terrain generation
  - [x] generate mesh
@@ -222,21 +250,6 @@ main resources:
  - [x] save & load
  - [x] vert color texture blending
 
-## physics engine
- - [ ] remove objs
- - [x] dynamics
- - [x] api for forces
- - [ ] sphere
- - [x] aabb
- - [ ] plane
- - [x] resolution
- - [x] array of dynamic objs, for optimization
- - [x] basic chqar controller in game for testing 
- - [ ] sweeping collision
- - [ ] cylinder / capsule
- - [ ] raycasts ?
-  - [ ] octree & ray v. triangle ?
-
 ## artstyle look-dev
  - [ ] draw sketch of scene
   - the base: old wooden house, trees, 
@@ -248,7 +261,7 @@ main resources:
     - [ ] big
   - [ ] trees
     - [ ] normal
-    - [x] big
+    - [x] big (f*cked normals)
   - [ ] bush
   - [ ] fence
   - [ ] old hut

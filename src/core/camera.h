@@ -6,6 +6,8 @@
 
 // ---- editor camera ----
 
+void camera_init();
+
 // add to the current position
 void camera_move(vec3 dist);
 
@@ -23,9 +25,9 @@ void camera_get_front(vec3 dir);
 // get the cameras current up direction
 void camera_get_up(vec3 dir);
 
-float camera_get_n_plane();
-float camera_get_f_plane();
-float camera_get_fov();
+// float camera_get_n_plane();
+// float camera_get_f_plane();
+// float camera_get_fov();
 
 // get the direction from the taget towards the camera (normalized)
 void camera_get_inv_direction(vec3 dir);

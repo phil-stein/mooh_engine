@@ -22,6 +22,8 @@ void phys_debug_draw_box_collider_func(phys_obj_t* obj);
 #else
 
 #define phys_debug_draw_velocity(obj)  
+#define phys_debug_draw_collider(obj)      
+#define phys_debug_draw_box_collider(obj)  
 
 #endif
 

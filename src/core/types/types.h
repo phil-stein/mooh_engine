@@ -22,18 +22,29 @@ struct entity_t;
 typedef void (init_callback)(struct entity_t* this);
 typedef void (update_callback)(struct entity_t* this, float dt);
 
+typedef enum entity_phys_flags
+{
+  ENTITY_HAS_RIGIDBODY = FLAG(0),
+  ENTITY_HAS_SPHERE    = FLAG(1),    // @TODO:   
+  ENTITY_HAS_BOX       = FLAG(2),       
+  ENTITY_HAS_PLANE     = FLAG(3),    // @TODO:   
+  ENTITY_HAS_CONVEX    = FLAG(4),    // @TODO:     
+  ENTITY_HAS_CAPSULE   = FLAG(5),    // @TODO:   
+
+}entity_phys_flags;
+
 typedef struct entity_t
 {
   u32 id;        // id for state_entity_get(id)
   int table_idx; // idx for entity_table_get(idx)
-  bool is_dead;
+  bool is_dead;  // insteadf of deleting the entity from array, its marked dead and overwritten with the next added entity
 
   // local space
   vec3 pos;   // position
   vec3 rot;   // rotation
   vec3 scl;   // scale
   vec3 delta_pos;    // difference between last and current frame, used for physics sync 
-  // vec3 delta_rot; // difference between last and current frame, used for physics sync 
+  // vec3 delta_rot; // difference between last and current frame, used for physics sync, not needed as phys don't know what rotation is 
   vec3 delta_scl;    // difference between last and current frame, used for physics sync
   vec3 delta_force;  // difference between last and current frame, used for physics sync
 
@@ -43,7 +54,9 @@ typedef struct entity_t
   int mat;  // index for assetm
   int mesh; // index for assetm
 
-  bool is_grounded; // only valid for ents with phys collider, otherwise always false
+  // -- physics --
+  entity_phys_flags phys_flags; // 0 if no flags, use HAS_FLAG() to check if flags are present
+  bool is_grounded;             // only valid for ents with phys collider, otherwise always false
 
   // -> null or gets called at apropriate time
   init_callback*   init_f;
@@ -57,10 +70,10 @@ typedef struct entity_t
 }entity_t;
 
 // these set the 'is_moved' flag, these should always be used as otherwise the 'model' wont get updated, in 'state_entity_update_global_model()'
-#define ENTITY_SET_POS(e, vec)      { vec3 dif; vec3_sub((e)->pos, vec, dif), vec3_add(dif, (e)->delta_pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }  // @UNSURE: why is this not vec3_copy()
-#define ENTITY_SET_POS_X(e, x)      { (e)->delta_pos[0] += (e)->pos[0] - (x); (e)->pos[0] = (x);    (e)->is_moved = true; }
-#define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[1] += (e)->pos[1] - (y); (e)->pos[1] = (y);    (e)->is_moved = true; }
-#define ENTITY_SET_POS_Z(e, z)      { (e)->delta_pos[2] += (e)->pos[2] - (z); (e)->pos[2] = (z);    (e)->is_moved = true; }
+#define ENTITY_SET_POS(e, vec)      { vec3_sub((vec), (e)->pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }  
+#define ENTITY_SET_POS_X(e, x)      { (e)->delta_pos[0] += (x) - (e)->pos[0]; (e)->pos[0] = (x);    (e)->is_moved = true; }
+#define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[1] += (y) - (e)->pos[1]; (e)->pos[1] = (y);    (e)->is_moved = true; }
+#define ENTITY_SET_POS_Z(e, z)      { (e)->delta_pos[2] += (z) - (e)->pos[2]; (e)->pos[2] = (z);    (e)->is_moved = true; }
 #define ENTITY_MOVE(e, vec)         { vec3_add((e)->delta_pos, (vec), (e)->delta_pos); vec3_add((e)->pos,    (vec), (e)->pos); (e)->is_moved = true; }
 #define ENTITY_MOVE_X(e, x)         { (e)->delta_pos[0] += (x);   (e)->pos[0] += (x);   (e)->is_moved = true; }
 #define ENTITY_MOVE_Y(e, y)         { (e)->delta_pos[1] += (y);   (e)->pos[1] += (y);   (e)->is_moved = true; }
@@ -78,9 +91,9 @@ typedef struct entity_t
 #define ENTITY_ROTATE_AXIS(e, a, v) { (e)->rot[(a)] += (v); (e)->is_moved = true; } // rotate on axis ' a '  from 0 -> 1
 
 #define ENTITY_SET_SCL(e, vec)      { vec3 dif; vec3_sub((e)->scl, vec, dif), vec3_add(dif, (e)->delta_scl, (e)->delta_scl); vec3_copy((vec), (e)->scl); (e)->is_moved = true; }
-#define ENTITY_SET_SCL_X(e, x)      { (e)->delta_scl[0] += (e)->scl[0] - (x); (e)->scl[0] = (x);    (e)->is_moved = true; }
-#define ENTITY_SET_SCL_Y(e, y)      { (e)->delta_scl[1] += (e)->scl[1] - (y); (e)->scl[1] = (y);    (e)->is_moved = true; }
-#define ENTITY_SET_SCL_Z(e, z)      { (e)->delta_scl[2] += (e)->scl[2] - (z); (e)->scl[2] = (z);    (e)->is_moved = true; }
+#define ENTITY_SET_SCL_X(e, x)      { (e)->delta_scl[0] += (x) - (e)->scl[0]; (e)->scl[0] = (x);    (e)->is_moved = true; }
+#define ENTITY_SET_SCL_Y(e, y)      { (e)->delta_scl[1] += (y) - (e)->scl[1]; (e)->scl[1] = (y);    (e)->is_moved = true; }
+#define ENTITY_SET_SCL_Z(e, z)      { (e)->delta_scl[2] += (z) - (e)->scl[2]; (e)->scl[2] = (z);    (e)->is_moved = true; }
 #define ENTITY_SCALE(e, vec)        { vec3_add((e)->delta_scl, (vec), (e)->delta_scl); vec3_add((e)->scl,    (vec), (e)->scl); (e)->is_moved = true; }
 #define ENTITY_SCALE_X(e, x)        { (e)->delta_scl[0] += (x);   (e)->scl[0] += (x);   (e)->is_moved = true; }
 #define ENTITY_SCALE_Y(e, y)        { (e)->delta_scl[1] += (y);   (e)->scl[1] += (y);   (e)->is_moved = true; }

@@ -16,7 +16,7 @@ void phys_collision_resolution(phys_obj_t* obj0, phys_obj_t* obj1, collision_inf
 	
   // position correction
 	vec3 dist;
-	vec3_mul_f(info.direction, info.depth * 0.5f, dist);
+	vec3_mul_f(info.direction, info.depth * 1.0f, dist);  // 0.5f
 	vec3_add(obj0->pos, dist, obj0->pos);
 
 	// @TODO: maybe use ellastic collision equation
@@ -26,56 +26,55 @@ void phys_collision_resolution(phys_obj_t* obj0, phys_obj_t* obj1, collision_inf
 	// 	  maybe mult by like 0.9 or use drag
 
 	// impact force
-	const f32 force_mult = 500.0f; // 1000.0f;
+	const f32 force_mult = 500.0f; // 500.0f; // 1000.0f;
 	if (obj1_has_rb)
 	{
 		f32 ratio0 = obj1->rb.mass / obj0->rb.mass;
 		f32 ratio1 = obj0->rb.mass / obj1->rb.mass;
-		// if (ratio0 < ratio1)
-		// { ratio1 = 1 - ratio0; }
-		// else 
-		// { ratio0 = 1 - ratio1; }
     
-    vec3 f0, f1;
+   vec3 f0, f1;
 		vec3_mul_f(dist,  force_mult * ratio0, f0);
 		vec3_mul_f(dist, -force_mult * ratio1, f1);
 
-		// phys_obj_add_force(o0->idx, f0);
-		// phys_obj_add_force(o1->idx, f1);
     vec3_add(obj0->rb.force, f0, obj0->rb.force);
     vec3_add(obj1->rb.force, f1, obj1->rb.force); 
 	}
 	else
 	{
+    // if (info.direction[1] != 0)
+    // { 
+    //   obj0->rb.velocity[1] = 0;
+    //   obj0->rb.force[1]    = 0;
+    // }
 		vec3 f0;
 		// 1.9 * force_mult, because not elastic
-		vec3_mul_f(dist, 1.9f * force_mult, f0);
-		// phys_obj_add_force(o0->idx, f0);
+		vec3_mul_f(dist, force_mult * 2.0f, f0);
     vec3_add(obj0->rb.force, f0, obj0->rb.force);
 	}
-	// @TODO: get working lol
-	// @TODO: put together
-	// friction
-	// if (info.grounded) // (o1->is_dynamic && o0->is_grounded)
-	// {
-	// 	vec3 f;
-	// 	vec3_mul_f(obj1->rb.velocity, 1, f);
-	// 	// phys_obj_add_force(o0->idx, f);
-  //   vec3_add(obj0->rb.velocity, f, obj0->rb.velocity);
-	// }
-	// if (o1->is_grounded) // (o1->is_dynamic && o0->is_grounded)
-	// {
-	// 	vec2 f;
-	// 	vec2_mul_f(o0->velocity, 1, f);
-	// 	// phys_obj_add_force(o1->idx, f);
-  //   vec3_add(obj0->rb.velocity, f0);
-	// }
+
 }
 
 
 // @NOTE: old resolution system, based on winter-dev's system
 /*
-
+	
+// @TODO: get working lol
+// @TODO: put together
+// friction
+// if (info.grounded) // (o1->is_dynamic && o0->is_grounded)
+// {
+// 	vec3 f;
+// 	vec3_mul_f(obj1->rb.velocity, 1, f);
+// 	// phys_obj_add_force(o0->idx, f);
+//   vec3_add(obj0->rb.velocity, f, obj0->rb.velocity);
+// }
+// if (o1->is_grounded) // (o1->is_dynamic && o0->is_grounded)
+// {
+// 	vec2 f;
+// 	vec2_mul_f(o0->velocity, 1, f);
+// 	// phys_obj_add_force(o1->idx, f);
+//   vec3_add(obj0->rb.velocity, f0);
+// }
 
 void phys_collision_response(phys_obj_t* obj0, phys_obj_t* obj1, collision_info_t info)
 {

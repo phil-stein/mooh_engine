@@ -34,7 +34,11 @@ void rotate_cam_by_mouse();
 
 int main(void)
 {
+#ifdef RELEASE
+  program_start(1920, 1800, "mooh", WINDOW_FULL, app_init, app_update);  // WINDOW_FULL
+#else
   program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update);  // WINDOW_FULL
+#endif
   return 0;
 }
 

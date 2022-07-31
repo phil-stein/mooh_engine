@@ -6,11 +6,18 @@
 # compiler plus flags, -g: debug info, -Wall: all warnings
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
-CC         = @gcc -g -Wall -DASSET_PATH=\"../../assets/\"	-DEDITOR -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG 
+# -DEDITOR -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG
+
+# no errors compile command
 CC_NO_WARN = @gcc
+# normal debug compile command
+CC         = @gcc -g -Wall -DASSET_PATH=\"../../assets/\"	-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG
+# release mode compile command
+# CC 	  		 = @gcc -g -Wall -DASSET_PATH=\"../../../../assets/\"	-DRELEASE -DASSETM_NO_ZIP
 
 NAME = game.exe
 OUT  = build\$(NAME)
+OUT_RELEASE = build\release\$(NAME)
 
 SRC_DIR   = ..
 GLOBL_DIR = $(SRC_DIR)/global
@@ -95,10 +102,16 @@ LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS)
 all: $(NAME)
 	@echo ---- done ----
 
+release: clean release_build
+	@echo ---- release ----
+
 # compile all object files to .exe
 $(NAME): $(OBJS) 
 	$(CC) -o $(OUT) $(OBJS) $(LIB_LINK)
 
+release_build: $(OBJS) 
+	del $(OUT_RELEASE)
+	$(CC) -o $(OUT_RELEASE) $(OBJS) $(LIB_LINK)
 
 # compile all .c files to .o files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -158,6 +171,7 @@ run: all
 cleanrun: clean all
 	@echo --- $(NAME) --- 
 	@$(OUT)
+
 
 
 

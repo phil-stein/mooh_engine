@@ -23,8 +23,12 @@ APP_DIR   = .
 
 OBJ_DIR = bin
 
+# external: ufbx, zip
+_OBJS += 				 			\
+	ufbx.o							\
+	zip.o
 # core
-_OBJS =					 			\
+_OBJS +=					 		\
 	glad.o				 			\
 	core_data.o					\
 	window.o			 			\
@@ -44,30 +48,25 @@ _OBJS =					 			\
 	debug_timer.o				\
 	terrain.o						\
 	serialization.o
-# data
-_OBJS += 				 			\
-	entity_template.o   \
-	shader_template.o   \
-	material_template.o \
-	test_comp.o
+# physics
 _OBJS += 							\
 	phys_world.o				\
 	phys_dynamics.o			\
 	phys_collision.o		\
 	phys_resolution.o	  \
 	phys_debug_draw.o
+# data
+_OBJS += 				 			\
+	entity_template.o   \
+	shader_template.o   \
+	material_template.o \
+	test_comp.o
 # app
 _OBJS += 				 			\
 	app.o					 			\
 	gui.o					 			\
 	gizmo.o							\
 	terrain_edit.o
-# ufbx
-_OBJS += 				 			\
-	ufbx.o
-# zip
-_OBJS += 				 			\
-	zip.o
 
 # put the OBJ_DIR in front of the obj names
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))

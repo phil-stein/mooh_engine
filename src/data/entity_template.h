@@ -19,17 +19,6 @@ typedef enum entity_template_type
   ENTITY_TEMPLATE_HUT_TEST,
 }entity_template_type;
 
-typedef enum entity_templyte_phys_flags
-{
-  ENTITY_HAS_RIGIDBODY = FLAG(0),
-  ENTITY_HAS_SPHERE    = FLAG(1),    // @TODO:   
-  ENTITY_HAS_BOX       = FLAG(2),       
-  ENTITY_HAS_PLANE     = FLAG(3),    // @TODO:   
-  ENTITY_HAS_CONVEX    = FLAG(4),    // @TODO:     
-  ENTITY_HAS_CAPSULE   = FLAG(5),    // @TODO:   
-
-}entity_templyte_phys_flags;
-
 
 // template for entites
 typedef struct entity_template_t
@@ -42,17 +31,26 @@ typedef struct entity_template_t
   init_callback*   init;
   update_callback* update;
 
-  // @TODO: physics, etc.
-  u32 phys_flags;
+  entity_phys_flags phys_flags;
   f32 mass;
   union
   {
     f32  radius;
-    vec3 aabb_size; // total aabb size from min to max
+    vec3 aabb_size;   // total aabb size from min to max
   };
-  
+  vec3 aabb_offset; // offset from objects position
 
 }entity_template_t;
+#define ENTITY_TEMPLATE_T_SET_DEFAULTS()  \
+  .name = "default",                      \
+  .mesh = "cube.fbx",                     \
+  .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
+  .init   = NULL,                         \
+  .update = NULL,                         \
+  .phys_flags  = 0,                       \
+  .mass        = 1.0f,                    \
+  .aabb_size   = { 1, 1, 1 },             \
+  .aabb_offset = { 0, 0, 0 },             
 
 
 const entity_template_t* entity_template_get(int idx);

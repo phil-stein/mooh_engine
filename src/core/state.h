@@ -11,13 +11,14 @@
 // func decls --------------------------------------------------- 
 
 void state_init();
+void state_call_entity_init();  // calls init func ptr on all entities
 void state_update(float dt);
 
 void state_clear_scene();
 
 entity_t* state_get_entity_arr(int* len, int* dead_len);
 int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx);
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, init_callback* init_f, update_callback* update_f, int table_idx);
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flags phys_flags, init_callback* init_f, update_callback* update_f, int table_idx);
 int state_duplicate_entity(int id, vec3 offset);
 void state_remove_entity(int id);
 entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line);
