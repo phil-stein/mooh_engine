@@ -106,10 +106,12 @@ release: clean release_build
 	@echo ---- release ----
 
 # compile all object files to .exe
-$(NAME): $(OBJS) 
+$(NAME): $(OBJS)
+	@echo !!! CHECK IF USING DEBUG CC !!!
 	$(CC) -o $(OUT) $(OBJS) $(LIB_LINK)
 
 release_build: $(OBJS) 
+	@echo !!! CHECK IF USING RELEASE CC !!!
 	del $(OUT_RELEASE)
 	$(CC) -o $(OUT_RELEASE) $(OBJS) $(LIB_LINK)
 
