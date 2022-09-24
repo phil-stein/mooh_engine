@@ -113,25 +113,57 @@ main resources:
   - [x] reload
  - [ ] make lights entities !!!
   - to be abled to parent lights, also to use gizmos
-  - sudo-components like bee-engine, or:
-    - world points to empty all having flag as first thing
-      that way entity_t doesn't need light pointers
+  - sudo-components like bee-engine
+    ```c
+     
+    ```
+  - world points to empty all having flag as first thing
+    that way entity_t doesn't need light pointers
       ```c
-        struct check_t
-        { flag_type_t type; }
-        struct entity_t
-        {
-          flag_type_t type;
-          ...
-        }
-        struct point_light_t
-        {
-          flag_type_t type;
-          ...
-        }
-        void** world; // array with all entities
-        
-        HAS_FLAG((check_t)world[3].type, GAY);
+      enum flag_type_t
+      {
+        FLAG_MESH         = FLAG(0),
+        FLAG_POINT_LIGHT  = FLAG(1),
+        FLAG_DIR_LIGHT    = FLAG(2),
+      }
+      struct check_t
+      { flag_type_t type; }
+      struct entity_t
+      {
+        flag_type_t type;
+        ...
+      }
+      struct point_light_t
+      {
+        flag_type_t type;
+        ...
+      }
+      void** world;   // array with all references
+      entity_t* ents; // array with all entities
+      arrput(ents, entity);
+      arrput(world, &ents[ents_len]);
+      HAS_FLAG((check_t)world[3].type, FLAG_POINT_LIGHT);
+      ```
+    - have components and flags, aka. both
+      ```c
+      // is flag actually necessary ???
+      struct entity_t
+      {
+        component_flag_t comp_flag;
+        ...
+        int point_light_idx;  // -1 if no point light   
+        or:
+      }
+      if (HAS_FLAG(entity.comp_flag, FLAG_POINT_LIGHT) )
+      {
+        all_point_lights[entity.point_light_idx].intensity;
+        or:
+      }
+      also works:
+      if (entity.point_light_idx >= 0)
+      {
+        all_point_lights[entity.point_light_idx].intensity;
+      }
       ```
   - [ ] reset all dynamic objects ? 
     - this way we don't have to reload the entire thing 
