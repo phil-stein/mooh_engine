@@ -15,12 +15,13 @@ u32 phys_objs_len = 0;
 
 // @TODO: move below update()
 
-void phys_obj_make_rb(f32 mass, phys_obj_t* obj)
+void phys_obj_make_rb(f32 mass, f32 friction, phys_obj_t* obj)
 {
   obj->flags |= PHYS_HAS_RIGIDBODY;
   obj->rb.mass = mass;
-  // obj->rb.drag = drag;     // gets set in RIGIDBODY_T_INIT()
-  // obj->rb.friction = 0.2f; // gets set in RIGIDBODY_T_INIT()
+  // obj->rb.drag = drag;      // gets set in RIGIDBODY_T_INIT()
+  // obj->rb.friction = 0.2f;  // gets set in RIGIDBODY_T_INIT()
+  obj->rb.friction = friction; // usually gets set by defaults in entity_template.c  
   vec3_copy(VEC3(0), obj->rb.velocity);
   vec3_copy(VEC3(0), obj->rb.force);
   
@@ -50,14 +51,14 @@ void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
   obj->collider.infos_len = 0;
 }
 
-void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass)
+void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass, f32 friction)
 {
   phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(VEC3(1), obj.scl);
 
-  phys_obj_make_rb(mass, &obj);
+  phys_obj_make_rb(mass, friction, &obj);
 
   arrput(phys_objs, obj);
   phys_objs_len++;
@@ -74,14 +75,14 @@ void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 off
   arrput(phys_objs, obj);
   phys_objs_len++;
 }
-void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, vec3 aabb[2], vec3 offset)
+void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 friction, vec3 aabb[2], vec3 offset)
 {
   phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(scl, obj.scl);
 
-  phys_obj_make_rb(mass, &obj);
+  phys_obj_make_rb(mass, friction, &obj);
   phys_obj_make_box(aabb, offset, &obj);
 
   arrput(phys_objs, obj);

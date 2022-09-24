@@ -33,6 +33,7 @@ typedef struct entity_template_t
 
   entity_phys_flags phys_flags;
   f32 mass;
+  f32 friction;
   union
   {
     f32  radius;
@@ -49,6 +50,7 @@ typedef struct entity_template_t
   .update = NULL,                         \
   .phys_flags  = 0,                       \
   .mass        = 1.0f,                    \
+  .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
   .aabb_offset = { 0, 0, 0 },             
 

@@ -27,6 +27,10 @@ void serialization_test();
 
 void serialization_write_scene_to_file(const char* name);
 void serialization_load_scene_from_file(const char* name);
+#ifdef EDITOR
+void serialization_write_scene_to_state_buffer();
+void serialization_load_scene_from_state_buffer();
+#endif
 
 void serialization_serialize_scene(u8** buffer);
 void serialization_serialize_entity(u8** buffer, entity_t* e);

@@ -3,6 +3,10 @@
 #include "core/state.h"
 #include "core/file_io.h"
 
+#ifdef EDITOR
+#include "core/camera.h"
+#endif
+
 #include "stb/stb_ds.h"
 
 
@@ -11,6 +15,14 @@ char str_buf[STR_BUF_MAX] = "";
 
 #define CUR_SCENE_NAME_MAX 128
 char cur_scene_name[CUR_SCENE_NAME_MAX] = "";
+
+#ifdef EDITOR
+u8* state_buffer = NULL;
+char state_buffer_scene_name[CUR_SCENE_NAME_MAX] = "";
+
+vec3 state_cam_pos         = { 0, 0, 0 };
+vec3 state_cam_orientation = { 0, 0, 0 };
+#endif
 
 static core_data_t* core_data = NULL;
 
@@ -84,10 +96,46 @@ void serialization_load_scene_from_file(const char* name)
   
   serialization_deserialize_scene(buffer, &offset);
 
+  ASSERT(strlen(name) < CUR_SCENE_NAME_MAX);
   strcpy(cur_scene_name, name);
 
   free(buffer);
 }
+
+#ifdef EDITOR
+void serialization_write_scene_to_state_buffer()
+{
+  u8* buffer = NULL;
+
+  serialization_serialize_scene(&buffer);
+ 
+  // @TODO: 
+  // !!! DO THIS NEXT
+  // also add searching .h files for func-defs to term_docs
+
+  state_buffer = realloc(state_buffer, arrlen(buffer) * sizeof(u8));
+  memcpy(state_buffer, buffer, arrlen(buffer) * sizeof(u8));
+
+  strcpy(state_buffer_scene_name, cur_scene_name);
+
+  arrfree(buffer);
+
+  camera_get_pos(state_cam_pos);
+  camera_get_front(state_cam_orientation);
+}
+
+void serialization_load_scene_from_state_buffer()
+{
+  u32 offset = 0;
+  
+  serialization_deserialize_scene(state_buffer, &offset);
+
+  strcpy(cur_scene_name, state_buffer_scene_name);
+
+  camera_set_pos(state_cam_pos);
+  camera_set_front(state_cam_orientation);
+}
+#endif
 
 void serialization_serialize_scene(u8** buffer)
 {

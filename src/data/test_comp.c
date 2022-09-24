@@ -10,7 +10,6 @@ vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
 void player_camera(entity_t* this, f32 dt);
 
-// @@TODO: run this on play not start
 void player_init(entity_t* this)
 {
   vec3_copy(this->pos, start_pos);
@@ -62,7 +61,6 @@ void player_update(entity_t* this, f32 dt)
   vec3_normalize(orientation, orientation);
   camera_set_front(orientation);
 
-  // @TODO: yittery as f*ck
   // -- mouse control --
   f32 x_offset = input_get_mouse_delta_x();
   f32 y_offset = input_get_mouse_delta_y();

@@ -253,29 +253,29 @@ void gui_top_bar_win()
         
         bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "play", NK_TEXT_LEFT))
-        { core_data->phys_act = true; core_data->scripts_act = true; }
+        { core_data_play();  }// { core_data->phys_act = true; core_data->scripts_act = true; }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
        
         bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "pause", NK_TEXT_LEFT))
-        { core_data->phys_act = false; core_data->scripts_act = false; }
+        { core_data_pause(); } // { core_data->phys_act = false; core_data->scripts_act = false; }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
         bounds = nk_widget_bounds(ctx);
-        if (nk_menu_item_label(ctx, "phys play", NK_TEXT_LEFT)) { core_data->phys_act = true; }
+        if (nk_menu_item_label(ctx, "phys play", NK_TEXT_LEFT)) { core_data_play_phys(); } // { core_data->phys_act = true; }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
-        bounds = nk_widget_bounds(ctx);
-        if (nk_menu_item_label(ctx, "phys pause", NK_TEXT_LEFT))  { core_data->phys_act = false; }
-        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        // bounds = nk_widget_bounds(ctx);
+        // if (nk_menu_item_label(ctx, "phys pause", NK_TEXT_LEFT))  { core_data->phys_act = false; }
+        // top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
         bounds = nk_widget_bounds(ctx);
-        if (nk_menu_item_label(ctx, "script play", NK_TEXT_LEFT)) { core_data->scripts_act = true; }
+        if (nk_menu_item_label(ctx, "script play", NK_TEXT_LEFT)) { core_data_play_scripts(); } // { core_data->scripts_act = true; }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
-        bounds = nk_widget_bounds(ctx);
-        if (nk_menu_item_label(ctx, "script pause", NK_TEXT_LEFT))  { core_data->scripts_act = false; }
-        top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
+        // bounds = nk_widget_bounds(ctx);
+        // if (nk_menu_item_label(ctx, "script pause", NK_TEXT_LEFT))  { core_data->scripts_act = false; }
+        // top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
         
         nk_menu_end(ctx);
       }

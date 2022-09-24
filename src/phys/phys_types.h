@@ -80,7 +80,7 @@ typedef struct rigidbody_t
   vec3 force;       // also often called 'acceleration-accumulator'
   f32  mass;
   f32  drag;        // slows object constantly, the lower the more stronger
-  f32  friction;    // increases drag when colliding, the lower the more friction
+  f32  friction;    // scales drag when colliding, the lower the more friction, i.e. 0.0f <->  1.0f
 
   // @NOTE: part of the old resolution
   // f32  restitution;      // default: 1.0f

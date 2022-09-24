@@ -225,7 +225,7 @@ void app_update()
   if (input_get_key_pressed(KEY_EXIT))
   {
     if (core_data->scripts_act || core_data->phys_act)
-    { core_data->scripts_act = false;  core_data->phys_act = false; }
+    { core_data_pause(); } // { core_data->scripts_act = false;  core_data->phys_act = false; }
     else { program_quit(); }
   }
 

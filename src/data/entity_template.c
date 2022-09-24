@@ -84,6 +84,7 @@ const entity_template_t entity_template_table[] =
     .update = player_update,
     .phys_flags = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_BOX,
     .mass = 5.0f,
+    .friction = 0.05f, 
     .aabb_size   = { 0.5f, 2.0f, 0.5f },
     .aabb_offset = { 0.0f, 2.15f, 0.0f },
   },

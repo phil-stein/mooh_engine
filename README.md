@@ -76,12 +76,13 @@ main resources:
   - draw_quad(), draw_mesh(), ...
  - [x] make core_data.c load all non custom shaders, framebuffers, etc.
  - [x] rename template_t to entity_template_t
+ - [ ] replace phys_act & scripts_act with flag
 
 ## base
  - [x] load shader
  - [x] multiple apps
  - [x] load mesh
-  - [ ] triangularize mesh
+  - [ ] triangularize mesh ?
   - [x] blender coord sys to mine
  - [ ] asset manager
   - [x] guid
@@ -110,6 +111,28 @@ main resources:
   - [x] serialization
   - [x] deserialization
   - [x] reload
+ - [ ] make lights entities !!!
+  - to be abled to parent lights, also to use gizmos
+  - sudo-components like bee-engine, or:
+    - world points to empty all having flag as first thing
+      that way entity_t doesn't need light pointers
+      {{{c
+        struct check_t
+        { flag_type_t type; }
+        struct entity_t
+        {
+          flag_type_t type;
+          ...
+        }
+        struct point_light_t
+        {
+          flag_type_t type;
+          ...
+        }
+        void** world; // array with all entities
+        
+        HAS_FLAG((check_t)world[3].type, GAY);
+      }}}
   - [ ] reset all dynamic objects ? 
     - this way we don't have to reload the entire thing 
     - not sure if needed in final game though
@@ -119,6 +142,9 @@ main resources:
     - single map file, never changed
     - multiple variants of that with changes
       - i.e. 'save01.scene', 'mygame.scene', etc.
+ - [ ] event system ?
+  - phys collisions ? (or when sync)
+  - custom events (day to night, etc.)
  - [ ] particle system
  - [x] set cam pos in program_start()
  - [ ] debug tools
@@ -209,7 +235,7 @@ main resources:
   - [x] set properties
   - [x] remove lights
   - [x] add lights
- - [ ] go back to inital state after play
+ - [x] go back to inital state after play
  - [ ] structure editor
   - seperate ?
  - [ ] particle system editor

@@ -113,9 +113,11 @@ typedef struct entity_t
 // @TODO:
 typedef struct structure_t
 {
-  entity_t* entities;
+  // entity_t* entities;
+  int* entities;          // id's for state_get_entity(id)
   int len;
 }structure_t;
+#define STRUCTURE_T_INIT()  { .entities = NULL, .len = 0 }
 
 typedef struct dir_light_t
 {

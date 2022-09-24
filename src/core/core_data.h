@@ -10,6 +10,8 @@
 #include "GLFW/glfw3.h"
 
 
+// @TODO: replace phys_act & scripts_act with flag
+
 typedef struct core_data_t
 {
   bool program_quit;  // if true program shuts down
@@ -154,9 +156,19 @@ typedef struct core_data_t
 }
 
 
+
 // -- func decls --
 
 core_data_t* core_data_get();
 void core_data_init();
+
+// play or pause the game, also saving/restoring game state
+void core_data_play();
+void core_data_play_scripts();
+void core_data_play_phys();
+void core_data_pause();
+
+// returns phys_act || scripts_act
+bool core_data_is_play();
 
 #endif

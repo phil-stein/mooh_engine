@@ -1,6 +1,7 @@
 #include "core/core_data.h"
 #include "core/assetm.h"
 #include "core/window.h"
+#include "core/serialization.h"
 
 
 
@@ -35,6 +36,51 @@ void core_data_init()
   // -- terrain --
 
   core_data.terrain_shader = assetm_create_shader_from_template(SHADER_TEMPLATE_TERRAIN);
+}
+
+void core_data_play()
+{
+  if (core_data_is_play()) { return; }
+  
+  core_data.scripts_act = true;
+  core_data.phys_act    = true;
+
+  serialization_write_scene_to_state_buffer();
+}
+
+void core_data_play_scripts()
+{
+  if (core_data_is_play()) { return; }
+
+  core_data.scripts_act = true;
+  core_data.phys_act    = false;
+
+  serialization_write_scene_to_state_buffer();
+}
+
+void core_data_play_phys()
+{
+  if (core_data_is_play()) { return; }
+  
+  core_data.scripts_act = false;
+  core_data.phys_act    = true;
+
+  serialization_write_scene_to_state_buffer();
+}
+
+void core_data_pause()
+{
+  if (!core_data_is_play()) { return; }
+
+  core_data.scripts_act = false;
+  core_data.phys_act    = false;
+
+  serialization_load_scene_from_state_buffer();
+}
+
+bool core_data_is_play()
+{
+  return core_data.phys_act || core_data.scripts_act;
 }
 
 INLINE void core_data_init_renderer()

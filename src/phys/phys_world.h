@@ -13,16 +13,16 @@ void phys_update(f32 dt);
 
 
 // add rigidbody to phys_obj_t
-void phys_obj_make_rb(f32 mass, phys_obj_t* obj);
+void phys_obj_make_rb(f32 mass, f32 friction, phys_obj_t* obj);
 // add box collider to phys_obj_t
 void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj);
 
 // add physics object with rigidbody, but no collider
-void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass);
+void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass, f32 friction);
 // add physics object with box collider but no rigidbody
 void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 offset);
 // add physics object with box collider and rigidbody
-void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, vec3 aabb[2], vec3 offset);
+void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 friction, vec3 aabb[2], vec3 offset);
 
 // remove object, by the entity its attached to
 void phys_remove_obj(u32 entity_idx);

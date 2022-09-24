@@ -109,11 +109,11 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
     vec3_copy(half_extents, aabb[1]);
     vec3_mul_f(aabb[0], -1, aabb[0]);
     
-    phys_add_obj_rb_box(id, pos, scl, def->mass, aabb, (f32*)def->aabb_offset);
+    phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->aabb_offset);
   }
   else if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
   {
-    phys_add_obj_rb(id, pos, def->mass);
+    phys_add_obj_rb(id, pos, def->mass, def->friction);
   }
   else if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
   {
@@ -386,6 +386,31 @@ void state_entity_global_scale(int id, vec3 out)
   
   state_entity_global_scale(e->parent, out);
   vec3_mul(out, e->scl, out);
+}
+
+// -- structures --
+
+structure_t state_make_structure_from_entity(int id)
+{
+  bool error = false;
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
+  
+  structure_t s = STRUCTURE_T_INIT();
+  state_structure_add_entity_recursive(&s, e);
+  
+  return s;
+}
+void state_structure_add_entity_recursive(structure_t* s, entity_t* e)
+{
+  if (e->parent >= 0) 
+  { 
+    arrput(s->entities, e->parent); 
+
+    bool error = false;
+    entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
+
+    state_structure_add_entity_recursive(s, p);
+  }
 }
 
 // -- lights --

@@ -26,7 +26,7 @@ int quad_mesh = -1;
 
 u32 brdf_lut;
 
-const f32 exposure    = 1.0f;
+const f32 exposure    = 1.25f;
 
 static core_data_t* core_data;
 

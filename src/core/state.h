@@ -33,6 +33,12 @@ void state_entity_model_no_scale(int id, mat4 out);
 void state_entity_model_no_scale_rotation(int id, mat4 out);
 void state_entity_global_scale(int id, vec3 out);
 
+
+// @NOTE: make structure_t describing an entity and all its children
+structure_t state_make_structure_from_entity(int id);
+// @NOTE: needed internally for 'state_make_structure_from_entity()'
+void state_structure_add_entity_recursive(structure_t* s, entity_t* e);
+
 dir_light_t* state_get_dir_light_arr(int* len);
 bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool cast_shadow, int shadow_map_x, int shadow_map_y);
 void state_remove_dir_light(int idx);
