@@ -116,7 +116,7 @@ main resources:
   - sudo-components like bee-engine, or:
     - world points to empty all having flag as first thing
       that way entity_t doesn't need light pointers
-      '''c
+      ```c
         struct check_t
         { flag_type_t type; }
         struct entity_t
@@ -132,7 +132,7 @@ main resources:
         void** world; // array with all entities
         
         HAS_FLAG((check_t)world[3].type, GAY);
-      '''
+      ```
   - [ ] reset all dynamic objects ? 
     - this way we don't have to reload the entire thing 
     - not sure if needed in final game though
