@@ -30,13 +30,14 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
 #define assetm_create_cubemap(name, ext)    assetm_create_cubemap_dbg(name, ext, __FILE__, __LINE__)
 #define assetm_load_cubemap_hdr(path)       assetm_load_cubemap_hdr_dbg(path, __FILE__, __LINE__)
 
-mesh_t* assetm_get_mesh_by_idx(int idx);
+mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* file, const int line);
 int assetm_get_mesh_idx_dbg(const char* name, const char* file, const int line);
 mesh_t* assetm_get_mesh_dbg(const char* name, const char* file, const int line);
 void assetm_create_mesh_dbg(const char* name, const char* file, const int line);
-#define assetm_get_mesh_idx(name) assetm_get_mesh_idx_dbg(name, __FILE__, __LINE__)
-#define assetm_get_mesh(name)     assetm_get_mesh_dbg(name, __FILE__, __LINE__)
-#define assetm_create_mesh(name)  assetm_create_mesh(name, __FILE__, __LINE__)
+#define assetm_get_mesh_by_idx(idx)     assetm_get_mesh_by_idx_dbg(idx, __FILE__, __LINE__)
+#define assetm_get_mesh_idx(name)       assetm_get_mesh_idx_dbg(name, __FILE__, __LINE__)
+#define assetm_get_mesh(name)           assetm_get_mesh_dbg(name, __FILE__, __LINE__)
+#define assetm_create_mesh(name)        assetm_create_mesh(name, __FILE__, __LINE__)
 
 shader_t* assetm_get_shader_by_idx_dbg(int idx, const char* file, const int line);
 int assetm_get_shader_idx_dbg(shader_template_type type, const char* file, const int line);

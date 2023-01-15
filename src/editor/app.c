@@ -173,6 +173,27 @@ void app_update()
 
 
   // -- input --
+  
+  // @TMP: print all entites and their children
+  if (input_get_key_pressed(KEY_SPACE))
+  {
+    P("|entities start|");
+    int dead_len, world_len = 0;
+    entity_t* world = state_get_entity_arr(&world_len, &dead_len);
+    entity_t* e = NULL;
+    for (int i_0 = 0; i_0 < world_len; ++i_0)
+    {
+      e = &world[i_0];
+      if (e->is_dead) { continue; }
+      PF(" -> id: %d, children_len: %d", e->id, e->children_len);
+      for (int i_1 = 0; i_1 < e->children_len; ++i_1)
+      {
+        PF(" | [%d]: %d", i_1, e->children[i_1]);
+      }
+      P("");
+    }
+    P("|entities end|");
+  }
 
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
   { 

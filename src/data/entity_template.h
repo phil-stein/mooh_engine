@@ -25,13 +25,13 @@ typedef struct entity_template_t
 {
   char* name;
 
-  char* mesh;
-  int   mat;    // idx for material_template.c
+  char* mesh;   // name for assetm, "-" means no mesh
+  int   mat;    // idx for material_template.c, -1 means no mesh
 
   init_callback*   init;
   update_callback* update;
 
-  entity_phys_flags phys_flags;
+  entity_phys_flag phys_flag;
   f32 mass;
   f32 friction;
   union
@@ -48,12 +48,26 @@ typedef struct entity_template_t
   .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
   .init   = NULL,                         \
   .update = NULL,                         \
-  .phys_flags  = 0,                       \
+  .phys_flag   = 0,                       \
   .mass        = 1.0f,                    \
   .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
-  .aabb_offset = { 0, 0, 0 },             
+  .aabb_offset = { 0, 0, 0 }             
 
+// removed () bc. vs19 is fckn stupid
+#define ENTITY_TEMPLATE_T_EMPTY()         \
+{                                         \
+  .name = "empty",                        \
+  .mesh = "-",                            \
+  .mat  = 0,                              \
+  .init   = NULL,                         \
+  .update = NULL,                         \
+  .phys_flag   = 0,                       \
+  .mass        = 1.0f,                    \
+  .friction    = 0.1f,                    \
+  .aabb_size   = { 1, 1, 1 },             \
+  .aabb_offset = { 0, 0, 0 }              \
+}
 
 const entity_template_t* entity_template_get(int idx);
 

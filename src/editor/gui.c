@@ -212,6 +212,12 @@ void gui_top_bar_win()
         if (nk_menu_item_label(ctx, "import", NK_TEXT_LEFT))
         { }
         
+        if (nk_menu_item_label(ctx, "new save", NK_TEXT_LEFT))
+        {
+          serialization_write_empty_scene_to_file(); 
+          // serialization_write_empty_terrain_to_file(TERRAIN_FILE_NAME); 
+        }
+        
         nk_menu_end(ctx);
       }
       nk_layout_row_push(ctx, 55);
@@ -311,14 +317,29 @@ void gui_properties_win()
     // -- properties --
 
     int id = app_data->selected_id;
-    nk_layout_row_dynamic(ctx, 25, 1);
     if (id >= 0)  // entities
     {
       bool error = false;
       entity_t* e     = state_get_entity(id, &error); ASSERT(!error);
+      int world_len = 0; int dead_len = 0;
+      state_get_entity_arr(&world_len, &dead_len);
       
+      nk_layout_row_dynamic(ctx, 25, 1);
       nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, entity_idx: %d", id, e->table_idx);
       nk_labelf(ctx, NK_TEXT_LEFT, "parent: %d, #children: %d", e->parent, e->children_len);
+      nk_layout_row_dynamic(ctx, 25, 2);
+      static int parent_id = 0;
+      nk_property_int(ctx, "parent id", 0, &parent_id, world_len -1, 1, 0.1f);
+      if (nk_button_label(ctx, "set parent") && parent_id >= 0 && parent_id < world_len)
+      {
+        bool error = false;
+        entity_t* p = state_get_entity(parent_id, &error);
+        if (!error)
+        {
+          state_entity_add_child(parent_id, id);
+        }
+        else { ERR("parent id not valid: %d", parent_id); }
+      }
 
       nk_layout_row_dynamic(ctx, 25, 2);
       nk_labelf(ctx, NK_TEXT_LEFT, "init:   %s", STR_BOOL(e->init_f != NULL));
@@ -343,15 +364,24 @@ void gui_properties_win()
         nk_tree_pop(ctx);
       }
       
-      if (nk_tree_push(ctx, NK_TREE_TAB, "material", NK_MINIMIZED))
+      if (e->mat >= 0 && e->mesh >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "material", NK_MINIMIZED))
       {
         material_t* mat = assetm_get_material_by_idx(e->mat);
         gui_properties_material(mat);
         nk_tree_pop(ctx);
       }
 
+      if (e->point_light_idx >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "point light", NK_MINIMIZED))
+      {
+        bool error = false;
+        point_light_t* p = state_get_point_light(e->point_light_idx, &error);
+        // gui_properties_point_light(e->pos, VEC3(1), 1);
+        gui_properties_point_light(p);
+        nk_tree_pop(ctx);
+      }
+
       const entity_template_t* def = entity_template_get(e->table_idx);
-      if (def->phys_flags != 0 && nk_tree_push(ctx, NK_TREE_TAB, "physics", NK_MINIMIZED))
+      if (def->phys_flag != 0 && nk_tree_push(ctx, NK_TREE_TAB, "physics", NK_MINIMIZED))
       {
         gui_properties_physics(def, e);
         nk_tree_pop(ctx);
@@ -481,6 +511,23 @@ void gui_properties_material(material_t* mat)
   nk_property_float(ctx, "roughness", 0.0f, &mat->roughness_f, 1.0f, 0.1f, 0.01f);
   nk_property_float(ctx, "metallic", 0.0f, &mat->metallic_f, 1.0f, 0.1f, 0.01f);
 
+
+
+}
+void gui_properties_point_light(point_light_t* p)
+{
+
+  nk_layout_row_dynamic(ctx, 30, 1);
+  nk_label(ctx, "position", NK_TEXT_LEFT);
+  nk_layout_row_dynamic(ctx, 30, 3);
+  nk_property_float(ctx, "p.x", -2048.0f, &p->pos[0], 2048.0f, 0.1f, 0.01f);
+  nk_property_float(ctx, "p.y", -2048.0f, &p->pos[1], 2048.0f, 0.1f, 0.01f);
+  nk_property_float(ctx, "p.z", -2048.0f, &p->pos[2], 2048.0f, 0.1f, 0.01f);
+
+  gui_color_selector(p->color);
+  
+  nk_property_float(ctx, "intensity", -2.0f, &p->intensity, 2048.0f, 0.1f, 0.01f);
+  
 }
 void gui_properties_physics(const entity_template_t* def, entity_t* e)
 {
@@ -495,7 +542,7 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
   if (obj)
   {
     nk_layout_row_dynamic(ctx, 30, 1);
-    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
+    if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- rigidbody --");
       // nk_labelf(ctx, NK_TEXT_LEFT, "mass: %f", obj->rb.mass);
@@ -514,12 +561,12 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       nk_property_float(ctx, "force.y", -2048.0f, &obj->rb.force[1], 2048.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f); 
     }
-    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_SPHERE))
+    if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- sphere --");
       nk_labelf(ctx, NK_TEXT_LEFT, "radius: %f", def->radius);
     }
-    if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
+    if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
       nk_labelf(ctx, NK_TEXT_LEFT, "[aabb]   x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
@@ -699,8 +746,10 @@ void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
     { app_data->selected_id = e->id; }
 
     *offs += 1;
+    PF("offs: %d, id: %d\n", *offs, e->id);
     for (int i = 0; i < e->children_len; ++i)
     {
+      ERR_CHECK(e->id != e->children[i], "id: %d, children_len: %d, child[%d]: %d\n", e->id, e->children_len, i, e->children[i]);
       bool err = false;
       entity_t* c = state_get_entity(e->children[i], &err); ASSERT(!err);
       gui_hierarchy_display_entity_and_children(c, offs); 
@@ -733,7 +782,7 @@ void gui_light_hierarchy_win()
     const int SEL_LIGHT_DIR   = 1;
     const int SEL_LIGHT_POINT = 2;
 
-    static int selected_type = SEL_LIGHT_NONE;
+    static int selected_type = 0; // vs is stupid so commented out SEL_LIGHT_NONE;
     static int selected = -1;
 
     if (nk_button_label(ctx, "add dir light")) 

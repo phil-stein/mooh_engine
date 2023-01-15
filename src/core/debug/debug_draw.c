@@ -25,7 +25,6 @@ void debug_draw_update_func()
   texture_t* t = assetm_get_texture_by_idx(blank_tex);
   for (int i = 0; i < queue_len; ++i)
   {
-      // @TODO: lines
       if (queue[i].type == DEBUG_DRAW_SPHERE)
       {
         mesh_t* m = assetm_get_mesh("sphere.fbx");
@@ -36,7 +35,7 @@ void debug_draw_update_func()
       }
       else if (queue[i].type == DEBUG_DRAW_LINE)
       {
-        renderer_draw_line(queue[i].pos, queue[i].rot, queue[i].tint);  // using rot as pos2
+        renderer_draw_line(queue[i].pos, queue[i].rot, queue[i].tint, queue[i].scl[0]);  // using rot as pos2
       }
       else if (queue[i].type == DEBUG_DRAW_MESH)
       {
@@ -95,7 +94,21 @@ void debug_draw_line_register_func(vec3 pos0, vec3 pos1, rgbf tint)
   d.is_model = false;
   vec3_copy(pos0, d.pos);
   vec3_copy(pos1, d.rot);
-  vec3_copy(VEC2(1), d.scl);
+  vec3_copy(VEC3(DEBUG_DEFAULT_LINE_WIDTH), d.scl);  // default width
+  vec3_copy(tint, d.tint);
+
+  arrput(queue, d);
+  queue_len++;
+}
+
+void debug_draw_line_register_width_func(vec3 pos0, vec3 pos1, rgbf tint, f32 width)
+{
+  debug_draw_t d;
+  d.type = DEBUG_DRAW_LINE;
+  d.is_model = false;
+  vec3_copy(pos0, d.pos);
+  vec3_copy(pos1, d.rot);
+  vec3_copy(VEC3(width), d.scl);
   vec3_copy(tint, d.tint);
 
   arrput(queue, d);
@@ -147,20 +160,37 @@ void debug_draw_mesh_textured_register_model_func(mat4 model, rgbf tint, int mes
 
 void debug_draw_box_register_func(vec3 points[8], rgbf color)
 {
-  debug_draw_line_register(points[0], points[1], color); 
-  debug_draw_line_register(points[1], points[2], color); 
-  debug_draw_line_register(points[2], points[3], color); 
-  debug_draw_line_register(points[3], points[0], color); 
+  debug_draw_line_register_width(points[0], points[1], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[1], points[2], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[2], points[3], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[3], points[0], color, DEBUG_DEFAULT_BOX_WIDTH); 
   
-  debug_draw_line_register(points[4], points[5], color); 
-  debug_draw_line_register(points[5], points[6], color); 
-  debug_draw_line_register(points[6], points[7], color); 
-  debug_draw_line_register(points[7], points[4], color); 
+  debug_draw_line_register_width(points[4], points[5], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[5], points[6], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[6], points[7], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[7], points[4], color, DEBUG_DEFAULT_BOX_WIDTH); 
   
-  debug_draw_line_register(points[4], points[0], color); 
-  debug_draw_line_register(points[5], points[1], color); 
-  debug_draw_line_register(points[6], points[2], color); 
-  debug_draw_line_register(points[7], points[3], color); 
+  debug_draw_line_register_width(points[4], points[0], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[5], points[1], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[6], points[2], color, DEBUG_DEFAULT_BOX_WIDTH); 
+  debug_draw_line_register_width(points[7], points[3], color, DEBUG_DEFAULT_BOX_WIDTH); 
 }
 
+void debug_draw_box_register_width_func(vec3 points[8], rgbf color, f32 width)
+{
+  debug_draw_line_register_width(points[0], points[1], color, width); 
+  debug_draw_line_register_width(points[1], points[2], color, width); 
+  debug_draw_line_register_width(points[2], points[3], color, width); 
+  debug_draw_line_register_width(points[3], points[0], color, width); 
+  
+  debug_draw_line_register_width(points[4], points[5], color, width); 
+  debug_draw_line_register_width(points[5], points[6], color, width); 
+  debug_draw_line_register_width(points[6], points[7], color, width); 
+  debug_draw_line_register_width(points[7], points[4], color, width); 
+  
+  debug_draw_line_register_width(points[4], points[0], color, width); 
+  debug_draw_line_register_width(points[5], points[1], color, width); 
+  debug_draw_line_register_width(points[6], points[2], color, width); 
+  debug_draw_line_register_width(points[7], points[3], color, width); 
+}
 #endif

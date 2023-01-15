@@ -22,7 +22,15 @@ struct entity_t;
 typedef void (init_callback)(struct entity_t* this);
 typedef void (update_callback)(struct entity_t* this, float dt);
 
-typedef enum entity_phys_flags
+typedef enum enitity_comp_flag
+{
+  ENTITY_HAS_NO_COMP     = 0,
+  ENTITY_HAS_POINT_LIGHT = FLAG(0),   
+  ENTITY_HAS_SOUND       = FLAG(1),   // @TODO: 
+
+}entity_comp_flag;
+
+typedef enum entity_phys_flag
 {
   ENTITY_HAS_RIGIDBODY = FLAG(0),
   ENTITY_HAS_SPHERE    = FLAG(1),    // @TODO:   
@@ -31,18 +39,20 @@ typedef enum entity_phys_flags
   ENTITY_HAS_CONVEX    = FLAG(4),    // @TODO:     
   ENTITY_HAS_CAPSULE   = FLAG(5),    // @TODO:   
 
-}entity_phys_flags;
+}entity_phys_flag;
 
 typedef struct entity_t
 {
+  // -- entity system / state -- 
   u32 id;        // id for state_entity_get(id)
   int table_idx; // idx for entity_table_get(idx)
   bool is_dead;  // insteadf of deleting the entity from array, its marked dead and overwritten with the next added entity
 
-  // local space
-  vec3 pos;   // position
-  vec3 rot;   // rotation
-  vec3 scl;   // scale
+
+  // -- space ---
+  vec3 pos;   // position, local space 
+  vec3 rot;   // rotation, local space
+  vec3 scl;   // scale,    local space 
   vec3 delta_pos;    // difference between last and current frame, used for physics sync 
   // vec3 delta_rot; // difference between last and current frame, used for physics sync, not needed as phys don't know what rotation is 
   vec3 delta_scl;    // difference between last and current frame, used for physics sync
@@ -51,17 +61,27 @@ typedef struct entity_t
   mat4 model;     // global space
   bool is_moved;  // specifies whether the entity has been moved since last model matrix update, used in 'state_entity_update_global_model()'
 
-  int mat;  // index for assetm
-  int mesh; // index for assetm
+  // -- visuals --
+  int mat;  // index for assetm, < 0 = no mat
+  int mesh; // index for assetm, < 0 = no mesh
 
+  // -- components --
+  // entity_comp_flag comp_flag; // components like ENTITY_HAS_POINT_LIGHT
+  int point_light_idx;   // normally -1, if >= 0 
+  // @NOTE: should probably be the whole point_light_t in here or
+  //        i need to force add_point_light() to associate with existing point light
+  // point_light_t point_light;
+      
   // -- physics --
-  entity_phys_flags phys_flags; // 0 if no flags, use HAS_FLAG() to check if flags are present
+  entity_phys_flag phys_flag; // 0 if no flags, use HAS_FLAG() to check if flags are present
   bool is_grounded;             // only valid for ents with phys collider, otherwise always false
 
+  // -- func pointers --
   // -> null or gets called at apropriate time
   init_callback*   init_f;
   update_callback* update_f;
 
+  // -- hierarchy --
   // int so they can be -1
   int  parent;
   int* children;

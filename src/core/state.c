@@ -65,6 +65,11 @@ void state_update(float dt)
     
     if (core_data->scripts_act && world[i].update_f != NULL)
     { world[i].update_f(&world[i], dt); }
+
+    if (world[i].point_light_idx >= 0)
+    {
+      vec3_copy(world[i].pos, point_lights[world[i].point_light_idx].pos);
+    }
   }
 }
 
@@ -94,13 +99,17 @@ entity_t* state_get_entity_arr(int* len, int* dead_len)
 int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
 {
   const entity_template_t* def = entity_template_get(idx);
-  int mesh = assetm_get_mesh_idx(def->mesh);
-  int mat  = assetm_get_material_idx(def->mat);
+  int mesh = -1;
+  if (!(strlen(def->mesh) == 1 && def->mesh[0] == '-')) // isnt equal to "-", that means no mesh
+  { mesh = assetm_get_mesh_idx(def->mesh); }
+  int mat  = 0; 
+  if (def->mat > -1)    // isnt -1 as thats no mat
+  { mat = assetm_get_material_idx(def->mat); }
 
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flags, def->init, def->update, idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init, def->update, idx);
 
-  if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
+  if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
     vec3 half_extents;
     vec3 aabb[2];
@@ -111,11 +120,11 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
     
     phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->aabb_offset);
   }
-  else if (HAS_FLAG(def->phys_flags, ENTITY_HAS_RIGIDBODY))
+  else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
     phys_add_obj_rb(id, pos, def->mass, def->friction);
   }
-  else if (HAS_FLAG(def->phys_flags, ENTITY_HAS_BOX))
+  else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX))
   {
     vec3 half_extents;
     vec3 aabb[2];
@@ -130,7 +139,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flags phys_flags, init_callback* init_f, update_callback* update_f, int table_idx)
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, int table_idx)
 {
   entity_t ent;
   ent.is_dead = false;
@@ -140,16 +149,17 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
   vec3_copy(pos,  ent.pos);
   vec3_copy(rot,  ent.rot);
   vec3_copy(scl,  ent.scl);
-  ent.is_moved     = true; 
-  ent.mesh         = mesh;
-  ent.mat          = mat;
-  ent.phys_flags   = phys_flags;
-  ent.is_grounded  = false; 
-  ent.init_f       = init_f;
-  ent.update_f     = update_f;
-  ent.children     = NULL;
-  ent.children_len = 0;
-  ent.parent       = -1;
+  ent.is_moved        = true; 
+  ent.mesh            = mesh;
+  ent.mat             = mat;
+  ent.point_light_idx = -1;
+  ent.phys_flag       = phys_flag;
+  ent.is_grounded     = false; 
+  ent.init_f          = init_f;
+  ent.update_f        = update_f;
+  ent.children        = NULL;
+  ent.children_len    = 0;
+  ent.parent          = -1;
 
   int idx = -1;
   // check for free slot
@@ -170,6 +180,11 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
 
   return idx;
 }
+int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
+{
+  return state_add_entity(pos, rot, scl, -1, -1, 0, NULL, NULL, -1);
+}
+
 int state_duplicate_entity(int id, vec3 offset)
 {
   bool err = false;
@@ -183,7 +198,7 @@ void state_remove_entity(int idx)
 {
   ERR_CHECK(idx >= 0 && idx < world_len, "removing invalid entity id");
  
-  if (world[idx].phys_flags != 0)
+  if (world[idx].phys_flag != 0)
   { phys_remove_obj(idx); }
 
   if (world[idx].parent > -1)
@@ -460,9 +475,16 @@ point_light_t* state_get_point_light_arr(int* len)
   return point_lights;
 }
 
+point_light_t* state_get_point_light(int id, bool* error)
+{
+  if (id < 0 || id >= point_lights_len) { *error = true; return NULL; }
+  *error = false;
+  return &point_lights[id];
+}
+
 bool state_add_point_light(vec3 pos, rgbf color, float intensity)
 {
-  if (dir_lights_len >= POINT_LIGHTS_MAX -1) { return false; }
+  if (dir_lights_len >= POINT_LIGHTS_MAX -1) { return false; P_ERR("tried adding point light but already max amount of point lights"); }
   
   point_light_t l;
   vec3_copy(pos, l.pos);
@@ -470,6 +492,17 @@ bool state_add_point_light(vec3 pos, rgbf color, float intensity)
   l.intensity    = intensity;
   
   point_lights[point_lights_len++] = l;
+
+  int id = state_add_empty_entity(pos, VEC3(0), VEC3(1));
+  bool error = false;
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
+  PF(" -> added pointlight entity: %d\n", id);
+  if (e->point_light_idx < 0)
+  {
+    e->point_light_idx = point_lights_len -1;
+  }
+  else { P_ERR("tried attaching point light to entity that already has one"); }
+
   return true;
 }
 

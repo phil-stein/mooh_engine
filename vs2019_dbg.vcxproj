@@ -190,6 +190,7 @@
     <ClCompile Include="src\phys\phys_collision.c" />
     <ClCompile Include="src\phys\phys_debug_draw.c" />
     <ClCompile Include="src\phys\phys_dynamics.c" />
+    <ClCompile Include="src\phys\phys_resolution.c" />
     <ClCompile Include="src\phys\phys_response.c" />
     <ClCompile Include="src\phys\phys_world.c" />
   </ItemGroup>
@@ -239,6 +240,7 @@
     <ClInclude Include="src\phys\phys_collision.h" />
     <ClInclude Include="src\phys\phys_debug_draw.h" />
     <ClInclude Include="src\phys\phys_dynamics.h" />
+    <ClInclude Include="src\phys\phys_resolution.h" />
     <ClInclude Include="src\phys\phys_response.h" />
     <ClInclude Include="src\phys\phys_types.h" />
     <ClInclude Include="src\phys\phys_world.h" />

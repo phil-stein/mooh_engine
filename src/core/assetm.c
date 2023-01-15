@@ -436,9 +436,10 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
 
 // meshes -----------------------------------------------------------------------------------------
 
-mesh_t* assetm_get_mesh_by_idx(int idx)
+// mesh_t* assetm_get_mesh_by_idx(int idx)
+mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* file, const int line)
 {
-  assert(idx >= 0 && idx < mesh_data_len);
+  ERR_CHECK(idx >= 0 && idx < mesh_data_len, "called from file: '%s' line: %d\n", file, line);
   return &mesh_data[idx];
 }
 int assetm_get_mesh_idx_dbg(const char* name, const char* file, const int line)

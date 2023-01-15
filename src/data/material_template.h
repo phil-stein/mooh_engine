@@ -17,6 +17,7 @@ typedef enum material_template_type
   MATERIAL_TEMPLATE_STONE01,
   MATERIAL_TEMPLATE_TREE01,
   MATERIAL_TEMPLATE_PATH,
+  MATERIAL_TEMPLATE_PLANKS,
 
 }material_template_type;
 

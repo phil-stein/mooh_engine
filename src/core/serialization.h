@@ -7,6 +7,10 @@
 #include "math/math_inc.h"
 
 
+// @NOTE: 0x010 = 1.0, 0x001 = 0.1, etc.
+//        serialized as u32
+#define SERIALIZATION_VERSION 0x001
+
 // @NOTE: mute or show serialization messages
 // #define SERIALIZATION_P(txt) P(txt)
 // #define SERALIZATION_PF(...) PF(__VA_ARGS__)
@@ -30,6 +34,8 @@ void serialization_load_scene_from_file(const char* name);
 #ifdef EDITOR
 void serialization_write_scene_to_state_buffer();
 void serialization_load_scene_from_state_buffer();
+
+void serialization_write_empty_scene_to_file();
 #endif
 
 void serialization_serialize_scene(u8** buffer);

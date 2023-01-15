@@ -234,7 +234,7 @@ void renderer_update()
     for (int i = 0; i < world_len; ++i)
     {
       e = &world[i];
-      if (e->is_dead) { continue; }
+      if (e->is_dead || e->mesh < 0 || e->mat < 0) { continue; }
   
       shader_set_mat4(&core_data->shadow_shader, "model", e->model);
 
@@ -281,7 +281,7 @@ void renderer_update()
     for (int i = 0; i < world_len; ++i)
     {
       e = &world[i];
-      if (e->is_dead) { continue; }
+      if (e->is_dead || e->mesh < 0 || e->mat < 0) { continue; }
 
       // ---- shader & draw call -----	
       material_t* mat = assetm_get_material_by_idx(e->mat);
@@ -623,7 +623,7 @@ void renderer_draw_scene_mouse_pick(mat4 gizmo_model)
   for (int i = 0; i < entities_len; ++i)
   {
     entity_t* ent = &entities[i];
-    if (ent->is_dead) { continue; }
+    if (ent->is_dead || ent->mesh < 0 || ent->mat < 0) { continue; }
 
     // state_entity_update_global_model(i);
 
@@ -995,7 +995,7 @@ void renderer_draw_mesh_preview(vec3 cam_pos, vec3 pos, vec3 rot, vec3 scale, me
   framebuffer_unbind();
 	
 }
-void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint)
+void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint, f32 width)
 {
 	// ---- mvp ----
 	mat4 model;
@@ -1008,6 +1008,8 @@ void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint)
 	window_get_size(&w, &h);
 	mat4 proj;
   camera_get_proj_mat(w, h, proj);
+
+  glLineWidth(width);
 
   // ---- vbo sub data ----
 

@@ -118,6 +118,17 @@ const material_template_t material_table[] =
     .metall_f = 0.0f,
     .shader_template = SHADER_TEMPLATE_NONE,
   },
+  // planks
+  {
+    .albedo = "stylized_planks/stylized_planks_albedo.jpg",
+    .normal = "stylized_planks/stylized_planks_normal.jpg",
+    .roughn = "stylized_planks/stylized_planks_roughness.jpg",
+    .metall = NULL,
+    .tint   = { 1, 1, 1 },
+    .roughn_f = 1.0f,
+    .metall_f = 0.0f,
+    .shader_template = SHADER_TEMPLATE_NONE,
+  },
 };
 const int material_table_len = sizeof(material_table) / sizeof(material_table[0]);
 

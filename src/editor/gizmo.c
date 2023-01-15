@@ -13,9 +13,11 @@
 // TODO: get static pointer
 // static app_data_t* app_data= NULL; 
 
-vec3 delta_pos = { 0 };
-vec3 delta_rot = { 0 };
-vec3 delta_scl = { 0 };
+static bool start_value_set = false;
+static vec3 start_pos = { 0, 0, 0 };
+vec3 delta_pos = { 0, 0, 0 };
+vec3 delta_rot = { 0, 0, 0 };
+vec3 delta_scl = { 0, 0, 0 };
 
 
 void gizmo_update()
@@ -47,6 +49,41 @@ void gizmo_update()
     else if (app_data->gizmo_type == GIZMO_ROTATE)
     {
       debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/rotate/gizmo.fbx"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+    }
+    
+    // -- draw line --
+    
+    if (app_data->selected_id >= 0 && input_get_mouse_down(MOUSE_LEFT))
+    {
+      bool err = false;
+      entity_t* e = state_get_entity(app_data->selected_id, &err);
+      assert(!err);
+
+      if (app_data->gizmo_type == GIZMO_TRANSLATE)
+      {
+        if (!start_value_set)
+        {
+          vec3_copy(e->pos, start_pos);
+          start_value_set = true;
+        }
+        debug_draw_line_register_width(start_pos, e->pos, RGB_F_RGB(1), 8);
+        debug_draw_sphere_register(start_pos, 0.1f, RGB_F_RGB(0.95f));
+        debug_draw_sphere_register(e->pos,    0.1f, RGB_F_RGB(0.95f));
+      }
+      // else if (app_data->gizmo_type == GIZMO_ROTATE)
+      // {
+      //   if (!start_value_set)
+      //   {
+      //     vec3_copy(e->rot, start_rot);
+      //     start_value_set = true;
+      //   }
+
+      //   // @TODO: figure out math for rot position
+
+
+      //   debug_draw_sphere_register(, 0.1f, RGB_F_RGB(0.95f));
+      //   debug_draw_sphere_register(,    0.1f, RGB_F_RGB(0.95f));
+      // }
     }
   }
 
@@ -139,7 +176,7 @@ void gizmo_update()
 
     vec2 p0 = { x + dx, y - dy };
     vec2 p1 = { x, y };
-    
+
     mat4 model;
     vec3 pos;
     GIZMO_MODEL_POS(app_data, model, pos);
@@ -282,11 +319,17 @@ void gizmo_update()
         vec3_copy(VEC3(0), delta_rot);
         vec3_copy(VEC3(0), delta_scl);
       }
-    }
 
+    }
+    else { start_value_set = false; } // reset if no entity selected 
   }
+  else { start_value_set = false; }   // reset if mouse isn't pressed
 
 }
+
+// }
+
+// }
 
 
 // 3d distance between 2 screen-space points projected into and entity's model space

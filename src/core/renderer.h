@@ -39,6 +39,6 @@ void renderer_draw_mesh_textured_mat(mat4 model, mesh_t* m, texture_t* tex, vec3
 
 void renderer_draw_mesh_preview(vec3 cam_pos, vec3 pos, vec3 rot, vec3 scale, mesh_t* m, texture_t* tex, vec3 tint, texture_t* bg, framebuffer_t* fb);
 
-void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint);
+void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint, f32 width);
 
 #endif

@@ -47,6 +47,10 @@ main resources:
  - [x] mouse-pick shader doesnt compile
  - [ ] terrain-chunks dont get culled properly 
  - [x] phys collision response extreme
+ - [ ] point light entity *1* is not parented to the player, 
+       but the player is it's parent
+       aka. parenting is broken prob. in serialization
+ - [ ] removing objects in editor causes crash
 
 ## optimizations
  - [ ] [multithreading](#multithreading) 
@@ -77,6 +81,13 @@ main resources:
  - [x] make core_data.c load all non custom shaders, framebuffers, etc.
  - [x] rename template_t to entity_template_t
  - [ ] replace phys_act & scripts_act with flag
+ - [ ] seperate serialization.c into terrain & entities
+
+## tools
+ - [x] base project
+ - [ ] binary dump
+  - write empty scene, terrain, etc. to file
+ - [ ] ... 
 
 ## base
  - [x] load shader
@@ -152,12 +163,10 @@ main resources:
         component_flag_t comp_flag;
         ...
         int point_light_idx;  // -1 if no point light   
-        or:
       }
       if (HAS_FLAG(entity.comp_flag, FLAG_POINT_LIGHT) )
       {
         all_point_lights[entity.point_light_idx].intensity;
-        or:
       }
       also works:
       if (entity.point_light_idx >= 0)
@@ -248,6 +257,9 @@ main resources:
   - [x] global edit on children / rotated
   - [x] make scale gizmo better
   - [x] make rotate gizmo better
+  - [x] draw line for distance
+  - [ ] draw line for rotation ?
+  - [ ] draw line for scale ?
  - [x] entity hierarchy
  - [x] removing
  - [x] duplicating

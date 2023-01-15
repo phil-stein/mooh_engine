@@ -58,8 +58,7 @@ char* file_read_len(const char* file_path, int* length)
     f = fopen(file_path, "rb");
     if (f == NULL)
     {
-        fprintf(stderr, "[ERROR] loading text-file at: %s\n", file_path);
-        assert(false);
+        ERR("loading text-file at: %s\n", file_path);
     }
 
     // get len of file

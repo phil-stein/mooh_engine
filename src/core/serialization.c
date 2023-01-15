@@ -75,6 +75,7 @@ void serialization_write_scene_to_file(const char* name)
 {
   u8* buffer = NULL;
 
+  // @UNSURE: add serialization version ???
   serialization_serialize_scene(&buffer);
   
   char path[128];
@@ -135,10 +136,46 @@ void serialization_load_scene_from_state_buffer()
   camera_set_pos(state_cam_pos);
   camera_set_front(state_cam_orientation);
 }
+
+void serialization_write_empty_scene_to_file()
+{
+  u8* buffer = NULL;
+
+  // serialization_serialize_scene(&buffer);
+  serialization_serialize_u32(&buffer, 0); // dir_lights_len
+  serialization_serialize_u32(&buffer, 0); // point_lights_len
+  serialization_serialize_u32(&buffer, 0); // world_len
+  
+  SERIALIZATION_P("[serialization] serialized empty scene");
+
+  char path[128];
+  sprintf(path, ASSET_PATH"%s", "-_-_new_-_-");
+  file_write(path, (const char*)buffer, (int)arrlen(buffer));
+
+  arrfree(buffer);
+}
 #endif
 
 void serialization_serialize_scene(u8** buffer)
 {
+  // -- version --
+
+  serialization_serialize_u32(buffer, SERIALIZATION_VERSION);
+  
+  // -- entities --
+
+  int world_len = 0;
+  int world_dead_len = 0;
+  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+
+  serialization_serialize_u32(buffer, world_len - world_dead_len);
+
+  for (u32 i = 0; i < world_len; ++i)
+  {
+    if (world[i].is_dead) { continue; }
+    serialization_serialize_entity(buffer, &world[i]);
+  }
+
   // -- dir lights --
   
   int dir_lights_len = 0;
@@ -163,20 +200,6 @@ void serialization_serialize_scene(u8** buffer)
     serialization_serialize_point_light(buffer, &point_lights[i]);
   } 
   
-  // -- entities --
-
-  int world_len = 0;
-  int world_dead_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
-
-  serialization_serialize_u32(buffer, world_len - world_dead_len);
-
-  for (u32 i = 0; i < world_len; ++i)
-  {
-    if (world[i].is_dead) { continue; }
-    serialization_serialize_entity(buffer, &world[i]);
-  }
-
   SERIALIZATION_P("[serialization] serialized scene");
 }
 void serialization_deserialize_scene(u8* buffer, u32* offset)
@@ -184,7 +207,21 @@ void serialization_deserialize_scene(u8* buffer, u32* offset)
 
   // clear pre-existing scene
   state_clear_scene();
+ 
+  // -- version -- 
+  
+  u32 version = serialization_deserialize_u32(buffer, offset);
 
+  // -- entities --
+
+  u32 world_len = serialization_deserialize_u32(buffer, offset);
+  P_U32(world_len);
+
+  for (u32 i = 0; i < world_len; ++i)
+  {
+    serialization_deserialize_entity(buffer, offset);
+  }
+  
   // -- dir lights --
   
   u32 dir_lights_len = serialization_deserialize_u32(buffer, offset);
@@ -204,16 +241,6 @@ void serialization_deserialize_scene(u8* buffer, u32* offset)
   {
     serialization_deserialize_point_light(buffer, offset);
   } 
- 
-  // -- entities --
-
-  u32 world_len = serialization_deserialize_u32(buffer, offset);
-  P_U32(world_len);
-
-  for (u32 i = 0; i < world_len; ++i)
-  {
-    serialization_deserialize_entity(buffer, offset);
-  }
   
   SERIALIZATION_P("[serialization] deserialized scene");
 }
@@ -346,7 +373,7 @@ void serialization_deserialize_entity(u8* buffer, u32* offset)
   {
     arrput(e->children, serialization_deserialize_s32(buffer, offset));
   }
-
+  PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
 }
 
 void serialization_serialize_dir_light(u8** buffer, dir_light_t* l)
