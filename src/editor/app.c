@@ -171,6 +171,20 @@ void app_update()
   TIMER_FUNC(gizmo_update());
   TIMER_FUNC(terrain_edit_update());
 
+  // draw lights
+  int world_len = 0;
+  int world_dead_len = 0;
+  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+  for (int i = 0; i < world_len; ++i)
+  {
+    if (world[i].point_light_idx >= 0) 
+    {
+      bool error = false;
+      point_light_t* p = state_get_point_light(world[i].point_light_idx, &error); ASSERT(!error);
+      debug_draw_sphere_register(world[i].pos, 0.35f, p->color); 
+    }
+  }
+
 
   // -- input --
   

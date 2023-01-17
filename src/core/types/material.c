@@ -24,9 +24,6 @@ material_t material_load_from_template(const material_template_t* m)
   if (m->shader_template != SHADER_TEMPLATE_NONE)
   { shader = assetm_get_shader_idx(m->shader_template); }
 
-  // @TODO: load from template
-  // vec2_copy(tile, m->tile);
-
   return material_make(albedo, normal, roughn, metall, (float*)m->tint, (float)m->roughn_f, (float)m->metall_f, shader, m->tile_scl, m->tile_by_scl, m->tile);  
 }
 
@@ -60,7 +57,6 @@ material_t material_make(int albedo, int normal, int roughness, int metallic, rg
   m.tile_by_scl = tile_by_scl;
   // @TODO: pass as arg
   vec2_copy(tile, m.tile);
-
 
   return m;
 }

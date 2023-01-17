@@ -93,6 +93,8 @@ void program_start(int width, int height, const char* title, window_type type, e
 // sync physics & entities
 void program_sync_phys()
 {
+  // @TODO: if static parented to moving parent, or give option for dynamic objs to not have forces affect them i.e. push, gravity
+
   int world_len = 0;
   int world_dead_len = 0;
   entity_t* world= state_get_entity_arr(&world_len, &world_dead_len);
@@ -119,10 +121,15 @@ void program_sync_phys()
       vec3_copy(VEC3(0), world[obj->entity_idx].delta_force);  
 
     }
-    if (PHYS_OBJ_HAS_COLLIDER(obj))
-    {
-      world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
-    }
+    // else // if (world[obj->entity_idx].parent >= 0) // static objects with parents
+    // {
+    //   P_INT(world[obj->entity_idx].parent);
+    //   if (world[world[obj->entity_idx].parent].is_moved) { P(" - is moved"); }
+    // }
+    // if (PHYS_OBJ_HAS_COLLIDER(obj))
+    // {
+    //   world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
+    // }
     vec3_copy(obj->pos, world[obj->entity_idx].pos);  // update entity position after physics
     ENTITY_SET_POS(&world[obj->entity_idx], obj->pos);
   }

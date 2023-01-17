@@ -176,7 +176,7 @@ void entity_update(entity_t* this, f32 dt)
 {
   const f32 speed = 10.0f * dt;
   // this->rot[2] += speed;
-  ENTITY_ROTATE_Z(this, speed);
+  ENTITY_ROTATE_Y(this, speed);
 
   // f32 r = (f32)sin(time_get_total_t());
   // f32 g = (f32)cos(time_get_total_t());

@@ -308,6 +308,8 @@ void renderer_update()
       
       glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
       glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
+    
+      ERR_CHECK(tex_idx <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_idx);
 
       shader_set_float(mat_shader, "roughness_f", mat->roughness_f);
       shader_set_float(mat_shader, "metallic_f", mat->metallic_f);
@@ -317,9 +319,11 @@ void renderer_update()
       if (mat->tile_by_scl) 
       { 
         f32 uv_scl = ( e->scl[0] + e->scl[1] + e->scl[2] ) / 3;
+        P_F32(uv_scl);
         vec2_mul_f(tile, uv_scl, tile); 
       }
       vec2_mul_f(tile, mat->tile_scl, tile);
+      P_F32(mat->tile_scl); P_VEC2(tile);
       shader_set_vec2(mat_shader, "uv_tile", tile);
 
       shader_set_mat4(mat_shader, "model", e->model);  // model gets updated in shadow map
@@ -400,6 +404,8 @@ void renderer_update()
       shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->view);
       sprintf(buffer, "shadows[%d].proj", idx);
       shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->proj);
+    
+      ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
     }
     // -----------------------------------------------------
 
@@ -454,10 +460,12 @@ void renderer_update()
     glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer04); 
     shader_set_int(&core_data->lighting_shader, "position", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
+    glActiveTexture(GL_TEXTURE0 + tex_index); 
     glBindTexture(GL_TEXTURE_2D, core_data->fb_shadow_pass.buffer); 
     shader_set_int(&core_data->lighting_shader, "shadow", tex_index);
     tex_index++;
+
+    ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
 
     // lights ----------------------------------------------
     char buffer[28];
@@ -646,12 +654,34 @@ void renderer_draw_scene_mouse_pick(mat4 gizmo_model)
     mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh);
     DRAW_MESH(mesh);
   }
+
+  // -- draw terrain --
   for (int i = 0; i < core_data->terrain_chunks_len; ++i) 
   { 
   if (!core_data->terrain_chunks[i].loaded || !core_data->terrain_chunks[i].visible) { continue; }
     shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ID_BUFFER_TERRAIN_0 -i); // counts down
     shader_set_mat4(&core_data->mouse_pick_shader, "model", core_data->terrain_chunks[i].model);
     renderer_draw_terrain_mesh(&core_data->terrain_chunks[i]); 
+  }
+
+  // -- draw lights --
+  mesh_t* sphere = assetm_get_mesh("sphere.fbx");
+  for (int i = 0; i < entities_len; ++i)
+  {
+    entity_t* ent = &entities[i];
+    if (ent->point_light_idx >= 0)
+    {
+      mat4 model;
+      mat4_copy(ent->model, model);
+      mat4_scale_f(model, 0.35f, model);
+      shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ent->id);
+
+      shader_set_mat4(&core_data->mouse_pick_shader, "model", model);
+      shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
+      shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
+
+      DRAW_MESH(sphere);
+    }
   }
 
   // -- draw gizmo --

@@ -545,21 +545,20 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- rigidbody --");
-      // nk_labelf(ctx, NK_TEXT_LEFT, "mass: %f", obj->rb.mass);
-      // nk_labelf(ctx, NK_TEXT_LEFT, "drag: %f", obj->rb.drag);
-      // nk_labelf(ctx, NK_TEXT_LEFT, "friction: %f", obj->rb.friction);
+      
       nk_property_float(ctx, "mass", 0.1f, &obj->rb.mass, 4096.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "drag", 0.0001f, &obj->rb.drag, 2.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "friction", 0.0001f, &obj->rb.friction, 2.0f, 0.1f, 0.01f); 
 
-      // P_VEC3(obj->pos);
       nk_labelf(ctx, NK_TEXT_LEFT, "pos: %f, %f, %f", obj->pos[0], obj->pos[1], obj->pos[2]);
       nk_labelf(ctx, NK_TEXT_LEFT, "vel: %f, %f, %f", obj->rb.velocity[0], obj->rb.velocity[1], obj->rb.velocity[2]);
       // nk_labelf(ctx, NK_TEXT_LEFT, "f:   %f, %f, %f", obj->rb.force[0], obj->rb.force[1], obj->rb.force[2]);
-      // tmp
+      
       nk_property_float(ctx, "force.x", -2048.0f, &obj->rb.force[0], 2048.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "force.y", -2048.0f, &obj->rb.force[1], 2048.0f, 0.1f, 0.01f); 
-      nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f); 
+      nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f);
+
+      nk_labelf(ctx, NK_TEXT_LEFT, "is_grounded: %s", obj->collider.is_grounded ? "true" : "false");
     }
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE))
     {

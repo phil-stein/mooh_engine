@@ -130,6 +130,9 @@ typedef struct entity_t
 #define ENTITY_FORCE_Z(e, z)        { (e)->delta_force[2] += (z);   }
 #define ENTITY_FORCE_AXIS(e, a, v)  { (e)->delta_force[(a)] += (v); } // scale on axis ' a '  from 0 -> 1
 
+// @TODO: ENTITY_HAS_COLLIDER() / ENTITY_HAS_RIGIDBODY() / etc. macros
+
+
 // @TODO:
 typedef struct structure_t
 {

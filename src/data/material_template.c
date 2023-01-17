@@ -139,6 +139,8 @@ const material_template_t material_table[] =
     .roughn_f = 1.0f,
     .metall_f = 0.0f,
     .shader_template = SHADER_TEMPLATE_NONE,
+    .tile_scl = 1.0f,
+    .tile_by_scl = true,
   },
   // bricks
   {
@@ -152,7 +154,6 @@ const material_template_t material_table[] =
     .roughn_f = 1.0f,
     .metall_f = 0.0f,
     .shader_template = SHADER_TEMPLATE_NONE,
-
     .tile_scl = 1.0f,
     .tile_by_scl = true,
   },

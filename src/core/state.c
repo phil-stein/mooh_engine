@@ -237,10 +237,27 @@ void state_entity_add_child(int parent, int child)
   if (c->parent > -1) 
   { P_ERR("parenting child which is already parented."); return; } 
 
+  // // set offset in phys
+  // if (HAS_FLAG(c->phys_flag, ENTITY_HAS_BOX))
+  // {
+  //   u32 phys_objs_len = 0;
+  //   phys_obj_t* phys_objs = phys_get_obj_arr(&phys_objs_len);
+  //   for (u32 i = 0; i < phys_objs_len; ++i)
+  //   {
+  //     phys_obj_t* obj = &phys_objs[i];
+  //     if (obj->entity_idx == c->id)
+  //     {
+  //       P("peepee");
+  //       vec3_add(obj->pos, c->pos, obj->pos);
+  //       vec3_mul(obj->scl, c->scl, obj->scl);
+  //     }
+  //   }
+  // }
+
   arrput(p->children, child);
   p->children_len++;
   c->parent = parent;
-  PF("-> parent: %d, child: %d\n", p->id, c->id);
+  // PF("-> parent: %d, child: %d\n", p->id, c->id);
 }
 void state_entity_remove_child(int parent, int child)
 {

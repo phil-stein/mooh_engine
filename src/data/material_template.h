@@ -48,8 +48,10 @@ typedef struct material_template_t
     .roughn = NULL,                             \
     .metall = NULL,                             \
     .tint   = (vec3){ 1, 1, 1 },                \
-    .roughn_f = 0.5f,                           \
     .metall_f = 0.0f,                           \
+    .roughn_f = 0.5f,                           \
+    .tile_scl = 1.0f,                           \
+    .tile_by_scl = false,                       \
     .tile = (vec2){ 1, 1 },                     \
     .shader_template = SHADER_TEMPLATE_NONE
 

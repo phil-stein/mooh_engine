@@ -373,7 +373,7 @@ void serialization_deserialize_entity(u8* buffer, u32* offset)
   {
     arrput(e->children, serialization_deserialize_s32(buffer, offset));
   }
-  PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
+  // PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
 }
 
 void serialization_serialize_dir_light(u8** buffer, dir_light_t* l)

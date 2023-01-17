@@ -19,18 +19,11 @@ void phys_obj_make_rb(f32 mass, f32 friction, phys_obj_t* obj)
 {
   obj->flags |= PHYS_HAS_RIGIDBODY;
   obj->rb.mass = mass;
-  // obj->rb.drag = drag;      // gets set in RIGIDBODY_T_INIT()
-  // obj->rb.friction = 0.2f;  // gets set in RIGIDBODY_T_INIT()
-  obj->rb.friction = friction; // usually gets set by defaults in entity_template.c  
+  // obj->rb.drag = drag;       // gets set in RIGIDBODY_T_INIT()
+  // obj->rb.friction = 0.2f;   // gets set in RIGIDBODY_T_INIT()
+  obj->rb.friction = friction;   
   vec3_copy(VEC3(0), obj->rb.velocity);
   vec3_copy(VEC3(0), obj->rb.force);
-  
-
-  // @NOTE: part of the old resolution
-  // // @TODO: set these through arguments
-  // obj->rb.restitution      = 1.0f;
-  // obj->rb.static_friction  = 0.0f;
-  // obj->rb.dynamic_friction = 0.0f;
 }
 void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
 {

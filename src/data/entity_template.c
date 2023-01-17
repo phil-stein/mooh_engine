@@ -95,7 +95,7 @@ const entity_template_t entity_template_table[] =
 
 const entity_template_t* entity_template_get(int idx)
 {
-  P_INT(idx);
+  // P_INT(idx);
 
   if (idx == -1)  // empty entity template
   {
