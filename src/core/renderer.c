@@ -312,6 +312,16 @@ void renderer_update()
       shader_set_float(mat_shader, "roughness_f", mat->roughness_f);
       shader_set_float(mat_shader, "metallic_f", mat->metallic_f);
 
+      vec2 tile; 
+      vec2_copy(mat->tile, tile);
+      if (mat->tile_by_scl) 
+      { 
+        f32 uv_scl = ( e->scl[0] + e->scl[1] + e->scl[2] ) / 3;
+        vec2_mul_f(tile, uv_scl, tile); 
+      }
+      vec2_mul_f(tile, mat->tile_scl, tile);
+      shader_set_vec2(mat_shader, "uv_tile", tile);
+
       shader_set_mat4(mat_shader, "model", e->model);  // model gets updated in shadow map
       shader_set_mat4(mat_shader, "view", view);
       shader_set_mat4(mat_shader, "proj", proj);

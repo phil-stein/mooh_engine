@@ -65,7 +65,7 @@ const entity_template_t entity_template_table[] =
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "cube_static",
     .mesh = "cube.fbx",
-    .mat  = MATERIAL_TEMPLATE_DEFAULT,
+    .mat  = MATERIAL_TEMPLATE_BRICK, // _PLANKS, // _PATH, // _METALL,
     .phys_flag = ENTITY_HAS_BOX,
     .aabb_size  = { 1, 1, 1 },
   },

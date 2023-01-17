@@ -9,6 +9,7 @@ const material_template_t material_table[] =
 {
   // empty
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = NULL,
     .normal = NULL,
     .roughn = NULL,
@@ -20,6 +21,7 @@ const material_template_t material_table[] =
   },
   // default
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = NULL,
     .normal = NULL,
     .roughn = NULL,
@@ -32,6 +34,7 @@ const material_template_t material_table[] =
   // MATERIAL_TEMPLATE_DEFAULT_INIT(), // @NOTE: is this better, than having the values in the .c file ?
   // metall
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = NULL,
     .normal = NULL,
     .roughn = NULL,
@@ -43,6 +46,7 @@ const material_template_t material_table[] =
   },
   // demon01
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "demon01/demon01_albedo.png",
     .normal = "demon01/demon01_normal.png",
     .roughn = "demon01/demon01_roughness.png",
@@ -54,6 +58,7 @@ const material_template_t material_table[] =
   },
   // demon02
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "demon02/demon02_albedo.png",
     .normal = "demon02/demon02_normal.png",
     .roughn = "demon02/demon02_roughness.png",
@@ -65,6 +70,7 @@ const material_template_t material_table[] =
   },
   // shotgun
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "shotgun/shotgun_albedo.png",
     .normal = "shotgun/shotgun_normal.png",
     .roughn = "shotgun/shotgun_roughness.png",
@@ -76,6 +82,7 @@ const material_template_t material_table[] =
   },
   // grass
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "stylized_grass/stylized_grass_albedo.jpg",
     .normal = "stylized_grass/stylized_grass_normal.jpg",
     .roughn = "stylized_grass/stylized_grass_roughness.jpg",
@@ -87,6 +94,7 @@ const material_template_t material_table[] =
   },
   // stone01
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "stone01_02/stone01_albedo.png",
     .normal = "stone01_02/stone01_normal.png",
     .roughn = "stone01_02/stone01_roughness.png",
@@ -98,6 +106,7 @@ const material_template_t material_table[] =
   },
   // tree01
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "tree01/tree01_albedo.png",
     .normal = "tree01/tree01_normal.png",
     .roughn = "tree01/tree01_roughness.png",
@@ -109,6 +118,7 @@ const material_template_t material_table[] =
   },
   // path
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "stylized_path/stylized_path_albedo.jpg",
     .normal = "stylized_path/stylized_path_normal.jpg",
     .roughn = "stylized_path/stylized_path_roughness.jpg",
@@ -120,6 +130,7 @@ const material_template_t material_table[] =
   },
   // planks
   {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
     .albedo = "stylized_planks/stylized_planks_albedo.jpg",
     .normal = "stylized_planks/stylized_planks_normal.jpg",
     .roughn = "stylized_planks/stylized_planks_roughness.jpg",
@@ -128,6 +139,22 @@ const material_template_t material_table[] =
     .roughn_f = 1.0f,
     .metall_f = 0.0f,
     .shader_template = SHADER_TEMPLATE_NONE,
+  },
+  // bricks
+  {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
+
+    .albedo = "stylized_brick/stylized_bricks_albedo.jpg",
+    .normal = "stylized_brick/stylized_bricks_normal.jpg",
+    .roughn = "stylized_brick/stylized_bricks_roughness.jpg",
+    .metall = NULL,
+    .tint   = { 1, 1, 1 },
+    .roughn_f = 1.0f,
+    .metall_f = 0.0f,
+    .shader_template = SHADER_TEMPLATE_NONE,
+
+    .tile_scl = 1.0f,
+    .tile_by_scl = true,
   },
 };
 const int material_table_len = sizeof(material_table) / sizeof(material_table[0]);
