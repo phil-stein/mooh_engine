@@ -19,7 +19,8 @@ main resources:
 
 ## current capabilities
 
-<img src="https://github.com/phil-stein/mooh_engine/blob/main/assets/project_files/screenshot01.png" alt="logo" width="1000">
+<img src="https://github.com/phil-stein/mooh_engine/blob/main/assets/project_files/screenshot02
+.png" alt="logo" width="1000">
 
 # -- todo --
 
