@@ -126,10 +126,10 @@ void program_sync_phys()
     //   P_INT(world[obj->entity_idx].parent);
     //   if (world[world[obj->entity_idx].parent].is_moved) { P(" - is moved"); }
     // }
-    // if (PHYS_OBJ_HAS_COLLIDER(obj))
-    // {
-    //   world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
-    // }
+    if (PHYS_OBJ_HAS_COLLIDER(obj))
+    {
+      world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
+    }
     vec3_copy(obj->pos, world[obj->entity_idx].pos);  // update entity position after physics
     ENTITY_SET_POS(&world[obj->entity_idx], obj->pos);
   }

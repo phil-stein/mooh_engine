@@ -51,7 +51,9 @@ void state_remove_dir_light(int idx);
 
 point_light_t* state_get_point_light_arr(int* len);
 point_light_t* state_get_point_light(int id, bool* error);
-bool state_add_point_light(vec3 pos, rgbf color, float intensity);
+// bool state_add_point_light(vec3 pos, rgbf color, float intensity);
+int state_add_point_light_empty(vec3 pos, rgbf color, float intensity);           // point_light with new empty entity
+int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id);  // point_light atttached to existing entity
 void state_remove_point_light(int idx);
 
 #endif

@@ -417,7 +417,7 @@ void serialization_deserialize_point_light(u8* buffer, u32* offset)
   serialization_deserialize_vec3(buffer, offset, color);
   f32 intensity = serialization_deserialize_f32(buffer, offset);
 
-  state_add_point_light(pos, color, intensity);
+  state_add_point_light_empty(pos, color, intensity);
 }
 
 // ---- base types ----

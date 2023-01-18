@@ -76,8 +76,8 @@ typedef struct app_data_t
 // -- keymappings --
 
 #define KEY_EXIT              KEY_ESCAPE
-
 #define KEY_WIREFRAME_TOGGLE  KEY_TAB
+#define KEY_TOGGLE_FULLSCREEN KEY_F11
 
 #define KEY_GIZMO_TRANSLATE   KEY_G
 #define KEY_GIZMO_SCALE       KEY_S

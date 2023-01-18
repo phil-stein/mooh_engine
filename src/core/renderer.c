@@ -319,11 +319,9 @@ void renderer_update()
       if (mat->tile_by_scl) 
       { 
         f32 uv_scl = ( e->scl[0] + e->scl[1] + e->scl[2] ) / 3;
-        P_F32(uv_scl);
         vec2_mul_f(tile, uv_scl, tile); 
       }
       vec2_mul_f(tile, mat->tile_scl, tile);
-      P_F32(mat->tile_scl); P_VEC2(tile);
       shader_set_vec2(mat_shader, "uv_tile", tile);
 
       shader_set_mat4(mat_shader, "model", e->model);  // model gets updated in shadow map

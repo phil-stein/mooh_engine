@@ -163,6 +163,25 @@ void app_init()
 
 void app_update()
 {
+
+  // @TODO: this shows infront of gizmos
+  // draw lights
+  if (!core_data_is_play())
+  {
+    int world_len = 0;
+    int world_dead_len = 0;
+    entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+    for (int i = 0; i < world_len; ++i)
+    {
+      if (world[i].point_light_idx >= 0) 
+      {
+        bool error = false;
+        point_light_t* p = state_get_point_light(world[i].point_light_idx, &error); ASSERT(!error);
+        debug_draw_mesh_register(world[i].pos, VEC3_XYZ(90, 0, 0), VEC3(2.35f), p->color, assetm_get_mesh_idx("gizmos/lightbulb.fbx")); 
+      }
+    }
+  }
+
   mat4 model;
   vec3 pos;
   GIZMO_MODEL_POS(&app_data, model, pos);
@@ -171,43 +190,30 @@ void app_update()
   TIMER_FUNC(gizmo_update());
   TIMER_FUNC(terrain_edit_update());
 
-  // draw lights
-  int world_len = 0;
-  int world_dead_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
-  for (int i = 0; i < world_len; ++i)
-  {
-    if (world[i].point_light_idx >= 0) 
-    {
-      bool error = false;
-      point_light_t* p = state_get_point_light(world[i].point_light_idx, &error); ASSERT(!error);
-      debug_draw_sphere_register(world[i].pos, 0.35f, p->color); 
-    }
-  }
 
 
   // -- input --
   
-  // @TMP: print all entites and their children
-  if (input_get_key_pressed(KEY_SPACE))
-  {
-    P("|entities start|");
-    int dead_len, world_len = 0;
-    entity_t* world = state_get_entity_arr(&world_len, &dead_len);
-    entity_t* e = NULL;
-    for (int i_0 = 0; i_0 < world_len; ++i_0)
-    {
-      e = &world[i_0];
-      if (e->is_dead) { continue; }
-      PF(" -> id: %d, children_len: %d", e->id, e->children_len);
-      for (int i_1 = 0; i_1 < e->children_len; ++i_1)
-      {
-        PF(" | [%d]: %d", i_1, e->children[i_1]);
-      }
-      P("");
-    }
-    P("|entities end|");
-  }
+  // // @TMP: print all entites and their children
+  // if (input_get_key_pressed(KEY_SPACE))
+  // {
+  //   P("|entities start|");
+  //   int dead_len, world_len = 0;
+  //   entity_t* world = state_get_entity_arr(&world_len, &dead_len);
+  //   entity_t* e = NULL;
+  //   for (int i_0 = 0; i_0 < world_len; ++i_0)
+  //   {
+  //     e = &world[i_0];
+  //     if (e->is_dead) { continue; }
+  //     PF(" -> id: %d, children_len: %d", e->id, e->children_len);
+  //     for (int i_1 = 0; i_1 < e->children_len; ++i_1)
+  //     {
+  //       PF(" | [%d]: %d", i_1, e->children[i_1]);
+  //     }
+  //     P("");
+  //   }
+  //   P("|entities end|");
+  // }
 
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
   { 
@@ -257,6 +263,13 @@ void app_update()
 		app_data.wireframe_act = !app_data.wireframe_act;
 		core_data->wireframe_mode_enabled = app_data.wireframe_act;
 	}
+  if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
+  {
+    window_type type = window_get_mode();
+    // @NOTE: min -> max -> full
+    type = type == WINDOW_MIN ? WINDOW_MAX : type == WINDOW_MAX ? WINDOW_FULL : WINDOW_MAX;
+    window_set_mode(type);
+  }
   if (input_get_key_pressed(KEY_EXIT))
   {
     if (core_data->scripts_act || core_data->phys_act)

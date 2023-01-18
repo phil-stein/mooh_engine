@@ -26,6 +26,11 @@ void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 frict
 
 // remove object, by the entity its attached to
 void phys_remove_obj(u32 entity_idx);
+
+// "roatate" aabb 90° around y
+void phys_rotate_box_y(u32 entity_idx);
+
+
 // remove all objects
 void phys_clear_state();
 

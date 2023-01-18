@@ -47,8 +47,8 @@ void player_update(entity_t* this, f32 dt)
   { ENTITY_FORCE(this, front); }
 	if (input_get_key_down(KEY_DOWN_ARROW)  || input_get_key_down(KEY_S))
   { ENTITY_FORCE(this, back); }
-
-	if (this->is_grounded && input_get_key_pressed(KEY_SPACE))
+	
+  if (this->is_grounded && input_get_key_pressed(KEY_SPACE))
   { ENTITY_FORCE_Y(this, jump_force); }
   
   // @NOTE: set camera orientation

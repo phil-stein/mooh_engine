@@ -191,7 +191,17 @@ int state_duplicate_entity(int id, vec3 offset)
   entity_t* e = state_get_entity(id, &err); ASSERT(!err);
   vec3 pos;
   vec3_add(e->pos, offset, pos);
-  return state_add_entity_from_template(pos, e->rot, e->scl, e->table_idx);
+  int dupe = state_add_entity_from_template(pos, e->rot, e->scl, e->table_idx);
+
+  // attached point light
+  if (e->point_light_idx >= 0)
+  {
+    bool error = false;
+    point_light_t* p = state_get_point_light(e->point_light_idx, &error); ASSERT(!error);
+    state_add_point_light(pos, p->color, p->intensity, dupe);
+  }
+
+  return dupe;
   // return state_add_entity(pos, e->rot, e->scl, e->mesh, e->mat, e->init_f, e->update_f, e->table_idx);
 }
 void state_remove_entity(int idx)
@@ -237,6 +247,7 @@ void state_entity_add_child(int parent, int child)
   if (c->parent > -1) 
   { P_ERR("parenting child which is already parented."); return; } 
 
+  // @TODO: doesnt work, maybe gets overwritten or not updated
   // // set offset in phys
   // if (HAS_FLAG(c->phys_flag, ENTITY_HAS_BOX))
   // {
@@ -494,12 +505,20 @@ point_light_t* state_get_point_light_arr(int* len)
 
 point_light_t* state_get_point_light(int id, bool* error)
 {
-  if (id < 0 || id >= point_lights_len) { *error = true; return NULL; }
+  if (id < 0 || id >= point_lights_len) 
+  { ERR("id: %d, point_lights_lenlen: %d\n", id, point_lights_len); *error = true; return NULL; }
   *error = false;
   return &point_lights[id];
 }
 
-bool state_add_point_light(vec3 pos, rgbf color, float intensity)
+int state_add_point_light_empty(vec3 pos, rgbf color, float intensity)
+{
+  int id = state_add_empty_entity(pos, VEC3(0), VEC3(1));
+  return state_add_point_light(pos, color, intensity, id);
+}
+
+
+int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
 {
   if (dir_lights_len >= POINT_LIGHTS_MAX -1) { return false; P_ERR("tried adding point light but already max amount of point lights"); }
   
@@ -509,18 +528,18 @@ bool state_add_point_light(vec3 pos, rgbf color, float intensity)
   l.intensity    = intensity;
   
   point_lights[point_lights_len++] = l;
-
-  int id = state_add_empty_entity(pos, VEC3(0), VEC3(1));
+ 
   bool error = false;
-  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
-  PF(" -> added pointlight entity: %d\n", id);
+  entity_t* e = state_get_entity(entity_id, &error); ASSERT(!error);
   if (e->point_light_idx < 0)
   {
     e->point_light_idx = point_lights_len -1;
   }
   else { P_ERR("tried attaching point light to entity that already has one"); }
+  
+  PF(" -> added pointlight entity: %d\n", entity_id);
 
-  return true;
+  return point_lights_len -1;
 }
 
 void state_remove_point_light(int idx)

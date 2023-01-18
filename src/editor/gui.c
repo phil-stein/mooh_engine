@@ -570,7 +570,12 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
       nk_labelf(ctx, NK_TEXT_LEFT, "[aabb]   x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
       nk_labelf(ctx, NK_TEXT_LEFT, "[offset] x: %.2f y: %.2f, z: %.2f", obj->collider.offset[0], obj->collider.offset[1], obj->collider.offset[2]);
-      
+     
+      if (nk_button_label(ctx, "rotate box y"))
+      {
+        phys_rotate_box_y(e->id);
+      }
+
       phys_debug_draw_box_collider(obj);
     }
   }
@@ -795,7 +800,7 @@ void gui_light_hierarchy_win()
       camera_get_pos(pos);
       vec3_mul_f(front, 8.0f, front);
       vec3_add(front, pos, pos);
-      state_add_point_light(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);
+      state_add_point_light_empty(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);
     }
 
     if (nk_tree_push(ctx, NK_TREE_TAB, "hierarchy", NK_MAXIMIZED))

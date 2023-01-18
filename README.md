@@ -122,7 +122,7 @@ main resources:
   - [x] serialization
   - [x] deserialization
   - [x] reload
- - [ ] make lights entities !!!
+ - [x] make lights entities !!!
   - to be abled to parent lights, also to use gizmos
   - sudo-components like bee-engine
     ```c
@@ -263,6 +263,7 @@ main resources:
  - [x] entity hierarchy
  - [x] removing
  - [x] duplicating
+  - [x] duplicate lights when attached
  - [x] snapping
  - [x] terrain editor
   - [x] select
@@ -280,6 +281,7 @@ main resources:
   - [x] remove lights
   - [x] add lights
  - [x] go back to inital state after play
+ - [ ] lightbulb gizmo shows infront of trans. gizmos
  - [ ] structure editor
   - seperate ?
  - [ ] particle system editor
@@ -292,7 +294,11 @@ main resources:
  - [x] api for forces
  - [ ] sphere
  - [x] aabb
+  - [ ] parented aabb's dont change pos correct
+  - [ ] "rotate" aabb's in 90° steps
+  - [ ] change aabb in editor
  - [ ] plane
+ - [ ] obb (replace aabb, or use aabb as optimization)
  - [x] resolution
  - [ ] fix buoancy in resolution, actually in phys_debug_draw()
  - [x] array of dynamic objs, for optimization

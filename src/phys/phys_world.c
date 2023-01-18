@@ -95,6 +95,29 @@ void phys_remove_obj(u32 entity_idx)
   }
 }
 
+void phys_rotate_box_y(u32 entity_idx)
+{
+  for (u32 i = 0; i < phys_objs_len; ++i)
+  {
+    phys_obj_t* obj = &phys_objs[i];
+    if (obj->entity_idx == entity_idx && PHYS_OBJ_HAS_COLLIDER(obj) && obj->collider.type == PHYS_COLLIDER_BOX) 
+    {
+      // switch x / z
+      vec3 min, max;
+      min[0] = obj->collider.box.aabb[0][2];
+      min[1] = obj->collider.box.aabb[0][1];
+      min[2] = obj->collider.box.aabb[0][0];
+
+      max[0] = obj->collider.box.aabb[1][2];
+      max[1] = obj->collider.box.aabb[1][1];
+      max[2] = obj->collider.box.aabb[1][0];
+
+      vec3_copy(min, obj->collider.box.aabb[0]);
+      vec3_copy(max, obj->collider.box.aabb[1]);
+    }
+  }
+}
+
 // @TODO:
 void phys_clear_state()
 {
