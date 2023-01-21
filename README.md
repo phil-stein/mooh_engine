@@ -83,6 +83,7 @@ main resources:
  - [x] rename template_t to entity_template_t
  - [ ] replace phys_act & scripts_act with flag
  - [ ] seperate serialization.c into terrain & entities
+ - [ ] compile core, data, phys as libs 
 
 ## tools
  - [x] base project
@@ -187,7 +188,8 @@ main resources:
  - [ ] event system
   - [x] phys collisions
   - [ ] entity add, remove, parented
-  - custom events (day to night, etc.)
+  - [ ] etc.
+  - [ ] custom game events (day to night, etc.)
  - [ ] particle system
  - [x] set cam pos in program_start()
  - [ ] debug tools
@@ -328,6 +330,17 @@ main resources:
   - button in gui to calc for all chunks
  - [x] save & load
  - [x] vert color texture blending
+
+## in-game ui
+ - hook rendering into core
+ - [ ] draw quads 
+  - [ ] scale with screen
+  - [ ] textured quads
+ - [ ] aligned hierarchy
+  - [ ] centered
+  - [ ] left / right
+  - [ ] up / down
+ - [ ] text (already wrote lib)
 
 ## artstyle look-dev
  - [ ] draw sketch of scene
