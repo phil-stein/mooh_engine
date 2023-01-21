@@ -263,13 +263,22 @@ void app_update()
 		app_data.wireframe_act = !app_data.wireframe_act;
 		core_data->wireframe_mode_enabled = app_data.wireframe_act;
 	}
+
   if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
   {
     window_type type = window_get_mode();
+    
+    P_WINDOW_TYPE(type); 
+    
     // @NOTE: min -> max -> full
     type = type == WINDOW_MIN ? WINDOW_MAX : type == WINDOW_MAX ? WINDOW_FULL : WINDOW_MAX;
+    
+    P_WINDOW_TYPE(type); 
+    P("------------");
+
     window_set_mode(type);
   }
+
   if (input_get_key_pressed(KEY_EXIT))
   {
     if (core_data->scripts_act || core_data->phys_act)

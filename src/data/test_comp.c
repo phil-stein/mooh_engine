@@ -124,6 +124,16 @@ void player_update(entity_t* this, f32 dt)
 
 }
 
+void player_on_collision(entity_t* this, entity_t* col)
+{
+  // PF("player_on_collision: %d\n", col->id);
+}
+void player_on_trigger(entity_t* this, entity_t* trig)
+{
+  // PF("player_on_trigger: %d\n", trig->id);
+}
+
+
 void player_camera(entity_t* this, f32 dt)
 {
   // // @NOTE: rotates the camera accoding to the mouse-movement

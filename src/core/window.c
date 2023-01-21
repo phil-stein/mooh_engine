@@ -21,6 +21,7 @@ int			        resize_buffers_len = 0;
 // -- func decls --
 void error_callback(int error, const char* description);
 void resize_callback(void* window, int width, int height);
+void maximize_callback(void* window, int maximized);
 
 
 // intis glfw & glad, also creates the window
@@ -95,6 +96,8 @@ bool window_create(const int width, const int height, const char* title, window_
 
 	// set the resize callback
 	glfwSetFramebufferSizeCallback(core_data->window, (GLFWframebuffersizefun)resize_callback);
+  // @NOTE: causes inability to restore maximized after fullscreen, also framebuffers crash when minimizing to system tray
+  // glfwSetWindowMaximizeCallback(core_data->window,  (GLFWwindowmaximizefun)maximize_callback); 
 
 	glfwSetWindowAttrib(core_data->window, GLFW_FOCUS_ON_SHOW, true);
 	// glfwSetWindowAttrib(window, GLFW_AUTO_ICONIFY, true);
@@ -120,6 +123,11 @@ void resize_callback(void* window, int width, int height)
 		if (resize_buffers[i] == NULL) { continue; }
     framebuffer_resize_to_window(resize_buffers[i]);
 	}
+}
+
+void maximize_callback(void* window, int maximized)
+{
+  win_type = maximized ? WINDOW_MAX : WINDOW_MIN; // : win_type;
 }
 
 window_type window_get_mode()

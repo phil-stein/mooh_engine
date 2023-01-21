@@ -21,6 +21,8 @@ typedef struct cubemap_t
 struct entity_t;
 typedef void (init_callback)(struct entity_t* this);
 typedef void (update_callback)(struct entity_t* this, float dt);
+typedef void (collision_callback)(struct entity_t* this, struct entity_t* ent);
+typedef void (trigger_callback)(struct entity_t* this, struct entity_t* ent);
 
 typedef enum enitity_comp_flag
 {
@@ -78,11 +80,13 @@ typedef struct entity_t
 
   // -- func pointers --
   // -> null or gets called at apropriate time
-  init_callback*   init_f;
-  update_callback* update_f;
+  init_callback*      init_f;
+  update_callback*    update_f;
+  collision_callback* collision_f;
+  trigger_callback*   trigger_f;
 
   // -- hierarchy --
-  // int so they can be -1
+  // int so they can be -1, for no parent
   int  parent;
   int* children;
   int  children_len;

@@ -51,6 +51,7 @@ main resources:
        but the player is it's parent
        aka. parenting is broken prob. in serialization
  - [ ] removing objects in editor causes crash
+ - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
 
 ## optimizations
  - [ ] [multithreading](#multithreading) 
@@ -183,8 +184,9 @@ main resources:
     - single map file, never changed
     - multiple variants of that with changes
       - i.e. 'save01.scene', 'mygame.scene', etc.
- - [ ] event system ?
-  - phys collisions ? (or when sync)
+ - [ ] event system
+  - [x] phys collisions
+  - [ ] entity add, remove, parented
   - custom events (day to night, etc.)
  - [ ] particle system
  - [x] set cam pos in program_start()
@@ -219,6 +221,7 @@ main resources:
  - [x] point lights ?
  - [ ] blending
   - learnopengl weighted blending 'OIT'
+ - [ ] fix normal shadows
  - [ ] cascaded shadows
   - from cherno video 
   - also on learnopengl

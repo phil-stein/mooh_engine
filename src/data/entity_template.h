@@ -17,6 +17,10 @@ typedef enum entity_template_type
   ENTITY_TEMPLATE_STONE01,
   ENTITY_TEMPLATE_TREE01,
   ENTITY_TEMPLATE_HUT_TEST,
+  ENTITY_TEMPLATE_CUBE_STATIC,
+  ENTITY_TEMPLATE_CUBE_DYNAMIC,
+  ENTITY_TEMPLATE_PLAYER,
+  ENTITY_TEMPLATE_CUBE_STATIC_TRIGGER,
 }entity_template_type;
 
 
@@ -28,8 +32,10 @@ typedef struct entity_template_t
   char* mesh;   // name for assetm, "-" means no mesh
   int   mat;    // idx for material_template.c, -1 means no mesh
 
-  init_callback*   init;
-  update_callback* update;
+  init_callback*      init_f;
+  update_callback*    update_f;
+  collision_callback* collision_f;
+  trigger_callback*   trigger_f;
 
   entity_phys_flag phys_flag;
   f32 mass;
@@ -39,6 +45,7 @@ typedef struct entity_template_t
     f32  radius;
     vec3 aabb_size;   // total aabb size from min to max
   };
+  bool is_trigger;
   vec3 aabb_offset; // offset from objects position
 
 }entity_template_t;
@@ -46,13 +53,16 @@ typedef struct entity_template_t
   .name = "default",                      \
   .mesh = "cube.fbx",                     \
   .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
-  .init   = NULL,                         \
-  .update = NULL,                         \
+  .init_f      = NULL,                    \
+  .update_f    = NULL,                    \
+  .collision_f = NULL,                    \
+  .trigger_f   = NULL,                    \
   .phys_flag   = 0,                       \
   .mass        = 1.0f,                    \
   .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
-  .aabb_offset = { 0, 0, 0 }             
+  .aabb_offset = { 0, 0, 0 },             \
+  .is_trigger  = false                   
 
 // removed () bc. vs19 is fckn stupid
 #define ENTITY_TEMPLATE_T_EMPTY()         \
@@ -60,13 +70,16 @@ typedef struct entity_template_t
   .name = "empty",                        \
   .mesh = "-",                            \
   .mat  = 0,                              \
-  .init   = NULL,                         \
-  .update = NULL,                         \
+  .init_f      = NULL,                    \
+  .update_f    = NULL,                    \
+  .collision_f = NULL,                    \
+  .trigger_f   = NULL,                    \
   .phys_flag   = 0,                       \
   .mass        = 1.0f,                    \
   .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
-  .aabb_offset = { 0, 0, 0 }              \
+  .aabb_offset = { 0, 0, 0 },             \
+  .is_trigger  = false                    \
 }
 
 const entity_template_t* entity_template_get(int idx);

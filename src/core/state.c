@@ -1,6 +1,7 @@
 #include "core/state.h"
 #include "core/assetm.h"
 #include "core/core_data.h"
+#include "core/debug/debug_draw.h"
 #include "data/entity_template.h"
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
@@ -107,7 +108,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
   { mat = assetm_get_material_idx(def->mat); }
 
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init, def->update, idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -118,7 +119,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
     vec3_copy(half_extents, aabb[1]);
     vec3_mul_f(aabb[0], -1, aabb[0]);
     
-    phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->aabb_offset);
+    phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->aabb_offset, def->is_trigger);
   }
   else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -133,13 +134,13 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
     vec3_copy(half_extents, aabb[1]);
     vec3_mul_f(aabb[0], -1, aabb[0]);
     
-    phys_add_obj_box(id, pos, scl, aabb, (f32*)def->aabb_offset);
+    phys_add_obj_box(id, pos, scl, aabb, (f32*)def->aabb_offset, def->is_trigger);
   }
 
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, int table_idx)
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int table_idx)
 {
   entity_t ent;
   ent.is_dead = false;
@@ -157,6 +158,8 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
   ent.is_grounded     = false; 
   ent.init_f          = init_f;
   ent.update_f        = update_f;
+  ent.collision_f     = collision_f;
+  ent.trigger_f       = trigger_f;
   ent.children        = NULL;
   ent.children_len    = 0;
   ent.parent          = -1;
@@ -182,7 +185,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
 }
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
 {
-  return state_add_entity(pos, rot, scl, -1, -1, 0, NULL, NULL, -1);
+  return state_add_entity(pos, rot, scl, -1, -1, 0, NULL, NULL, NULL, NULL, -1);
 }
 
 int state_duplicate_entity(int id, vec3 offset)
@@ -320,9 +323,33 @@ void state_entity_update_global_model_dbg(int id, char* file, int line)
 
   if (e->parent >= 0)
   {
-    mat4_make_model(e->pos, e->rot, e->scl, e->model);
+    // apply parent model-matrix, parent_model * child_model = child_model
+    // also track the transform delta this causes
+    vec3 pre_pos, post_pos, delta_pos;
+    mat4_get_pos(e->model, pre_pos);  // model from last frame
+    
+    mat4_make_model(e->pos, e->rot, e->scl, e->model);  // parent indipendent
     entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
     mat4_mul(p->model, e->model, e->model);
+    
+    mat4_get_pos(e->model, post_pos); // model after parent-transform
+    vec3_sub(post_pos, pre_pos, delta_pos); 
+    // vec3_add(e->delta_pos, delta_pos, e->delta_pos); // @NOTE: acting fucky wucky
+    
+    if (core_data_is_play())
+    {
+      // P_VEC3(pre_pos);
+      // P_VEC3(post_pos);
+      // P_VEC3(delta_pos);
+      debug_draw_sphere_register(pre_pos, 0.2f,  RGB_F(1, 0, 0));
+      debug_draw_sphere_register(post_pos, 0.2f, RGB_F(0, 1, 0));
+      vec3 start, end;
+      vec3_mul_f(delta_pos, 1.0f, end);
+      debug_draw_line_register(start, end, RGB_F_RGB(0.5f));
+      vec3_add(delta_pos, post_pos, start);
+      vec3_add(end, post_pos, end);
+      debug_draw_line_register(start, end, RGB_F_RGB(1.0f));
+    }
   }
   else
   {
@@ -338,7 +365,8 @@ void state_entity_update_global_model_dbg(int id, char* file, int line)
     entity_t* c = state_get_entity(e->children[i], &err); ASSERT(!err);
     c->is_moved = true;
   }
-  e->is_moved = false;
+  // phys objs get reset in program.c program_sync_phys() 
+  e->is_moved = e->phys_flag != 0 ? e->is_moved : false;
 }
 void state_entity_global_model_no_rotation(int id, mat4 out)
 {

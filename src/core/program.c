@@ -6,6 +6,7 @@
 #include "core/assetm.h"
 #include "core/state.h"
 #include "core/terrain.h"
+#include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
 #include "math/math_inc.h"
@@ -42,6 +43,8 @@ void program_start(int width, int height, const char* title, window_type type, e
 	TIMER_FUNC_STATIC(init_f());     // init callback
   TIMER_FUNC_STATIC(state_init());
   TIMER_FUNC_STATIC(debug_draw_init());
+  
+  TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
 
   char _title[64];
   sprintf(_title, "game :)");
@@ -58,6 +61,7 @@ void program_start(int width, int height, const char* title, window_type type, e
     core_data->cur_fps      = 1 / core_data->delta_t;
     if (first_frame) { core_data->delta_t = 0.016f; first_frame = false; } // otherwise dt first frame is like 5 seconds
   
+    // --- title ----
     sprintf(_title, "%s | fps: '%.1f'", title, core_data->cur_fps);
     window_set_title(_title);
 
@@ -103,22 +107,29 @@ void program_sync_phys()
   for (u32 i = 0; i < phys_objs_len; ++i)
   {
     phys_obj_t* obj = &phys_objs[i];
+    entity_t*   e   = &world[obj->entity_idx];
 
-      
+    // either the attached entity or its parent have moved
+    if (e->is_moved) // || (world[obj->entity_idx].parent >= 0 && world[world[obj->entity_idx].parent].is_moved) )  
+    {
+      // if (obj->entity_idx == 31) { P_VEC3(e->delta_pos); }
+      vec3_add(e->delta_pos, obj->pos, obj->pos);         // update physics position after potential transform
+      vec3_add(e->delta_scl, obj->scl, obj->scl);         // update physics scale after potential scaling
+      vec3_copy(VEC3(0), e->delta_pos);  
+      vec3_copy(VEC3(0), e->delta_scl); 
+
+      e->is_moved = false;
+
+      // @NOTE: needed for ENTITY_SET_POS(), but cant do this every frame, or it stops all movement
+      // vec3_copy(VEC3(0), obj->rb.velocity);
+    }
+
     if (PHYS_OBJ_HAS_RIGIDBODY(obj))
     {
-      if (world[obj->entity_idx].is_moved)
-      {
-        vec3_add(world[obj->entity_idx].delta_pos, obj->pos, obj->pos);         // update physics position after potential transform
-        vec3_add(world[obj->entity_idx].delta_scl, obj->scl, obj->scl);         // update physics scale after potential scaling
-        vec3_copy(VEC3(0), world[obj->entity_idx].delta_pos);  
-        vec3_copy(VEC3(0), world[obj->entity_idx].delta_scl); 
+      // if (is_moved), etc, was here
 
-        // @NOTE: needed for ENTITY_SET_POS(), but cant do this every frame, or it stops all movement
-        // vec3_copy(VEC3(0), obj->rb.velocity);
-      }
-      vec3_add(world[obj->entity_idx].delta_force, obj->rb.force, obj->rb.force);   // update physics forces after potential added forces
-      vec3_copy(VEC3(0), world[obj->entity_idx].delta_force);  
+      vec3_add(e->delta_force, obj->rb.force, obj->rb.force);   // update physics forces after potential added forces
+      vec3_copy(VEC3(0), e->delta_force);  
 
     }
     // else // if (world[obj->entity_idx].parent >= 0) // static objects with parents
@@ -128,10 +139,10 @@ void program_sync_phys()
     // }
     if (PHYS_OBJ_HAS_COLLIDER(obj))
     {
-      world[obj->entity_idx].is_grounded = obj->collider.is_grounded;
+      e->is_grounded = obj->collider.is_grounded;
     }
-    vec3_copy(obj->pos, world[obj->entity_idx].pos);  // update entity position after physics
-    ENTITY_SET_POS(&world[obj->entity_idx], obj->pos);
+    vec3_copy(obj->pos, e->pos);  // update entity position after physics
+    ENTITY_SET_POS(e, obj->pos);
   }
 }
 

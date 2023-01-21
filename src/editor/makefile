@@ -47,7 +47,8 @@ _OBJS +=					 		\
 	debug_draw.o   			\
 	debug_timer.o				\
 	terrain.o						\
-	serialization.o
+	serialization.o			\
+	event_sys.o
 # physics
 _OBJS += 							\
 	phys_world.o				\

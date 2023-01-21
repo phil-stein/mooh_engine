@@ -8,9 +8,15 @@
 #include "stb/stb_ds.h"
 
 
-
+// all objects, static and dynamic
 phys_obj_t* phys_objs = NULL;
 u32 phys_objs_len = 0;
+
+// callbacks, macros to check for null
+phys_internal_collision_callback* collision_callback = NULL;
+phys_internal_trigger_callback*   trigger_callback   = NULL;
+#define COLLISION_CALLBACK(a, b)  if (collision_callback) { collision_callback((a), (b)); }
+#define TRIGGER_CALLBACK(a, b)    if (trigger_callback)   { trigger_callback((a), (b)); }
 
 
 // @TODO: move below update()
@@ -25,7 +31,7 @@ void phys_obj_make_rb(f32 mass, f32 friction, phys_obj_t* obj)
   vec3_copy(VEC3(0), obj->rb.velocity);
   vec3_copy(VEC3(0), obj->rb.force);
 }
-void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
+void phys_obj_make_box(vec3 aabb[2], vec3 offset, bool is_trigger, phys_obj_t* obj)
 {
   // ASSERT(!HAS_FLAG(obj->flags, PHYS_HAS_SPHERE));
   ASSERT(!PHYS_OBJ_HAS_COLLIDER(obj));
@@ -34,7 +40,7 @@ void phys_obj_make_box(vec3 aabb[2], vec3 offset, phys_obj_t* obj)
   obj->collider.type = PHYS_COLLIDER_BOX;
   
   vec3_copy(offset, obj->collider.offset);
-  obj->collider.is_trigger   = false;
+  obj->collider.is_trigger   = is_trigger;
   obj->collider.is_colliding = false;
   
   vec3_copy(aabb[0], obj->collider.box.aabb[0]);
@@ -56,19 +62,19 @@ void phys_add_obj_rb(u32 entity_idx, vec3 pos, f32 mass, f32 friction)
   arrput(phys_objs, obj);
   phys_objs_len++;
 }
-void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 offset)
+void phys_add_obj_box(u32 entity_idx, vec3 pos, vec3 scl, vec3 aabb[2], vec3 offset, bool is_trigger)
 {
   phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
   vec3_copy(pos, obj.pos);
   vec3_copy(scl, obj.scl);
 
-  phys_obj_make_box(aabb, offset, &obj); 
+  phys_obj_make_box(aabb, offset, is_trigger, &obj); 
 
   arrput(phys_objs, obj);
   phys_objs_len++;
 }
-void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 friction, vec3 aabb[2], vec3 offset)
+void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 friction, vec3 aabb[2], vec3 offset, bool is_trigger)
 {
   phys_obj_t obj = PHYS_OBJ_T_INIT();
   obj.entity_idx = entity_idx;
@@ -76,7 +82,7 @@ void phys_add_obj_rb_box(u32 entity_idx, vec3 pos, vec3 scl, f32 mass, f32 frict
   vec3_copy(scl, obj.scl);
 
   phys_obj_make_rb(mass, friction, &obj);
-  phys_obj_make_box(aabb, offset, &obj);
+  phys_obj_make_box(aabb, offset, is_trigger, &obj);
 
   arrput(phys_objs, obj);
   phys_objs_len++;
@@ -132,9 +138,10 @@ phys_obj_t* phys_get_obj_arr(u32* len)
   return phys_objs;
 }
 
-void phys_init()
+void phys_init(phys_internal_collision_callback* _collision_callback, phys_internal_trigger_callback* _trigger_callback)
 {
-	// ...
+  collision_callback = _collision_callback;
+  trigger_callback   = _trigger_callback;
 }
 
 void phys_update(f32 dt)
@@ -186,7 +193,12 @@ void phys_update(f32 dt)
 		    if (!c.trigger && PHYS_OBJ_HAS_RIGIDBODY(obj0)) // no response on trigger collisions
 		  	{
 		  		phys_collision_resolution(obj0, obj1, c);
+          COLLISION_CALLBACK(obj0->entity_idx, obj1->entity_idx);
 		  	}
+        else if (PHYS_OBJ_HAS_RIGIDBODY(obj0))
+        {
+          TRIGGER_CALLBACK(obj0->entity_idx, obj1->entity_idx);
+        }
 		  }
 
 		}

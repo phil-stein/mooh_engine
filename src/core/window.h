@@ -7,6 +7,7 @@
 
 
 typedef enum window_type { WINDOW_MIN, WINDOW_MAX, WINDOW_FULL } window_type;
+#define P_WINDOW_TYPE(a)  { PF("%s\n", (a) == WINDOW_MIN ? "WINDOW_MIN" : (a) == WINDOW_MAX ? "WINDOW_MAX" : (a) == WINDOW_FULL ? "WINDOW_FULL" : "?UNKNOWN?"); }
 
 // ---- func decls ----
 // creates a glfw window
