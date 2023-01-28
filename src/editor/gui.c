@@ -333,7 +333,7 @@ void gui_properties_win()
       if (nk_button_label(ctx, "set parent") && parent_id >= 0 && parent_id < world_len)
       {
         bool error = false;
-        entity_t* p = state_get_entity(parent_id, &error);
+        state_get_entity(parent_id, &error);  // just checking if exists
         if (!error)
         {
           state_entity_add_child(parent_id, id);
@@ -561,18 +561,22 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       nk_property_float(ctx, "force.y", -2048.0f, &obj->rb.force[1], 2048.0f, 0.1f, 0.01f); 
       nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f);
 
-      nk_labelf(ctx, NK_TEXT_LEFT, "is_grounded: %s", obj->collider.is_grounded ? "true" : "false");
+      nk_labelf(ctx, NK_TEXT_LEFT, "is_grounded: %s", STR_BOOL(obj->collider.is_grounded));
     }
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- sphere --");
       nk_labelf(ctx, NK_TEXT_LEFT, "radius: %f", def->radius);
+      
+      nk_labelf(ctx, NK_TEXT_LEFT, "is trigger: %s", STR_BOOL(def->is_trigger));
     }
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- box --");
       nk_labelf(ctx, NK_TEXT_LEFT, "[aabb]   x: %.2f y: %.2f, z: %.2f", def->aabb_size[0], def->aabb_size[1], def->aabb_size[2]);
       nk_labelf(ctx, NK_TEXT_LEFT, "[offset] x: %.2f y: %.2f, z: %.2f", obj->collider.offset[0], obj->collider.offset[1], obj->collider.offset[2]);
+      
+      nk_labelf(ctx, NK_TEXT_LEFT, "is trigger: %s", STR_BOOL(def->is_trigger));
      
       if (nk_button_label(ctx, "rotate box y"))
       {

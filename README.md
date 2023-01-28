@@ -89,6 +89,7 @@ main resources:
  - [x] base project
  - [ ] binary dump
   - write empty scene, terrain, etc. to file
+ - [ ] "model-viewer/-editor" for materials / anim / particles
  - [ ] ... 
 
 ## base
@@ -191,6 +192,7 @@ main resources:
   - [ ] etc.
   - [ ] custom game events (day to night, etc.)
  - [ ] particle system
+ - [ ] trail renderer
  - [x] set cam pos in program_start()
  - [ ] debug tools
   - [x] make debug timer 
@@ -223,7 +225,7 @@ main resources:
  - [x] point lights ?
  - [ ] blending
   - learnopengl weighted blending 'OIT'
- - [ ] fix normal shadows
+ - [ ] fix normal shadows (werid pos ?)
  - [ ] cascaded shadows
   - from cherno video 
   - also on learnopengl
@@ -291,7 +293,11 @@ main resources:
   - seperate ?
  - [ ] particle system editor
   - seperate ?
- - [ ] make gui less sh*t 
+ - [ ] make gui less sh*t
+ - [ ] ask to save if unsaved changes
+ - [ ] undo
+  - [ ] keep track of changes
+  - [ ] john jackman or some on yt pixeleditor
 
 ## physics engine
  - [x] remove objs
@@ -309,6 +315,9 @@ main resources:
  - [x] array of dynamic objs, for optimization
  - [x] basic char controller in game for testing 
  - [ ] sweeping collision
+ - [ ] organize in grid, octree, etc ?
+  - only checking collisions in the same/neighbouring grids
+  - dorment objs if camera to far away
  - [ ] cylinder / capsule
  - [ ] raycasts ?
   - [ ] octree & ray v. triangle ?

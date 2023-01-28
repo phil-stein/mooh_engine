@@ -160,6 +160,7 @@
     <ClCompile Include="src\core\core_data.c" />
     <ClCompile Include="src\core\debug\debug_draw.c" />
     <ClCompile Include="src\core\debug\debug_timer.c" />
+    <ClCompile Include="src\core\event_sys.c" />
     <ClCompile Include="src\core\file_io.c" />
     <ClCompile Include="src\core\glad.c" />
     <ClCompile Include="src\core\input.c" />
@@ -203,6 +204,7 @@
     <ClInclude Include="src\core\core_data.h" />
     <ClInclude Include="src\core\debug\debug_draw.h" />
     <ClInclude Include="src\core\debug\debug_timer.h" />
+    <ClInclude Include="src\core\event_sys.h" />
     <ClInclude Include="src\core\file_io.h" />
     <ClInclude Include="src\core\input.h" />
     <ClInclude Include="src\core\program.h" />

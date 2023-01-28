@@ -24,17 +24,17 @@ material_t material_load_from_template(const material_template_t* m)
   if (m->shader_template != SHADER_TEMPLATE_NONE)
   { shader = assetm_get_shader_idx(m->shader_template); }
 
-  return material_make(albedo, normal, roughn, metall, (float*)m->tint, (float)m->roughn_f, (float)m->metall_f, shader, m->tile_scl, m->tile_by_scl, m->tile);  
+  return material_make(albedo, normal, roughn, metall, (f32*)m->tint, (f32)m->roughn_f, (f32)m->metall_f, shader, m->tile_scl, m->tile_by_scl, (f32*)m->tile);  
 }
 
 
-material_t material_make_basic(int albedo, int normal, int roughness, int metallic, rgbf tint, float roughness_f, float metallic_f, int shader)
+material_t material_make_basic(int albedo, int normal, int roughness, int metallic, rgbf tint, f32 roughness_f, f32 metallic_f, int shader)
 {
 
   return material_make(albedo, normal, roughness, metallic, tint, roughness_f, metallic_f, shader, 1.0f, false, VEC2(1));
 }
 
-material_t material_make(int albedo, int normal, int roughness, int metallic, rgbf tint, float roughness_f, float metallic_f, int shader, f32 tile_scl, bool tile_by_scl, vec2 tile)
+material_t material_make(int albedo, int normal, int roughness, int metallic, rgbf tint, f32 roughness_f, f32 metallic_f, int shader, f32 tile_scl, bool tile_by_scl, vec2 tile)
 {
   // blank 1x1px white texture if no texture given 
   if (albedo    < 0) { albedo    = assetm_get_texture_idx("#internal/blank.png", true); }

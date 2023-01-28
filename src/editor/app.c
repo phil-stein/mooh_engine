@@ -34,7 +34,7 @@ void rotate_cam_by_mouse();
 
 int main(void)
 {
-  program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update);  // WINDOW_FULL
+  program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   
   // P_LINE();
   

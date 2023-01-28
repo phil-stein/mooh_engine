@@ -12,6 +12,9 @@
 
 // @TODO: replace phys_act & scripts_act with flag
 
+#define ASSET_PATH_MAX 256
+#define SHADERS_PATH_MAX ASSET_PATH_MAX
+
 typedef struct core_data_t
 {
   bool program_quit;  // if true program shuts down
@@ -25,7 +28,17 @@ typedef struct core_data_t
   f32 delta_t;
   f32 cur_fps;
 
+  // -- assetm --
+
+  char asset_path[ASSET_PATH_MAX] ;
+  char shaders_path[SHADERS_PATH_MAX] ;
+  
+  shader_t equirect_shader;       // for rendering equirectangular images to cube maps
+  shader_t irradiance_map_shader; // for rendering the irradiance map from the cube map
+  shader_t prefilter_shader;      // for rendering the prefilter map from the cube map
+  
   // -- camera --
+  
   vec3 cam_pos;
   vec3 cam_front;
   vec3 cam_up;
@@ -69,12 +82,6 @@ typedef struct core_data_t
   f64 scroll_y;
   f64 scroll_delta_x;
   f64 scroll_delta_y;
-
-  // -- assetm --
-
-  shader_t equirect_shader;       // for rendering equirectangular images to cube maps
-  shader_t irradiance_map_shader; // for rendering the irradiance map from the cube map
-  shader_t prefilter_shader;      // for rendering the prefilter map from the cube map
  
   // -- terrain --
 
@@ -106,6 +113,7 @@ typedef struct core_data_t
 
 }core_data_t;
 
+
 #define CORE_DATA_INIT()                      \
 {                                             \
   .program_quit = false,                      \
@@ -116,6 +124,9 @@ typedef struct core_data_t
   .t_last_frame = 0.0f,                       \
   .delta_t = 0.0f,                            \
   .cur_fps = 0.0f,                            \
+                                              \
+  .asset_path   = "\0",                       \
+  .shaders_path = "\0",                       \
                                               \
   .cam_pos     = { 0, 0, 0 },                 \
   .cam_front   = { 0, 0, -1 },                \

@@ -57,8 +57,8 @@ int material_data_len = 0;
 
 static core_data_t* core_data = NULL;
 
-// #define MATERIALS_PATH ASSET_PATH"materials/"
-#define SHADERS_PATH   ASSET_PATH"shaders/"
+// #define MATERIALS_PATH core_data->asset_path"materials/"
+// #define core_data->shaders_path   core_data->asset_path"shaders/"
 
 void assetm_init()
 {
@@ -82,8 +82,11 @@ void assetm_init()
   arrsetcap(mesh_data, MAX_ITEMS);
 
   // open zip archive
-  zip_textures  = zip_open(ASSET_PATH"textures/textures.zip", 0, 'r');
-  zip_meshes    = zip_open(ASSET_PATH"meshes/meshes.zip", 0, 'r');
+  char path[ASSET_PATH_MAX + 64];
+  sprintf(path, "%stextures/textures.zip", core_data->asset_path); 
+  zip_textures  = zip_open(path, 0, 'r');
+  sprintf(path, "%smeshes/meshes.zip", core_data->asset_path); 
+  zip_meshes    = zip_open(path, 0, 'r');
 
 }
 
@@ -134,9 +137,9 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, co
   void*  buf = NULL;
   size_t buf_len = 0;
 #ifdef ASSETM_NO_ZIP
-  char path[64];
+  char path[ASSET_PATH_MAX +64];
   int len = 0;
-  sprintf(path, ASSET_PATH"textures/%s", name);
+  sprintf(path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in assetm_create_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, file, line);
@@ -178,9 +181,9 @@ void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int*
   void*  buf = NULL;
   size_t buf_len = 0;
 #ifdef ASSETM_NO_ZIP
-  char path[64];
+  char path[ASSET_PATH_MAX +64];
   int len = 0;
-  sprintf(path, ASSET_PATH"textures/%s", name);
+  sprintf(path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
@@ -211,9 +214,9 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
   void*  buf = NULL;
   size_t buf_len = 0;
 #ifdef ASSETM_NO_ZIP
-  char _path[64];
+  char _path[ASSET_PATH_MAX +64];
   int len = 0;
-  sprintf(_path, ASSET_PATH"textures/%s", path);
+  sprintf(_path, "%stextures/%s", core_data->asset_path, path);
   buf = (void*)file_read_len(_path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
@@ -471,9 +474,9 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
   size_t buf_len = 0;
 
 #ifdef ASSETM_NO_ZIP
-  char path[64];
+  char path[ASSET_PATH_MAX +64];
   int len = 0;
-  sprintf(path, ASSET_PATH"meshes/%s", name);
+  sprintf(path, "%smeshes/%s", core_data->asset_path, name);
   buf = (void*)file_read_len(path, &len);
   buf_len = len;
 #else
@@ -546,14 +549,14 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
 
 #ifdef ASSETM_NO_ZIP
   // char path[128]; 
-  // sprintf(path, SHADERS_PATH"%s", name);
+  // sprintf(path, core_data->shaders_path"%s", name);
   // buf = file_read_len(path, (int*)&buf_len);
   const shader_template_t* s = shader_template_get(type);
 
-  char vert_path[128]; 
-  sprintf(vert_path, SHADERS_PATH"%s", s->vert);
-  char frag_path[128]; 
-  sprintf(frag_path, SHADERS_PATH"%s", s->frag);
+  char vert_path[ASSET_PATH_MAX +64]; 
+  sprintf(vert_path, "%s%s", core_data->shaders_path, s->vert);
+  char frag_path[ASSET_PATH_MAX +64]; 
+  sprintf(frag_path, "%s%s", core_data->shaders_path,s->frag);
 
   return shader_create_from_file(vert_path, frag_path, s->set_uniforms, s->name);
 	
@@ -636,7 +639,7 @@ void assetm_create_material(material_template_type type)
 // #ifdef ASSETM_NO_ZIP
 //     char path[64];
 //     int len = 0;
-//     sprintf(path, ASSET_PATH"textures/%s", name);
+//     sprintf(path, core_data->asset_path"textures/%s", name);
 //     buf = (void*)file_read_len(path, &len);
 //     buf_len = len;
 //     ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);

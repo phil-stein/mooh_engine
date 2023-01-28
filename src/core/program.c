@@ -21,7 +21,7 @@
 
 static core_data_t* core_data = NULL;
 
-void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f)
+void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
 	if (!window_create(width, height, title, type))
 	{
@@ -30,13 +30,19 @@ void program_start(int width, int height, const char* title, window_type type, e
 	}
 
 	// ---- init ----
+
+  // asset path
+  core_data = core_data_get();
+  strcpy(core_data->asset_path, asset_path);
+  sprintf(core_data->shaders_path, "%sshaders/", asset_path);
+ 
+
   rand_seed(time(NULL));
 	TIMER_FUNC_STATIC(input_init());
   TIMER_FUNC_STATIC(assetm_init());
   
   TIMER_FUNC_STATIC(core_data_init());
-  core_data = core_data_get();
-	
+	TIMER_FUNC_STATIC(serialization_init());
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());
@@ -112,6 +118,12 @@ void program_sync_phys()
     // either the attached entity or its parent have moved
     if (e->is_moved) // || (world[obj->entity_idx].parent >= 0 && world[world[obj->entity_idx].parent].is_moved) )  
     {
+      // @NOTE: this is buggy for some reason
+      //        also should i even update the phys obj not the other way around
+      // vec3 delta_pos;
+      // vec3_sub(obj->pos, e->pos, delta_pos); 
+      // vec3_add(delta_pos, obj->pos, obj->pos);         // update physics position after potential transform
+
       // if (obj->entity_idx == 31) { P_VEC3(e->delta_pos); }
       vec3_add(e->delta_pos, obj->pos, obj->pos);         // update physics position after potential transform
       vec3_add(e->delta_scl, obj->scl, obj->scl);         // update physics scale after potential scaling

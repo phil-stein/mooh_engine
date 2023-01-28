@@ -28,6 +28,7 @@ typedef union f32_wrapper_t
 
 void serialization_test();
 
+void serialization_init();
 
 void serialization_write_scene_to_file(const char* name);
 void serialization_load_scene_from_file(const char* name);

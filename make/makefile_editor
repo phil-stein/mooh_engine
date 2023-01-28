@@ -6,18 +6,24 @@
 # compiler plus flags, -g: debug info, -Wall: all warnings
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
-CC         = @gcc -g -Wall -DASSET_PATH=\"../../assets/\"	-DEDITOR -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG 
+CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"	-DEDITOR -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG 
 CC_NO_WARN = @gcc
 
-NAME = editor.exe
-OUT  = build\$(NAME)
+BUILD_DIR = ..\build
 
-SRC_DIR   = ..
+NAME = editor.exe
+OUT  = $(BUILD_DIR)\$(NAME)
+
+SRC_DIR   = ../src
 GLOBL_DIR = $(SRC_DIR)/global
 DATA_DIR  = $(SRC_DIR)/data
-APP_DIR   = .
+APP_DIR   = $(SRC_DIR)/editor
 
-OBJ_DIR = bin
+OBJ_DIR = $(BUILD_DIR)\bin
+LIB_DIR = ..\libs\win64
+
+EXTERNAL_DIR = ../external
+APP_INC			 = $(APP_DIR)
 
 # app
 _OBJS = 				 			\
@@ -30,7 +36,6 @@ _OBJS = 				 			\
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
 OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
-LIB_DIR = ../../libs/win64
 
 _LIBS = 						\
 	_mooh_core				\
@@ -41,9 +46,6 @@ _LIBS = 						\
 	opengl32					
 
 LIBS     = $(patsubst %,-l %,$(_LIBS))
-
-EXTERNAL_DIR = ../../external
-APP_INC			 = .
 
 _INC = 							  				\
 		$(EXTERNAL_DIR)	  				\
@@ -60,7 +62,9 @@ all: core $(NAME)
 
 # compile mooh_core library
 core:
-	$(MAKE) -C ../..
+	$(MAKE) -f makefile_core	
+
+#	$(MAKE) -C ../.. when compiling from src/editor
 
 # @cd ../.. && $(MAKE) && @cd src/editor
 

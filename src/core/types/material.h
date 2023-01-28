@@ -27,7 +27,7 @@ typedef struct material_t
 }material_t;
 
 material_t material_load_from_template(const material_template_t* m);
-material_t material_make_basic(int albedo, int normal, int roughness, int metallic, rgbf tint, float roughness_f, float metallic_f, int shader);
+material_t material_make_basic(int albedo, int normal, int roughness, int metallic, rgbf tint, f32 roughness_f, f32 metallic_f, int shader);
 
-material_t material_make(int albedo, int normal, int roughness, int metallic, rgbf tint, float roughness_f, float metallic_f, int shader, f32 tile_scl, bool tile_by_scl, vec2 tile);
+material_t material_make(int albedo, int normal, int roughness, int metallic, rgbf tint, f32 roughness_f, f32 metallic_f, int shader, f32 tile_scl, bool tile_by_scl, vec2 tile);
 #endif

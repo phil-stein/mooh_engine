@@ -120,6 +120,9 @@
     <ClCompile Include="src\phys\phys_resolution.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\event_sys.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\debug\debug_draw.h">
@@ -267,6 +270,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\phys\phys_resolution.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\event_sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

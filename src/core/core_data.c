@@ -19,16 +19,23 @@ core_data_t* core_data_get()
 
 void core_data_init()
 {
+  // @NOTE: asset_path gets set in program_start()
+
   // -- assetm --
 
-  core_data.equirect_shader = shader_create_from_file(ASSET_PATH"shaders/cubemap/render_equirect.vert", 
-					      ASSET_PATH"shaders/cubemap/render_equirect.frag", NULL, "equirect_render_shader");
+  char vert_path[ASSET_PATH_MAX + 64];
+  char frag_path[ASSET_PATH_MAX + 64];
+  sprintf(vert_path, "%sshaders/cubemap/render_equirect.vert", core_data.asset_path);
+  sprintf(frag_path, "%sshaders/cubemap/render_equirect.frag", core_data.asset_path);
+  core_data.equirect_shader = shader_create_from_file(vert_path, frag_path, NULL, "equirect_render_shader");
  
-  core_data.irradiance_map_shader = shader_create_from_file(ASSET_PATH"shaders/cubemap/render_equirect.vert", 
-					      ASSET_PATH"shaders/cubemap/irradiance_map.frag", NULL, "irradiance_map_shader");
+  sprintf(frag_path, "%sshaders/cubemap/irradiance_map.frag", core_data.asset_path);
+  core_data.irradiance_map_shader = shader_create_from_file(vert_path, 
+					      frag_path, NULL, "irradiance_map_shader");
  
-  core_data.prefilter_shader = shader_create_from_file(ASSET_PATH"shaders/cubemap/render_equirect.vert", 
-					      ASSET_PATH"shaders/cubemap/prefilter_map.frag", NULL, "prefilter_shader");
+  sprintf(frag_path, "%sshaders/cubemap/prefilter_map.frag", core_data.asset_path);
+  core_data.prefilter_shader = shader_create_from_file(vert_path, 
+					      frag_path, NULL, "prefilter_shader");
 
 
   core_data_init_renderer();
@@ -45,7 +52,9 @@ void core_data_play()
   core_data.scripts_act = true;
   core_data.phys_act    = true;
 
+#if EDITOR
   serialization_write_scene_to_state_buffer();
+#endif
 }
 
 void core_data_play_scripts()
@@ -55,7 +64,9 @@ void core_data_play_scripts()
   core_data.scripts_act = true;
   core_data.phys_act    = false;
 
+#if EDITOR
   serialization_write_scene_to_state_buffer();
+#endif
 }
 
 void core_data_play_phys()
@@ -65,7 +76,9 @@ void core_data_play_phys()
   core_data.scripts_act = false;
   core_data.phys_act    = true;
 
+#if EDITOR
   serialization_write_scene_to_state_buffer();
+#endif
 }
 
 void core_data_pause()
@@ -75,7 +88,9 @@ void core_data_pause()
   core_data.scripts_act = false;
   core_data.phys_act    = false;
 
+#if EDITOR
   serialization_load_scene_from_state_buffer();
+#endif
 }
 
 bool core_data_is_play()

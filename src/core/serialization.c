@@ -26,6 +26,13 @@ vec3 state_cam_orientation = { 0, 0, 0 };
 
 static core_data_t* core_data = NULL;
 
+
+void serialization_init()
+{
+  core_data = core_data_get();
+}
+
+
 void serialization_test()
 {
   u8* buffer = NULL;
@@ -78,8 +85,8 @@ void serialization_write_scene_to_file(const char* name)
   // @UNSURE: add serialization version ???
   serialization_serialize_scene(&buffer);
   
-  char path[128];
-  sprintf(path, ASSET_PATH"%s", name);
+  char path[ASSET_PATH_MAX +64];
+  sprintf(path, "%s%s", core_data->asset_path, name);
   file_write(path, (const char*)buffer, (int)arrlen(buffer));
 
 
@@ -90,9 +97,11 @@ void serialization_load_scene_from_file(const char* name)
 {
   u32 offset = 0;
   int length = 0;
-  
-  char path[128];
-  sprintf(path, ASSET_PATH"%s", name);
+ 
+  if (core_data == NULL) { ERR("u stupid\n") };
+  P_STR(core_data->asset_path);
+  char path[ASSET_PATH_MAX +64];
+  sprintf(path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_read_bytes(path, &length);
   
   serialization_deserialize_scene(buffer, &offset);
@@ -148,8 +157,8 @@ void serialization_write_empty_scene_to_file()
   
   SERIALIZATION_P("[serialization] serialized empty scene");
 
-  char path[128];
-  sprintf(path, ASSET_PATH"%s", "-_-_new_-_-");
+  char path[ASSET_PATH_MAX +64];
+  sprintf(path, "%s%s", core_data->asset_path, "-_-_new_-_-");
   file_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
@@ -253,8 +262,8 @@ void serialization_write_terrain_to_file(const char* name)
 
   serialization_serialize_terrain(&buffer);
 
-  char path[128];
-  sprintf(path, ASSET_PATH"%s", name);
+  char path[ASSET_PATH_MAX +64];
+  sprintf(path, "%s%s", core_data->asset_path, name);
   file_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
@@ -264,8 +273,8 @@ void serialization_load_terrain_from_file(const char* name)
   u32 offset = 0;
   int length = 0;
   
-  char path[128];
-  sprintf(path, ASSET_PATH"%s", name);
+  char path[ASSET_PATH_MAX +64];
+  sprintf(path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_read_bytes(path, &length);
   
   serialization_deserialize_terrain(buffer, &offset);
@@ -274,8 +283,6 @@ void serialization_load_terrain_from_file(const char* name)
 }
 void serialization_serialize_terrain(u8** buffer)
 {
-  core_data = core_data_get();
-
   serialization_serialize_f32(buffer, core_data->terrain_scl);
   serialization_serialize_f32(buffer, core_data->terrain_y_scl);
   serialization_serialize_u32(buffer, core_data->terrain_x_len);
@@ -291,8 +298,6 @@ void serialization_serialize_terrain(u8** buffer)
 }
 void serialization_deserialize_terrain(u8* buffer, u32* offset)
 {
-  core_data = core_data_get();
-
   core_data->terrain_scl   = serialization_deserialize_f32(buffer, offset); 
   core_data->terrain_y_scl = serialization_deserialize_f32(buffer, offset);  
   core_data->terrain_x_len = serialization_deserialize_u32(buffer, offset); 
