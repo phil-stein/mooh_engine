@@ -44,6 +44,7 @@ _OBJS +=					 		\
 	texture.o			 			\
 	mesh.o				 			\
 	renderer.o		 			\
+	renderer_direct.o		\
 	framebuffer.o	 			\
 	camera.o			 			\
 	assetm.o			 			\

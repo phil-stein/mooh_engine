@@ -62,13 +62,15 @@ main resources:
  - [ ] occlusion culling 
  - [ ] batch renderer
  - [ ] lod system ?
- - [ ] precompute brdf, etc.
+ - [ ] octree or something for chunks
+ - [ ] precompute brdf, etc., [also mentioned](#tools)
 
 ## sus amogus
  - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
    it worked before and something changed in the code that made it no longer work that way
    what exactly changed ???
  - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
+ - serialization or something adds pointlights every u play 
 
 ## organization
  - [ ] factor out cubemap creating from assetm
@@ -77,19 +79,20 @@ main resources:
  - [x] find better name for entity folder
  - [x] replace mat4_perspective() with cam_get_proj()
  - [ ] fix ale error on #include's
- - [ ] seperate draw funs from renderer
+ - [x] seperate draw funs from renderer
   - draw_quad(), draw_mesh(), ...
  - [x] make core_data.c load all non custom shaders, framebuffers, etc.
  - [x] rename template_t to entity_template_t
  - [ ] replace phys_act & scripts_act with flag
  - [ ] seperate serialization.c into terrain & entities
- - [ ] compile core, data, phys as libs 
+ - [x] compile core, data, phys as libs 
 
 ## tools
  - [x] base project
  - [ ] binary dump
   - write empty scene, terrain, etc. to file
- - [ ] "model-viewer/-editor" for materials / anim / particles
+ - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
+ - [ ] precompute brdf in software to load in game, [also mentioned](#optimizations)
  - [ ] ... 
 
 ## base

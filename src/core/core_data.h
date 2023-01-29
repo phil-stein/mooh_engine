@@ -51,14 +51,22 @@ typedef struct core_data_t
 
   // -- renderer --
 
+  // primitives
+  // created in core_data_init_renderer()
+  u32 quad_vao, quad_vbo;
+  int quad_mesh;
+  mesh_t line_mesh;
+
   bool wireframe_mode_enabled;
   bool show_shadows;
-  
+
+  // created in core_data_init_renderer()
   framebuffer_t fb_deferred;
   framebuffer_t fb_lighting;
   framebuffer_t fb_shadow_pass;
   framebuffer_t fb_mouse_pick;
 
+  // created in core_data_init_renderer()
   shader_t basic_shader;
   shader_t shadow_shader;
   shader_t deferred_shader;
@@ -136,6 +144,8 @@ typedef struct core_data_t
   .cam_fov_rad = 45.0f * M_PI_F / 180.0f,     \
   .near_plane  = 0.1f,                        \
   .far_plane   = 1000.0f,                     \
+                                              \
+  .quad_mesh = -1,                            \
                                               \
   .wireframe_mode_enabled = false,            \
   .show_shadows  = true,                      \

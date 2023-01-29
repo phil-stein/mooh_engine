@@ -3,6 +3,7 @@
 #include "core/debug/debug_draw.h"
 #include "core/assetm.h"
 #include "core/renderer.h"
+#include "core/renderer_direct.h"
 
 #include "stb/stb_ds.h"
 
@@ -29,30 +30,30 @@ void debug_draw_update_func()
       {
         mesh_t* m = assetm_get_mesh("sphere.fbx");
         if (queue[i].is_model)
-        { renderer_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
         else
-        { renderer_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
       }
       else if (queue[i].type == DEBUG_DRAW_LINE)
       {
-        renderer_draw_line(queue[i].pos, queue[i].rot, queue[i].tint, queue[i].scl[0]);  // using rot as pos2
+        renderer_direct_draw_line(queue[i].pos, queue[i].rot, queue[i].tint, queue[i].scl[0]);  // using rot as pos2
       }
       else if (queue[i].type == DEBUG_DRAW_MESH)
       {
         mesh_t* m = assetm_get_mesh_by_idx(queue[i].mesh);
         if (queue[i].is_model)
-        { renderer_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
         else 
-        { renderer_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
       }
       else if (queue[i].type == DEBUG_DRAW_MESH_TEX)
       {
         mesh_t*      m = assetm_get_mesh_by_idx(queue[i].mesh);
         texture_t* tex = assetm_get_texture_by_idx(queue[i].tex);
         if (queue[i].is_model)
-        { renderer_draw_mesh_textured_mat(queue[i].model, m, tex, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, tex, queue[i].tint); }
         else 
-        { renderer_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, tex, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, tex, queue[i].tint); }
       }
 
   }

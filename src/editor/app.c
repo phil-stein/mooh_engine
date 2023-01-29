@@ -71,7 +71,7 @@ void app_init()
   // core_data->scripts_act = false;
   // @TODO: do this in program_start()
   //        maybe not, it'll be done load_scene()
-  cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr");
+  TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
   // state_set_cubemap(cube_map);
   core_data->cube_map = cube_map;
 
@@ -122,7 +122,7 @@ void app_init()
  
   const char scene_name[] = "test.scene";
   // serialization_write_scene_to_file(scene_name);
-  serialization_load_scene_from_file(scene_name);
+  TIMER_FUNC_STATIC(serialization_load_scene_from_file(scene_name));
 
   // in game will be done by camera-controller
   // input_center_cursor_pos();
@@ -157,7 +157,7 @@ void app_init()
   // TIMER_FUNC_STATIC(terrain_create(25));
   // core_data->terrain_scl = 100;
   
-  serialization_load_terrain_from_file("test.terrain");
+  TIMER_FUNC_STATIC(serialization_load_terrain_from_file("test.terrain"));
   TIMER_FUNC_STATIC(terrain_create(25));
 }
 

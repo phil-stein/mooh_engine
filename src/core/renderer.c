@@ -20,17 +20,13 @@
 // ---- vars ----
 
 // vao, vbo for the quad used in render_quad()
-u32 quad_vao, quad_vbo;
 u32 skybox_vao, skybox_vbo;
-int quad_mesh = -1;
 
 u32 brdf_lut;
 
 const f32 exposure    = 1.25f;
 
 static core_data_t* core_data;
-
-mesh_t line_mesh;
 
 #define DRAW_MESH(_mesh)                                                                \
       {                                                                                 \
@@ -44,42 +40,6 @@ mesh_t line_mesh;
 void renderer_init()
 {
   core_data = core_data_get();
-
-	// ---- quad -----
-	f32 quad_verts[] = 
-	{ 
-	// positions   // tex coords
-	-1.0f,  1.0f,  0.0f, 1.0f,
-	-1.0f, -1.0f,  0.0f, 0.0f,
-	 1.0f, -1.0f,  1.0f, 0.0f,
-
-	-1.0f,  1.0f,  0.0f, 1.0f,
-	 1.0f, -1.0f,  1.0f, 0.0f,
-	 1.0f,  1.0f,  1.0f, 1.0f
-	};
-
-	// screen quad VAO
-	glGenVertexArrays(1, &quad_vao);
-	glGenBuffers(1, &quad_vbo);
-	glBindVertexArray(quad_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, quad_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(f32), &quad_verts, GL_STATIC_DRAW); // quad_verts is 24 long
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32)));
-
-  quad_mesh = assetm_get_mesh_idx("quad.fbx");
-
-
-  const f32 verts[] = 
-  {
-    // pos    normals   uvs    tangents
-    0, 0, 0,  0, 0, 0,  0, 0,  0, 0, 0, 
-    0, 1, 0,  0, 0, 0,  0, 0,  0, 0, 0, 
-  };
-  const int verts_len = 2 * FLOATS_PER_VERT;
-  mesh_make((f32*)verts, (int)verts_len, &line_mesh);
 
   // cube map -------------------------------------------------------------------------------------
 
@@ -407,7 +367,7 @@ void renderer_update()
     }
     // -----------------------------------------------------
 
-    glBindVertexArray(quad_vao);
+    glBindVertexArray(core_data->quad_vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
   }
@@ -497,7 +457,7 @@ void renderer_update()
     }
     // -----------------------------------------------------
 
-    glBindVertexArray(quad_vao);
+    glBindVertexArray(core_data->quad_vao);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glEnable(GL_DEPTH_TEST);
   }
@@ -516,7 +476,7 @@ void renderer_update()
   glBindTexture(GL_TEXTURE_2D, core_data->fb_lighting.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
   shader_set_int(&core_data->post_fx_shader, "tex", 0);
 
-  glBindVertexArray(quad_vao);
+  glBindVertexArray(core_data->quad_vao);
   glDrawArrays(GL_TRIANGLES, 0, 6);
   glEnable(GL_DEPTH_TEST);
 
@@ -804,7 +764,7 @@ u32 renderer_gen_brdf_lut()
   shader_use(&core_data->brdf_lut_shader);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-	glBindVertexArray(quad_vao);
+	glBindVertexArray(core_data->quad_vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
   
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -815,259 +775,4 @@ u32 renderer_gen_brdf_lut()
   return brdf_lut;
 }
 
-void renderer_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color)
-{
-	// ---- mvp ----
-	
-	mat4 model;
-	mat4_make_model_2d(pos, size, 0.0f, model);
 
-	mat4 view;
-	mat4_lookat_2d(cam_pos, 10.0f, view);
-
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-	// ---- shader & draw call ----
-
-	shader_use(&core_data->basic_shader);
-	shader_set_int(&core_data->basic_shader, "use_color", 1);
-	shader_set_vec3(&core_data->basic_shader, "color", color);
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	glBindVertexArray(quad_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-}
-
-void renderer_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, texture_t* tex)
-{
-	// ---- mvp ----
-	
-	mat4 model;
-	mat4_make_model_2d(pos, size, 0.0f, model);
-
-	mat4 view;
-	mat4_lookat_2d(cam_pos, 10.0f, view);
-
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-	// ---- shader & draw call -----	
-
-	shader_use(&core_data->basic_shader);
-	shader_set_vec3(&core_data->basic_shader, "tint", VEC3(1));
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	// glBindVertexArray(quad_vao);
-	// glDrawArrays(GL_TRIANGLES, 0, 6);
-	
-  mesh_t* m = assetm_get_mesh_by_idx(quad_mesh);
-	glBindVertexArray(m->vao);
-  if (m->indexed)
-  { glDrawElements(GL_TRIANGLES, m->indices_count, GL_UNSIGNED_INT, 0); }
-  else
-  { glDrawArrays(GL_TRIANGLES, 0, m->verts_count); }
-	
-}
-
-void renderer_draw_mesh_textured(vec3 pos, vec3 rot, vec3 scale, mesh_t* m, texture_t* tex, vec3 tint)
-{
-	// ---- mvp ----
-	mat4 model;
-  mat4_make_model(pos, rot, scale, model);
-
-	mat4 view;
-  // vec3 center;
-  // cam_pos[2] = 10;  // tmp, zoom away
-  // vec3_add(cam_pos, VEC3_Z(-1), center);
-  // mat4_lookat(cam_pos, center, VEC3_Y(1), view);
-  camera_get_view_mat(view);
-  
-
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-	// ---- shader & draw call -----	
-
-	shader_use(&core_data->basic_shader);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	shader_set_vec3(&core_data->basic_shader, "tint", tint);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	glBindVertexArray(m->vao);
-  if (m->indexed)
-  { glDrawElements(GL_TRIANGLES, m->indices_count, GL_UNSIGNED_INT, 0); }
-  else
-  { glDrawArrays(GL_TRIANGLES, 0, m->verts_count); }
-	
-}
-
-void renderer_draw_mesh_textured_mat(mat4 model, mesh_t* m, texture_t* tex, vec3 tint)
-{
-	// ---- mvp ----
-	mat4 view;
-  camera_get_view_mat(view);
-  
-
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-	// ---- shader & draw call -----	
-
-	shader_use(&core_data->basic_shader);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	shader_set_vec3(&core_data->basic_shader, "tint", tint);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	glBindVertexArray(m->vao);
-  if (m->indexed)
-  { glDrawElements(GL_TRIANGLES, m->indices_count, GL_UNSIGNED_INT, 0); }
-  else
-  { glDrawArrays(GL_TRIANGLES, 0, m->verts_count); }
-	
-}
-
-
-void renderer_draw_mesh_preview(vec3 cam_pos, vec3 pos, vec3 rot, vec3 scale, mesh_t* m, texture_t* tex, vec3 tint, texture_t* bg, framebuffer_t* fb)
-{
-	framebuffer_bind(fb);
-   
-  glViewport(0, 0, fb->width, fb->height);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
- 
-  // -- opengl state --
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_BLEND); // enable blending of transparent texture
-  //set blending function: 1 - source_alpha, e.g. 0.6(60%) transparency -> 1 - 0.6 = 0.4(40%)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-  glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
- 
-  // -- background --
- 	
-  mat4 model;
-  mat4_make_model(VEC3(0), VEC3(0), VEC3(1), model);
-
-	mat4 view;
-  vec3 center;
-  vec3_add(VEC3_Z(10), VEC3_Z(-1), center);
-  mat4_lookat(VEC3_Z(10), center, VEC3_Y(1), view);
-  
-	mat4 proj;
-	float pers = 10;
-	m_deg_to_rad(&pers);
-	mat4_perspective(pers, ((f32)fb->width / (f32)fb->height), 0.1f, 100.0f, proj);
-
-	shader_use(&core_data->basic_shader);
-	shader_set_vec3(&core_data->basic_shader, "tint", VEC3(1));
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, bg->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-  mesh_t* quad_m = assetm_get_mesh_by_idx(quad_mesh);
-	glBindVertexArray(quad_m->vao);
-  if (quad_m->indexed)
-  { glDrawElements(GL_TRIANGLES, quad_m->indices_count, GL_UNSIGNED_INT, 0); }
-  else
-  { glDrawArrays(GL_TRIANGLES, 0, quad_m->verts_count); }
-
-  glEnable(GL_DEPTH_TEST);
-  
-  // -- mesh --
-
-  mat4_make_model(pos, rot, scale, model);
-
-  vec3_add(cam_pos, VEC3_Z(-1), center);
-  mat4_lookat(cam_pos, center, VEC3_Y(1), view);
-  
-	mat4_perspective(pers, ((f32)fb->width / (f32)fb->height), 0.1f, 100.0f, proj);
-
-	shader_use(&core_data->basic_shader);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, tex->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	shader_set_vec3(&core_data->basic_shader, "tint", tint);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	glBindVertexArray(m->vao);
-  if (m->indexed)
-  { glDrawElements(GL_TRIANGLES, m->indices_count, GL_UNSIGNED_INT, 0); }
-  else
-  { glDrawArrays(GL_TRIANGLES, 0, m->verts_count); }
-
-  framebuffer_unbind();
-	
-}
-void renderer_draw_line(vec3 pos0, vec3 pos1, vec3 tint, f32 width)
-{
-	// ---- mvp ----
-	mat4 model;
-  mat4_make_model(VEC3(0), VEC3(0), VEC3(1), model);
-
-	mat4 view;
-  camera_get_view_mat(view);
-  
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-  glLineWidth(width);
-
-  // ---- vbo sub data ----
-
-  glBindBuffer(GL_ARRAY_BUFFER, line_mesh.vbo);
-  glBufferSubData(GL_ARRAY_BUFFER, 0 * sizeof(f32),               3 * sizeof(f32), pos0);
-  glBufferSubData(GL_ARRAY_BUFFER, FLOATS_PER_VERT * sizeof(f32), 3 * sizeof(f32), pos1);
-
-	// ---- shader & draw call -----	
-
-	shader_use(&core_data->basic_shader);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, (assetm_get_texture("#internal/blank.png", true))->handle); 
-	shader_set_int(&core_data->basic_shader, "tex", 0);
-	shader_set_vec3(&core_data->basic_shader, "tint", tint);
-	
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	glBindVertexArray(line_mesh.vao);
-  glDrawArrays(GL_LINES, 0, 2);
-	
-}

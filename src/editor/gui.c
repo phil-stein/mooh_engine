@@ -6,6 +6,7 @@
 #include "core/core_data.h"
 #include "core/window.h"
 #include "core/renderer.h"
+#include "core/renderer_direct.h"
 #include "core/state.h"
 #include "core/input.h"
 #include "core/assetm.h"
@@ -669,7 +670,7 @@ void gui_template_browser_win()
           
           texture_t* bg   = assetm_get_texture("#internal/preview_bg.png", true);
           
-          renderer_draw_mesh_preview(cam_pos, VEC3(0), VEC3(0), VEC3(1), mesh, tex, VEC3(1), bg, &fb_preview);
+          renderer_direct_draw_mesh_preview(cam_pos, VEC3(0), VEC3(0), VEC3(1), mesh, tex, VEC3(1), bg, &fb_preview);
           // const int size = (template_win_rect.w * 0.2f) - 20;
           const int size = (template_win_rect.h) - 70;
           nk_layout_row_static(ctx, size, size, 1);    

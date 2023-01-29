@@ -2,6 +2,8 @@
 #include "core/core_data.h"
 #include "core/camera.h"
 #include "core/renderer.h"
+#include "core/renderer_direct.h"
+#include "core/serialization.h"
 #include "core/input.h"
 #include "core/assetm.h"
 #include "core/state.h"
@@ -23,11 +25,14 @@ static core_data_t* core_data = NULL;
 
 void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
-	if (!window_create(width, height, title, type))
+  TIMER_START(" -- program init -- ");
+	
+  if (!window_create(width, height, title, type))
 	{
 		printf("[ERROR] window creation failed\n");
 		return;
 	}
+  
 
 	// ---- init ----
 
@@ -45,12 +50,15 @@ void program_start(int width, int height, const char* title, window_type type, e
 	TIMER_FUNC_STATIC(serialization_init());
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
+  TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(terrain_init());
 	TIMER_FUNC_STATIC(init_f());     // init callback
   TIMER_FUNC_STATIC(state_init());
   TIMER_FUNC_STATIC(debug_draw_init());
   
   TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
+
+  TIMER_STOP_STATIC();  // program init timer
 
   char _title[64];
   sprintf(_title, "game :)");
