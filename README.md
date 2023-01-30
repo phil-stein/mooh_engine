@@ -24,66 +24,66 @@ main resources:
 # -- todo --
 
 ## next steps
-  - [multithreading](#multithreading)
-    - sample / study proj
-    - write abstraction ?
-    - asset loading
-    - sep. main, renderer, app, etc.
-  - [structures](#base)
-  - [cascaded shadows](#renderer)
-  - [particle system](base)
-  - [physics engine](#physics engine)
-    - sweept collisions
-    - obb's
-    - spheres
+    - [multithreading](#multithreading)
+      - sample / study proj
+      - write abstraction ?
+      - asset loading
+      - sep. main, renderer, app, etc.
+    - [structures](#base)
+    - [cascaded shadows](#renderer)
+    - [particle system](base)
+    - [physics engine](#physics engine)
+      - sweept collisions
+      - obb's
+      - spheres
 
 ## buggs
- - [ ] since mat sys blank.png gets loaded twice 
- - [ ] glfw mouse button & scroll callbacks 
-  - works in nuklear, look at that
-  - actually nuklear is stealing our callback from glfw
- - [ ] obj sizes are different than in blender
-  - there is a apply transform option but its experimental
- - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
- - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
- - [ ] deserializing scene sometimes adds pink point light infront of camera
- - [ ] terrain-chunks dont get culled properly 
- - [ ] point light entity *1* is not parented to the player, 
-       but the player is it's parent
-       aka. parenting is broken prob. in serialization
- - [ ] removing objects in editor causes crash
- - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
- - [ ] serialization or something adds pointlights every u play 
+  - [ ] since mat sys blank.png gets loaded twice 
+  - [ ] glfw mouse button & scroll callbacks 
+    - works in nuklear, look at that
+    - actually nuklear is stealing our callback from glfw
+  - [ ] obj sizes are different than in blender
+    - there is a apply transform option but its experimental
+  - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
+  - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
+  - [ ] deserializing scene sometimes adds pink point light infront of camera
+  - [ ] terrain-chunks dont get culled properly 
+  - [ ] point light entity *1* is not parented to the player, 
+        but the player is it's parent
+        aka. parenting is broken prob. in serialization
+  - [ ] removing objects in editor causes crash
+  - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
+  - [ ] serialization or something adds pointlights every u play 
 
 ## optimizations
- - [ ] [multithreading](#multithreading) 
- - [ ] use textures with r = roughness, g = metallic, ...
- - [ ] change the white tex for no normal
- - [ ] occlusion culling 
- - [ ] batch renderer
- - [ ] lod system ?
- - [ ] octree or something for chunks
- - [ ] precompute brdf, etc., [also mentioned](#tools)
+  - [ ] [multithreading](#multithreading) 
+  - [ ] use textures with r = roughness, g = metallic, ...
+  - [ ] change the white tex for no normal
+  - [ ] occlusion culling 
+  - [ ] batch renderer
+  - [ ] lod system ?
+  - [ ] octree or something for chunks
+  - [ ] precompute brdf, etc., [also mentioned](#tools)
 
 ## sus amogus
- - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
-   it worked before and something changed in the code that made it no longer work that way
-   what exactly changed ???
- - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
+  - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
+    it worked before and something changed in the code that made it no longer work that way
+    what exactly changed ???
+  - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
 
 ## organization
- - [ ] factor out cubemap creating from assetm, into sep. tool
- - [ ] factor out brdf creating from renderer, into sep. tool
- - [ ] fix ale error on #include's
- - [ ] replace phys_act & scripts_act with flag
- - [ ] seperate serialization.c into terrain & entities
+  - [ ] factor out cubemap creating from assetm, into sep. tool
+  - [ ] factor out brdf creating from renderer, into sep. tool
+  - [ ] fix ale error on #include's
+  - [ ] replace phys_act & scripts_act with flag
+  - [ ] seperate serialization.c into terrain & entities
 
 ## tools
- - [ ] binary dump
-  - write empty scene, terrain, etc. to file
- - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
- - [ ] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
- - [ ] ... 
+  - [ ] binary dump
+    - write empty scene, terrain, etc. to file
+  - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
+  - [ ] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
+  - [ ] ... 
 
 ## base
   - [x] load mesh
@@ -109,147 +109,146 @@ main resources:
     ```
     - [ ] create / load
     - [ ] store ?
- - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
-  - [ ] reset all dynamic objects ? 
-    - this way we don't have to reload the entire thing 
-    - not sure if needed in final game though
-    - requires restructuring probably
-    - reload suprisingly fast
-  - [ ] game saves system
-    - single map file, never changed
-    - multiple variants of that with changes
-      - i.e. 'save01.scene', 'mygame.scene', etc.
- - [ ] event system
-  - [ ] entity add, remove, parented
-  - [ ] etc.
-  - [ ] custom game events (day to night, etc.)
- - [ ] particle system
-  - cpu / gpu side or mix ?
-  - [ ] pooling
-  - [ ] billboards
-  - [ ] different spawn "shapes"
-    - [ ] circle
-    - [ ] cone
-    - [ ] sphere
-    - [ ] cylinder ?
-  - [ ] animated textures
-  - [ ] integrate trail renderer
- - [ ] trail renderer
- - [ ] debug tools
-  - [ ] add profiler
- - [ ] controller support ? 
+  - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
+    - [ ] reset all dynamic objects ? 
+      - this way we don't have to reload the entire thing 
+      - not sure if needed in final game though
+      - requires restructuring probably
+      - reload suprisingly fast
+    - [ ] game saves system
+      - single map file, never changed
+      - multiple variants of that with changes
+        - i.e. 'save01.scene', 'mygame.scene', etc.
+  - [ ] event system
+    - [ ] entity add, remove, parented
+    - [ ] etc.
+    - [ ] custom game events (day to night, etc.)
+  - [ ] particle system
+    - cpu / gpu side or mix ?
+    - [ ] pooling
+    - [ ] billboards
+    - [ ] different spawn "shapes"
+      - [ ] circle
+      - [ ] cone
+      - [ ] sphere
+      - [ ] cylinder ?
+    - [ ] animated textures
+    - [ ] integrate trail renderer
+  - [ ] trail renderer
+  - [ ] debug tools
+    - [ ] add profiler
+  - [ ] controller support ? 
 
 ## renderer
- - [ ] blending
-  - learnopengl weighted blending 'OIT'
- - [ ] fix normal shadows (werid pos ?)
- - [ ] cascaded shadows
-  - from cherno video 
-  - also on learnopengl
- - [ ] tiling
- - [ ] ssao
- - [ ] bloom
- - [ ] custom anti aliasing
- - [ ] water 
- - [ ] maybe do outlines ?     
- - [ ] immediate mode renderer, for gui, etc.
+  - [ ] blending
+    - learnopengl weighted blending 'OIT'
+  - [ ] fix normal shadows (werid pos ?)
+  - [ ] cascaded shadows
+    - from cherno video 
+    - also on learnopengl
+  - [ ] tiling
+  - [ ] ssao
+  - [ ] bloom
+  - [ ] custom anti aliasing
+  - [ ] water 
+  - [ ] maybe do outlines ?     
+  - [ ] immediate mode renderer, for gui, etc.
 
 ## entity system
- - [ ] structures ? (prefabs), [also mentioned](#base)
+  - [ ] structures ? (prefabs), [also mentioned](#base)
 
 ## level editor
- - [x] gizmos
-  - [ ] draw line for rotation ?
-  - [ ] draw line for scale ?
- - [ ] structure editor
-  - seperate ?
- - [ ] particle system editor
-  - seperate ?
- - [ ] make gui less sh*t
- - [ ] ask to save if unsaved changes
- - [ ] undo
-  - [ ] keep track of changes
-  - [ ] john jackman or some on yt pixeleditor
+  - [x] gizmos
+    - [ ] draw line for rotation ?
+    - [ ] draw line for scale ?
+  - [ ] structure editor
+    - seperate ?
+  - [ ] particle system editor
+    - seperate ?
+  - [ ] make gui less sh*t
+  - [ ] ask to save if unsaved changes
+  - [ ] undo
+    - [ ] keep track of changes
+    - [ ] john jackman or some on yt pixeleditor
 
 ## physics engine
- - [ ] sphere
- - [x] aabb
-  - [ ] parented aabb's dont change pos correct
-  - [ ] "rotate" aabb's in 90° steps
-  - [ ] change aabb in editor
- - [ ] plane
- - [ ] obb (replace aabb, or use aabb as optimization)
- - [ ] fix buoancy in resolution, actually in phys_debug_draw()
- - [ ] sweeping collision
- - [ ] organize in grid, octree, etc ?
-  - only checking collisions in the same/neighbouring grids
-  - dorment objs if camera to far away
- - [ ] cylinder / capsule
- - [ ] raycasts ?
-  - [ ] octree & ray v. triangle ?
+  - [ ] sphere
+  - [x] aabb
+    - [ ] parented aabb's dont change pos correct
+    - [ ] "rotate" aabb's in 90° steps
+    - [ ] change aabb in editor
+  - [ ] plane
+  - [ ] obb (replace aabb, or use aabb as optimization)
+  - [ ] fix buoancy in resolution, actually in phys_debug_draw()
+  - [ ] sweeping collision
+  - [ ] organize in grid, octree, etc ?
+    - only checking collisions in the same/neighbouring grids
+    - dorment objs if camera to far away
+  - [ ] cylinder / capsule
+  - [ ] raycasts ?
+    - [ ] octree & ray v. triangle ?
 
 ## multithreading
- - decide on win32, C11, single header lib
- - make example program
- - maybe make abstraction for thread stuff ?
- - add [profiler](#base) first
- - architecture
-  - main (input, gameplay, etc.)
-  - worker (asset-loading, terrain, etc.)
-  - renderer
-  - physics
- - [ ] any multithreading
- - [ ] asset loading
- - [ ] physics
- - [ ] rendering
-  - decouple entities from main-thread
- - [ ] terrain
+  - decide on win32, C11, single header lib
+  - make example program
+  - maybe make abstraction for thread stuff ?
+  - add [profiler](#base) first
+  - architecture
+    - main (input, gameplay, etc.)
+    - worker (asset-loading, terrain, etc.)
+    - renderer
+    - physics
+  - [ ] any multithreading
+  - [ ] asset loading
+  - [ ] physics
+  - [ ] rendering
+    - decouple entities from main-thread
+  - [ ] terrain
 
 ## audio system
   - using miniaudio, soloud, etc.
- - [ ] clips
- - [ ] loops
- - [ ] sfx ?
- - [ ] system
-  - queue bg music, ambient, etc.
+  - [ ] clips
+  - [ ] loops
+  - [ ] sfx ?
+  - [ ] system
+    - queue bg music, ambient, etc.
 
 ## animation system
- - unsure if necessary
- - [ ] learnopengl.com
- - [ ] system
- - [ ] blending animations
+  - [ ] learnopengl.com
+  - [ ] system
+  - [ ] blending animations
 
 ## artstyle look-dev
- - [ ] draw sketch of scene
-  - the base: old wooden house, trees, 
-    rusty equipment, overgrown
- - [ ] make 3d polished scene 
-  - [ ] stones
-    - [ ] small
-    - [x] middle
-    - [ ] big
-  - [ ] trees
-    - [ ] normal
-    - [x] big (f*cked normals)
-  - [ ] bush
-  - [ ] fence
-  - [ ] old hut
+  - [ ] draw sketch of scene
+    - the base: old wooden house, trees, 
+      rusty equipment, overgrown
+  - [ ] make 3d polished scene 
+    - [ ] stones
+      - [ ] small
+      - [x] middle
+      - [ ] big
+    - [ ] trees
+      - [ ] normal
+      - [x] big (f*cked normals)
+    - [ ] bush
+    - [ ] fence
+    - [ ] old hut
 
 ## terrain generation
- - [ ] normals & tangents on edges
-  - button in gui to calc for all chunks
+  - [ ] normals & tangents on edges
+    - button in gui to calc for all chunks
 
 ## in-game ui
- - hook rendering into core
- - [ ] draw quads 
-  - [ ] scale with screen
-  - [ ] textured quads
- - [ ] aligned hierarchy
-  - [ ] centered
-  - [ ] left / right
-  - [ ] up / down
- - [ ] text (already wrote lib)
+  - hook rendering into core
+  - [ ] draw quads 
+    - [ ] scale with screen
+    - [ ] textured quads
+  - [ ] aligned hierarchy
+    - [ ] centered
+    - [ ] left / right
+    - [ ] up / down
+  - [ ] text (already wrote lib)
 
 ## game design
- - [ ] game design doc
- - [ ] ...
+  - [ ] game design doc
+  - [ ] ...
