@@ -24,15 +24,15 @@ main resources:
 # -- todo --
 
 ## next steps
-  - multithreading
+  - [multithreading](#multithreading)
     - sample / study proj
     - write abstraction ?
     - asset loading
     - sep. main, renderer, app, etc.
-  - structures
-  - cascaded shadows
-  - particle system
-  - physics engine
+  - [structures](#base)
+  - [cascaded shadows](#renderer)
+  - [particle system](base)
+  - [physics engine](#physics engine)
     - sweept collisions
     - obb's
     - spheres
@@ -93,6 +93,20 @@ main resources:
   - [ ] load shaders from zip
   - [ ] handle missing assets
  - [ ] structures (prefabs)
+    ```c
+      // this way structures can be added regardless of world id's
+      // also entities need a reference to which structure they are a part of 
+      struct structure_def_t
+      {
+        entity_t* e;
+        int parent_idx; // idx into structure_t, not world
+      };
+      struct structure_t
+      {
+        structure_def_t* arr;
+        int len;
+      };
+    ```
   - [ ] create / load
   - [ ] store ?
  - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
