@@ -24,18 +24,18 @@ main resources:
 # -- todo --
 
 ## next steps
-    - [multithreading](#multithreading)
-      - sample / study proj
-      - write abstraction ?
-      - asset loading
-      - sep. main, renderer, app, etc.
-    - [structures](#base)
-    - [cascaded shadows](#renderer)
-    - [particle system](base)
-    - [physics engine](#physics engine)
-      - sweept collisions
-      - obb's
-      - spheres
+  - [multithreading](#multithreading)
+    - sample / study proj
+    - write abstraction ?
+    - asset loading
+    - sep. main, renderer, app, etc.
+  - [structures](#base)
+  - [cascaded shadows](#renderer)
+  - [particle system](base)
+  - [physics engine](#physics engine)
+    - sweept collisions
+    - obb's
+    - spheres
 
 ## buggs
   - [ ] since mat sys blank.png gets loaded twice 
