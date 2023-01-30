@@ -86,13 +86,13 @@ main resources:
  - [ ] ... 
 
 ## base
- - [x] load mesh
-  - [ ] triangularize mesh ? (not really necessary as blender does it)
-  - [x] blender coord sys to mine
- - [ ] asset manager
-  - [ ] load shaders from zip
-  - [ ] handle missing assets
- - [ ] structures (prefabs)
+  - [x] load mesh
+    - [ ] triangularize mesh ? (not really necessary as blender does it)
+    - [x] blender coord sys to mine
+  - [ ] asset manager
+    - [ ] load shaders from zip
+    - [ ] handle missing assets
+  - [ ] structures (prefabs)
     ```c
       // this way structures can be added regardless of world id's
       // also entities need a reference to which structure they are a part of 
@@ -107,8 +107,8 @@ main resources:
         int len;
       };
     ```
-  - [ ] create / load
-  - [ ] store ?
+    - [ ] create / load
+    - [ ] store ?
  - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
   - [ ] reset all dynamic objects ? 
     - this way we don't have to reload the entire thing 
