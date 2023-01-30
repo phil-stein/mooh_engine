@@ -23,6 +23,20 @@ main resources:
 
 # -- todo --
 
+## next steps
+  - multithreading
+    - sample / study proj
+    - write abstraction ?
+    - asset loading
+    - sep. main, renderer, app, etc.
+  - structures
+  - cascaded shadows
+  - particle system
+  - physics engine
+    - sweept collisions
+    - obb's
+    - spheres
+
 ## buggs
  - [ ] since mat sys blank.png gets loaded twice 
  - [ ] glfw mouse button & scroll callbacks 
@@ -39,6 +53,7 @@ main resources:
        aka. parenting is broken prob. in serialization
  - [ ] removing objects in editor causes crash
  - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
+ - [ ] serialization or something adds pointlights every u play 
 
 ## optimizations
  - [ ] [multithreading](#multithreading) 
@@ -55,7 +70,6 @@ main resources:
    it worked before and something changed in the code that made it no longer work that way
    what exactly changed ???
  - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
- - serialization or something adds pointlights every u play 
 
 ## organization
  - [ ] factor out cubemap creating from assetm, into sep. tool
@@ -73,7 +87,7 @@ main resources:
 
 ## base
  - [x] load mesh
-  - [ ] triangularize mesh ?
+  - [ ] triangularize mesh ? (not really necessary as blender does it)
   - [x] blender coord sys to mine
  - [ ] asset manager
   - [ ] load shaders from zip
@@ -96,6 +110,16 @@ main resources:
   - [ ] etc.
   - [ ] custom game events (day to night, etc.)
  - [ ] particle system
+  - cpu / gpu side or mix ?
+  - [ ] pooling
+  - [ ] billboards
+  - [ ] different spawn "shapes"
+    - [ ] circle
+    - [ ] cone
+    - [ ] sphere
+    - [ ] cylinder ?
+  - [ ] animated textures
+  - [ ] integrate trail renderer
  - [ ] trail renderer
  - [ ] debug tools
   - [ ] add profiler
@@ -150,37 +174,6 @@ main resources:
  - [ ] raycasts ?
   - [ ] octree & ray v. triangle ?
 
-## terrain generation
- - [ ] normals & tangents on edges
-  - button in gui to calc for all chunks
-
-## in-game ui
- - hook rendering into core
- - [ ] draw quads 
-  - [ ] scale with screen
-  - [ ] textured quads
- - [ ] aligned hierarchy
-  - [ ] centered
-  - [ ] left / right
-  - [ ] up / down
- - [ ] text (already wrote lib)
-
-## artstyle look-dev
- - [ ] draw sketch of scene
-  - the base: old wooden house, trees, 
-    rusty equipment, overgrown
- - [ ] make 3d polished scene 
-  - [ ] stones
-    - [ ] small
-    - [x] middle
-    - [ ] big
-  - [ ] trees
-    - [ ] normal
-    - [x] big (f*cked normals)
-  - [ ] bush
-  - [ ] fence
-  - [ ] old hut
-
 ## multithreading
  - decide on win32, C11, single header lib
  - make example program
@@ -211,6 +204,37 @@ main resources:
  - [ ] learnopengl.com
  - [ ] system
  - [ ] blending animations
+
+## artstyle look-dev
+ - [ ] draw sketch of scene
+  - the base: old wooden house, trees, 
+    rusty equipment, overgrown
+ - [ ] make 3d polished scene 
+  - [ ] stones
+    - [ ] small
+    - [x] middle
+    - [ ] big
+  - [ ] trees
+    - [ ] normal
+    - [x] big (f*cked normals)
+  - [ ] bush
+  - [ ] fence
+  - [ ] old hut
+
+## terrain generation
+ - [ ] normals & tangents on edges
+  - button in gui to calc for all chunks
+
+## in-game ui
+ - hook rendering into core
+ - [ ] draw quads 
+  - [ ] scale with screen
+  - [ ] textured quads
+ - [ ] aligned hierarchy
+  - [ ] centered
+  - [ ] left / right
+  - [ ] up / down
+ - [ ] text (already wrote lib)
 
 ## game design
  - [ ] game design doc
