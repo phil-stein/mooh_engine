@@ -8,7 +8,8 @@
 #  -fcommon: ignore duplicate variable definitions
 #  @TODO: get rid of EDITOR defione, should not be here
 # -DASSET_PATH=\"assets/\"
-CC         = @gcc -g -Wall	-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG	-DEDITOR  
+# -DEDITOR
+CC         = @gcc -g -Wall	-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE
 CC_NO_WARN = @gcc
 
 LIB_DIR = ..\libs\win64

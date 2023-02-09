@@ -24,21 +24,34 @@ main resources:
 # -- todo --
 
 ## next steps
-  - [multithreading](#multithreading)
-    - sample / study proj
-    - write abstraction ?
-    - asset loading
-    - sep. main, renderer, app, etc.
-  - [structures](#base)
-  - [cascaded shadows](#renderer)
-  - [particle system](base)
-  - [physics engine](#physics engine)
-    - sweept collisions
-    - obb's
-    - spheres
+  - *optimizations*
+    - [multithreading](#multithreading) `WIP | cur goal`
+      - sample / study proj
+      - write abstraction ?
+      - asset loading via zip
+      - sep. main, renderer, app, etc.
+    - [custom asset formats](#optimizations)
+    - [precompute brdf, equirect, etc](#optimizations)
+    - [batch renderer](#optimizations)
+  - *base*
+    - [structures](#base) `WIP`
+  - *graphics*
+    - [blending](#renderer)
+    - [cascaded shadows](#renderer)
+    - [particle system](#base)
+    - [trail renderer](#base)
+    - [missing vfx, bloom, ssao, aa](#renderer)
+  - *advanced*
+    - [physics engine](#physics-engine)
+      - sweept collisions
+      - obb's
+      - spheres
+    - [chunking for ents/phys_objs](#optimizations) 
+  - *organization*
+    - [comment all .h files in core](#organization) 
 
 ## buggs
-  - [ ] since mat sys blank.png gets loaded twice 
+  - [ ] since mat sys blank.png gets loaded twice (hdr / no hdr) 
   - [ ] glfw mouse button & scroll callbacks 
     - works in nuklear, look at that
     - actually nuklear is stealing our callback from glfw
@@ -62,8 +75,17 @@ main resources:
   - [ ] occlusion culling 
   - [ ] batch renderer
   - [ ] lod system ?
-  - [ ] octree or something for chunks
+  - [ ] octree or something for chunks, for entities / phys_objs
   - [ ] precompute brdf, etc., [also mentioned](#tools)
+  - [ ] custom asset formats
+    - [ ] mesh
+      - pure verts, nothing else
+      - 3:pos + 3:norm + 2:uv + 3:tan  =  11: f32, 44: bytes 
+      - quad: fbx:11.1kb / custom:176bytes = 1.5% 
+      - demon02: fbx:1.68mb / custom:87kb  = 5.1%
+      - prob. not realistic to be this drastic, but say 10% would still be amazing
+    - [ ] texture ?
+    - [ ] shader spir-v ?
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -77,6 +99,32 @@ main resources:
   - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate serialization.c into terrain & entities
+  - [ ] comment all .h files in core
+    - [ ] debug
+      - [ ] debug_draw.h
+      - [ ] debug_timer.h
+    - [ ] types
+      - [ ] framebuffer.h
+      - [ ] material.h
+      - [ ] mesh.h
+      - [ ] shader.h
+      - [ ] texture.h
+      - [ ] types.h
+    - [ ] main
+      - [ ] assetm.h
+      - [ ] camera.h
+      - [ ] core_data.h
+      - [ ] event_sys.h
+      - [ ] file_io.h
+      - [ ] input.h
+      - [ ] program.h
+      - [ ] renderer.h
+      - [ ] renderer_direct.h
+      - [ ] serialization.h
+      - [ ] state.h
+      - [ ] str_util.h
+      - [ ] terrain.h
+      - [ ] window.h
 
 ## tools
   - [ ] binary dump
@@ -92,6 +140,7 @@ main resources:
   - [ ] asset manager
     - [ ] load shaders from zip
     - [ ] handle missing assets
+    - [ ] custom asset formats [descr. here](#optimization)
   - [ ] structures (prefabs)
     ```c
       // this way structures can be added regardless of world id's

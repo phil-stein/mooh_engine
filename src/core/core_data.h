@@ -9,6 +9,9 @@
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 
+// @TODO: define this in make and use in all of core
+// #define INCLUDE_PLAY_MODE
+
 
 // @TODO: replace phys_act & scripts_act with flag
 
@@ -114,13 +117,25 @@ typedef struct core_data_t
   // ?
   // -----------
 
+  // @TODO: stripping out when not defined 
+  //        const doesnt work
+#ifdef INCLUDE_PLAY_MODE
 // #ifdef EDITOR
   bool phys_act;
   bool scripts_act;
-// #endif
+#else 
+  bool phys_act;
+  bool scripts_act;
+#endif
 
 }core_data_t;
 
+// value for phys_act & scripts_act
+#ifdef INCLUDE_PLAY_MODE
+#define PLAY_ACT_VALUE false
+#else
+#define PLAY_ACT_VALUE true
+#endif
 
 #define CORE_DATA_INIT()                      \
 {                                             \
@@ -172,8 +187,8 @@ typedef struct core_data_t
   .terrain_draw_dist = 2,                     \
   .terrain_cull_dist = 3,                     \
                                               \
-  .phys_act = false,                          \
-  .scripts_act = false,                       \
+  .phys_act    = PLAY_ACT_VALUE,              \
+  .scripts_act = PLAY_ACT_VALUE,              \
 }
 
 
@@ -183,13 +198,30 @@ typedef struct core_data_t
 core_data_t* core_data_get();
 void core_data_init();
 
+#ifdef INCLUDE_PLAY_MODE
 // play or pause the game, also saving/restoring game state
-void core_data_play();
-void core_data_play_scripts();
-void core_data_play_phys();
-void core_data_pause();
+void core_data_play_func();
+void core_data_play_scripts_func();
+void core_data_play_phys_func();
+void core_data_pause_func();
 
 // returns phys_act || scripts_act
-bool core_data_is_play();
+bool core_data_is_play_func();
+
+#define core_data_is_play()        core_data_is_play_func()
+#define core_data_play()           core_data_play_func()
+#define core_data_play_scripts()   core_data_play_scripts_func()   
+#define core_data_play_phys()      core_data_play_phys_func() 
+#define core_data_pause()          core_data_pause_func()  
+
+#else
+
+#define core_data_is_play()        true 
+#define core_data_play()           
+#define core_data_play_scripts()  
+#define core_data_play_phys()     
+#define core_data_pause()         
+
+#endif
 
 #endif

@@ -45,6 +45,8 @@ void core_data_init()
   core_data.terrain_shader = assetm_create_shader_from_template(SHADER_TEMPLATE_TERRAIN);
 }
 
+#ifdef INCLUDE_PLAY_MODE
+
 void core_data_play()
 {
   if (core_data_is_play()) { return; }
@@ -93,10 +95,9 @@ void core_data_pause()
 #endif
 }
 
-bool core_data_is_play()
-{
-  return core_data.phys_act || core_data.scripts_act;
-}
+bool core_data_is_play_func() { return core_data.phys_act || core_data.scripts_act; }
+
+#endif  // #ifdef INCLUDE_PLAY_MODE
 
 INLINE void core_data_init_renderer()
 {

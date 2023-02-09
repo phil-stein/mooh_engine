@@ -215,7 +215,7 @@ void app_update()
   //   P("|entities end|");
   // }
 
-  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
+  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S) && !core_data_is_play())
   { 
     serialization_write_scene_to_file(SCENE_FILE_NAME); 
     serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
