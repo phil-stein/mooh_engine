@@ -97,22 +97,22 @@ void input_update()
 }
 
 
-input_state input_get_key_state(key _key)
+input_state input_get_key_state(key_type _key)
 {
 	// "key" & "keystate" map directly to glfws key definitions
   core_data_t* core_data = core_data_get();  
 	return glfwGetKey(core_data->window, _key);
 }
-bool input_get_key_down(key _key)
+bool input_get_key_down(key_type _key)
 {
 	return input_get_key_state(_key) == STATE_PRESS;
 }
-bool is_key_released(key _key)
+bool is_key_released(key_type _key)
 {
 	return input_get_key_state(_key) == STATE_RELEASED;
 
 }
-bool input_get_key_pressed(key _key)
+bool input_get_key_pressed(key_type _key)
 {
     return input_get_key_down(_key) && input_get_last_key_state(_key);
 }
@@ -135,7 +135,7 @@ bool input_get_key_pressed(key _key)
 //   return result;
 // }
 
-bool input_get_last_key_state(key _key)
+bool input_get_last_key_state(key_type _key)
 {
     if (_key == KEY_UNKNOWN) { return false; }
     else if (_key == KEY_SPACE) { return Space_st; }
@@ -263,7 +263,7 @@ bool input_get_last_key_state(key _key)
 }
 
 // window is type GLFWwindow*
-void input_key_callback(void* window, key _key, int scancode, input_state state, int _mods)
+void input_key_callback(void* window, key_type _key, int scancode, input_state state, int _mods)
 {
     if (state == STATE_PRESS)
     {
@@ -397,29 +397,29 @@ void input_key_callback(void* window, key _key, int scancode, input_state state,
 }
 
 
-input_state input_get_mouse_state(mouse_btn btn)
+input_state input_get_mouse_state(mouse_btn_type btn)
 {
     // "key" & "keystate" map directly to glfws key definitions
     core_data_t* core_data = core_data_get();  
     return glfwGetMouseButton(core_data->window, btn);
 }
 
-bool input_get_mouse_down(mouse_btn btn)
+bool input_get_mouse_down(mouse_btn_type btn)
 {
     return input_get_mouse_state(btn) == STATE_PRESS;
 }
 
-bool input_get_mouse_released(mouse_btn btn)
+bool input_get_mouse_released(mouse_btn_type btn)
 {
     return input_get_mouse_state(btn) == STATE_RELEASED;
 }
 
-bool input_get_mouse_pressed(mouse_btn btn)
+bool input_get_mouse_pressed(mouse_btn_type btn)
 {
     return input_get_mouse_down(btn) == STATE_PRESS && input_get_last_mouse_state(btn) == STATE_RELEASED;
 }
 
-bool input_get_last_mouse_state(mouse_btn btn)
+bool input_get_last_mouse_state(mouse_btn_type btn)
 {
     if (btn == MOUSE_BUTTON1)      { return mouse_button1; }
     else if (btn == MOUSE_BUTTON2) { return mouse_button2; }
@@ -434,7 +434,7 @@ bool input_get_last_mouse_state(mouse_btn btn)
 
 // @BUGG: not being called
 // window is type GLFWwindow*
-void input_mouse_callback(void* window, mouse_btn button, input_state state, int _mods)
+void input_mouse_callback(void* window, mouse_btn_type button, input_state state, int _mods)
 {
   PF("button: %d, state: %d\n", button, state);
   if (state == STATE_PRESS)

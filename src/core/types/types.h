@@ -10,14 +10,16 @@
 #include "math/math_inc.h"
 
 
+// @DOC: @TODO:
 typedef struct cubemap_t
 {
-  u32 environment;
+  u32 environment;  
   u32 irradiance;
   u32 prefilter;
   // u32 brdf_lut;
 }cubemap_t;
 
+// @DOC: callbacks used in entity_t
 struct entity_t;
 typedef void (init_callback)(struct entity_t* this);
 typedef void (update_callback)(struct entity_t* this, float dt);
@@ -26,17 +28,17 @@ typedef void (trigger_callback)(struct entity_t* this, struct entity_t* ent);
 
 typedef enum enitity_comp_flag
 {
-  ENTITY_HAS_NO_COMP     = 0,
-  ENTITY_HAS_POINT_LIGHT = FLAG(0),   
+  ENTITY_HAS_NO_COMP     = 0,         // @DOC: default, no components
+  ENTITY_HAS_POINT_LIGHT = FLAG(0),   // @DOC: indicates entity has pointlight, accesible via entity_t.point_light_idx
   ENTITY_HAS_SOUND       = FLAG(1),   // @TODO: 
 
 }entity_comp_flag;
 
 typedef enum entity_phys_flag
 {
-  ENTITY_HAS_RIGIDBODY = FLAG(0),
+  ENTITY_HAS_RIGIDBODY = FLAG(0),    // @DOC: indicates the phys_obj_t the entity is simulated with has a rigidbody   
   ENTITY_HAS_SPHERE    = FLAG(1),    // @TODO:   
-  ENTITY_HAS_BOX       = FLAG(2),       
+  ENTITY_HAS_BOX       = FLAG(2),    // @DOC: indicates the phys_obj_t the entity is simulated with has a box collider, aka. aabb
   ENTITY_HAS_PLANE     = FLAG(3),    // @TODO:   
   ENTITY_HAS_CONVEX    = FLAG(4),    // @TODO:     
   ENTITY_HAS_CAPSULE   = FLAG(5),    // @TODO:   
@@ -46,9 +48,9 @@ typedef enum entity_phys_flag
 typedef struct entity_t
 {
   // -- entity system / state -- 
-  u32 id;        // id for state_entity_get(id)
-  int table_idx; // idx for entity_table_get(idx)
-  bool is_dead;  // insteadf of deleting the entity from array, its marked dead and overwritten with the next added entity
+  u32 id;        // @DOC: id for state_entity_get(id), not necessarily the index into state entity array
+  int table_idx; // @DOC: idx for entity_table_get(idx)
+  bool is_dead;  // @DOC: instead of deleting the entity from array, its marked dead and overwritten with the next added entity
 
 
   // -- space ---
@@ -93,7 +95,7 @@ typedef struct entity_t
 
 }entity_t;
 
-// these set the 'is_moved' flag, these should always be used as otherwise the 'model' wont get updated, in 'state_entity_update_global_model()'
+// @DOC: these set the 'is_moved' flag, these should always be used as otherwise the 'model' wont get updated, in 'state_entity_update_global_model()'
 #define ENTITY_SET_POS(e, vec)      { vec3_sub((vec), (e)->pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }  
 #define ENTITY_SET_POS_X(e, x)      { (e)->delta_pos[0] += (x) - (e)->pos[0]; (e)->pos[0] = (x);    (e)->is_moved = true; }
 #define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[1] += (y) - (e)->pos[1]; (e)->pos[1] = (y);    (e)->is_moved = true; }
@@ -148,37 +150,40 @@ typedef struct structure_t
 
 typedef struct dir_light_t
 {
-  vec3  pos;
-  vec3  dir;
-  rgbf  color;
+  vec3  pos;    // position
+  vec3  dir;    // direction vector
+  rgbf  color;  // color of light
   // rgbf  ambient;
   // rgbf  diffuse;
-  float intensity;
+  float intensity;  // multiplier for lights effect on the world 
 
-  bool cast_shadow;
+  // only used when cast_shadow is true 
+  bool cast_shadow; 
   int  shadow_map_x;
   int  shadow_map_y;
   framebuffer_t fb_shadow;
-  mat4 view;
-  mat4 proj;
+  mat4 view;  // view matrix from lights perspective
+  mat4 proj;  // projection matrxix from lights perspective
 
 }dir_light_t;
 
 typedef struct point_light_t
 {
-  vec3  pos;
-  rgbf  color;
-  float intensity;
+  vec3  pos;        // position
+  rgbf  color;      // color of light
+  float intensity;  // multiplier for lights effect on the world
 
 }point_light_t;
 
 typedef struct scene_t
 {
-  entity_t* world;
+  entity_t* world;  // array of all entities
   int world_len;
 
-  dir_light_t* dir_lights;
+  dir_light_t* dir_lights;  // array of all dir lights
   int dir_lights_len;
+
+  // @TODO: 
 
   // point lights here
 

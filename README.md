@@ -40,7 +40,7 @@ main resources:
     - [cascaded shadows](#renderer)
     - [particle system](#base)
     - [trail renderer](#base)
-    - [missing vfx, bloom, ssao, aa](#renderer)
+    - [missing post-fx, bloom, ssao, aa](#renderer)
   - *advanced*
     - [physics engine](#physics-engine)
       - sweept collisions
@@ -67,6 +67,7 @@ main resources:
   - [ ] removing objects in editor causes crash
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] serialization or something adds pointlights every u play 
+  - [x] play mode doesnt work anymore      
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -85,6 +86,7 @@ main resources:
       - demon02: fbx:1.68mb / custom:87kb  = 5.1%
       - prob. not realistic to be this drastic, but say 10% would still be amazing
     - [ ] texture ?
+      - uncompressed for faster load time 
     - [ ] shader spir-v ?
 
 ## sus amogus
@@ -99,24 +101,26 @@ main resources:
   - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate serialization.c into terrain & entities
+  - [ ] use _dbg funcs for materials in assetm
   - [ ] comment all .h files in core
-    - [ ] debug
-      - [ ] debug_draw.h
-      - [ ] debug_timer.h
-    - [ ] types
-      - [ ] framebuffer.h
-      - [ ] material.h
-      - [ ] mesh.h
-      - [ ] shader.h
-      - [ ] texture.h
-      - [ ] types.h
+    - [x] debug
+      - [x] debug_draw.h
+      - [x] debug_timer.h
+    - [x] types
+      - [x] framebuffer.h
+      - [x] material.h
+       - [ ] check @TODO: in mesh_t 
+      - [x] mesh.h
+      - [x] shader.h
+      - [x] texture.h
+      - [x] types.h
     - [ ] main
-      - [ ] assetm.h
-      - [ ] camera.h
-      - [ ] core_data.h
-      - [ ] event_sys.h
-      - [ ] file_io.h
-      - [ ] input.h
+      - [x] assetm.h
+      - [x] camera.h
+      - [x] core_data.h
+      - [x] event_sys.h
+      - [x] file_io.h
+      - [x] input.h
       - [ ] program.h
       - [ ] renderer.h
       - [ ] renderer_direct.h
@@ -125,6 +129,23 @@ main resources:
       - [ ] str_util.h
       - [ ] terrain.h
       - [ ] window.h
+    - [ ] data
+      - [ ] entity_template.h
+      - [ ] material_template.h
+      - [ ] shader_template.h
+    - [ ] editor
+      - [ ] app.h
+      - [ ] gizmo.h
+      - [ ] gui.h
+      - [ ] terrain_edit.h
+    - [ ] phys
+      - [ ] phys_collisions.h
+      - [ ] phys_debug_draw.h
+      - [ ] phys_dynamics.h
+      - [ ] phys_resolution.h
+      - [ ] phys_response.h
+      - [ ] phys_types.h
+      - [ ] phys_world.h
 
 ## tools
   - [ ] binary dump
@@ -207,9 +228,6 @@ main resources:
   - [ ] structures ? (prefabs), [also mentioned](#base)
 
 ## level editor
-  - [x] gizmos
-    - [ ] draw line for rotation ?
-    - [ ] draw line for scale ?
   - [ ] structure editor
     - seperate ?
   - [ ] particle system editor
@@ -219,6 +237,13 @@ main resources:
   - [ ] undo
     - [ ] keep track of changes
     - [ ] john jackman or some on yt pixeleditor
+  - [ ] give trigger colliders a different color
+  - [x] draw line between parent & child
+    - [x] indicate which side is parent/child
+  - [ ] outline on selected entity
+  - [x] make a .h file with all color macros
+    - [x] parent / child lines
+    - [x] move the color of collider debug draw from phys to editor
 
 ## physics engine
   - [ ] sphere

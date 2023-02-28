@@ -2,13 +2,11 @@
 #define INPUT_H
 
 #include "global/global.h"
-// #include "core/window.h"
-// #include "GLFW/glfw3.h"
 
-// "input_state" mapps directly to glfws key definitions
+// @DOC: "input_state" maps directly to glfws key definitions
 typedef enum input_state { STATE_RELEASED, STATE_PRESS } input_state;
-// typedef enum keystate ;
 
+// @DOC: modifications to key presses, f.e. holding control while pressing s
 typedef enum modifier_type
 {
   MOD_SHIFT          = FLAG(0), 
@@ -20,7 +18,8 @@ typedef enum modifier_type
 
 }modifier_type;
 
-enum key
+// @DOC: maps directly to glfws key definitions
+typedef enum
 {
     KEY_UNKNOWN = -1,
     KEY_SPACE = 32,
@@ -159,14 +158,11 @@ enum key
     KEY_RIGHT_WIN_MAC_SYMBOL = KEY_RIGHT_SUPER,
 
     KEY_MENU = 348
-};
-// "key" mapps directly to glfws key definitions
-typedef enum key key;
+}key_type;
 
-
-enum mouse_btn
+// @DOC: maps directly to glfws key definitions
+typedef enum
 {
-    
     MOUSE_BUTTON1 = 0,  // Same as Left
     MOUSE_BUTTON2 = 1,  // Same as Right
     MOUSE_BUTTON3 = 2,  // Same as Middle
@@ -178,26 +174,26 @@ enum mouse_btn
     MOUSE_LEFT   = MOUSE_BUTTON1, // Same as Button1
     MOUSE_RIGHT  = MOUSE_BUTTON2, // Same as Button2
     MOUSE_MIDDLE = MOUSE_BUTTON3  // Same as Button3
-};
-// "mouse_btn" mapps directly to glfws key definitions
-typedef enum mouse_btn mouse_btn;
+}mouse_btn_type;
 
+// @DOC: initializes the input system, call this before any other calls to input
 void input_init();
+// @DOC: updatees the key states, etc. call every frame
 void input_update();
 
 
-// returns the state of the key [KEY_PRESS, KEY_RELEASED]
-input_state input_get_key_state(key _key);
+// @DOC: returns the state of the key [KEY_PRESS, KEY_RELEASE]
+input_state input_get_key_state(key_type _key);
 
-// returns true if the key is pressed, false it it is released
-bool input_get_key_down(key _key);
+// @DOC: returns true if the key is pressed, false it it is released
+bool input_get_key_down(key_type _key);
 
-// returns true if the key is released, false it it is pressed
-bool input_get_key_released(key _key);
+// @DOC: returns true if the key is released, false it it is pressed
+bool input_get_key_released(key_type _key);
 
-// check whether a key is pressed and not held
-// returns true the first frame the Key is held/pressed
-bool input_get_key_pressed(key _key);
+// @DOC: check whether a key is pressed and not held
+//       returns true the first frame the Key is held/pressed
+bool input_get_key_pressed(key_type _key);
 
 // @NOTE: neat idea, but kinda unnecessary
 // checks multiple keys down with or logic opreator
@@ -205,51 +201,55 @@ bool input_get_key_pressed(key _key);
 // count: amount of KEY_... enums
 bool input_get_keys_down_or(u32 count, ...);
 
-// sets the key states for the last frame
-// window is type GLFWwindow*
-void input_key_callback(void* window, key _key, int scancode, input_state state, int mods);
+// @DOC: sets the key states for the last frame
+//       window is type GLFWwindow*
+//       !used internally
+void input_key_callback(void* window, key_type _key, int scancode, input_state state, int mods);
 
-// gets the state of the key last frame 
-bool input_get_last_key_state(key _key);
-
-
-// returns the state of the button [KEY_PRESS, KEY_RELEASED]
-input_state input_get_mouse_state(mouse_btn btn);
-// returns true if the mouse-button is pressed, false it it is released
-bool input_get_mouse_down(mouse_btn btn);
-// returns true if the mouse-button is released, false it it is pressed
-bool input_get_mouse_released(mouse_btn btn);
-// check whether a mouse-button is pressed and not held
-// returns true the first frame the button is held/pressed
-bool input_get_mouse_pressed(mouse_btn btn);
-// gets the state of the mouse-button last frame 
-bool input_get_last_mouse_state(mouse_btn btn);
-// window is type GLFWwindow*
-void input_mouse_callback(void* window, mouse_btn button, input_state state, int mods);
+// @DOC: gets the state of the key last frame 
+bool input_get_last_key_state(key_type _key);
 
 
-// get the mouse's x position
+// @DOC: returns the state of the button [KEY_PRESS, KEY_RELEASED]
+input_state input_get_mouse_state(mouse_btn_type btn);
+// @DOC: returns true if the mouse-button is pressed, false it it is released
+bool input_get_mouse_down(mouse_btn_type btn);
+// @DOC: returns true if the mouse-button is released, false it it is pressed
+bool input_get_mouse_released(mouse_btn_type btn);
+// @DOC: check whether a mouse-button is pressed and not held
+//       returns true the first frame the button is held/pressed
+bool input_get_mouse_pressed(mouse_btn_type btn);
+// @DOC: gets the state of the mouse-button last frame 
+bool input_get_last_mouse_state(mouse_btn_type btn);
+// @DOC: window is type GLFWwindow*
+void input_mouse_callback(void* window, mouse_btn_type button, input_state state, int mods);
+
+
+// @DOC: get the mouse's x position
 f64 input_get_mouse_x();
-// get the mouse's y position
+// @DOC: get the mouse's y position
 f64 input_get_mouse_y();
-// get the mouse's position
+// @DOC: get the mouse's position
 void input_get_mouse_pos(f64* x, f64* y);
-// get the distance the mouse moved on the x axis last frame
+// @DOC: get the distance the mouse moved on the x axis last frame
 f64 input_get_mouse_delta_x();
-// get the distance the mouse moved on the y axis last frame
+// @DOC: get the distance the mouse moved on the y axis last frame
 f64 input_get_mouse_delta_y();
-// get the distance the mouse moved on the x and y axis last frame
+// @DOC: get the distance the mouse moved on the x and y axis last frame
 void input_get_mouse_delta(f64* x, f64* y);
 
-// puts the cursor in the middle of the window
+// @DOC: puts the cursor in the middle of the window
 void input_center_cursor_pos();
-// set if the cursor is visible
+// @DOC: set if the cursor is visible
 void input_set_cursor_visible(bool visible);
 
-// glfw callback used internally
-// window is type GLFWwindow*
+// @DOC: glfw callback used internally
+//       window is type GLFWwindow*
+//       !used internally
 void input_mouse_pos_callback(void* window, double xpos, double ypos);
 
+// @DOC: 
+//       !used internally
 void input_scroll_callback(void* window, double xpos, double ypos);
 
 #endif

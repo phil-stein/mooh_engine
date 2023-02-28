@@ -1,9 +1,6 @@
 #include "core/file_io.h"
 #include "math/math_inc.h"
 
-#define STB_DS_IMPLEMENTATION       // only define once
-#include "stb/stb_ds.h"         
-
 #include <direct.h>
 
 int file_check_exists(const char* file_path)

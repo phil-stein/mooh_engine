@@ -10,10 +10,10 @@ void phys_debug_draw_velocity_func(phys_obj_t* obj)
 	vec3_copy(obj->rb.velocity, v_scaled);
 	vec3_mul_f(v_scaled, 0.2f, v_scaled);
 	vec3_add(obj->pos, v_scaled, v_pos);
-  debug_draw_line_register(obj->pos, v_pos,PHYS_DEBUG_VELOCITY_COLOR ); 
+  debug_draw_line_register(obj->pos, v_pos, PHYS_DEBUG_VELOCITY_COLOR); 
 }
 
-void phys_debug_draw_collider_func(phys_obj_t* obj)
+void phys_debug_draw_collider_func(phys_obj_t* obj, f32* color)
 {
   switch (obj->collider.type)
   {
@@ -23,12 +23,12 @@ void phys_debug_draw_collider_func(phys_obj_t* obj)
       // @NOTE: deserialized entites get wrong id in phys_obj_t
       break;
     case PHYS_COLLIDER_BOX:
-      phys_debug_draw_box_collider_func(obj);
+      phys_debug_draw_box_collider_func(obj, color);
       break;
   }
 }
 
-void phys_debug_draw_box_collider_func(phys_obj_t* obj)
+void phys_debug_draw_box_collider_func(phys_obj_t* obj, f32* color)
 {
 	if (!PHYS_OBJ_HAS_COLLIDER(obj)) { return; }
   
@@ -86,7 +86,9 @@ void phys_debug_draw_box_collider_func(phys_obj_t* obj)
   };
 #undef V
 
-  debug_draw_box_register(points, PHYS_OBJ_HAS_RIGIDBODY(obj) ? PHYS_DEBUG_COLLIDER_COLOR_DYNAMIC : PHYS_DEBUG_COLLIDER_COLOR_STATIC);
+  // debug_draw_box_register(points, PHYS_OBJ_HAS_RIGIDBODY(obj) ? PHYS_DEBUG_COLLIDER_COLOR_DYNAMIC : PHYS_DEBUG_COLLIDER_COLOR_STATIC);
+  // debug_draw_box_register(points, obj->is_trigger ? trigger_col : PHYS_OBJ_HAS_RIGIDBODY(obj) ? normal_col : static_col);
+  debug_draw_box_register(points, color);
 
   // debug_draw_sphere_register(top0, 0.25f, RGB_F(1, 1, 0));
   // debug_draw_sphere_register(top1, 0.25f, RGB_F(1, 0, 0));

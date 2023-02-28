@@ -15,7 +15,9 @@
 
 // @TODO: replace phys_act & scripts_act with flag
 
+// @DOC: maximun length of the ASSET_PATH macro defined in make
 #define ASSET_PATH_MAX 256
+// @DOC: maximun length of the path to the shaders aka. ASSET_PATH/shaders
 #define SHADERS_PATH_MAX ASSET_PATH_MAX
 
 typedef struct core_data_t
@@ -27,14 +29,14 @@ typedef struct core_data_t
   GLFWmonitor* monitor;
   GLFWwindow*  window;
 
-  f32 t_last_frame;
-  f32 delta_t;
-  f32 cur_fps;
+  f32 t_last_frame;  // time it took to run the last frame
+  f32 delta_t;       // how much time has passed since last frame
+  f32 cur_fps;       // frames per second
 
   // -- assetm --
 
-  char asset_path[ASSET_PATH_MAX] ;
-  char shaders_path[SHADERS_PATH_MAX] ;
+  char asset_path[ASSET_PATH_MAX];
+  char shaders_path[SHADERS_PATH_MAX];
   
   shader_t equirect_shader;       // for rendering equirectangular images to cube maps
   shader_t irradiance_map_shader; // for rendering the irradiance map from the cube map
@@ -51,15 +53,15 @@ typedef struct core_data_t
   const f32 near_plane; 
   const f32 far_plane;  
 
-
-  // -- renderer --
-
-  // primitives
+  // -- renderer_direct --
+  
   // created in core_data_init_renderer()
-  u32 quad_vao, quad_vbo;
+  u32 quad_vao, quad_vbo;     // 
   int quad_mesh;
   mesh_t line_mesh;
 
+  // -- renderer --
+  
   bool wireframe_mode_enabled;
   bool show_shadows;
 
@@ -111,8 +113,6 @@ typedef struct core_data_t
   u32 terrain_draw_dist;
   u32 terrain_cull_dist;
 
-  // -- camera --
-  // ?
   // -- state --
   // ?
   // -----------
@@ -195,8 +195,11 @@ typedef struct core_data_t
 
 // -- func decls --
 
-core_data_t* core_data_get();
+// @DOC: initialize core_data call this before any other calls to core_data
 void core_data_init();
+
+// @DOC: get pointer to core_data struct
+core_data_t* core_data_get();
 
 #ifdef INCLUDE_PLAY_MODE
 // play or pause the game, also saving/restoring game state

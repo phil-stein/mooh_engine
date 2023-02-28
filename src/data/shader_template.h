@@ -31,7 +31,7 @@ typedef struct shader_template_t
   const char* vert; 
   const char* frag;
   bool unlit;
-  uniforms_callback* set_uniforms;
+  uniforms_callback* set_uniforms_f;
 }shader_template_t;
 
 const shader_template_t* shader_template_get(int idx);

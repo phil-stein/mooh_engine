@@ -20,6 +20,9 @@
 
 #include <time.h>
 
+#define STB_DS_IMPLEMENTATION       // only define once
+#include "stb/stb_ds.h"         
+
 
 static core_data_t* core_data = NULL;
 
@@ -32,8 +35,7 @@ void program_start(int width, int height, const char* title, window_type type, e
 		printf("[ERROR] window creation failed\n");
 		return;
 	}
-  
-
+ 
 	// ---- init ----
 
   // asset path

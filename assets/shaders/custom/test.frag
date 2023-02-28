@@ -56,5 +56,9 @@ void main()
   color.rgb = texture(albedo, _in.uv_coords).rgb * tint;
   color.a   = 1.0;
   color.rgb += fade_color * mask;
+  
+  // honstely no idea what this is supposed to do
+  color.rgb = fade_color;
+
 
 } 

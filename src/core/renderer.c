@@ -288,7 +288,7 @@ void renderer_update()
       shader_set_mat4(mat_shader, "view", view);
       shader_set_mat4(mat_shader, "proj", proj);
 
-      if (mat_shader->set_uniforms != NULL) { mat_shader->set_uniforms(mat_shader, tex_idx); }
+      if (mat_shader->set_uniforms_f != NULL) { mat_shader->set_uniforms_f(mat_shader, tex_idx); }
 
       mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh);
       DRAW_MESH(mesh);

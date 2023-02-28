@@ -1,5 +1,6 @@
 #include "editor/gizmo.h"
 #include "editor/app.h"
+#include "editor/stylesheet.h"
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/input.h"
@@ -32,6 +33,44 @@ void gizmo_update()
     mat4 model;
     vec3 pos;
     GIZMO_MODEL_POS(app_data, model, pos);
+    
+    // draw line to parent
+    bool error = false;
+    entity_t* e = state_get_entity(app_data->selected_id, &error); ASSERT(!error);
+    if (e->parent >= 0)
+    {
+      entity_t* p = state_get_entity(e->parent, &error); ASSERT(!error);
+      vec3 p_pos;
+      mat4_get_pos(p->model, p_pos);
+      // shorten vector
+      vec3 start; vec3_copy(pos, start);
+      vec3 step;  vec3_sub(p_pos, pos, step); // dir towards parent
+      vec3_normalize(step, step);
+      vec3_mul_f(step, 0.5f, step);
+      vec3_add(start, step, start);
+      debug_draw_line_register_width(p_pos, start, INFO_CHILD_LINE_COLOR, INFO_CHILD_LINE_WIDTH);
+      debug_draw_sphere_register(p_pos, 0.1f, INFO_CHILD_LINE_SPHERES_COLOR);
+      debug_draw_sphere_register(start, 0.1f, INFO_CHILD_LINE_SPHERES_COLOR);
+    }
+    // draw line to children
+    if (e->children_len > 0)
+    {
+      for (int i = 0; i < e->children_len; ++i)
+      {
+        entity_t* c = state_get_entity(e->children[i], &error); ASSERT(!error);
+        vec3 c_pos;
+        mat4_get_pos(c->model, c_pos);
+        // shorten vector
+        vec3 start; vec3_copy(pos, start);
+        vec3 step;  vec3_sub(c_pos, pos, step); // dir towards parent
+        vec3_normalize(step, step);
+        vec3_mul_f(step, 0.5f, step);
+        vec3_add(start, step, start);
+        debug_draw_line_register_width(c_pos, start, INFO_PARENT_LINE_COLOR, INFO_PARENT_LINE_WIDTH);
+        debug_draw_sphere_register(c_pos, 0.1f, INFO_PARENT_LINE_SPHERES_COLOR);
+        debug_draw_sphere_register(start, 0.1f, INFO_PARENT_LINE_SPHERES_COLOR);
+      }
+    }
 
     
     if (app_data->gizmo_type == GIZMO_NONE)
@@ -63,12 +102,12 @@ void gizmo_update()
       {
         if (!start_value_set)
         {
-          vec3_copy(e->pos, start_pos);
+          vec3_copy(pos, start_pos);
           start_value_set = true;
         }
-        debug_draw_line_register_width(start_pos, e->pos, RGB_F_RGB(1), 8);
-        debug_draw_sphere_register(start_pos, 0.1f, RGB_F_RGB(0.95f));
-        debug_draw_sphere_register(e->pos,    0.1f, RGB_F_RGB(0.95f));
+        debug_draw_line_register_width(start_pos, pos, GIZMO_TRANSLATE_LINE_COLOR, GIZMO_TRANSLATE_LINE_WIDTH);
+        debug_draw_sphere_register(start_pos, 0.1f, GIZMO_TRANSLATE_LINE_SPHERES_COLOR);
+        debug_draw_sphere_register(pos,    0.1f, GIZMO_TRANSLATE_LINE_SPHERES_COLOR);       
       }
       // else if (app_data->gizmo_type == GIZMO_ROTATE)
       // {

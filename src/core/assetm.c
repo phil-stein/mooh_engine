@@ -558,7 +558,7 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
   char frag_path[ASSET_PATH_MAX +64]; 
   sprintf(frag_path, "%s%s", core_data->shaders_path,s->frag);
 
-  return shader_create_from_file(vert_path, frag_path, s->set_uniforms, s->name);
+  return shader_create_from_file(vert_path, frag_path, s->set_uniforms_f, s->name);
 	
 #else
   ERR("zip loading for shaders not yet implemented\n -> [FILE] '%s', [LINE] %d\n", file, line);

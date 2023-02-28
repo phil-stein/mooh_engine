@@ -30,6 +30,7 @@ const material_template_t material_table[] =
     .roughn_f = 0.5f,
     .metall_f = 0.0f,
     .shader_template = SHADER_TEMPLATE_NONE,
+  
   },
   // MATERIAL_TEMPLATE_DEFAULT_INIT(), // @NOTE: is this better, than having the values in the .c file ?
   // metall

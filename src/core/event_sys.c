@@ -40,9 +40,6 @@ void event_sys_trigger_phys_collision(int id_01, int id_02)
   {
     phys_collision_arr[i](id_01, id_02);
   }
-  // arrfree(phys_collision_arr);
-  // phys_collision_arr = NULL;
-  // phys_collision_arr_len = 0;
 }
 void event_sys_trigger_phys_trigger(int id_01, int id_02)       // on two entities colliding, at least one is set to trigger 
 {
@@ -58,9 +55,6 @@ void event_sys_trigger_phys_trigger(int id_01, int id_02)       // on two entiti
   {
     phys_trigger_arr[i](id_01, id_02);
   }
-  // arrfree(phys_collision_arr);
-  // phys_collision_arr = NULL;
-  // phys_collision_arr_len = 0;
 }
 
 // --- register ---

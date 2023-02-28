@@ -3,6 +3,7 @@
 #include "editor/gui.h"
 #include "editor/app.h"
 #include "editor/gizmo.h"
+#include "editor/stylesheet.h"
 #include "core/core_data.h"
 #include "core/window.h"
 #include "core/renderer.h"
@@ -584,7 +585,8 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
         phys_rotate_box_y(e->id);
       }
 
-      phys_debug_draw_box_collider(obj);
+      phys_debug_draw_box_collider(obj, def->is_trigger ? INFO_COLLIDER_TRIGGER_COLOR : 
+                                        (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY) ? INFO_COLLIDER_DYNAMIC_COLOR : INFO_COLLIDER_STATIC_COLOR));
     }
   }
 

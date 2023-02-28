@@ -6,7 +6,7 @@
 
 void test_shader_set_uniforms(shader_t* shader, int tex_idx)
 {
-  shader_set_vec3(shader, "fade_color", VEC3_XYZ(1, 1, 1));
+  shader_set_vec3(shader, "fade_color", VEC3_XYZ(1, 0, 1));
 }
 
 
@@ -18,7 +18,7 @@ const shader_template_t shader_table[] =
     .vert  = "basic.vert",
     .frag  = "basic.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // shadow map
   {
@@ -26,7 +26,7 @@ const shader_template_t shader_table[] =
     .vert  = "shadow_map.vert",
     .frag  = "empty.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // deferred
   {
@@ -34,7 +34,7 @@ const shader_template_t shader_table[] =
     .vert  = "basic.vert",
     .frag  = "deferred.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // skybox
   {
@@ -42,7 +42,7 @@ const shader_template_t shader_table[] =
     .vert  = "cubemap/cube_map.vert",
     .frag  = "cubemap/cube_map.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // shadow pass
   {
@@ -50,7 +50,7 @@ const shader_template_t shader_table[] =
     .vert  = "screen.vert",
     .frag  = "shadow_pass.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // lighting
   {
@@ -58,7 +58,7 @@ const shader_template_t shader_table[] =
     .vert  = "screen.vert",
     .frag  = "pbr.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // post-fx
   {
@@ -66,7 +66,7 @@ const shader_template_t shader_table[] =
     .vert  = "screen.vert",
     .frag  = "post_fx.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // brdf lut
   {
@@ -74,7 +74,7 @@ const shader_template_t shader_table[] =
     .vert  = "cubemap/brdf_lut.vert",
     .frag  = "cubemap/brdf_lut.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // mouse pick
   {
@@ -82,7 +82,7 @@ const shader_template_t shader_table[] =
     .vert  = "basic.vert",
     .frag  = "mouse_picking.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
   // terrain
   {
@@ -90,7 +90,7 @@ const shader_template_t shader_table[] =
     .vert  = "terrain.vert",
     .frag  = "terrain.frag",
     .unlit = false,
-    .set_uniforms = NULL,
+    .set_uniforms_f = NULL,
   },
 
   // -- custom --
@@ -99,7 +99,7 @@ const shader_template_t shader_table[] =
     .vert  = "basic.vert",
     .frag  = "custom/test.frag", 
     .unlit = false,
-    .set_uniforms = test_shader_set_uniforms,
+    .set_uniforms_f = test_shader_set_uniforms,
   },
 };
 const int shader_table_len = sizeof(shader_table) / sizeof(shader_table[0]);

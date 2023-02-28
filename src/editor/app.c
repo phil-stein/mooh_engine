@@ -36,30 +36,6 @@ int main(void)
 {
   program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   
-  // P_LINE();
-  
-  // PF("PF\n");
-  // P("P");
- 
-  // int a   = 12;    P_INT(a); 	  
-  // u32 b   = 12;    P_U32(b);	  
-  // f32 c   = 1.2f;  P_F32(c); 	  
-  // char* d = "hi";  P_STR(d); 	  
-  // char e  = '&';   P_CHAR(e); 	
-  // bool f  = true;  P_BOOL(f); 	
-  
-  /// P_TXT(txt)  
-  
-  // P_ERR(...)	
-  // ASSERT(c)   
-  // ERR(...)    
-  // ERR_CHECK(c, ...) 
-
-  // f32 g = 2 / 0; F32_NAN(g);  
-  // P_NAN(v)    
-
-  // P_INFO("hello this is info"); 
-
   return 0;
 }
 
