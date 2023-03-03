@@ -126,7 +126,7 @@ void debug_timer_start_timer_func(char* name, char* file, char* func)
 { }
 
 bool debug_timer_can_stop_timer()
-{ }
+{ return false; }
 
 timer_t debug_timer_stop_timer_func()
 {

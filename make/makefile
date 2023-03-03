@@ -3,7 +3,7 @@
 
 all: editor
 
-clean: core_clean editor_clean
+clean: core_clean editor_clean game_clean
 
 # --- core ---
 

@@ -6,20 +6,21 @@
 # compiler plus flags, -g: debug info, -Wall: all warnings
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
-CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"	-DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE
+#  -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE
+CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"  -DASSETM_NO_ZIP 
 CC_NO_WARN = @gcc
 
-BUILD_DIR = ..\build
+BUILD_DIR = ../build
 
-NAME = editor.exe
+NAME = game.exe
 OUT  = $(BUILD_DIR)\$(NAME)
 
 SRC_DIR   = ../src
 GLOBL_DIR = $(SRC_DIR)/global
 DATA_DIR  = $(SRC_DIR)/data
-APP_DIR   = $(SRC_DIR)/editor
+APP_DIR   = $(SRC_DIR)/game
 
-OBJ_DIR = $(BUILD_DIR)\bin_editor
+OBJ_DIR = $(BUILD_DIR)/bin_game
 LIB_DIR = ..\libs\win64
 
 EXTERNAL_DIR = ../external
@@ -28,9 +29,7 @@ APP_INC			 = $(APP_DIR)
 # app
 _OBJS = 				 			\
 	app.o					 			\
-	gui.o					 			\
-	gizmo.o							\
-	terrain_edit.o
+	gui.o					 			
 
 # put the OBJ_DIR in front of the obj names
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
@@ -38,7 +37,7 @@ OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 
 _LIBS = 						\
-	_mooh_core_editor	\
+	_mooh_core				\
 	glfw3							\
 	gdi32							\
 	user32						\
@@ -61,10 +60,9 @@ all: core $(NAME)
 
 
 # compile mooh_core library
-# $(MAKE) -C .. -f makefile_core	
+# $(MAKE) -f makefile_core	
 core:
-	$(MAKE) -C .. core_editor	
-
+	$(MAKE) -C .. core_game
 
 #	$(MAKE) -C ../.. when compiling from src/editor
 

@@ -242,7 +242,7 @@ main resources:
   - [ ] give trigger colliders a different color
   - [x] draw line between parent & child
     - [x] indicate which side is parent/child
-  - [ ] outline on selected entity
+  - [x] outline on selected entity
   - [x] make a .h file with all color macros
     - [x] parent / child lines
     - [x] move the color of collider debug draw from phys to editor

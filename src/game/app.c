@@ -1,5 +1,5 @@
 #include "editor/app.h"
-// #include "editor/gui.h"
+#include "editor/gui.h"
 #include "editor/gizmo.h"
 #include "editor/terrain_edit.h"
 #include "core/program.h"
@@ -21,7 +21,7 @@
 
 
 // bool app_data.wireframe_act = false;
-// f32 app_data.mouse_sensitivity = 0.125f;
+// float app_data.mouse_sensitivity = 0.125f;
 // int app_data.selected_id = -1; // -1 = not selected
 
 app_data_t app_data = APP_DATA_INIT(); 
@@ -34,49 +34,118 @@ void rotate_cam_by_mouse();
 
 int main(void)
 {
-#ifdef RELEASE
-  program_start(1920, 1800, "mooh", WINDOW_FULL, app_init, app_update);  // WINDOW_FULL
-#else
-  program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update);  // WINDOW_FULL
-#endif
+  program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
+  
   return 0;
 }
 
 void app_init()
 {
+  #ifdef ASSETM_NO_ZIP
+  P("| ASSETM NO ZIP");
+  #endif
+  #ifdef EDITOR
+  P("| EDITOR");
+  #endif
+  #ifdef INCLUDE_PLAY_MODE
+  P("| PLAY MODE");
+  #endif
+
+
   core_data = core_data_get();
-  core_data->phys_act = true;
-  core_data->scripts_act = true;
-  cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr");
+
+  // core_data->phys_act    = true;
+  // core_data->scripts_act = true;
+
+  TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
+  // state_set_cubemap(cube_map);
   core_data->cube_map = cube_map;
 
-
-  // serialization_write_scene_to_file(scene_name);
-  serialization_load_scene_from_file(SCENE_FILE_NAME);
+  const char scene_name[] = "test.scene";
+  TIMER_FUNC_STATIC(serialization_load_scene_from_file(scene_name));
+  TIMER_FUNC_STATIC(serialization_load_terrain_from_file("test.terrain"));
+  TIMER_FUNC_STATIC(terrain_create(25));
 
   // in game will be done by camera-controller
-  // input_center_cursor_pos();
   camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
   camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));
   
+  
   // TIMER_FUNC_STATIC(gui_init());
-
-  serialization_load_terrain_from_file(TERRAIN_FILE_NAME);
-  TIMER_FUNC_STATIC(terrain_create(25));
 }
 
 void app_update()
 {
-  // TIMER_FUNC(gui_update());
 
   // -- input --
-  input_set_cursor_visible(false);
-  rotate_cam_by_mouse(); 
-  move_cam_by_keys();
   
   if (input_get_key_pressed(KEY_EXIT))
   {
     program_quit();
+  }
+  
+  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
+  { 
+    serialization_write_scene_to_file(SCENE_FILE_NAME); 
+    serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
+  }
+
+  if (input_get_key_pressed(KEY_SPACE))
+  { core_data->show_shadows = !core_data->show_shadows; }
+
+  // @TODO: flickers first frame
+  static bool start = true;
+  if (!app_data.mouse_over_ui && input_get_mouse_down(KEY_MOUSE_MOVE_START))
+  {
+    app_data.switch_gizmos_act = false;
+    if (start)
+    { 
+      input_center_cursor_pos(); 
+      start = false;
+    }
+    else
+    {
+      input_set_cursor_visible(false);
+      rotate_cam_by_mouse(); 
+      move_cam_by_keys();
+    }
+  }
+  else
+  { 
+    app_data.switch_gizmos_act = true;
+    start = true;
+    input_set_cursor_visible(true); 
+  }
+
+  // snapping enabled when holding ctrl
+  app_data.gizmo_snapping = (app_data.selected_id >= 0 && input_get_key_down(KEY_GIZMO_SNAPPING));
+  
+    // duplicate with 'ctrl + d'
+  if (app_data.selected_id >= 0 && input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_D))
+  {
+    int id = state_duplicate_entity(app_data.selected_id, VEC3_XYZ(2, 0, 0));
+    app_data.selected_id = id;
+  }
+
+  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
+	{
+		app_data.wireframe_act = !app_data.wireframe_act;
+		core_data->wireframe_mode_enabled = app_data.wireframe_act;
+	}
+
+  if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
+  {
+    window_type type = window_get_mode();
+    
+    P_WINDOW_TYPE(type); 
+    
+    // @NOTE: min -> max -> full
+    type = type == WINDOW_MIN ? WINDOW_MAX : type == WINDOW_MAX ? WINDOW_FULL : WINDOW_MAX;
+    
+    P_WINDOW_TYPE(type); 
+    P("------------");
+
+    window_set_mode(type);
   }
 
 }
@@ -84,10 +153,11 @@ void app_update()
 app_data_t* app_data_get()
 { return &app_data; }
 
+
 void move_cam_by_keys()
 {
   // -- move the cam --
-	f32 cam_speed = CAM_SPEED * core_data->delta_t;
+	float cam_speed = CAM_SPEED * core_data->delta_t;
 	if (input_get_key_down(KEY_LEFT_SHIFT))
 	{ cam_speed *= CAM_SPEED_SHIFT_MULT; }
 	if (input_get_key_down(KEY_MOVE_FORWARD))

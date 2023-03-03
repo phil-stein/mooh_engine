@@ -75,7 +75,7 @@ void gizmo_update()
     
     if (app_data->gizmo_type == GIZMO_NONE)
     {
-      debug_draw_sphere_register(pos, 0.25f, RGB_F(1.0f, 0.5f, 0.0f));
+      debug_draw_sphere_register(pos, 0.15f, RGB_F(1.0f, 0.5f, 0.0f));
     }
     else if (app_data->gizmo_type == GIZMO_TRANSLATE)
     {

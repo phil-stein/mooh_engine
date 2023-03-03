@@ -9,12 +9,13 @@
 #  @TODO: get rid of EDITOR defione, should not be here
 # -DASSET_PATH=\"assets/\"
 # -DEDITOR
-CC         = @gcc -g -Wall	-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE
+# CC         = @gcc -g -Wall	-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE
+CC         = @gcc -g -Wall	
 CC_NO_WARN = @gcc
 
 LIB_DIR = ..\libs\win64
 
-NAME = lib_mooh_core.a
+# NAME = lib_mooh_core.a
 OUT  = $(LIB_DIR)\$(NAME)
 
 SRC_DIR   		 = ../src
@@ -27,7 +28,7 @@ PHYS_DIR  		 = $(SRC_DIR)/phys
 
 EXTERNAL_DIR = ../external
 
-OBJ_DIR = ..\build\bin
+OBJ_DIR = ..\build\$(BIN_DIR)
 
 # external: ufbx, zip
 _OBJS += 				 			\
@@ -94,6 +95,9 @@ LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS)
 
 
 all: $(NAME)
+	@echo $(BIN_DIR)
+	@echo $(NAME)
+	@echo $(CC_ARGS)
 	@echo ---- mooh core ----
 
 # compile all object files to .exe
@@ -104,31 +108,31 @@ $(NAME): $(OBJS)
 # compile all .c files to .o files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_TYPES_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_DEBUG_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(DATA_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(PHYS_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
 	echo $< -> $@	
-	$(CC) -c $< -o $@ $(INC)
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/ufbx/%.c
 	echo $< -> $@	

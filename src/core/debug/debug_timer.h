@@ -114,6 +114,9 @@ f64 debug_timer_stop_timer_print_func();
 // to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 #define TIMER_STOP_PRINT()
 
+
+#define TIMER_STOP_STATIC()
+
 // functions / macros in "debug_utils.h" are deactivated
 // to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 timer_t* debug_timer_get_all(int* len);
