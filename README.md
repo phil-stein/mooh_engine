@@ -97,13 +97,13 @@ main resources:
 
 ## organization
   - [ ] factor out cubemap creating from assetm, into sep. tool
-  - [ ] factor out brdf creating from renderer, into sep. tool
-  - [ ] factor out mouse_pick & outline from renderer into sep. file 
+  - [x] factor out brdf creating from renderer
+  - [x] factor out mouse_pick & outline from renderer into sep. file 
   - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate serialization.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
-  - [ ] ! get game comliling again
+  - [x] ! get game comliling again
   - [ ] comment all .h files in core
     - [x] debug
       - [x] debug_draw.h
@@ -224,7 +224,7 @@ main resources:
   - [ ] custom anti aliasing
   - [ ] water 
   - [ ] maybe do outlines ?     
-  - [ ] immediate mode renderer, for gui, etc.
+  - [x] immediate mode renderer, for gui, etc.
 
 ## entity system
   - [ ] structures ? (prefabs), [also mentioned](#base)

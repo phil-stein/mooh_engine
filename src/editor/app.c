@@ -6,6 +6,7 @@
 #include "core/core_data.h"
 #include "core/input.h"
 #include "core/renderer.h"
+#include "core/renderer_extra.h"
 #include "core/camera.h"
 #include "core/file_io.h"
 #include "core/assetm.h"
@@ -161,7 +162,7 @@ void app_update()
   mat4 model;
   vec3 pos;
   GIZMO_MODEL_POS(&app_data, model, pos);
-  TIMER_FUNC(renderer_draw_scene_mouse_pick(model)); 
+  TIMER_FUNC(renderer_extra_draw_scene_mouse_pick(model)); 
   TIMER_FUNC(gui_update());
   TIMER_FUNC(gizmo_update());
   TIMER_FUNC(terrain_edit_update());

@@ -166,6 +166,8 @@
     <ClCompile Include="src\core\input.c" />
     <ClCompile Include="src\core\program.c" />
     <ClCompile Include="src\core\renderer.c" />
+    <ClCompile Include="src\core\renderer_direct.c" />
+    <ClCompile Include="src\core\renderer_extra.c" />
     <ClCompile Include="src\core\serialization.c" />
     <ClCompile Include="src\core\state.c" />
     <ClCompile Include="src\core\terrain.c" />
@@ -209,6 +211,8 @@
     <ClInclude Include="src\core\input.h" />
     <ClInclude Include="src\core\program.h" />
     <ClInclude Include="src\core\renderer.h" />
+    <ClInclude Include="src\core\renderer_direct.h" />
+    <ClInclude Include="src\core\renderer_extra.h" />
     <ClInclude Include="src\core\serialization.h" />
     <ClInclude Include="src\core\state.h" />
     <ClInclude Include="src\core\str_util.h" />

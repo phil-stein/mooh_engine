@@ -8,6 +8,7 @@
 #include "core/window.h"
 #include "core/renderer.h"
 #include "core/renderer_direct.h"
+#include "core/renderer_extra.h"
 #include "core/state.h"
 #include "core/input.h"
 #include "core/assetm.h"

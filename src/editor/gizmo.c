@@ -5,6 +5,7 @@
 #include "core/camera.h"
 #include "core/input.h"
 #include "core/renderer.h"
+#include "core/renderer_extra.h"
 #include "core/debug/debug_draw.h"
 #include "core/state.h"
 #include "core/assetm.h"
@@ -141,7 +142,7 @@ void gizmo_update()
   static int gizmo_axis = -1;
   if (!app_data->mouse_over_ui && input_get_mouse_pressed(MOUSE_LEFT))
   {
-    int id = renderer_mouse_position_mouse_pick_id(); 
+    int id = renderer_extra_mouse_position_mouse_pick_id(); 
 
     // P_INT(id);
     if (id >= 0)

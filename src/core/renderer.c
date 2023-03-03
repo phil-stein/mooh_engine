@@ -1,5 +1,6 @@
 #include "core/renderer.h"
 #include "core/renderer_direct.h"
+#include "core/renderer_extra.h"
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/state.h"
@@ -9,7 +10,6 @@
 #include "core/debug/debug_timer.h"
 #include "data/shader_template.h"
 
-#include "editor/app.h"   // big bad only tmp
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -29,14 +29,6 @@ const f32 exposure    = 1.25f;
 
 static core_data_t* core_data;
 
-#define DRAW_MESH(_mesh)                                                                \
-      {                                                                                 \
-        glBindVertexArray(_mesh->vao);                                                  \
-        if (_mesh->indexed)                                                             \
-        { glDrawElements(GL_TRIANGLES, _mesh->indices_count, GL_UNSIGNED_INT, 0); }     \
-        else                                                                            \
-        { glDrawArrays(GL_TRIANGLES, 0, _mesh->verts_count); }                          \
-      }
 
 void renderer_init()
 {
@@ -99,7 +91,7 @@ void renderer_init()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
   // ----------------------------------------------------------------------------------------------
 
-  brdf_lut = renderer_gen_brdf_lut(); // @TODO: put in core_data
+  brdf_lut = renderer_extra_gen_brdf_lut(); // @TODO: put in core_data
 
   // int texture_units;
   // glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units); 
@@ -466,7 +458,7 @@ void renderer_update()
   TIMER_STOP();
 
 #ifdef OUTLINE
-  TIMER_FUNC(renderer_draw_scene_outline());
+  TIMER_FUNC(renderer_extra_draw_scene_outline());
 #endif // EDITOR
 
   TIMER_START("post fx");
@@ -582,253 +574,4 @@ void renderer_draw_terrain_mesh(terrain_chunk_t* chunk)
           * strip)); // offset to starting index
   }
 }
-#ifdef EDITOR
-void renderer_draw_scene_mouse_pick(mat4 gizmo_model)
-{
-  int w, h; window_get_size(&w, &h);
-  app_data_t*  app_data  = app_data_get();
-  
-  framebuffer_bind(&core_data->fb_mouse_pick);
-  glViewport(0, 0, w / 4, h / 4);
-  glClearColor(0.0, 0.0, 0.0, 1.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  // -- opengl state --
-  glEnable(GL_DEPTH_TEST); // enable the z-buffer
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-
-  mat4 view, proj;
-  camera_get_view_mat(view);
-  camera_get_proj_mat(w, h, proj);
-
-  // cycle all objects
-  int entities_len = 0;
-  int entities_dead_len = 0;
-  entity_t* entities = state_get_entity_arr(&entities_len, &entities_dead_len);
-  shader_use(&core_data->mouse_pick_shader);
-  for (int i = 0; i < entities_len; ++i)
-  {
-    entity_t* ent = &entities[i];
-    if (ent->is_dead || ent->mesh < 0 || ent->mat < 0) { continue; }
-
-    // state_entity_update_global_model(i);
-
-    shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ent->id);
-
-    shader_set_mat4(&core_data->mouse_pick_shader, "model", ent->model);
-    shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
-    shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
-
-    mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh);
-    DRAW_MESH(mesh);
-  }
-
-  // -- draw terrain --
-  for (int i = 0; i < core_data->terrain_chunks_len; ++i) 
-  { 
-  if (!core_data->terrain_chunks[i].loaded || !core_data->terrain_chunks[i].visible) { continue; }
-    shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ID_BUFFER_TERRAIN_0 -i); // counts down
-    shader_set_mat4(&core_data->mouse_pick_shader, "model", core_data->terrain_chunks[i].model);
-    renderer_draw_terrain_mesh(&core_data->terrain_chunks[i]); 
-  }
-
-  // -- draw lights --
-  mesh_t* sphere = assetm_get_mesh("sphere.fbx");
-  for (int i = 0; i < entities_len; ++i)
-  {
-    entity_t* ent = &entities[i];
-    if (ent->point_light_idx >= 0)
-    {
-      mat4 model;
-      mat4_copy(ent->model, model);
-      mat4_scale_f(model, 0.35f, model);
-      shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ent->id);
-
-      shader_set_mat4(&core_data->mouse_pick_shader, "model", model);
-      shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
-      shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
-
-      DRAW_MESH(sphere);
-    }
-  }
-
-  // -- draw gizmo --
-  if (app_data->selected_id >= 0 || app_data->selected_id == -2) // entity or terrain
-  {
-    glClear(GL_DEPTH_BUFFER_BIT);
-        
-    // mat4 model;
-    // if (app_data->selected_id >= 0)
-    // { state_entity_model_no_scale(app_data->selected_id, model); }
-    // else // terrain
-    // { mat4_make_model(core_data->terrain_pos, core_data->terrain_rot, VEC3(1), model); }
-
-
-    shader_set_mat4(&core_data->mouse_pick_shader, "model", gizmo_model);
-    shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
-    shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
-
-    mesh_t* hitboxes_translate[] = 
-    {
-      assetm_get_mesh("gizmos/translate/x.fbx"),
-      assetm_get_mesh("gizmos/translate/y.fbx"),
-      assetm_get_mesh("gizmos/translate/z.fbx"),
-      assetm_get_mesh("gizmos/translate/xy.fbx"),
-      assetm_get_mesh("gizmos/translate/xz.fbx"),
-      assetm_get_mesh("gizmos/translate/yz.fbx"),
-      assetm_get_mesh("gizmos/translate/xyz.fbx")
-    };
-    mesh_t* hitboxes_scale[] = 
-    {
-      assetm_get_mesh("gizmos/scale/x.fbx"),
-      assetm_get_mesh("gizmos/scale/y.fbx"),
-      assetm_get_mesh("gizmos/scale/z.fbx"),
-      assetm_get_mesh("gizmos/scale/xyz.fbx")
-    };
-    mesh_t* hitboxes_rotate[] = 
-    {
-      assetm_get_mesh("gizmos/rotate/x.fbx"),
-      assetm_get_mesh("gizmos/rotate/y.fbx"),
-      assetm_get_mesh("gizmos/rotate/z.fbx"),
-      assetm_get_mesh("gizmos/rotate/xyz.fbx")
-    };
-
-    mesh_t** hitboxes = app_data->gizmo_type == 1 ? hitboxes_translate :
-      app_data->gizmo_type == 2 ? hitboxes_scale     : 
-      app_data->gizmo_type == 3 ? hitboxes_rotate    : NULL;
-    int hitboxes_len  = app_data->gizmo_type == 1 ? 7 :
-      app_data->gizmo_type == 2 ? 4 :
-      app_data->gizmo_type == 3 ? 4 : 0;
-
-    for (int i = 0; i < hitboxes_len; ++i)
-    {
-      shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ID_BUFFER_GIZMO_0 -i); // -3, -4, -5, ...
-      mesh_t* mesh = hitboxes[i];
-      DRAW_MESH(mesh);
-    }
-  }
-
-  framebuffer_unbind();
-}
-
-void renderer_draw_scene_outline()
-{
-  if (core_data->outline_id < 0) { return; }
-  bool error = false;
-	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
-  // draw in solid-mode for fbo
-	if (core_data->wireframe_mode_enabled == true)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	int w, h; window_get_size(&w, &h);
-	glViewport(0, 0, w, h);
-	framebuffer_bind(&core_data->fb_outline);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
-	
-  // if (!(gamestate && hide_gizmos) && ent->id != -1 && (ent->has_model || ent->has_light || ent->has_cam)) //  && ent->visible
-	// {
-  // }
-
-  // @TODO: draw lightbulb when light
-
-  // mat4 view, proj;
-  // camera_get_view_mat(view);
-  // mat4 view_no_pos;
-  // mat4_copy(view, view_no_pos);
-  // mat4_set_pos(0, 0, 0, view_no_pos);
-  // camera_get_proj_mat(w, h, proj);
-
-  // shader_set_mat4(&core_data->_shader, "model", ent->model);
-  // shader_set_mat4(&core_data->_shader, "view", view);
-  // shader_set_mat4(&core_data->_shader, "proj", proj);
-
-
-  // @NOTE: does obj drawn need to be scaled up ?
-
-  mesh_t* mesh   = assetm_get_mesh_by_idx(e->mesh);
-  texture_t* tex = assetm_get_texture("#internal/blank.png", true);
-  renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
-  // DRAW_MESH(mesh);
-
-	framebuffer_unbind();
-}
-
-#endif // EDITOR
-
-int renderer_mouse_position_mouse_pick_id()
-{
-  f64 x = 0;
-  f64 y = 0;
-  input_get_mouse_pos(&x, &y);
-  int w = 0;
-  int h = 0;
-  window_get_size(&w, &h);
-  y = h - y; // invert as buffer is rendered upside down
-  x *= 0.25;
-  y *= 0.25;
-
-  f32 pixel[1];
-
-  glGetError(); // clear any previous errors
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, core_data->fb_mouse_pick.fbo);
-  glReadPixels((int)x, (int)y, 1, 1, GL_RED, GL_FLOAT, pixel);
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
- 
-  framebuffer_unbind();
-
-  int id = pixel[0] -1;
-  // PF("-> id: %d, pixel: %f\n", id, pixel[0]);
-
-  return id;
-
-}
-
-u32 renderer_gen_brdf_lut()
-{
-  // gen framebuffer ---------------------------------------------------------------------
-
-  unsigned int capture_fbo, capture_rbo;
-  glGenFramebuffers(1, &capture_fbo);
-  glGenRenderbuffers(1, &capture_rbo);
-
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
-
-  // gen brdf lut ------------------------------------------------------------------------
-  
-  unsigned int brdf_lut;
-  glGenTextures(1, &brdf_lut);
-
-  glBindTexture(GL_TEXTURE_2D, brdf_lut);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdf_lut, 0);
-
-  glViewport(0, 0, 512, 512);
-  shader_use(&core_data->brdf_lut_shader);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-	glBindVertexArray(core_data->quad_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-  
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
- 
-  glDeleteFramebuffers(1, &capture_fbo);
-  glDeleteRenderbuffers(1, &capture_rbo);
-
-  return brdf_lut;
-}
-
 

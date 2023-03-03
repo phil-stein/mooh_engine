@@ -131,6 +131,8 @@ void player_on_collision(entity_t* this, entity_t* col)
 void player_on_trigger(entity_t* this, entity_t* trig)
 {
   // PF("player_on_trigger: %d\n", trig->id);
+
+  ENTITY_FORCE_Y(this, 50.0f);
 }
 
 

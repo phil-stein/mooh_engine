@@ -47,6 +47,7 @@ _OBJS +=					 		\
 	mesh.o				 			\
 	renderer.o		 			\
 	renderer_direct.o		\
+	renderer_extra.o		\
 	framebuffer.o	 			\
 	camera.o			 			\
 	assetm.o			 			\
