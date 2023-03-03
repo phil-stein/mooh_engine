@@ -53,7 +53,6 @@ void app_init()
   P("| PLAY MODE");
   #endif
 
-
   core_data = core_data_get();
 
   // core_data->phys_act    = true;
@@ -91,44 +90,7 @@ void app_update()
     serialization_write_scene_to_file(SCENE_FILE_NAME); 
     serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
   }
-
-  if (input_get_key_pressed(KEY_SPACE))
-  { core_data->show_shadows = !core_data->show_shadows; }
-
-  // @TODO: flickers first frame
-  static bool start = true;
-  if (!app_data.mouse_over_ui && input_get_mouse_down(KEY_MOUSE_MOVE_START))
-  {
-    app_data.switch_gizmos_act = false;
-    if (start)
-    { 
-      input_center_cursor_pos(); 
-      start = false;
-    }
-    else
-    {
-      input_set_cursor_visible(false);
-      rotate_cam_by_mouse(); 
-      move_cam_by_keys();
-    }
-  }
-  else
-  { 
-    app_data.switch_gizmos_act = true;
-    start = true;
-    input_set_cursor_visible(true); 
-  }
-
-  // snapping enabled when holding ctrl
-  app_data.gizmo_snapping = (app_data.selected_id >= 0 && input_get_key_down(KEY_GIZMO_SNAPPING));
   
-    // duplicate with 'ctrl + d'
-  if (app_data.selected_id >= 0 && input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_D))
-  {
-    int id = state_duplicate_entity(app_data.selected_id, VEC3_XYZ(2, 0, 0));
-    app_data.selected_id = id;
-  }
-
   if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
 	{
 		app_data.wireframe_act = !app_data.wireframe_act;

@@ -17,7 +17,7 @@ void state_update(float dt);
 void state_clear_scene();
 
 entity_t* state_get_entity_arr(int* len, int* dead_len);
-int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx);
+int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx);
 int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int table_idx);
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl);
 int state_duplicate_entity(int id, vec3 offset);

@@ -11,23 +11,43 @@ int                       phys_collision_arr_len = 0;
 phys_trigger_callback**   phys_trigger_arr = NULL;
 int                       phys_trigger_arr_len = 0;
 
+ent_added_callback**    ent_added_arr = NULL;
+int                     ent_added_arr_len = 0;
+ent_removed_callback**  ent_removed_arr = NULL;
+int                     ent_removed_arr_len = 0;
+ent_parented_callback** ent_parented_arr = NULL;
+int                     ent_parented_arr_len = 0;
+
 // // void event_sys_trigger_started_frame();          // @UNSURE: before each new frame 
 // 
 // void event_sys_trigger_finished_asset_loading();  // after all assets have been loaded
 // void event_sys_trigger_finished_setup();          // after the ´program starts outputing to the window
 // // void event_sys_trigger_finished_frame();         // @UNSURE: after each new frame 
 // 
-// void event_sys_trigger_entity_added(int id);                     // on entity added to world
-// void event_sys_trigger_entity_removed(int id);                   // on entity removed from world
-// void event_sys_trigger_entity_parented(int parent, int child);   // on entity being parented
+void event_sys_trigger_entity_added(int id)                     // on entity added to world
+{
+  for (int i = 0; i < ent_added_arr_len; ++i)
+  {
+    ent_added_arr[i](id);
+  }
+}
+void event_sys_trigger_entity_removed(int id)                   // on entity removed from world
+{
+  for (int i = 0; i < ent_removed_arr_len; ++i)
+  {
+    ent_removed_arr[i](id);
+  }
+}
+void event_sys_trigger_entity_parented(int parent, int child)   // on entity being parented
+{
+  for (int i = 0; i < ent_parented_arr_len; ++i)
+  {
+    ent_parented_arr[i](parent, child);
+  }
+}
 
 void event_sys_trigger_phys_collision(int id_01, int id_02)
 {  
-  // P("");
-  // P_INT(id_01);
-  // P_INT(id_02);
-  // P("");
-
   bool error = false;
   entity_t* e_01 = state_get_entity(id_01, &error); ASSERT(!error);
   entity_t* e_02 = state_get_entity(id_02, &error); ASSERT(!error);
@@ -65,9 +85,22 @@ void event_sys_trigger_phys_trigger(int id_01, int id_02)       // on two entiti
 // void event_sys_register_finished_setup(empty_callback callback);
 // // void event_sys_register_finished_frame(empty_callback callback);        
 // 
-// void event_sys_register_entity_added(ent_added_callback callback);
-// void event_sys_register_entity_removed(ent_removed_callback callback);
-// void event_sys_register_entity_parented(ent_parented_callback callback);
+
+void event_sys_register_entity_added(ent_added_callback callback)
+{
+  arrput(ent_added_arr, callback);
+  ent_added_arr_len++;
+}
+void event_sys_register_entity_removed(ent_removed_callback callback)
+{
+  arrput(ent_removed_arr, callback);
+  ent_removed_arr_len++;
+}
+void event_sys_register_entity_parented(ent_parented_callback callback)
+{
+  arrput(ent_parented_arr, callback);
+  ent_parented_arr_len++;
+}
 
 void event_sys_register_phys_collision(phys_collision_callback* callback)
 {

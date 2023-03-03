@@ -489,17 +489,19 @@ void input_center_cursor_pos()
     core_data->mouse_delta_x = 0; core_data->mouse_delta_y = 0;
 }
 
-void input_set_cursor_visible(bool visible)
+void input_set_cursor_visible_dbg(bool visible, const char* file, const int line)
 {
-    core_data_t* core_data = core_data_get();  
-    if (visible)
-    {
-        glfwSetInputMode(core_data->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    }
-    else
-    {
-        glfwSetInputMode(core_data->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
+  // PF("| cursor: %s, [%s][%d]\n", STR_BOOL(visible), file, line);
+  
+  core_data_t* core_data = core_data_get();  
+  if (visible)
+  {
+    glfwSetInputMode(core_data->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+  }
+  else
+  {
+    glfwSetInputMode(core_data->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  }
 }
 
 // window is type GLFWwindow*

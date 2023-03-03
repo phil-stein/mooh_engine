@@ -20,10 +20,19 @@ typedef void (phys_trigger_callback)(int id_01, int id_02);
 // void event_sys_trigger_finished_setup();          // after the ´program starts outputing to the window
 // void event_sys_trigger_finished_frame();         // @UNSURE: after each new frame 
 
-// @TODO:
-// void event_sys_trigger_entity_added(int id);                     // on entity added to world
-// void event_sys_trigger_entity_removed(int id);                   // on entity removed from world
-// void event_sys_trigger_entity_parented(int parent, int child);   // on entity being parented
+// @DOC: calls all functions registered under event_sys_register_entity_added
+//       ! used internally
+//       id: id of the added entity
+void event_sys_trigger_entity_added(int id);                     // on entity added to world
+// @DOC: calls all functions registered under event_sys_register_entity_removed
+//       ! used internally
+//       id: id of the removed entity
+void event_sys_trigger_entity_removed(int id);                   // on entity removed from world
+// @DOC: calls all functions registered under event_sys_register_entity_parented
+//       ! used internally
+//       parent: id of the new parent
+//       child:  id of the new child
+void event_sys_trigger_entity_parented(int parent, int child);   // on entity being parented
 
 // @DOC: calls all functions registered under event_sys_register_phys_collision
 //       ! used internally
@@ -47,10 +56,15 @@ void event_sys_trigger_phys_trigger(int id_01, int id_02);       // on two entit
 // void event_sys_register_finished_setup(empty_callback callback);
 // // void event_sys_register_finished_frame(empty_callback callback); // @UNSURE: 
 
-// @TODO: 
-// void event_sys_register_entity_added(ent_added_callback callback);
-// void event_sys_register_entity_removed(ent_removed_callback callback);
-// void event_sys_register_entity_parented(ent_parented_callback callback);
+// @DOC: register a function to be called when an entity is added 
+//       callback: function pointer to the func
+void event_sys_register_entity_added(ent_added_callback callback);
+// @DOC: register a function to be called when an entity is removed
+//       callback: function pointer to the func
+void event_sys_register_entity_removed(ent_removed_callback callback);
+// @DOC: register a function to be called when an entity is parented to another
+//       callback: function pointer to the func
+void event_sys_register_entity_parented(ent_parented_callback callback);
 
 // @DOC: register a function to be called when two entites collide and both arent set to trigger
 //       callback: function pointer to the func

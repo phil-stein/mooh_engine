@@ -67,7 +67,8 @@ main resources:
   - [ ] removing objects in editor causes crash
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] serialization or something adds pointlights every u play 
-  - [x] play mode doesnt work anymore      
+  - [x] play mode doesnt work anymore     
+  - [ ] deselecting doesnt clear the outline buffer 
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -103,6 +104,7 @@ main resources:
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate serialization.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
+  - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
   - [ ] comment all .h files in core
     - [x] debug
@@ -193,6 +195,7 @@ main resources:
         - i.e. 'save01.scene', 'mygame.scene', etc.
   - [ ] event system
     - [ ] entity add, remove, parented
+    - [x] collision / trigger
     - [ ] etc.
     - [ ] custom game events (day to night, etc.)
   - [ ] particle system
@@ -218,7 +221,7 @@ main resources:
   - [ ] cascaded shadows
     - from cherno video 
     - also on learnopengl
-  - [ ] tiling
+  - [x] tiling
   - [ ] ssao
   - [ ] bloom
   - [ ] custom anti aliasing

@@ -28,8 +28,7 @@ APP_INC			 = $(APP_DIR)
 
 # app
 _OBJS = 				 			\
-	app.o					 			\
-	gui.o					 			
+	app.o					 			
 
 # put the OBJ_DIR in front of the obj names
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))

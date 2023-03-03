@@ -11,6 +11,7 @@
 #include "core/file_io.h"
 #include "core/assetm.h"
 #include "core/state.h"
+#include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
 #include "core/terrain.h"
@@ -33,6 +34,11 @@ static core_data_t* core_data = NULL;
 void move_cam_by_keys();
 void rotate_cam_by_mouse();
 
+// @TMP: testing event_sys
+void added(int id)          { PF("! added entity: %d\n", id); }
+void removed(int id)        { PF("! removed entity: %d\n", id); }
+void parented(int p, int c) { PF("! parented entity: %d, %d\n", p, c); }
+
 int main(void)
 {
   program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
@@ -42,6 +48,11 @@ int main(void)
 
 void app_init()
 {
+  // @TMP: 
+  event_sys_register_entity_added(added);
+  event_sys_register_entity_removed(removed);
+  event_sys_register_entity_parented(parented);
+  
   core_data = core_data_get();
   // pause physics and scripts on start
   // core_data->phys_act = false;
@@ -136,7 +147,10 @@ void app_init()
   
   TIMER_FUNC_STATIC(serialization_load_terrain_from_file("test.terrain"));
   TIMER_FUNC_STATIC(terrain_create(25));
+
 }
+
+
 
 void app_update()
 {

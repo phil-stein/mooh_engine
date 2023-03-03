@@ -1,6 +1,7 @@
 #include "core/state.h"
 #include "core/assetm.h"
 #include "core/core_data.h"
+#include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
 #include "data/entity_template.h"
 #include "math/math_inc.h"
@@ -97,9 +98,9 @@ entity_t* state_get_entity_arr(int* len, int* dead_len)
   return world;
 }
 
-int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
+int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
 {
-  const entity_template_t* def = entity_template_get(idx);
+  const entity_template_t* def = entity_template_get(table_idx);
   int mesh = -1;
   if (!(strlen(def->mesh) == 1 && def->mesh[0] == '-')) // isnt equal to "-", that means no mesh
   { mesh = assetm_get_mesh_idx(def->mesh); }
@@ -108,7 +109,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
   { mat = assetm_get_material_idx(def->mat); }
 
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, table_idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -137,6 +138,9 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int idx)
     phys_add_obj_box(id, pos, scl, aabb, (f32*)def->aabb_offset, def->is_trigger);
   }
 
+  
+  event_sys_trigger_entity_added(id);
+
   return id; 
 }
 
@@ -164,24 +168,26 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
   ent.children_len    = 0;
   ent.parent          = -1;
 
-  int idx = -1;
+  int id = -1;
   // check for free slot
   if (world_dead_len > 0)
   {
-    idx = arrpop(world_dead);
-    ent.id = idx;
+    id = arrpop(world_dead);
+    ent.id = id;
     world_dead_len--;
-    world[idx] = ent;
+    world[id] = ent;
   }
   else
   {
-    idx = world_len;
-    ent.id = idx;
+    id = world_len;
+    ent.id = id;
     arrput(world, ent);
     world_len++;
   }
+  
+  event_sys_trigger_entity_added(id);
 
-  return idx;
+  return id;
 }
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
 {
@@ -207,25 +213,27 @@ int state_duplicate_entity(int id, vec3 offset)
   return dupe;
   // return state_add_entity(pos, e->rot, e->scl, e->mesh, e->mat, e->init_f, e->update_f, e->table_idx);
 }
-void state_remove_entity(int idx)
+void state_remove_entity(int id)
 {
-  ERR_CHECK(idx >= 0 && idx < world_len, "removing invalid entity id");
+  ERR_CHECK(id >= 0 && id < world_len, "removing invalid entity id");
  
-  if (world[idx].phys_flag != 0)
-  { phys_remove_obj(idx); }
+  if (world[id].phys_flag != 0)
+  { phys_remove_obj(id); }
 
-  if (world[idx].parent > -1)
+  if (world[id].parent > -1)
   {
-    state_entity_remove_child(world[idx].parent, idx);
+    state_entity_remove_child(world[id].parent, id);
   }
-  for (int i = 0; i < world[idx].children_len; ++i)
+  for (int i = 0; i < world[id].children_len; ++i)
   {
-    state_entity_remove_child(world[idx].id, world[idx].children[i]);
+    state_entity_remove_child(world[id].id, world[id].children[i]);
   }
 
-  world[idx].is_dead = true;
-  arrput(world_dead, idx);
+  world[id].is_dead = true;
+  arrput(world_dead, id);
   world_dead_len++;
+  
+  event_sys_trigger_entity_removed(id);
 }
 // entity_t* state_get_entity(int id, bool* error)
 entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line)
@@ -272,6 +280,8 @@ void state_entity_add_child(int parent, int child)
   p->children_len++;
   c->parent = parent;
   // PF("-> parent: %d, child: %d\n", p->id, c->id);
+  
+  event_sys_trigger_entity_parented(parent, child);
 }
 void state_entity_remove_child(int parent, int child)
 {
