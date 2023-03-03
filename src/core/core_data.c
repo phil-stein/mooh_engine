@@ -172,6 +172,14 @@ INLINE void core_data_init_renderer()
   core_data.fb_mouse_pick.size_divisor = 4;
   framebuffer_create(&core_data.fb_mouse_pick);
   window_set_texturebuffer_to_update_to_screen_size(&core_data.fb_mouse_pick);
+	
+  core_data.fb_outline.type = FRAMEBUFFER_SINGLE_CHANNEL_F;
+	core_data.fb_outline.is_msaa = false;
+	core_data.fb_outline.width = 0;
+	core_data.fb_outline.height = 0;
+	core_data.fb_outline.size_divisor = 1;
+	framebuffer_create(&core_data.fb_outline);
+	window_set_texturebuffer_to_update_to_screen_size(&core_data.fb_outline);  // updates framebuffer on window resize
 
   // -- shaders --
 

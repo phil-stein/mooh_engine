@@ -98,10 +98,12 @@ main resources:
 ## organization
   - [ ] factor out cubemap creating from assetm, into sep. tool
   - [ ] factor out brdf creating from renderer, into sep. tool
+  - [ ] factor out mouse_pick & outline from renderer into sep. file 
   - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate serialization.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
+  - [ ] ! get game comliling again
   - [ ] comment all .h files in core
     - [x] debug
       - [x] debug_draw.h

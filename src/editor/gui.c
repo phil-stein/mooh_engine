@@ -916,15 +916,40 @@ void gui_framebuffer_win()
     window_get_size(&w, &h);
     float ratio = (float)h / (float)w;
     // const int size = 150; // 190; // 245;
-    int size = frameb_win_rect.w - 40;
+    int size = frameb_win_rect.w - 60;
+    
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "deferred - color");
     nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_deferred.buffer));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "deferred - material");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_deferred.buffer02));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "deferred - normal");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_deferred.buffer03));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "deferred - position");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_deferred.buffer04));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "shadow");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_shadow_pass.buffer));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "lighting");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_lighting.buffer));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "mouse_pick");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
     nk_image(ctx, nk_image_id(core_data->fb_mouse_pick.buffer));
+    nk_layout_row_static(ctx, 25, size, 1);
+    nk_labelf(ctx, NK_LEFT, "outline");
+    nk_layout_row_static(ctx, size * ratio, size, 1);
+    nk_image(ctx, nk_image_id(core_data->fb_outline.buffer));
   }
   nk_end(ctx);
 }

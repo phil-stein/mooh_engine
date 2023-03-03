@@ -70,6 +70,7 @@ typedef struct core_data_t
   framebuffer_t fb_lighting;
   framebuffer_t fb_shadow_pass;
   framebuffer_t fb_mouse_pick;
+  framebuffer_t fb_outline;
 
   // created in core_data_init_renderer()
   shader_t basic_shader;
@@ -127,6 +128,8 @@ typedef struct core_data_t
   bool phys_act;
   bool scripts_act;
 #endif
+
+  int outline_id; // used in renderer_draw_outline()
 
 }core_data_t;
 
@@ -189,6 +192,8 @@ typedef struct core_data_t
                                               \
   .phys_act    = PLAY_ACT_VALUE,              \
   .scripts_act = PLAY_ACT_VALUE,              \
+                                              \
+  .outline_id  = -1,                          \
 }
 
 

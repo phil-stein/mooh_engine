@@ -1,4 +1,5 @@
 #include "core/renderer.h"
+#include "core/renderer_direct.h"
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/state.h"
@@ -463,7 +464,11 @@ void renderer_update()
   }
   framebuffer_unbind();
   TIMER_STOP();
-  
+
+#ifdef OUTLINE
+  TIMER_FUNC(renderer_draw_scene_outline());
+#endif // EDITOR
+
   TIMER_START("post fx");
   // post fx ---------------------------------------------
 
@@ -475,6 +480,12 @@ void renderer_update()
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, core_data->fb_lighting.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
   shader_set_int(&core_data->post_fx_shader, "tex", 0);
+
+#ifdef OUTLINE
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_2D, core_data->fb_outline.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
+  shader_set_int(&core_data->post_fx_shader, "outline", 1);
+#endif // OUTLINE
 
   glBindVertexArray(core_data->quad_vao);
   glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -700,7 +711,52 @@ void renderer_draw_scene_mouse_pick(mat4 gizmo_model)
 
   framebuffer_unbind();
 }
-#endif
+
+void renderer_draw_scene_outline()
+{
+  if (core_data->outline_id < 0) { return; }
+  bool error = false;
+	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
+  // draw in solid-mode for fbo
+	if (core_data->wireframe_mode_enabled == true)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	int w, h; window_get_size(&w, &h);
+	glViewport(0, 0, w, h);
+	framebuffer_bind(&core_data->fb_outline);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
+	
+  // if (!(gamestate && hide_gizmos) && ent->id != -1 && (ent->has_model || ent->has_light || ent->has_cam)) //  && ent->visible
+	// {
+  // }
+
+  // @TODO: draw lightbulb when light
+
+  // mat4 view, proj;
+  // camera_get_view_mat(view);
+  // mat4 view_no_pos;
+  // mat4_copy(view, view_no_pos);
+  // mat4_set_pos(0, 0, 0, view_no_pos);
+  // camera_get_proj_mat(w, h, proj);
+
+  // shader_set_mat4(&core_data->_shader, "model", ent->model);
+  // shader_set_mat4(&core_data->_shader, "view", view);
+  // shader_set_mat4(&core_data->_shader, "proj", proj);
+
+
+  // @NOTE: does obj drawn need to be scaled up ?
+
+  mesh_t* mesh   = assetm_get_mesh_by_idx(e->mesh);
+  texture_t* tex = assetm_get_texture("#internal/blank.png", true);
+  renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
+  // DRAW_MESH(mesh);
+
+	framebuffer_unbind();
+}
+
+#endif // EDITOR
 
 int renderer_mouse_position_mouse_pick_id()
 {

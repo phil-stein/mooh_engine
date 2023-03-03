@@ -99,7 +99,7 @@ void program_start(int width, int height, const char* title, window_type type, e
     }
 #endif
 		TIMER_FUNC(input_update());
-  
+ 
     debug_timer_clear_state();
 
 		glfwSwapBuffers(core_data->window);

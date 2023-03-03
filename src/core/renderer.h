@@ -6,6 +6,11 @@
 #include "core/terrain.h"
 #include "math/math_inc.h"
 
+// @NOTE: so we dont need to define it in make
+#ifdef EDITOR
+#define OUTLINE
+#endif // EDITOR
+
 
 // start positions of id's in id_buffer
 #define ID_BUFFER_ENTITY_0   0    // goes up   0, 1, 2, ...
@@ -27,6 +32,8 @@ void renderer_draw_terrain_mesh(terrain_chunk_t* chunk); // just the draw-call, 
 
 void renderer_draw_scene_mouse_pick(mat4 gizmo_model);
 int  renderer_mouse_position_mouse_pick_id();
+
+void renderer_draw_scene_outline();
 
 u32 renderer_gen_brdf_lut();
 

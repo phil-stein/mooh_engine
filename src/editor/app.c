@@ -166,6 +166,8 @@ void app_update()
   TIMER_FUNC(gizmo_update());
   TIMER_FUNC(terrain_edit_update());
 
+  // @NOTE: sync selected with outline
+  core_data->outline_id = app_data.selected_id;
 
 
   // -- input --
