@@ -17,6 +17,7 @@ typedef struct cubemap_t
   u32 irradiance;
   u32 prefilter;
   // u32 brdf_lut;
+  f32 intensity; 
 }cubemap_t;
 
 // @DOC: callbacks used in entity_t

@@ -32,6 +32,7 @@ uniform vec3 view_pos;
 uniform samplerCube irradiance_map;
 uniform samplerCube prefilter_map;
 uniform sampler2D   brdf_lut;
+uniform float       cube_map_intensity; 
 
 uniform int point_lights_len;
 uniform point_light_t point_lights[8];
@@ -117,7 +118,7 @@ void main()
   vec2 brdf  = texture(brdf_lut, vec2(max(dot(N, V), 0.0), roughness)).rg;
   vec3 specular = prefiltered_color * (F * brdf.x + brdf.y);
 
-  vec3 ambient = (kD * diffuse + specular) * 0.3; //  * ao;
+  vec3 ambient = (kD * diffuse + specular) * 0.3 * cube_map_intensity; //  * ao;
 
   vec3 col = ambient + Lo;
 

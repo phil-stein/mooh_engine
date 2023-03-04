@@ -214,12 +214,12 @@ main resources:
   - [ ] trail renderer
   - [ ] debug tools
     - [ ] add profiler
-  - [ ] controller support ? 
+  - [ ] controller support ?
+  - [ ] serialize cube_map.intensity
 
 ## renderer
   - [ ] blending
     - learnopengl weighted blending 'OIT'
-  - [ ] fix normal shadows (werid pos ?)
   - [ ] cascaded shadows
     - from cherno video 
     - also on learnopengl
@@ -228,8 +228,9 @@ main resources:
   - [ ] bloom
   - [ ] custom anti aliasing
   - [ ] water 
-  - [ ] maybe do outlines ?     
+  - [x] maybe do outlines ?     
   - [x] immediate mode renderer, for gui, etc.
+  - [x] cubemap intensity
 
 ## entity system
   - [ ] structures ? (prefabs), [also mentioned](#base)

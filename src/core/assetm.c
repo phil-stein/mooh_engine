@@ -433,6 +433,7 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
   c.irradiance  = irradiance_map;
   c.prefilter   = prefilter_map;
   // c.brdf_lut    = brdf_lut;
+  c.intensity   = 1.0f;
   return c;
 
 }

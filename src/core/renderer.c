@@ -380,6 +380,7 @@ void renderer_update()
     
     vec3 cam_pos; camera_get_pos(cam_pos);
     shader_set_vec3(&core_data->lighting_shader, "view_pos", cam_pos);
+    shader_set_float(&core_data->lighting_shader, "cube_map_intensity", core_data->cube_map.intensity);
     
     int  tex_index = 0;
 

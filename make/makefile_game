@@ -10,7 +10,7 @@
 CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"  -DASSETM_NO_ZIP 
 CC_NO_WARN = @gcc
 
-BUILD_DIR = ../build
+BUILD_DIR = ..\build
 
 NAME = game.exe
 OUT  = $(BUILD_DIR)\$(NAME)
@@ -20,7 +20,7 @@ GLOBL_DIR = $(SRC_DIR)/global
 DATA_DIR  = $(SRC_DIR)/data
 APP_DIR   = $(SRC_DIR)/game
 
-OBJ_DIR = $(BUILD_DIR)/bin_game
+OBJ_DIR = $(BUILD_DIR)\bin_game
 LIB_DIR = ..\libs\win64
 
 EXTERNAL_DIR = ../external

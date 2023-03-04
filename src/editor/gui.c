@@ -806,6 +806,9 @@ void gui_light_hierarchy_win()
     static int selected_type = 0; // vs is stupid so commented out SEL_LIGHT_NONE;
     static int selected = -1;
 
+
+    nk_property_float(ctx, "cube map intensity", 0.0f, &core_data->cube_map.intensity, 100.0f, 0.1f, 0.01f);
+
     if (nk_button_label(ctx, "add dir light")) 
     {
       state_add_dir_light(VEC3(0), VEC3_Y(-1), RGB_F(1, 1, 1), 1, false, 0, 0);
