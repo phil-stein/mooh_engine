@@ -7,7 +7,7 @@ written in c <br>
 **still under development | unstable**
 
 using:      [glfw3](https://www.glfw.org/), [glad](https://glad.dav1d.de/), [stb_image & stb_ds](https://github.com/nothings/stb), [nuklear](https://github.com/Immediate-Mode-UI/Nuklear)<br>
-and my own: [math-library](https://github.com/phil-stein/math) & [global-defines](https://github.com/phil-stein/global)
+and my own: [math-library](https://github.com/phil-stein/math), [global-defines](https://github.com/phil-stein/global), [serialization-library](https://github.com/phil-stein/serialization), [physics-engine](https://github.com/phil-stein/phys)
 
 main resources:  
   - [learnopengl.com](https://learnopengl.com/)
