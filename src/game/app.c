@@ -55,13 +55,6 @@ void app_init()
 
   core_data = core_data_get();
 
-  // core_data->phys_act    = true;
-  // core_data->scripts_act = true;
-
-  TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
-  // state_set_cubemap(cube_map);
-  core_data->cube_map = cube_map;
-
   const char scene_name[] = "test.scene";
   TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
   TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));

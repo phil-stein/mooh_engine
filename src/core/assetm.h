@@ -24,8 +24,6 @@ int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* file, co
 texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* file, const int line);
 void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, const int line);
 void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* file, const int line); // @NOTE: no longer in use
-u32 assetm_create_cubemap_dbg(const char* name, const char* ext, const char* file, const int line);
-cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const int line);
 // @DOC: get a textures index in the assetm array of textures, used in f.e. assetm_get_texture_by_idx()
 //       name: name of texture
 //       srgb: if tex isnt loaded yet, this decides if its loaded as a srgb texture for hdr
@@ -46,11 +44,7 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
 //       pixels:      gets set to pointer to pixel data
 #define assetm_get_texture_data(name, width, height, channel_num, pixels) \
                                             assetm_get_texture_data_dbg(name, width, height, channel_num, pixels, __FILE__, __LINE__)
-// @NOTE: no longer in use
-#define assetm_create_cubemap(name, ext)    assetm_create_cubemap_dbg(name, ext, __FILE__, __LINE__)
-// @DOC: load cubemap from .hdr file
-//       path: path to .hdr file
-#define assetm_load_cubemap_hdr(path)       assetm_load_cubemap_hdr_dbg(path, __FILE__, __LINE__)
+
 
 mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* file, const int line);
 int assetm_get_mesh_idx_dbg(const char* name, const char* file, const int line);

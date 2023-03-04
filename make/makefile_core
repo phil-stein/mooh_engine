@@ -58,7 +58,8 @@ _OBJS +=					 		\
 	debug_timer.o				\
 	terrain.o						\
 	save_sys.o					\
-	event_sys.o
+	event_sys.o					\
+	cubemap.o
 # physics
 _OBJS += 							\
 	phys_world.o				\

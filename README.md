@@ -98,7 +98,7 @@ main resources:
   - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
 
 ## organization
-  - [ ] factor out cubemap creating from assetm, into sep. tool
+  - [x] factor out cubemap creating from assetm, into sep. file
   - [x] factor out brdf creating from renderer
   - [x] factor out mouse_pick & outline from renderer into sep. file 
   - [ ] fix ale error on #include's
@@ -166,6 +166,11 @@ main resources:
     - [ ] triangularize mesh ? (not really necessary as blender does it)
     - [x] blender coord sys to mine
   - [ ] asset manager
+    - [ ] free assets
+      - [x] textures
+      - [ ] meshes
+      - [ ] cubemaps
+      - [ ] shaders
     - [ ] load shaders from zip
     - [ ] handle missing assets
     - [ ] custom asset formats [descr. here](#optimization)
@@ -217,6 +222,9 @@ main resources:
     - [ ] add profiler
   - [ ] controller support ?
   - [x] serialize cube_map
+  - [ ] add tags or equivalent to entities
+    - for on_collision etc.
+    - single or multiple ?
 
 ## renderer
   - [ ] blending
@@ -273,7 +281,6 @@ main resources:
 
 ## multithreading
   - decide on win32, C11, single header lib
-  - make example program
   - maybe make abstraction for thread stuff ?
   - add [profiler](#base) first
   - architecture
@@ -281,8 +288,14 @@ main resources:
     - worker (asset-loading, terrain, etc.)
     - renderer
     - physics
-  - [ ] any multithreading
+  - [x] make example program
   - [ ] asset loading
+    - [ ] also works with zip ?
+    - [ ] textures
+    - [ ] meshes
+    - [ ] shaders
+    - [ ] scene ?
+    - [ ] terrain
   - [ ] physics
   - [ ] rendering
     - decouple entities from main-thread

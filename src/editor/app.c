@@ -49,11 +49,11 @@ int main(void)
 
 void app_init()
 {
-  // @TMP: 
-  event_sys_register_entity_added(added);
-  event_sys_register_entity_removed(removed);
-  event_sys_register_entity_parented(parented);
-  event_sys_register_entity_parent_removed(parent_rm);
+  // // @TMP: testing event sys 
+  // event_sys_register_entity_added(added);
+  // event_sys_register_entity_removed(removed);
+  // event_sys_register_entity_parented(parented);
+  // event_sys_register_entity_parent_removed(parent_rm);
   
   core_data = core_data_get();
   // pause physics and scripts on start

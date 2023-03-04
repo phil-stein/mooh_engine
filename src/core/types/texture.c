@@ -9,6 +9,15 @@
 
 #include "GLAD/glad.h"
 
+void texture_free(texture_t* t)
+{
+	glDeleteTextures(1, &t->handle);
+}
+void texture_free_handle(u32 handle)
+{
+	glDeleteTextures(1, &handle);
+}
+
 void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, size_t* height_out, int* channel_num, bool flip_vertical) 
 {
     int width, height;

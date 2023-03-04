@@ -139,8 +139,6 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
   }
 
   
-  event_sys_trigger_entity_added(id);
-
   return id; 
 }
 

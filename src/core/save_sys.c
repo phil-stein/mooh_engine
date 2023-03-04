@@ -3,6 +3,7 @@
 #include "core/state.h"
 #include "core/file_io.h"
 #include "core/assetm.h"
+#include "core/types/cubemap.h"
 #include "core/debug/debug_timer.h"
 #include "serialization/serialization.h"
 
@@ -195,12 +196,12 @@ void save_sys_deserialize_scene(u8* buffer, u32* offset)
   {
     f32 intensity = serialization_deserialize_f32(buffer, offset);
     char* cube_map_name = serialization_deserialize_str(buffer, offset);
-    TIMER_FUNC_STATIC(core_data->cube_map = assetm_load_cubemap_hdr(cube_map_name));
+    TIMER_FUNC_STATIC(core_data->cube_map = cubemap_load(cube_map_name));
     core_data->cube_map.intensity = intensity;
   }
   else
   {
-    TIMER_FUNC_STATIC(core_data->cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
+    TIMER_FUNC_STATIC(core_data->cube_map = cubemap_load("#cubemaps/gothic_manor_01_2k.hdr"));
   }
 
   // -- entities --

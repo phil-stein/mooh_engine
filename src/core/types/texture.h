@@ -13,6 +13,14 @@ typedef struct texture_t
 	char* path; // path to texture file
 }texture_t;
 
+// @DOC: free the memory of a texture
+//       t: texture to be freed
+//       @UNSURE: texture_t.path
+void texture_free(texture_t* t);
+// @DOC: free the memory of a texture
+//       handle: handle of texture 
+//       @UNSURE: texture_t.path
+void texture_free_handle(u32 handle);
 
 // @DOC: load the pixels of an image file
 //       path:          path to file

@@ -15,6 +15,7 @@
 // @DOC: @TODO:
 typedef struct cubemap_t
 {
+  bool loaded;
   char name[CUBE_MAP_NAME_MAX];
 
   u32 environment;  
