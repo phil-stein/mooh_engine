@@ -13,4 +13,5 @@
  - nuklear		: https://github.com/Immediate-Mode-UI/Nuklear
  - assimp		: https://github.com/assimp/assimp
  - dirent 		: https://github.com/tronkko/dirent
+ - thread		: https://github.com/mattiasgustavsson/libs/blob/main/docs/thread.md
 

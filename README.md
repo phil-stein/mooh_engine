@@ -169,7 +169,7 @@ main resources:
     - [ ] free assets
       - [x] textures
       - [ ] meshes
-      - [ ] cubemaps
+      - [ ] cubemaps `WIP`
       - [ ] shaders
     - [ ] load shaders from zip
     - [ ] handle missing assets
