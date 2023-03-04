@@ -9,7 +9,7 @@
 
 // @NOTE: 0x010 = 1.0, 0x001 = 0.1, etc.
 //        serialized as u32
-#define SERIALIZATION_VERSION 0x001
+#define SAVE_SYS_VERSION 2
 
 // @NOTE: mute or show serialization messages
 // #define SERIALIZATION_P(txt) P(txt)

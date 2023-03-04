@@ -429,6 +429,8 @@ cubemap_t assetm_load_cubemap_hdr_dbg(const char* path, const char* file, const 
   ASSETM_PF("[assetm] loaded cubemap '%s''\n", path);
 
   cubemap_t c;
+  ERR_CHECK(strlen(path) < CUBE_MAP_NAME_MAX, "not enough space in cube_map.name for the given name / path. %d|%d", strlen(path), CUBE_MAP_NAME_MAX); 
+  strcpy(c.name, path);
   c.environment = cubemap;
   c.irradiance  = irradiance_map;
   c.prefilter   = prefilter_map;

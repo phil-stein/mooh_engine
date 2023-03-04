@@ -13,7 +13,7 @@
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
 #include "core/terrain.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 #include "data/entity_template.h"
 #include "phys/phys_world.h"
 
@@ -63,8 +63,8 @@ void app_init()
   core_data->cube_map = cube_map;
 
   const char scene_name[] = "test.scene";
-  TIMER_FUNC_STATIC(serialization_load_scene_from_file(scene_name));
-  TIMER_FUNC_STATIC(serialization_load_terrain_from_file("test.terrain"));
+  TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
+  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
   TIMER_FUNC_STATIC(terrain_create(25));
 
   // in game will be done by camera-controller
@@ -87,8 +87,8 @@ void app_update()
   
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
   { 
-    serialization_write_scene_to_file(SCENE_FILE_NAME); 
-    serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
+    save_sys_write_scene_to_file(SCENE_FILE_NAME); 
+    save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
   }
   
   if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))

@@ -103,7 +103,7 @@ main resources:
   - [x] factor out mouse_pick & outline from renderer into sep. file 
   - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
-  - [ ] seperate serialization.c into terrain & entities
+  - [ ] seperate save_sys.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
   - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
@@ -216,7 +216,7 @@ main resources:
   - [ ] debug tools
     - [ ] add profiler
   - [ ] controller support ?
-  - [ ] serialize cube_map.intensity
+  - [x] serialize cube_map
 
 ## renderer
   - [ ] blending

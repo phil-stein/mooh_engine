@@ -168,6 +168,7 @@
     <ClCompile Include="src\core\renderer.c" />
     <ClCompile Include="src\core\renderer_direct.c" />
     <ClCompile Include="src\core\renderer_extra.c" />
+    <ClCompile Include="src\core\save_sys.c" />
     <ClCompile Include="src\core\serialization.c" />
     <ClCompile Include="src\core\state.c" />
     <ClCompile Include="src\core\terrain.c" />
@@ -196,6 +197,7 @@
     <ClCompile Include="src\phys\phys_resolution.c" />
     <ClCompile Include="src\phys\phys_response.c" />
     <ClCompile Include="src\phys\phys_world.c" />
+    <ClCompile Include="src\serialization\serialization.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="external\ufbx\ufbx.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="src\core\renderer.h" />
     <ClInclude Include="src\core\renderer_direct.h" />
     <ClInclude Include="src\core\renderer_extra.h" />
+    <ClInclude Include="src\core\save_sys.h" />
     <ClInclude Include="src\core\serialization.h" />
     <ClInclude Include="src\core\state.h" />
     <ClInclude Include="src\core\str_util.h" />
@@ -250,6 +253,7 @@
     <ClInclude Include="src\phys\phys_response.h" />
     <ClInclude Include="src\phys\phys_types.h" />
     <ClInclude Include="src\phys\phys_world.h" />
+    <ClInclude Include="src\serialization\serialization.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\terrain_old.zip" />

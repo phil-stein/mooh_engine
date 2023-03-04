@@ -129,6 +129,12 @@
     <ClCompile Include="src\core\renderer_extra.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\save_sys.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\serialization\serialization.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\debug\debug_draw.h">
@@ -285,6 +291,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\renderer_extra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\save_sys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\serialization\serialization.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

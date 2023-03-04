@@ -10,9 +10,13 @@
 #include "math/math_inc.h"
 
 
+#define CUBE_MAP_NAME_MAX 128
+
 // @DOC: @TODO:
 typedef struct cubemap_t
 {
+  char name[CUBE_MAP_NAME_MAX];
+
   u32 environment;  
   u32 irradiance;
   u32 prefilter;

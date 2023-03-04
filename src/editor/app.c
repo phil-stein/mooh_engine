@@ -61,9 +61,8 @@ void app_init()
   // core_data->scripts_act = false;
   // @TODO: do this in program_start()
   //        maybe not, it'll be done load_scene()
-  TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
-  // state_set_cubemap(cube_map);
-  core_data->cube_map = cube_map;
+  // TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
+  // core_data->cube_map = cube_map;
 
   // // -- add entities --
   // // int quad_id     = 
