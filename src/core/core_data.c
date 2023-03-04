@@ -1,7 +1,7 @@
 #include "core/core_data.h"
 #include "core/assetm.h"
 #include "core/window.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 
 
 
@@ -55,7 +55,7 @@ void core_data_play()
   core_data.phys_act    = true;
 
 #if EDITOR
-  serialization_write_scene_to_state_buffer();
+  save_sys_write_scene_to_state_buffer();
 #endif
 }
 
@@ -67,7 +67,7 @@ void core_data_play_scripts()
   core_data.phys_act    = false;
 
 #if EDITOR
-  serialization_write_scene_to_state_buffer();
+  save_sys_write_scene_to_state_buffer();
 #endif
 }
 
@@ -79,7 +79,7 @@ void core_data_play_phys()
   core_data.phys_act    = true;
 
 #if EDITOR
-  serialization_write_scene_to_state_buffer();
+  save_sys_write_scene_to_state_buffer();
 #endif
 }
 
@@ -91,7 +91,7 @@ void core_data_pause()
   core_data.phys_act    = false;
 
 #if EDITOR
-  serialization_load_scene_from_state_buffer();
+  save_sys_load_scene_from_state_buffer();
 #endif
 }
 

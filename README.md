@@ -89,6 +89,7 @@ main resources:
     - [ ] texture ?
       - uncompressed for faster load time 
     - [ ] shader spir-v ?
+  - [ ] only clear outline buffer when deselecting
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -106,8 +107,8 @@ main resources:
   - [ ] use _dbg funcs for materials in assetm
   - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
-  - [ ] make serialization into generalized gitrepo
-    - [ ] seperate serialization & save_sys 
+  - [x] make serialization into generalized gitrepo
+    - [x] seperate serialization & save_sys 
   - [ ] comment all .h files in core
     - [x] debug
       - [x] debug_draw.h

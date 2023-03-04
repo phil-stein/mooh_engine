@@ -8,3 +8,6 @@
 	path = external/ufbx
 	url = https://github.com/bqqbarbhg/ufbx.git
 
+[submodule "src/serialization"]
+	path = src/serialization
+	url = https://github.com/phil-stein/serialization

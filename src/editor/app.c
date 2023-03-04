@@ -15,7 +15,7 @@
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
 #include "core/terrain.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 #include "data/entity_template.h"
 #include "phys/phys_world.h"
 
@@ -111,8 +111,8 @@ void app_init()
   // state_add_point_light(VEC3_XYZ(-10,  10, 10), RGB_F_RGB(300), 1.0f);
  
   const char scene_name[] = "test.scene";
-  // serialization_write_scene_to_file(scene_name);
-  TIMER_FUNC_STATIC(serialization_load_scene_from_file(scene_name));
+  // save_sys_write_scene_to_file(scene_name);
+  TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
 
   // in game will be done by camera-controller
   // input_center_cursor_pos();
@@ -147,7 +147,7 @@ void app_init()
   // TIMER_FUNC_STATIC(terrain_create(25));
   // core_data->terrain_scl = 100;
   
-  TIMER_FUNC_STATIC(serialization_load_terrain_from_file("test.terrain"));
+  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
   TIMER_FUNC_STATIC(terrain_create(25));
 
 }
@@ -212,8 +212,8 @@ void app_update()
 
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S) && !core_data_is_play())
   { 
-    serialization_write_scene_to_file(SCENE_FILE_NAME); 
-    serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
+    save_sys_write_scene_to_file(SCENE_FILE_NAME); 
+    save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
   }
 
   if (input_get_key_pressed(KEY_SPACE))

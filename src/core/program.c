@@ -4,7 +4,7 @@
 #include "core/renderer.h"
 #include "core/renderer_direct.h"
 #include "core/renderer_extra.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 #include "core/input.h"
 #include "core/assetm.h"
 #include "core/state.h"
@@ -50,7 +50,7 @@ void program_start(int width, int height, const char* title, window_type type, e
   TIMER_FUNC_STATIC(assetm_init());
   
   TIMER_FUNC_STATIC(core_data_init());
-	TIMER_FUNC_STATIC(serialization_init());
+	TIMER_FUNC_STATIC(save_sys_init());
   TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(renderer_extra_init());
   TIMER_FUNC_STATIC(camera_init());

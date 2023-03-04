@@ -1,7 +1,7 @@
 #include "data/test_comp.h"
 #include "core/input.h"
 #include "core/camera.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 #include "core/debug/debug_draw.h"
 #include "math/math_inc.h"
 
@@ -118,7 +118,7 @@ void player_update(entity_t* this, f32 dt)
   // @NOTE: reset when falling down
   if (this->pos[1] < -2.0f)
   { 
-    serialization_load_scene_from_file("test.scene");
+    save_sys_load_scene_from_file("test.scene");
     // ENTITY_SET_POS(this, start_pos); 
   }
 

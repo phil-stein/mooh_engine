@@ -1,5 +1,3 @@
-#ifdef  EDITOR
-
 #include "editor/gui.h"
 #include "editor/app.h"
 #include "editor/gizmo.h"
@@ -13,7 +11,7 @@
 #include "core/input.h"
 #include "core/assetm.h"
 #include "core/camera.h"
-#include "core/serialization.h"
+#include "core/save_sys.h"
 #include "core/types/types.h"
 #include "core/debug/debug_timer.h"
 #include "core/debug/debug_draw.h"
@@ -204,8 +202,8 @@ void gui_top_bar_win()
         bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "save", NK_TEXT_LEFT))
         {
-          serialization_write_scene_to_file(SCENE_FILE_NAME); 
-          serialization_write_terrain_to_file(TERRAIN_FILE_NAME); 
+          save_sys_write_scene_to_file(SCENE_FILE_NAME); 
+          save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
         }
         top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : top_bar_menu_hover;
        
@@ -217,8 +215,8 @@ void gui_top_bar_win()
         
         if (nk_menu_item_label(ctx, "new save", NK_TEXT_LEFT))
         {
-          serialization_write_empty_scene_to_file(); 
-          // serialization_write_empty_terrain_to_file(TERRAIN_FILE_NAME); 
+          save_sys_write_empty_scene_to_file(); 
+          // save_sys_write_empty_terrain_to_file(TERRAIN_FILE_NAME); 
         }
         
         nk_menu_end(ctx);
@@ -1167,4 +1165,3 @@ void gui_color_selector(rgbf color)
   }
 }
 
-#endif

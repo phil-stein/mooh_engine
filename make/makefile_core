@@ -18,13 +18,14 @@ LIB_DIR = ..\libs\win64
 # NAME = lib_mooh_core.a
 OUT  = $(LIB_DIR)\$(NAME)
 
-SRC_DIR   		 = ../src
-GLOBL_DIR 		 = $(SRC_DIR)/global
-CORE_DIR  		 = $(SRC_DIR)/core
-CORE_TYPES_DIR = $(SRC_DIR)/core/types
-CORE_DEBUG_DIR = $(SRC_DIR)/core/debug
-DATA_DIR  		 = $(SRC_DIR)/data
-PHYS_DIR  		 = $(SRC_DIR)/phys
+SRC_DIR   		 		= ../src
+GLOBL_DIR 		 		= $(SRC_DIR)/global
+CORE_DIR  		 		= $(SRC_DIR)/core
+CORE_TYPES_DIR 		= $(SRC_DIR)/core/types
+CORE_DEBUG_DIR 		= $(SRC_DIR)/core/debug
+DATA_DIR  		 		= $(SRC_DIR)/data
+PHYS_DIR  		 		= $(SRC_DIR)/phys
+SERIALIZATION_DIR = $(SRC_DIR)/serialization
 
 EXTERNAL_DIR = ../external
 
@@ -56,7 +57,7 @@ _OBJS +=					 		\
 	debug_draw.o   			\
 	debug_timer.o				\
 	terrain.o						\
-	serialization.o			\
+	save_sys.o					\
 	event_sys.o
 # physics
 _OBJS += 							\
@@ -71,6 +72,9 @@ _OBJS += 				 			\
 	shader_template.o   \
 	material_template.o \
 	test_comp.o
+# serialization
+_OBJS += 							\
+	serialization.o
 
 
 # put the OBJ_DIR in front of the obj names
@@ -131,7 +135,7 @@ $(OBJ_DIR)/%.o: $(PHYS_DIR)/%.c
 	echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
-$(OBJ_DIR)/%.o: $(APP_DIR)/%.c
+$(OBJ_DIR)/%.o: $(SERIALIZATION_DIR)/%.c
 	echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
