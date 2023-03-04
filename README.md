@@ -68,7 +68,7 @@ main resources:
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] serialization or something adds pointlights every u play 
   - [x] play mode doesnt work anymore     
-  - [ ] deselecting doesnt clear the outline buffer 
+  - [x] deselecting doesnt clear the outline buffer 
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 

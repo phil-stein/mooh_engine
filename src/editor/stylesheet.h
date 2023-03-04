@@ -3,6 +3,7 @@
 
 // --- gizmo ---
 
+#define GIZMO_NONE_SIZE                     0.05f
 #define GIZMO_TRANSLATE_LINE_WIDTH          8
 #define GIZMO_TRANSLATE_LINE_COLOR          RGB_F_RGB(1)
 #define GIZMO_TRANSLATE_LINE_SPHERES_COLOR  RGB_F_RGB(0.95f)

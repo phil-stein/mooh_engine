@@ -350,6 +350,8 @@ void gui_properties_win()
         state_entity_remove_child(e->parent, e->id);
       }
 
+      // @TODO: @UNSURE: display children
+
       nk_layout_row_dynamic(ctx, 25, 2);
       nk_labelf(ctx, NK_TEXT_LEFT, "init:   %s", STR_BOOL(e->init_f != NULL));
       nk_labelf(ctx, NK_TEXT_LEFT, "update: %s", STR_BOOL(e->update_f != NULL));

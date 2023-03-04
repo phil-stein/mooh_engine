@@ -152,7 +152,17 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
 
 void renderer_extra_draw_scene_outline()
 {
-  if (core_data->outline_id < 0) { return; }
+  if (core_data->outline_id < 0) 
+  {
+    // @OPTIMIZATION: only clear buffer when deselecting
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    int w, h; window_get_size(&w, &h);
+    glViewport(0, 0, w, h);
+    framebuffer_bind(&core_data->fb_outline);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
+	  framebuffer_unbind();
+    return; 
+  }
   bool error = false;
 	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
   // draw in solid-mode for fbo
