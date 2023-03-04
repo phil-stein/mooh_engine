@@ -102,6 +102,24 @@ const entity_template_t entity_template_table[] =
     .aabb_size  = { 1, 1, 1 },
     .is_trigger = true,
   },
+  {
+    ENTITY_TEMPLATE_T_SET_DEFAULTS(),
+    .name = "devil_paladin_body",
+    .mesh = "mooh_body01.fbx",
+    .mat  = MATERIAL_TEMPLATE_PALADIN_BODY,
+  },
+  {
+    ENTITY_TEMPLATE_T_SET_DEFAULTS(),
+    .name = "devil_paladin_armour",
+    .mesh = "mooh_armour01.fbx",
+    .mat  = MATERIAL_TEMPLATE_PALADIN_ARMOUR,
+  },
+  {
+    ENTITY_TEMPLATE_T_SET_DEFAULTS(),
+    .name = "devil_paladin_weapon",
+    .mesh = "mooh_weapon01.fbx",
+    .mat  = MATERIAL_TEMPLATE_PALADIN_WEAPON,
+  },
 };
 
 const entity_template_t* entity_template_get(int idx)

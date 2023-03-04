@@ -158,6 +158,43 @@ const material_template_t material_table[] =
     .tile_scl = 1.0f,
     .tile_by_scl = true,
   },
+  // paladin body
+  {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
+    .albedo = "devil_paladin_body/albedo.png",
+    .normal = "devil_paladin_body/normal.png",
+    .roughn = "devil_paladin_body/roughness.png",
+    // .metall = "devil_paladin_body/metallic.png",
+    .metall = NULL,
+    .tint   = { 1, 1, 1 },
+    .roughn_f = 1.0f,
+    .metall_f = 0.0f,
+    .shader_template = SHADER_TEMPLATE_NONE,
+  },
+  // paladin armour
+  {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
+    .albedo = "devil_paladin_armour/albedo.png",
+    .normal = "devil_paladin_armour/normal.png",
+    .roughn = "devil_paladin_armour/roughness.png",
+    .metall = "devil_paladin_armour/metallic.png",
+    .tint   = { 1, 1, 1 },
+    .roughn_f = 1.0f,
+    .metall_f = 1.0f,
+    .shader_template = SHADER_TEMPLATE_NONE,
+  },
+  // paladin weapon
+  {
+    MATERIAL_TEMPLATE_DEFAULT_INIT(),
+    .albedo = "devil_paladin_weapon/albedo.png",
+    .normal = "devil_paladin_weapon/normal.png",
+    .roughn = "devil_paladin_weapon/roughness.png",
+    .metall = "devil_paladin_weapon/metallic.png",
+    .tint   = { 1, 1, 1 },
+    .roughn_f = 1.0f,
+    .metall_f = 1.0f,
+    .shader_template = SHADER_TEMPLATE_NONE,
+  },
 };
 const int material_table_len = sizeof(material_table) / sizeof(material_table[0]);
 

@@ -245,7 +245,7 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line)
 }
 void state_entity_add_child(int parent, int child)
 {
-  if (parent < 0 || child < 0 || parent >= world_len || child >= world_len) 
+  if (parent < 0 || child < 0 || parent >= world_len || child >= world_len || child == parent) 
   {
     P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); 
     return;
@@ -285,7 +285,7 @@ void state_entity_add_child(int parent, int child)
 }
 void state_entity_remove_child(int parent, int child)
 {
-  if (parent < 0 || child < 0 || parent >= world_len || child >= world_len) 
+  if (parent < 0 || child < 0 || parent >= world_len || child >= world_len || child == parent) 
   { 
     P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); 
     return;

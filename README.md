@@ -106,6 +106,8 @@ main resources:
   - [ ] use _dbg funcs for materials in assetm
   - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
+  - [ ] make serialization into generalized gitrepo
+    - [ ] seperate serialization & save_sys 
   - [ ] comment all .h files in core
     - [x] debug
       - [x] debug_draw.h
@@ -194,7 +196,7 @@ main resources:
       - multiple variants of that with changes
         - i.e. 'save01.scene', 'mygame.scene', etc.
   - [ ] event system
-    - [ ] entity add, remove, parented
+    - [x] entity add, remove, parented
     - [x] collision / trigger
     - [ ] etc.
     - [ ] custom game events (day to night, etc.)

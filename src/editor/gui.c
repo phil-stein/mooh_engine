@@ -344,6 +344,12 @@ void gui_properties_win()
         else { ERR("parent id not valid: %d", parent_id); }
       }
 
+      nk_layout_row_dynamic(ctx, 25, 1);
+      if (nk_button_label(ctx, "remove parent") && e->parent >= 0)
+      {
+        state_entity_remove_child(e->parent, e->id);
+      }
+
       nk_layout_row_dynamic(ctx, 25, 2);
       nk_labelf(ctx, NK_TEXT_LEFT, "init:   %s", STR_BOOL(e->init_f != NULL));
       nk_labelf(ctx, NK_TEXT_LEFT, "update: %s", STR_BOOL(e->update_f != NULL));
