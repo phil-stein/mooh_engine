@@ -339,7 +339,7 @@ void gui_properties_win()
         state_get_entity(parent_id, &error);  // just checking if exists
         if (!error)
         {
-          state_entity_add_child(parent_id, id);
+          state_entity_add_child_remove_parent(parent_id, id);
         }
         else { ERR("parent id not valid: %d", parent_id); }
       }

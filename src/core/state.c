@@ -243,6 +243,7 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line)
   *error = id < 0 || id > world_len-1 || world[id].is_dead;
   return &world[id];
 }
+
 void state_entity_add_child(int parent, int child)
 {
   if (parent < 0 || child < 0 || parent >= world_len || child >= world_len || child == parent) 
@@ -304,7 +305,19 @@ void state_entity_remove_child(int parent, int child)
     }
   }
   c->parent = -1;
+
+  event_sys_trigger_entity_parent_removed(parent, child);
 }
+
+void state_entity_add_child_remove_parent(int parent, int child)
+{
+  bool error = false;
+  entity_t* c = state_get_entity(child, &error); ASSERT(!error);
+  if (c->parent >= 0 && c->parent != parent)
+  { state_entity_remove_child(parent, child); }
+  state_entity_add_child(parent, child);
+}
+
 void state_entity_local_model(int id, mat4 out)
 {  
   if (id < 0 || id >= world_len) 

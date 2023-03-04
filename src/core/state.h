@@ -29,6 +29,10 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line);
 
 void state_entity_add_child(int parent, int child);
 void state_entity_remove_child(int parent, int child);
+// @DOC: removes old parent if present and sets new parent
+//       parent: new parent entity id
+//       child:  new child entity id
+void state_entity_add_child_remove_parent(int parent, int child);
 
 void state_entity_local_model(int id, mat4 out);
 void state_entity_update_global_model_dbg(int id, char* file, int line);

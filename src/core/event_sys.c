@@ -11,12 +11,14 @@ int                       phys_collision_arr_len = 0;
 phys_trigger_callback**   phys_trigger_arr = NULL;
 int                       phys_trigger_arr_len = 0;
 
-ent_added_callback**    ent_added_arr = NULL;
-int                     ent_added_arr_len = 0;
-ent_removed_callback**  ent_removed_arr = NULL;
-int                     ent_removed_arr_len = 0;
-ent_parented_callback** ent_parented_arr = NULL;
-int                     ent_parented_arr_len = 0;
+ent_added_callback**     ent_added_arr = NULL;
+int                      ent_added_arr_len = 0;
+ent_removed_callback**   ent_removed_arr = NULL;
+int                      ent_removed_arr_len = 0;
+ent_parented_callback**  ent_parented_arr = NULL;
+int                      ent_parented_arr_len = 0;
+ent_parent_rm_callback** ent_parent_rm_arr = NULL;
+int                      ent_parent_rm_arr_len = 0;
 
 // // void event_sys_trigger_started_frame();          // @UNSURE: before each new frame 
 // 
@@ -43,6 +45,13 @@ void event_sys_trigger_entity_parented(int parent, int child)   // on entity bei
   for (int i = 0; i < ent_parented_arr_len; ++i)
   {
     ent_parented_arr[i](parent, child);
+  }
+}
+void event_sys_trigger_entity_parent_removed(int parent, int child)   // on entity having its parent removed
+{
+  for (int i = 0; i < ent_parent_rm_arr_len; ++i)
+  {
+    ent_parent_rm_arr[i](parent, child);
   }
 }
 
@@ -100,6 +109,11 @@ void event_sys_register_entity_parented(ent_parented_callback callback)
 {
   arrput(ent_parented_arr, callback);
   ent_parented_arr_len++;
+}
+void event_sys_register_entity_parent_removed(ent_parent_rm_callback callback)
+{
+  arrput(ent_parent_rm_arr, callback);
+  ent_parent_rm_arr_len++;
 }
 
 void event_sys_register_phys_collision(phys_collision_callback* callback)

@@ -5,6 +5,7 @@
 typedef void (ent_added_callback)(int id);
 typedef void (ent_removed_callback)(int id);
 typedef void (ent_parented_callback)(int parent, int child);
+typedef void (ent_parent_rm_callback)(int parent, int child);
 typedef void (phys_collision_callback)(int id_01, int id_02);
 typedef void (phys_trigger_callback)(int id_01, int id_02);
 
@@ -33,6 +34,11 @@ void event_sys_trigger_entity_removed(int id);                   // on entity re
 //       parent: id of the new parent
 //       child:  id of the new child
 void event_sys_trigger_entity_parented(int parent, int child);   // on entity being parented
+// @DOC: calls all functions registered under event_sys_register_entity_parent_removed
+//       ! used internally
+//       parent: id of the new parent
+//       child:  id of the new child
+void event_sys_trigger_entity_parent_removed(int parent, int child);   // on entity having its parent removed
 
 // @DOC: calls all functions registered under event_sys_register_phys_collision
 //       ! used internally
@@ -65,6 +71,9 @@ void event_sys_register_entity_removed(ent_removed_callback callback);
 // @DOC: register a function to be called when an entity is parented to another
 //       callback: function pointer to the func
 void event_sys_register_entity_parented(ent_parented_callback callback);
+// @DOC: register a function to be called when an entity has its parent removed
+//       callback: function pointer to the func
+void event_sys_register_entity_parent_removed(ent_parent_rm_callback callback);
 
 // @DOC: register a function to be called when two entites collide and both arent set to trigger
 //       callback: function pointer to the func

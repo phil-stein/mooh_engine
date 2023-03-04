@@ -35,9 +35,10 @@ void move_cam_by_keys();
 void rotate_cam_by_mouse();
 
 // @TMP: testing event_sys
-void added(int id)          { PF("! added entity: %d\n", id); }
-void removed(int id)        { PF("! removed entity: %d\n", id); }
-void parented(int p, int c) { PF("! parented entity: %d, %d\n", p, c); }
+void added(int id)           { PF("! added entity: %d\n", id); }
+void removed(int id)         { PF("! removed entity: %d\n", id); }
+void parented(int p, int c)  { PF("! parented entity: %d, %d\n", p, c); }
+void parent_rm(int p, int c) { PF("! parent removed entity: %d, %d\n", p, c); }
 
 int main(void)
 {
@@ -52,6 +53,7 @@ void app_init()
   event_sys_register_entity_added(added);
   event_sys_register_entity_removed(removed);
   event_sys_register_entity_parented(parented);
+  event_sys_register_entity_parent_removed(parent_rm);
   
   core_data = core_data_get();
   // pause physics and scripts on start
