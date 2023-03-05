@@ -3,7 +3,7 @@
 #include "core/core_data.h"
 #include "core/camera.h"
 #include "core/window.h"
-#include "core/renderer.h"      // ID_BUFFER_TO_CHUNK_IDX()
+#include "core/renderer/renderer.h"      // ID_BUFFER_TO_CHUNK_IDX()
 #include "core/types/types.h"
 #include "core/debug/debug_timer.h"
 #include "core/debug/debug_draw.h"
@@ -56,7 +56,7 @@ void terrain_create(f32 uv_tile)
 void terrain_update()
 {
   vec3 cam_pos;
-  camera_get_pos(cam_pos);
+  vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
   for (u32 i = 0; i < core_data->terrain_chunks_len; ++i)
   {
     terrain_chunk_t* chunk = &core_data->terrain_chunks[i];

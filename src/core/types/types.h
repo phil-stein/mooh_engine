@@ -10,6 +10,18 @@
 #include "math/math_inc.h"
 
 
+typedef struct
+{
+  vec3 pos;
+  vec3 front;
+  vec3 up;
+  vec3 target;
+  const f32 fov; 
+  const f32 fov_rad;     
+  const f32 near_plane; 
+  const f32 far_plane;  
+}camera_t;
+
 #define CUBE_MAP_NAME_MAX 128
 
 // @DOC: @TODO:

@@ -5,7 +5,7 @@
 #include "core/program.h"
 #include "core/core_data.h"
 #include "core/input.h"
-#include "core/renderer.h"
+#include "core/renderer/renderer.h"
 #include "core/camera.h"
 #include "core/file_io.h"
 #include "core/assetm.h"

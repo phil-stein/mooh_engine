@@ -4,8 +4,8 @@
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/input.h"
-#include "core/renderer.h"
-#include "core/renderer_extra.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/renderer_extra.h"
 #include "core/debug/debug_draw.h"
 #include "core/state.h"
 #include "core/assetm.h"
@@ -395,10 +395,10 @@ void gizmo_calc_dist_screen_to_model(vec2 p0, vec2 p1, vec3 entity_pos, mat4 ent
     -(p0[1] / h) * 2 -1
   };
   vec3 cam_pos, dist;
-  camera_get_pos(cam_pos);
+  vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
   vec3_sub(entity_pos, cam_pos, dist);
   float depth = vec3_magnitude(dist);
-  depth = (depth / core_data->far_plane) * 2 -1;
+  depth = (depth / core_data->cam.far_plane) * 2 -1;
   space_screen_to_world(view, proj, pos_norm, depth, pos0); 
 
   mat4 model;

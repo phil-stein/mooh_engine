@@ -2,8 +2,8 @@
 
 #include "core/debug/debug_draw.h"
 #include "core/assetm.h"
-#include "core/renderer.h"
-#include "core/renderer_direct.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/renderer_direct.h"
 
 #include "stb/stb_ds.h"
 

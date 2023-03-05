@@ -2,8 +2,8 @@
 #include "editor/app.h"
 #include "core/core_data.h"
 #include "core/input.h"
-#include "core/renderer.h"
-#include "core/renderer_extra.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/renderer_extra.h"
 #include "core/types/types.h"
 #include "core/debug/debug_draw.h"
 

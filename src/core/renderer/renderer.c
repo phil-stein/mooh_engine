@@ -1,6 +1,6 @@
-#include "core/renderer.h"
-#include "core/renderer_direct.h"
-#include "core/renderer_extra.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/renderer_direct.h"
+#include "core/renderer/renderer_extra.h"
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/state.h"
@@ -156,9 +156,9 @@ void renderer_update()
 
   // @TODO: shadows follow camera
   vec3 light_pos, c_forward;
-  camera_get_pos(light_pos);
+  vec3_copy(core_data->cam.pos, light_pos);   // camera_get_pos(light_pos);
   vec3_add(light_pos, VEC3_XYZ(0, 5, 0), light_pos);
-  camera_get_front(c_forward);
+  vec3_copy(core_data->cam.front, c_forward); // camera_get_front(c_forward);
   vec3_mul_f(c_forward, 5.0f, c_forward);
   vec3_add(light_pos, c_forward, light_pos);
 
@@ -378,8 +378,8 @@ void renderer_update()
     glDisable(GL_DEPTH_TEST);
     shader_use(&core_data->lighting_shader);
     
-    vec3 cam_pos; camera_get_pos(cam_pos);
-    shader_set_vec3(&core_data->lighting_shader, "view_pos", cam_pos);
+    // vec3 cam_pos; vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
+    shader_set_vec3(&core_data->lighting_shader, "view_pos", core_data->cam.pos); // cam_pos
     shader_set_float(&core_data->lighting_shader, "cube_map_intensity", core_data->cube_map.intensity);
     
     int  tex_index = 0;

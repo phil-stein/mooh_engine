@@ -1,4 +1,5 @@
 #include "data/test_comp.h"
+#include "core/core_data.h"
 #include "core/input.h"
 #include "core/camera.h"
 #include "core/save_sys.h"
@@ -6,12 +7,15 @@
 #include "math/math_inc.h"
 
 
+static core_data_t* core_data = NULL;
+
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
 void player_camera(entity_t* this, f32 dt);
 
 void player_init(entity_t* this)
 {
+  core_data = core_data_get();
   vec3_copy(this->pos, start_pos);
   input_center_cursor_pos(); 
   input_set_cursor_visible(false);
@@ -53,7 +57,7 @@ void player_update(entity_t* this, f32 dt)
   
   // @NOTE: set camera orientation
   vec3 cam_pos; 
-  camera_get_pos(cam_pos);
+  vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
   vec3 orientation = { 0.0f, -0.3f, -1.0f };
   vec3 target;
   vec3_add(this->pos, VEC3_Y(3), target); // so not looking at feet
@@ -105,7 +109,7 @@ void player_update(entity_t* this, f32 dt)
   vec3_add(pos, this->pos, pos);
   
   // debug_draw_sphere_register(pos, 0.35f, RGB_F(0, 1, 1));
-  camera_get_pos(cam_pos);
+  vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
   vec3 dif;
   vec3_sub(pos, cam_pos, dif);
   // @NOTE: speed of cam-smoothing framerate dependent, but gets yittery when * dt

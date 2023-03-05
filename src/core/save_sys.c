@@ -89,8 +89,10 @@ void save_sys_write_scene_to_state_buffer()
 
   arrfree(buffer);
 
-  camera_get_pos(state_cam_pos);
-  camera_get_front(state_cam_orientation);
+  vec3_copy(core_data->cam.pos,   state_cam_pos);
+  vec3_copy(core_data->cam.front, state_cam_orientation);
+  // camera_get_pos(state_cam_pos);
+  // camera_get_front(state_cam_orientation);
 }
 
 void save_sys_load_scene_from_state_buffer()

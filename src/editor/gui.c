@@ -4,9 +4,9 @@
 #include "editor/stylesheet.h"
 #include "core/core_data.h"
 #include "core/window.h"
-#include "core/renderer.h"
-#include "core/renderer_direct.h"
-#include "core/renderer_extra.h"
+#include "core/renderer/renderer.h"
+#include "core/renderer/renderer_direct.h"
+#include "core/renderer/renderer_extra.h"
 #include "core/state.h"
 #include "core/input.h"
 #include "core/assetm.h"
@@ -644,8 +644,8 @@ void gui_template_browser_win()
             if (nk_button_label(ctx, "+"))
             {
               vec3 front, pos;
-              camera_get_front(front);
-              camera_get_pos(pos);
+              vec3_copy(core_data->cam.front, front); // camera_get_front(front);
+              vec3_copy(core_data->cam.pos,   pos);   // camera_get_pos(pos);
               vec3_mul_f(front, 8.0f, front);
               vec3_add(front, pos, pos);
               int id = state_add_entity_from_template(pos, VEC3(0), VEC3(1), i);
@@ -816,8 +816,8 @@ void gui_light_hierarchy_win()
     if (nk_button_label(ctx, "add point light"))
     {
       vec3 front, pos;
-      camera_get_front(front);
-      camera_get_pos(pos);
+      vec3_copy(core_data->cam.front, front); // camera_get_front(front);
+      vec3_copy(core_data->cam.pos,   pos);   // camera_get_pos(pos);
       vec3_mul_f(front, 8.0f, front);
       vec3_add(front, pos, pos);
       state_add_point_light_empty(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);

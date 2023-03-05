@@ -44,14 +44,7 @@ typedef struct core_data_t
   
   // -- camera --
   
-  vec3 cam_pos;
-  vec3 cam_front;
-  vec3 cam_up;
-  vec3 cam_target;
-  const f32 cam_fov; 
-  const f32 cam_fov_rad;     
-  const f32 near_plane; 
-  const f32 far_plane;  
+  camera_t cam;
 
   // -- renderer_direct --
   
@@ -154,14 +147,14 @@ typedef struct core_data_t
   .asset_path   = "\0",                       \
   .shaders_path = "\0",                       \
                                               \
-  .cam_pos     = { 0, 0, 0 },                 \
-  .cam_front   = { 0, 0, -1 },                \
-  .cam_up      = { 0, 1, 0 },                 \
-  .cam_target  = { 0, 0, 0 },                 \
-  .cam_fov     = 45.0f,                       \
-  .cam_fov_rad = 45.0f * M_PI_F / 180.0f,     \
-  .near_plane  = 0.1f,                        \
-  .far_plane   = 1000.0f,                     \
+  .cam.pos     = { 0, 0, 0 },                 \
+  .cam.front   = { 0, 0, -1 },                \
+  .cam.up      = { 0, 1, 0 },                 \
+  .cam.target  = { 0, 0, 0 },                 \
+  .cam.fov     = 45.0f,                       \
+  .cam.fov_rad = 45.0f * M_PI_F / 180.0f,     \
+  .cam.near_plane  = 0.1f,                    \
+  .cam.far_plane   = 1000.0f,                 \
                                               \
   .quad_mesh = -1,                            \
                                               \

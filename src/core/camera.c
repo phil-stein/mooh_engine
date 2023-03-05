@@ -35,47 +35,47 @@ void camera_init()
 // ---- func ----
 void camera_move(vec3 dist)
 {
-	vec3_add(core_data->cam_pos, dist, core_data->cam_pos);
+	vec3_add(core_data->cam.pos, dist, core_data->cam.pos);
 }
 
 // ---- set ----
 void camera_set_pos(vec3 pos)
 {
-	vec3_copy(pos, core_data->cam_pos);
+	vec3_copy(pos, core_data->cam.pos);
 }
 void camera_set_front(vec3 dir)
 {
-	vec3_copy(dir, core_data->cam_front);
+	vec3_copy(dir, core_data->cam.front);
 }
 void camera_set_up(vec3 dir)
 {
-	vec3_copy(dir, core_data->cam_up);
+	vec3_copy(dir, core_data->cam.up);
 }
 
 // ---- get ----
-void camera_get_pos(vec3 pos)
-{
-	vec3_copy(core_data->cam_pos, pos);
-}
-void camera_get_front(vec3 dir)
-{
-	vec3_copy(core_data->cam_front, dir);
-}
-void camera_get_up(vec3 dir)
-{
-	vec3_copy(core_data->cam_up, dir);
-}
-float camera_get_n_plane()
-{ return core_data->near_plane; }
-float camera_get_f_plane()
-{ return core_data->far_plane; }
-float camera_get_fov()
-{ return core_data->cam_fov; }
+// void camera_get_pos(vec3 pos)
+// {
+// 	vec3_copy(core_data->cam_pos, pos);
+// }
+// void camera_get_front(vec3 dir)
+// {
+// 	vec3_copy(core_data->cam_front, dir);
+// }
+// void camera_get_up(vec3 dir)
+// {
+// 	vec3_copy(core_data->cam_up, dir);
+// }
+// float camera_get_n_plane()
+// { return core_data->near_plane; }
+// float camera_get_f_plane()
+// { return core_data->far_plane; }
+// float camera_get_fov()
+// { return core_data->cam_fov; }
 
 void camera_get_inv_direction(vec3 dir)
 {
 	// same as: dir = position - target; 
-	vec3_sub(core_data->cam_pos, core_data->cam_target, dir);
+	vec3_sub(core_data->cam.pos, core_data->cam.target, dir);
 	vec3_normalize(dir, dir);
 }
 
@@ -115,11 +115,11 @@ void camera_get_turntable_view_mat(const float radius, mat4 view)
 void camera_get_view_mat(mat4 view)
 {
 	vec3 center;
-	vec3_add(core_data->cam_pos, core_data->cam_front, center);
-	mat4_lookat(core_data->cam_pos, center, core_data->cam_up, view);
+	vec3_add(core_data->cam.pos, core_data->cam.front, center);
+	mat4_lookat(core_data->cam.pos, center, core_data->cam.up, view);
 }
 void camera_get_proj_mat(int width, int height, mat4 proj)
 {
-  mat4_perspective(core_data->cam_fov_rad, ((f32)width / (f32)height), core_data->near_plane, core_data->far_plane, proj);
+  mat4_perspective(core_data->cam.fov_rad, ((f32)width / (f32)height), core_data->cam.near_plane, core_data->cam.far_plane, proj);
 }
 

@@ -18,15 +18,15 @@ void camera_set_front(vec3 dir);
 void camera_set_up(vec3 dir);
 
 
-// @DOC: get the cameras current position
-void camera_get_pos(vec3 pos);
-
-// @DOC: get the cameras current front direction
-void camera_get_front(vec3 dir);
-
-// @DOC: get the cameras current up direction
-void camera_get_up(vec3 dir);
-
+// // @DOC: get the cameras current position
+// void camera_get_pos(vec3 pos);
+// 
+// // @DOC: get the cameras current front direction
+// void camera_get_front(vec3 dir);
+// 
+// // @DOC: get the cameras current up direction
+// void camera_get_up(vec3 dir);
+// 
 // float camera_get_n_plane();
 // float camera_get_f_plane();
 // float camera_get_fov();
