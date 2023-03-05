@@ -11,11 +11,15 @@
 
 void texture_free(texture_t* t)
 {
+  if (t->handle != 0) { return; }
 	glDeleteTextures(1, &t->handle);
+  t->handle = 0;
 }
 void texture_free_handle(u32 handle)
 {
+  if (handle != 0) { return; }
 	glDeleteTextures(1, &handle);
+  handle = 0;
 }
 
 void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, size_t* height_out, int* channel_num, bool flip_vertical) 

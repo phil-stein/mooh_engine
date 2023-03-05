@@ -68,7 +68,8 @@ main resources:
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] serialization or something adds pointlights every u play 
   - [x] play mode doesnt work anymore     
-  - [x] deselecting doesnt clear the outline buffer 
+  - [x] deselecting doesnt clear the outline buffer
+  - [ ] freeing cubemap doesnt seem to actually free any memory
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -169,7 +170,7 @@ main resources:
     - [ ] free assets
       - [x] textures
       - [ ] meshes
-      - [ ] cubemaps `WIP`
+      - [ ] cubemaps [doesnt work](#buggs) `WIP`
       - [ ] shaders
     - [ ] load shaders from zip
     - [ ] handle missing assets

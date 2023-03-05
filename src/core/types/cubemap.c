@@ -11,6 +11,8 @@
 
 static core_data_t* core_data = NULL;
 
+  
+// @BUGG: @OPTIMIZATION: feeing cubemap doesnt seem to free memory 
 void cubemap_free()
 {
   core_data = core_data_get();
@@ -25,9 +27,8 @@ void cubemap_free()
 cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line) 
 {
   core_data = core_data_get();
-  
-  // @BUGG: when already loaded cubemap loading another flips it 
-  if (core_data->cube_map.loaded) { return core_data->cube_map; }
+ 
+  // @BUGG: @OPTIMIZATION: reloading cubemap adds a lot of memory
   if (core_data->cube_map.loaded) { cubemap_free(); }
 
   // fix seams betweencubemap faces
@@ -54,10 +55,10 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the zip archive.\n -> [FILE] '%s', [LINE] %d", path, file, line);
 #endif
 
-  // stbi_set_flip_vertically_on_load(true);
+  stbi_set_flip_vertically_on_load(false);
   int width, height, channels;
   float *data = stbi_loadf_from_memory(buf, buf_len, &width, &height, &channels, 0);
-  unsigned int hdr_texture;
+  u32 hdr_texture;
   if (data)
   {
     glGenTextures(1, &hdr_texture);
@@ -76,7 +77,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
 
   // gen framebuffer ---------------------------------------------------------------------
     
-  unsigned int capture_fbo, capture_rbo;
+  u32 capture_fbo, capture_rbo;
   glGenFramebuffers(1, &capture_fbo);
   glGenRenderbuffers(1, &capture_rbo);
 
@@ -86,11 +87,13 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
 
   // gen cubemap -------------------------------------------------------------------------
-  
-  unsigned int cubemap;
+ 
+  // @TODO: clear cubema ???
+
+  u32 cubemap;
   glGenTextures(1, &cubemap);
   glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
-  for (unsigned int i = 0; i < 6; ++i)
+  for (u32 i = 0; i < 6; ++i)
   {
     // note that we store each face with 16 bit floating point values
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 
@@ -129,7 +132,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   glDisable(GL_CULL_FACE);
   glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
   glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  for (unsigned int i = 0; i < 6; ++i)
+  for (u32 i = 0; i < 6; ++i)
   {
     shader_set_mat4(&core_data->equirect_shader, "view", view_mats[i]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
@@ -150,10 +153,10 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   
   // render irradiencemap ----------------------------------------------------------------
 
-  unsigned int irradiance_map;
-  glGenTextures(1, &irradiance_map);
+  u32 irradiance_map;
+  glGenTextures(1, &irradiance_map); 
   glBindTexture(GL_TEXTURE_CUBE_MAP, irradiance_map);
-  for (unsigned int i = 0; i < 6; ++i)
+  for (u32 i = 0; i < 6; ++i)
   {
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, 
         GL_RGB, GL_FLOAT, NULL);
@@ -176,7 +179,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
 
   glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
   glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  for (unsigned int i = 0; i < 6; ++i)
+  for (u32 i = 0; i < 6; ++i)
   {
     shader_set_mat4(&core_data->irradiance_map_shader, "view", view_mats[i]);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
@@ -194,10 +197,10 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   
   // gen radiance map --------------------------------------------------------------------
   
-  unsigned int prefilter_map;
-  glGenTextures(1, &prefilter_map);
+  u32 prefilter_map;
+  glGenTextures(1, &prefilter_map); 
   glBindTexture(GL_TEXTURE_CUBE_MAP, prefilter_map);
-  for (unsigned int i = 0; i < 6; ++i)
+  for (u32 i = 0; i < 6; ++i)
   {
     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, NULL);
   }
@@ -217,19 +220,19 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   shader_set_int(&core_data->prefilter_shader, "environment_map", 0);
 
   glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  unsigned int max_mip_levels = 5;
-  for (unsigned int mip = 0; mip < max_mip_levels; ++mip)
+  u32 max_mip_levels = 5;
+  for (u32 mip = 0; mip < max_mip_levels; ++mip)
   {
     // reisze framebuffer according to mip-level size.
-    unsigned int mip_w = 128 * pow(0.5, mip);
-    unsigned int mip_h = 128 * pow(0.5, mip);
+    u32 mip_w = 128 * pow(0.5, mip);
+    u32 mip_h = 128 * pow(0.5, mip);
     glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mip_w, mip_h);
     glViewport(0, 0, mip_w, mip_h);
 
     float roughness = (float)mip / (float)(max_mip_levels - 1);
     shader_set_float(&core_data->prefilter_shader, "roughness", roughness);
-    for (unsigned int  i = 0; i < 6; ++i)
+    for (u32  i = 0; i < 6; ++i)
     {
       shader_set_mat4(&core_data->prefilter_shader, "view", view_mats[i]);
       glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
@@ -250,6 +253,8 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   
   glDeleteFramebuffers(1, &capture_fbo);
   glDeleteRenderbuffers(1, &capture_rbo);
+
+  // texture_free_handle(prefilter_map);
   
   ASSETM_PF("[assetm] loaded cubemap '%s''\n", path);
 
@@ -263,7 +268,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   // c.brdf_lut    = brdf_lut;
   c.intensity   = 1.0f;
 
-  // texture_free_handle(hdr_texture);
+  texture_free_handle(hdr_texture);
 
   return c;
 
