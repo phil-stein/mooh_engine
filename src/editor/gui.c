@@ -370,6 +370,8 @@ void gui_properties_win()
       }
       nk_layout_row_dynamic(ctx, 30, 1);
 
+      // @TODO: mesh properties
+
       if (nk_tree_push(ctx, NK_TREE_TAB, "transform", NK_MINIMIZED))
       {
         gui_properties_transform(e->pos, e->rot, e->scl, &e->is_moved);
@@ -379,7 +381,7 @@ void gui_properties_win()
       if (e->mat >= 0 && e->mesh >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "material", NK_MINIMIZED))
       {
         material_t* mat = assetm_get_material_by_idx(e->mat);
-        gui_properties_material(mat);
+        gui_properties_material(mat, e->mat);
         nk_tree_pop(ctx);
       }
 
@@ -388,7 +390,7 @@ void gui_properties_win()
         bool error = false;
         point_light_t* p = state_get_point_light(e->point_light_idx, &error);
         // gui_properties_point_light(e->pos, VEC3(1), 1);
-        gui_properties_point_light(p);
+        gui_properties_point_light(p, e->point_light_idx);
         nk_tree_pop(ctx);
       }
 
@@ -464,7 +466,7 @@ void gui_properties_win()
           if (nk_tree_push(ctx, NK_TREE_TAB, buf, NK_MINIMIZED))
           {
             material_t* mat = assetm_get_material_by_idx(core_data->terrain_materials[i]);
-            gui_properties_material(mat);
+            gui_properties_material(mat, core_data->terrain_materials[i]);
             nk_tree_pop(ctx);
           }
         }
@@ -507,8 +509,11 @@ void gui_properties_transform(vec3 pos, vec3 rot, vec3 scl, bool* has_moved)
   nk_property_float(ctx, "s.z", -2048.0f, &scl[2], 2048.0f, 0.1f, 0.01f);
   if (!vec3_equal(scl_old, scl)) { *has_moved = true; }
 }
-void gui_properties_material(material_t* mat)
+void gui_properties_material(material_t* mat, int idx)
 {
+  nk_layout_row_dynamic(ctx, 30, 1);
+  nk_labelf(ctx, NK_LEFT, "idx: %d", idx);
+
   const int size = prop_win_rect.w / 2 - 20;
   nk_layout_row_static(ctx, size, size, 2);
   nk_image(ctx, nk_image_id(assetm_get_texture_by_idx(mat->albedo)->handle));
@@ -526,10 +531,11 @@ void gui_properties_material(material_t* mat)
 
 
 }
-void gui_properties_point_light(point_light_t* p)
+void gui_properties_point_light(point_light_t* p, int idx)
 {
-
   nk_layout_row_dynamic(ctx, 30, 1);
+  nk_labelf(ctx, NK_LEFT, "idx: %d", idx);
+  
   nk_label(ctx, "position", NK_TEXT_LEFT);
   nk_layout_row_dynamic(ctx, 30, 3);
   nk_property_float(ctx, "p.x", -2048.0f, &p->pos[0], 2048.0f, 0.1f, 0.01f);
@@ -767,7 +773,7 @@ void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
     { app_data->selected_id = e->id; }
 
     *offs += 1;
-    PF("offs: %d, id: %d\n", *offs, e->id);
+    // PF("offs: %d, id: %d\n", *offs, e->id);
     for (int i = 0; i < e->children_len; ++i)
     {
       ERR_CHECK(e->id != e->children[i], "id: %d, children_len: %d, child[%d]: %d\n", e->id, e->children_len, i, e->children[i]);

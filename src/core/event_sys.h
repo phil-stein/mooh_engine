@@ -1,3 +1,6 @@
+#ifndef EVENT_SYS_H
+#define EVENT_SYS_H
+
 #include "global/global.h"
 
 
@@ -83,4 +86,4 @@ void event_sys_register_phys_collision(phys_collision_callback* callback);
 void event_sys_register_phys_trigger(phys_trigger_callback callback);       
 
 
-
+#endif

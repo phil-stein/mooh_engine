@@ -29,8 +29,8 @@ void gui_top_bar_win();
 
 void gui_properties_win();
 void gui_properties_transform(vec3 pos, vec3 rot, vec3 scl, bool* has_moved);
-void gui_properties_material(material_t* mat);
-void gui_properties_point_light(point_light_t* p); // (vec3 pos, rgbf col, f32 intensity);
+void gui_properties_material(material_t* mat, int idx);
+void gui_properties_point_light(point_light_t* p, int idx); // (vec3 pos, rgbf col, f32 intensity);
 void gui_properties_physics(const entity_template_t* def, entity_t* e);
 
 void gui_template_browser_win();

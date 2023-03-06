@@ -1,9 +1,9 @@
 #ifndef RENDERER_DIRECT_H
 #define RENDERER_DIRECT_H
 
-#include "global/global.h"
-#include "core/types/types.h"
-#include "math/math_inc.h"
+#include "../../global/global.h"
+#include "../../core/types/types.h"
+#include "../../math/math_inc.h"
 
 
 void renderer_direct_init();

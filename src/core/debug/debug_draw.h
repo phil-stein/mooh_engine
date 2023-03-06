@@ -4,9 +4,9 @@
 // @NOTE: if not defined all this gets stripped out
 #ifdef DEBUG_DRAW
 
-#include "global/global.h"
-#include "core/debug/debug_draw.h"
-#include "math/math_inc.h"
+#include "../../global/global.h"
+#include "../../core/debug/debug_draw.h"
+#include "../../math/math_inc.h"
 
 // @DOC: used internally in debug_draw_t
 typedef enum debug_draw_type { DEBUG_DRAW_SPHERE, DEBUG_DRAW_LINE, DEBUG_DRAW_MESH, DEBUG_DRAW_MESH_TEX } debug_draw_type;

@@ -12,6 +12,7 @@ clean: core_clean editor_clean game_clean
 
 EDITOR_CORE_NAME ="lib_mooh_core_editor.a" 
 EDITOR_CC_ARGS   ="-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"
+# EDITOR_CC_ARGS   ="-DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"
 EDITOR_CORE_BIN		 ="bin_core_editor"
 
 GAME_CORE_NAME 	 ="lib_mooh_core.a" 

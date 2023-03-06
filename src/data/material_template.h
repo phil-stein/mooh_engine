@@ -1,9 +1,9 @@
 #ifndef MATERIAL_TEMPLATE_H 
 #define MATERIAL_TEMPLATE_H 
 
-#include "global/global.h"
-#include "data/shader_template.h"
-#include "math/math_inc.h"
+#include "../global/global.h"
+#include "../data/shader_template.h"
+#include "../math/math_inc.h"
 
 typedef enum material_template_type
 {

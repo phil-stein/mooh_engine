@@ -1,8 +1,8 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "global/global.h"
-#include "core/types/types.h"
+#include "../global/global.h"
+#include "../core/types/types.h"
 
 // #define WORLD_MAX 12
 #define DIR_LIGHTS_MAX   6    // depends on max number set in lighting shader

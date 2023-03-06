@@ -1,7 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "global/global.h"
+#include "../../global/global.h"
 
 // @NOTE: mesh_t also has a floats_per_vert var in case its not this
 #define FLOATS_PER_VERT (3 + 3 + 2 + 3)  // pos norm uv tan

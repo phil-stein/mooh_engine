@@ -1,9 +1,9 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#include "global/global.h"
-#include "math/math_inc.h"
-#include "data/material_template.h"
+#include "../../global/global.h"
+#include "../../math/math_inc.h"
+#include "../../data/material_template.h"
 
 typedef struct material_t
 {

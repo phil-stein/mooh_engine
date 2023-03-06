@@ -1,10 +1,10 @@
 #ifndef SAVE_SYS_H
 #define SAVE_SYS_H
 
-#include "global/global.h"
-#include "core/terrain.h"
-#include "core/types/types.h"
-#include "math/math_inc.h"
+#include "../global/global.h"
+#include "../core/terrain.h"
+#include "../core/types/types.h"
+#include "../math/math_inc.h"
 
 
 // @NOTE: 0x010 = 1.0, 0x001 = 0.1, etc.

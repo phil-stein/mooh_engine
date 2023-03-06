@@ -70,6 +70,8 @@ main resources:
   - [x] play mode doesnt work anymore     
   - [x] deselecting doesnt clear the outline buffer
   - [ ] freeing cubemap doesnt seem to actually free any memory
+  - [ ] brick material on groud isnt the same as the other cubes
+    - they should all be referencing the same material_t 
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -91,12 +93,15 @@ main resources:
       - uncompressed for faster load time 
     - [ ] shader spir-v ?
   - [ ] only clear outline buffer when deselecting
+  - [ ] change zip archive for custom file format
+    - all textures, etc. back to back in one file with a simple header
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
     it worked before and something changed in the code that made it no longer work that way
     what exactly changed ???
   - ENTITY_SET_POS() doesnt work properly in program_sync_physics(), need to set velocity to 0
+  - zip archive not faster than straight files
 
 ## organization
   - [x] factor out cubemap creating from assetm, into sep. file
@@ -173,6 +178,7 @@ main resources:
       - [ ] cubemaps [doesnt work](#buggs) `WIP`
       - [ ] shaders
     - [ ] load shaders from zip
+    - [ ] load cubemaps from zip
     - [ ] handle missing assets
     - [ ] custom asset formats [descr. here](#optimization)
   - [ ] structures (prefabs)
@@ -262,6 +268,7 @@ main resources:
   - [x] make a .h file with all color macros
     - [x] parent / child lines
     - [x] move the color of collider debug draw from phys to editor
+  - [x] check mouse over ui, doesnt work for debug, hierarchy, etc.
 
 ## physics engine
   - [ ] sphere
@@ -298,7 +305,7 @@ main resources:
     - [ ] scene ?
     - [ ] terrain
   - [ ] physics
-  - [ ] rendering
+  - [ ] rendering ?
     - decouple entities from main-thread
   - [ ] terrain
 

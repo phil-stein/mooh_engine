@@ -119,45 +119,45 @@ void move_cam_by_keys()
 	{ cam_speed *= CAM_SPEED_SHIFT_MULT; }
 	if (input_get_key_down(KEY_MOVE_FORWARD))
 	{
-		vec3 front; camera_get_front(front);
+		vec3 front; vec3_copy(core_data->cam.front, front); // camera_get_front(front);
 		vec3_mul_f(front, cam_speed, front);
 		camera_move(front);
 	}
 	if (input_get_key_down(KEY_MOVE_BACKWARD))
 	{
-		vec3 front; camera_get_front(front);
+		vec3 front; vec3_copy(core_data->cam.front, front); // camera_get_front(front);
 		vec3_mul_f(front, -cam_speed, front);
 		camera_move(front);
 	}
 	if (input_get_key_down(KEY_MOVE_LEFT))
 	{
-		vec3 up;    camera_get_up(up);
-		vec3 front; camera_get_front(front);
+		// vec3 up;    camera_get_up(up);
+		// vec3 front; camera_get_front(front);
 		vec3 dist;
-		vec3_cross(front, up, dist);
+		vec3_cross(core_data->cam.front, core_data->cam.up, dist);
 		vec3_normalize(dist, dist);
 		vec3_mul_f(dist, -cam_speed, dist);
 		camera_move(dist);
 	}
 	if (input_get_key_down(KEY_MOVE_RIGHT))
 	{
-		vec3 up;    camera_get_up(up);
-		vec3 front; camera_get_front(front);
+		// vec3 up;    camera_get_up(up);
+		// vec3 front; camera_get_front(front);
 		vec3 dist;
-		vec3_cross(front, up, dist);
+		vec3_cross(core_data->cam.front, core_data->cam.up, dist);
 		vec3_normalize(dist, dist);
 		vec3_mul_f(dist, cam_speed, dist);
 		camera_move(dist);
 	}
 	if (input_get_key_down(KEY_MOVE_DOWN))
 	{
-		vec3 up;	camera_get_up(up);
+		vec3 up;	vec3_copy(core_data->cam.up, up); // camera_get_up(up);
 		vec3_mul_f(up, -cam_speed, up);
 		camera_move(up);
 	}
 	if (input_get_key_down(KEY_MOVE_UP))
 	{
-		vec3 up; camera_get_up(up);
+		vec3 up;	vec3_copy(core_data->cam.up, up); // camera_get_up(up);
 		vec3_mul_f(up, cam_speed, up);
 		camera_move(up);
 	}
@@ -189,9 +189,9 @@ void rotate_cam_by_mouse()
 	if (!init)
 	{
     vec3 front;
-    camera_get_front(front);
-		pitch = front[1] * 90; // -30.375f;
-		yaw	  =	front[2] * 90; // -90.875;
+    vec3_copy(core_data->cam.front, front); // camera_get_front(front);
+		pitch = core_data->cam.front[1] * 90; // -30.375f;
+		yaw	  = core_data->cam.front[2] * 90; // -90.875;
 		init = true;
 	}
 

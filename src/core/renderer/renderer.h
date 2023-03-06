@@ -1,10 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "global/global.h"
-#include "core/types/types.h"
-#include "core/terrain.h"
-#include "math/math_inc.h"
+#include "../../global/global.h"
+#include "../../core/types/types.h"
+#include "../../core/terrain.h"
+#include "../../math/math_inc.h"
 
 
 #define DRAW_MESH(_mesh)                                                                \

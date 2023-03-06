@@ -1,8 +1,8 @@
 #ifndef SHADER_TEMPLATE_H 
 #define SHADER_TEMPLATE_H 
 
-#include "global/global.h"
-#include "core/types/shader.h"
+#include "../global/global.h"
+#include "../core/types/shader.h"
 
 typedef enum shader_template_type
 {

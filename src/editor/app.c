@@ -2,6 +2,7 @@
 #include "editor/gui.h"
 #include "editor/gizmo.h"
 #include "editor/terrain_edit.h"
+#include "editor/stylesheet.h"
 #include "core/program.h"
 #include "core/core_data.h"
 #include "core/input.h"
@@ -157,6 +158,7 @@ void app_update()
 {
 
   // @TODO: this shows infront of gizmos
+  //        also move to gizmo.c
   // draw lights
   if (!core_data_is_play())
   {
@@ -169,7 +171,7 @@ void app_update()
       {
         bool error = false;
         point_light_t* p = state_get_point_light(world[i].point_light_idx, &error); ASSERT(!error);
-        debug_draw_mesh_register(world[i].pos, VEC3_XYZ(90, 0, 0), VEC3(2.35f), p->color, assetm_get_mesh_idx("gizmos/lightbulb.fbx")); 
+        debug_draw_mesh_register(world[i].pos, GIZMO_POINT_LIGHT_ROT, GIZMO_POINT_LIGHT_SCL, p->color, assetm_get_mesh_idx(GIZMO_POINT_LIGHT_MESH)); 
       }
     }
   }

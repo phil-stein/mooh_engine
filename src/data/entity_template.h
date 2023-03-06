@@ -1,9 +1,9 @@
 #ifndef ENTITY_DEF_H
 #define ENTITY_DEF_H
 
-#include "global/global.h"
-#include "core/types/types.h"
-#include "math/math_inc.h"
+#include "../global/global.h"
+#include "../core/types/types.h"
+#include "../math/math_inc.h"
 
 
 typedef enum entity_template_type 

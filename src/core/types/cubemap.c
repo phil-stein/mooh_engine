@@ -39,21 +39,21 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
  
   void*  buf = NULL;
   size_t buf_len = 0;
-#ifdef ASSETM_NO_ZIP
+// #ifdef ASSETM_NO_ZIP
   char _path[ASSET_PATH_MAX +64];
   int len = 0;
   sprintf(_path, "%stextures/%s", core_data->asset_path, path);
   buf = (void*)file_read_len(_path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
-#else 
-  zip_entry_open(zip_textures, path);
-  {
-    zip_entry_read(zip_textures, &buf, &buf_len);
-  }
-  zip_entry_close(zip_textures);
-  ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the zip archive.\n -> [FILE] '%s', [LINE] %d", path, file, line);
-#endif
+// #else 
+//   zip_entry_open(zip_textures, path);
+//   {
+//     zip_entry_read(zip_textures, &buf, &buf_len);
+//   }
+//   zip_entry_close(zip_textures);
+//   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the zip archive.\n -> [FILE] '%s', [LINE] %d", path, file, line);
+// #endif
 
   stbi_set_flip_vertically_on_load(false);
   int width, height, channels;

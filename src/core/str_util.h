@@ -1,7 +1,7 @@
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
-#include "global/global.h"
+#include "../global/global.h"
 
 #include <string.h>
 

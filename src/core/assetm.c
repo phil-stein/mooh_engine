@@ -83,9 +83,9 @@ void assetm_init()
 
   // open zip archive
   char path[ASSET_PATH_MAX + 64];
-  sprintf(path, "%stextures/textures.zip", core_data->asset_path); 
+  sprintf(path, "%s/textures.zip", core_data->asset_path); 
   zip_textures  = zip_open(path, 0, 'r');
-  sprintf(path, "%smeshes/meshes.zip", core_data->asset_path); 
+  sprintf(path, "%s/meshes.zip", core_data->asset_path); 
   zip_meshes    = zip_open(path, 0, 'r');
 
 }
@@ -313,7 +313,7 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
   // void*  buf = NULL;
   // size_t buf_len = 0;
 
-#ifdef ASSETM_NO_ZIP
+// #ifdef ASSETM_NO_ZIP
   // char path[128]; 
   // sprintf(path, core_data->shaders_path"%s", name);
   // buf = file_read_len(path, (int*)&buf_len);
@@ -326,14 +326,14 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
 
   return shader_create_from_file(vert_path, frag_path, s->set_uniforms_f, s->name);
 	
-#else
-  ERR("zip loading for shaders not yet implemented\n -> [FILE] '%s', [LINE] %d\n", file, line);
-  // zip_entry_open(zip_materials, name);
-  // {
-  //   zip_entry_read(zip_materials, &buf, &buf_len);
-  // }
-  // zip_entry_close(zip_materials);
-#endif 
+// #else
+//   ERR("zip loading for shaders not yet implemented\n -> [FILE] '%s', [LINE] %d\n", file, line);
+//   // zip_entry_open(zip_materials, name);
+//   // {
+//   //   zip_entry_read(zip_materials, &buf, &buf_len);
+//   // }
+//   // zip_entry_close(zip_materials);
+// #endif 
   // ERR_CHECK(buf != NULL || buf_len != 0, "material '%s' requested in assetm_create_material() / assetm_get_material(), doesn't exist in the zip archive or folder.", name);
   // free(buf);
   // printf("[assetm] loaded shader '%s'\n", name);

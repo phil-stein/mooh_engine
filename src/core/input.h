@@ -1,7 +1,7 @@
 #ifndef INPUT_H
 #define INPUT_H
 
-#include "global/global.h"
+#include "../global/global.h"
 
 // @DOC: "input_state" maps directly to glfws key definitions
 typedef enum input_state { STATE_RELEASED, STATE_PRESS } input_state;

@@ -152,55 +152,42 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
 
 void renderer_extra_draw_scene_outline()
 {
-  if (core_data->outline_id < 0) 
+  // @OPTIMIZATION: only clear buffer when deselecting
+  glClearColor(0.0, 0.0, 0.0, 0.0);
+  int w, h; window_get_size(&w, &h);
+  glViewport(0, 0, w, h);
+  framebuffer_bind(&core_data->fb_outline);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
+  
+  if (core_data->outline_id < 0)  // no entity to render outline for 
   {
-    // @OPTIMIZATION: only clear buffer when deselecting
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    int w, h; window_get_size(&w, &h);
-    glViewport(0, 0, w, h);
-    framebuffer_bind(&core_data->fb_outline);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
 	  framebuffer_unbind();
     return; 
-  }
-  bool error = false;
-	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
+  }  
+
   // draw in solid-mode for fbo
 	if (core_data->wireframe_mode_enabled == true)
-	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
-	glClearColor(0.0, 0.0, 0.0, 0.0);
-	int w, h; window_get_size(&w, &h);
-	glViewport(0, 0, w, h);
-	framebuffer_bind(&core_data->fb_outline);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
-	
-  // if (!(gamestate && hide_gizmos) && ent->id != -1 && (ent->has_model || ent->has_light || ent->has_cam)) //  && ent->visible
-	// {
-  // }
-
-  // @TODO: draw lightbulb when light
-
-  // mat4 view, proj;
-  // camera_get_view_mat(view);
-  // mat4 view_no_pos;
-  // mat4_copy(view, view_no_pos);
-  // mat4_set_pos(0, 0, 0, view_no_pos);
-  // camera_get_proj_mat(w, h, proj);
-
-  // shader_set_mat4(&core_data->_shader, "model", ent->model);
-  // shader_set_mat4(&core_data->_shader, "view", view);
-  // shader_set_mat4(&core_data->_shader, "proj", proj);
-
-
-  // @NOTE: does obj drawn need to be scaled up ?
-
-  mesh_t* mesh   = assetm_get_mesh_by_idx(e->mesh);
+	{ glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+  
+  bool error = false;
+	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
+  
+  mesh_t* mesh = NULL;
   texture_t* tex = assetm_get_texture("#internal/blank.png", true);
-  renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
-  // DRAW_MESH(mesh);
-
+  
+  if (e->point_light_idx >= 0 && e->mesh < 0)                    // if no mesh, but is pointlight
+  { 
+    mesh = assetm_get_mesh("gizmos/lightbulb.fbx"); 
+    // @TODO: rot & scl should be the macro in editor/stylesheet.h, buts thats a dependency
+    renderer_direct_draw_mesh_textured(e->pos, VEC3_XYZ(90, 0, 0), VEC3(2.35f), mesh, tex, RGB_F_RGB(1));
+  }           
+  else if (e->is_dead || e->mesh < 0 || e->mat < 0) { framebuffer_unbind(); return; } // if no mesh
+  else                                                          // if has mesh 
+  { 
+    mesh = assetm_get_mesh_by_idx(e->mesh); 
+    renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
+  }              
+	
 	framebuffer_unbind();
 }
 

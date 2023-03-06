@@ -1,8 +1,8 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <global/global.h>
-#include <math/math_inc.h>
+#include "../global/global.h"
+#include "../math/math_inc.h"
 
 
 // @DOC: // initialize the camera, call this before any other calls to cam_...()

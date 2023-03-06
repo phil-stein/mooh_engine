@@ -1,9 +1,9 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "global/global.h"
-#include "math/math_inc.h" 
-#include "GLAD/glad.h"
+#include "../../global/global.h"
+#include "../../math/math_inc.h" 
+#include "../../../external/GLAD/glad.h"
 
 typedef enum framebuffer_type
 {

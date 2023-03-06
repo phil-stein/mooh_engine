@@ -4,10 +4,14 @@
 // --- gizmo ---
 
 #define GIZMO_NONE_SIZE                     0.05f
+
 #define GIZMO_TRANSLATE_LINE_WIDTH          8
 #define GIZMO_TRANSLATE_LINE_COLOR          RGB_F_RGB(1)
 #define GIZMO_TRANSLATE_LINE_SPHERES_COLOR  RGB_F_RGB(0.95f)
 
+#define GIZMO_POINT_LIGHT_ROT               VEC3_XYZ(90, 0, 0)
+#define GIZMO_POINT_LIGHT_SCL               VEC3(2.35f)
+#define GIZMO_POINT_LIGHT_MESH              "gizmos/lightbulb.fbx"
 
 // --- info --- 
 

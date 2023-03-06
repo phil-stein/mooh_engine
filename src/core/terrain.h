@@ -1,11 +1,11 @@
 #ifndef TERRAIN_H
 #define TERRAIN_H
 
-#include "global/global.h"
-#include "math/math_inc.h"
-#include "core/types/mesh.h"
-#include "data/shader_template.h"
-#include "data/material_template.h"
+#include "../global/global.h"
+#include "../math/math_inc.h"
+#include "../core/types/mesh.h"
+#include "../data/shader_template.h"
+#include "../data/material_template.h"
 
 
 typedef struct terrain_chunk_t

@@ -1,7 +1,7 @@
 #ifndef DEBUG_UTIL_H
 #define DEBUG_UTIL_H
 
-#include "global/global.h"
+#include "../../global/global.h"
 
 // @DOC: defines a timer type, used internally
 typedef struct timer_t

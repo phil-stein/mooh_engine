@@ -1,9 +1,9 @@
 #ifndef REDERER_EXTRA_H
 #define REDERER_EXTRA_H
 
-#include "global/global.h"
-#include "core/types/types.h"
-#include "math/math_inc.h"
+#include "../../global/global.h"
+#include "../../core/types/types.h"
+#include "../../math/math_inc.h"
 
 // @NOTE: so we dont need to define it in make
 #ifdef EDITOR
