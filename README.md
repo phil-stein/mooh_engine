@@ -25,7 +25,7 @@ main resources:
 
 ## next steps
   - *optimizations*
-    - [custom asset formats](#optimizations) `cur goal`
+    - [custom asset formats](#optimizations) `WIP | cur goal`
     - [multithreading](#multithreading) `WIP` 
       - sample / study proj
       - write abstraction ?
@@ -83,7 +83,7 @@ main resources:
   - [ ] octree or something for chunks, for entities / phys_objs
   - [ ] precompute brdf, etc., [also mentioned](#tools)
   - [ ] custom asset formats
-    - [ ] mesh
+    - [ ] mesh `WIP`
       - pure verts, nothing else
       - 3:pos + 3:norm + 2:uv + 3:tan  =  11: f32, 44: bytes 
       - quad: fbx:11.1kb / custom:176bytes = 1.5% 
@@ -113,6 +113,7 @@ main resources:
   - [ ] use _dbg funcs for materials in assetm
   - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
+  - [ ] rename entity_t.table_idx -> template_idx
   - [x] make serialization into generalized gitrepo
     - [x] seperate serialization & save_sys 
   - [ ] comment all .h files in core

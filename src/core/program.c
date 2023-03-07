@@ -7,6 +7,7 @@
 #include "core/input.h"
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
+#include "core/io/asset_io.h"
 #include "core/state.h"
 #include "core/terrain.h"
 #include "core/event_sys.h"
@@ -47,6 +48,7 @@ void program_start(int width, int height, const char* title, window_type type, e
 
   rand_seed(time(NULL));
 	TIMER_FUNC_STATIC(input_init());
+  TIMER_FUNC_STATIC(asset_io_init());
   TIMER_FUNC_STATIC(assetm_init());
   
   TIMER_FUNC_STATIC(core_data_init());

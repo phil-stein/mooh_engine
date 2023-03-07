@@ -1,8 +1,8 @@
 #ifndef FILE_IO_H
 #define FILE_IO_H
 
-#include "../global/global.h"
-#include "../core/types/mesh.h"
+#include "global/global.h"
+#include "core/types/mesh.h"
 
 // @DOC: returns true if the file under the specified path "file_path" exists, otherwise false
 //       file_path: path to the file, including file name

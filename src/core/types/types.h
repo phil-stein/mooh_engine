@@ -187,11 +187,14 @@ typedef struct dir_light_t
 
 typedef struct point_light_t
 {
+  bool is_dead;     // instead of deleting the light from array, its marked dead and overwritten with the next added point_light
+  int  id;          // for state_get_point_light(id)
+  int entity_id;    // either -1 or entity id the light is attached to
+  
   vec3  pos;        // position
   rgbf  color;      // color of light
   float intensity;  // multiplier for lights effect on the world
 
-  int entity_id;    // either -1 or entity id the light is attached to
 
 }point_light_t;
 

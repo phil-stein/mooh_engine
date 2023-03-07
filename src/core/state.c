@@ -19,8 +19,11 @@ int  world_dead_len = 0;
 dir_light_t dir_lights[DIR_LIGHTS_MAX];
 int         dir_lights_len = 0;
 
-point_light_t point_lights[POINT_LIGHTS_MAX];
-int           point_lights_len = 0;
+point_light_t* point_lights = NULL;
+int            point_lights_len = 0;
+
+int* point_lights_dead = NULL;
+int  point_lights_dead_len = 0;
 
   // @NOTE: entity->init() get called in state_init(), in the editor they get called when play is pressed
 #ifdef EDITOR
@@ -214,9 +217,16 @@ int state_duplicate_entity(int id, vec3 offset)
 void state_remove_entity(int id)
 {
   ERR_CHECK(id >= 0 && id < world_len, "removing invalid entity id");
+  ERR_CHECK(!world[id].is_dead, "removing already 'dead' entity");
  
   if (world[id].phys_flag != 0)
   { phys_remove_obj(id); }
+
+  if (world[id].point_light_idx >= 0)
+  {
+    state_remove_point_light(world[id].point_light_idx);
+    // world[id].point_light_idx = -1;
+  }
 
   if (world[id].parent > -1)
   {
@@ -230,7 +240,9 @@ void state_remove_entity(int id)
   world[id].is_dead = true;
   arrput(world_dead, id);
   world_dead_len++;
-  
+ 
+  if (core_data->outline_id == id) { core_data->outline_id = -1; }
+
   event_sys_trigger_entity_removed(id);
 }
 // entity_t* state_get_entity(int id, bool* error)
@@ -546,16 +558,19 @@ void state_remove_dir_light(int idx)
   dir_lights_len--;
 }
 
-point_light_t* state_get_point_light_arr(int* len)
+// --- point lights ---
+
+point_light_t* state_get_point_light_arr(int* len, int* dead_len)
 {
-  *len = point_lights_len;
+  *len      = point_lights_len;
+  *dead_len = point_lights_dead_len;
   return point_lights;
 }
 
-point_light_t* state_get_point_light(int id, bool* error)
+point_light_t* state_get_point_light_dbg(int id, bool* error, const char* file, const int line)
 {
   if (id < 0 || id >= point_lights_len) 
-  { ERR("id: %d, point_lights_lenlen: %d\n", id, point_lights_len); *error = true; return NULL; }
+  { ERR("id: %d, point_lights_len: %d \ncalled from: \"%s\", line: %d\n", id, point_lights_len, file, line); *error = true; return NULL; }
   *error = false;
   return &point_lights[id];
 }
@@ -569,45 +584,64 @@ int state_add_point_light_empty(vec3 pos, rgbf color, float intensity)
 
 int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
 {
-  if (dir_lights_len >= POINT_LIGHTS_MAX -1) { return false; P_ERR("tried adding point light but already max amount of point lights"); }
+  if (point_lights_len - point_lights_dead_len >= POINT_LIGHTS_MAX -1) 
+  { return -1; P_ERR("tried adding point light but already max amount of point lights"); }
   
   point_light_t l;
+  l.entity_id = entity_id;
+  l.is_dead = false;
   vec3_copy(pos, l.pos);
   vec3_copy(color, l.color);
   l.intensity    = intensity;
   
-  point_lights[point_lights_len++] = l;
+  // point_lights[point_lights_len++] = l;
+  
+  int id = -1;
+  // check for free slot
+  if (point_lights_dead_len > 0)
+  {
+    id = arrpop(point_lights_dead);
+    l.id = id;
+    point_lights_dead_len--;
+    point_lights[id] = l;
+  }
+  else
+  {
+    id = point_lights_len;
+    l.id = id;
+    arrput(point_lights, l);
+    point_lights_len++;
+  }
  
   bool error = false;
   entity_t* e = state_get_entity(entity_id, &error); ASSERT(!error);
   if (e->point_light_idx < 0)
   {
-    e->point_light_idx = point_lights_len -1;
-    l.entity_id = entity_id;
+    e->point_light_idx = id;
+    // l.entity_id = entity_id;
   }
-  else { P_ERR("tried attaching point light to entity that already has one"); }
+  else { ERR("tried attaching point light to entity that already has one"); }
   
-  PF(" -> added pointlight entity: %d\n", entity_id);
+  PF(" -> added pointlight entity: e: %d, l: %d\n", entity_id, id);
 
-  return point_lights_len -1;
+  return id;
 }
 
-void state_remove_point_light(int idx)
+void state_remove_point_light(int id)
 {
-  ERR_CHECK(idx >= 0 && idx < point_lights_len, "'idx' passed to 'state_remove_point_light()' invalid: '%d', max: '%d'", idx, point_lights_len);
+  ERR_CHECK(id >= 0 && id < point_lights_len, "'id' passed to 'state_remove_point_light()' invalid: '%d', max: '%d'", id, point_lights_len);
+  ERR_CHECK(!point_lights[id].is_dead, "removing already 'dead' point_light");
 
   // remove from attached entity
-  if (point_lights[idx].entity_id >= 0)
+  if (point_lights[id].entity_id >= 0)
   {
     bool error = false;
-    entity_t* e = state_get_entity(point_lights[idx].entity_id, &error); ASSERT(!error);
+    entity_t* e = state_get_entity(point_lights[id].entity_id, &error); ASSERT(!error);
     e->point_light_idx = -1;
   }
- 
-  // move all lights down one to replace the given light
-  for (int i = idx; i < point_lights_len +1; ++i)
-  {
-    point_lights[i] = point_lights[i +1];
-  }
-  point_lights_len--;
+  
+  point_lights[id].is_dead = true;
+  arrput(point_lights_dead, id);
+  point_lights_dead_len++;
 }
+

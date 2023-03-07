@@ -53,8 +53,9 @@ bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool c
 void state_remove_dir_light(int idx);
 
 
-point_light_t* state_get_point_light_arr(int* len);
-point_light_t* state_get_point_light(int id, bool* error);
+point_light_t* state_get_point_light_arr(int* len, int* dead_len);
+point_light_t* state_get_point_light_dbg(int id, bool* error, const char* file, const int line);
+#define        state_get_point_light(id, error) state_get_point_light_dbg((id), (error), __FILE__, __LINE__) 
 // bool state_add_point_light(vec3 pos, rgbf color, float intensity);
 int state_add_point_light_empty(vec3 pos, rgbf color, float intensity);           // point_light with new empty entity
 int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id);  // point_light atttached to existing entity

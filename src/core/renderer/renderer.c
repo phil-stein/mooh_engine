@@ -140,7 +140,8 @@ void renderer_update()
   int dir_lights_len = 0;
   dir_light_t* dir_lights = state_get_dir_light_arr(&dir_lights_len);
   int point_lights_len = 0;
-  point_light_t* point_lights = state_get_point_light_arr(&point_lights_len);
+  int point_lights_dead_len = 0;
+  point_light_t* point_lights = state_get_point_light_arr(&point_lights_len, &point_lights_dead_len);
   
 
   TIMER_START("shadow maps");
@@ -436,12 +437,14 @@ void renderer_update()
       sprintf(buffer, "dir_lights[%d].color", idx);
       shader_set_vec3(&core_data->lighting_shader, buffer, color);
     }
-    shader_set_int(&core_data->lighting_shader, "point_lights_len", point_lights_len);
+    shader_set_int(&core_data->lighting_shader, "point_lights_len", point_lights_len - point_lights_dead_len);
+    int point_lights_disabled = 0;
     for (int i = 0; i < point_lights_len; ++i)
     {
       point_light_t* light = &point_lights[i];
+      if (light->is_dead) { point_lights_disabled++; continue; }
 
-      int idx = i; //  - disabled_lights;
+      int idx = i - point_lights_disabled;
       sprintf(buffer, "point_lights[%d].pos", idx);
       shader_set_vec3(&core_data->lighting_shader, buffer, light->pos);
       sprintf(buffer, "point_lights[%d].color", idx);

@@ -326,7 +326,7 @@ void gui_properties_win()
       state_get_entity_arr(&world_len, &dead_len);
       
       nk_layout_row_dynamic(ctx, 25, 1);
-      nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, entity_idx: %d", id, e->table_idx);
+      nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, table_idx: %d", id, e->table_idx);
       nk_labelf(ctx, NK_TEXT_LEFT, "parent: %d, #children: %d", e->parent, e->children_len);
       nk_layout_row_dynamic(ctx, 25, 2);
       static int parent_id = 0;
@@ -382,6 +382,13 @@ void gui_properties_win()
       {
         material_t* mat = assetm_get_material_by_idx(e->mat);
         gui_properties_material(mat, e->mat);
+        nk_tree_pop(ctx);
+      }
+      
+      if (e->mesh >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "mesh", NK_MINIMIZED))
+      {
+        mesh_t* m = assetm_get_mesh_by_idx(e->mesh);
+        gui_properties_mesh(m, e->mesh, e->table_idx);
         nk_tree_pop(ctx);
       }
 
@@ -527,14 +534,22 @@ void gui_properties_material(material_t* mat, int idx)
   nk_layout_row_dynamic(ctx, 30, 1);
   nk_property_float(ctx, "roughness", 0.0f, &mat->roughness_f, 1.0f, 0.1f, 0.01f);
   nk_property_float(ctx, "metallic", 0.0f, &mat->metallic_f, 1.0f, 0.1f, 0.01f);
+}
+void gui_properties_mesh(mesh_t* m, int idx, int entity_template_idx)
+{  
+  const entity_template_t* tmplt = entity_template_get(entity_template_idx);
 
-
-
+  nk_layout_row_dynamic(ctx, 30, 1);
+  nk_labelf(ctx, NK_LEFT, "name:    %s", tmplt->mesh);
+  nk_labelf(ctx, NK_LEFT, "f32 per vert: %d", m->floats_per_vert);
+  nk_labelf(ctx, NK_LEFT, "verts:   %d", m->verts_count);
+  nk_labelf(ctx, NK_LEFT, "indices: %d", m->indices_count);
+  
 }
 void gui_properties_point_light(point_light_t* p, int idx)
 {
   nk_layout_row_dynamic(ctx, 30, 1);
-  nk_labelf(ctx, NK_LEFT, "idx: %d", idx);
+  nk_labelf(ctx, NK_LEFT, "id: %d, arr idx: %d", p->id, idx);
   
   nk_label(ctx, "position", NK_TEXT_LEFT);
   nk_layout_row_dynamic(ctx, 30, 3);
@@ -803,7 +818,8 @@ void gui_light_hierarchy_win()
     int dl_len = 0;
     dir_light_t* dl   = state_get_dir_light_arr(&dl_len);
     int pl_len = 0;
-    point_light_t* pl = state_get_point_light_arr(&pl_len);
+    int pl_dead_len = 0;
+    point_light_t* pl = state_get_point_light_arr(&pl_len, &pl_dead_len);
 
     const int SEL_LIGHT_NONE  = 0;
     const int SEL_LIGHT_DIR   = 1;
@@ -843,6 +859,7 @@ void gui_light_hierarchy_win()
       }
       for (int i = 0; i < pl_len; ++i)
       {
+        if (pl->is_dead) { continue; }
         char buf[32];
         sprintf(buf, "point light: %d", i);
         bool selec = i == selected && selected_type == SEL_LIGHT_POINT;

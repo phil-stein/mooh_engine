@@ -5,6 +5,7 @@
 #include "core/types/mesh.h"
 #include "core/types/material.h"
 #include "data/material_template.h"
+#include "core/debug/debug_timer.h"
 #include "math/math_inc.h"
 
 #include "GLAD/glad.h"
@@ -239,6 +240,8 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
   void*  buf = NULL;
   size_t buf_len = 0;
 
+  // TIMER_START("mesh loading fbx");
+    
 #ifdef ASSETM_NO_ZIP
   char path[ASSET_PATH_MAX +64];
   int len = 0;
@@ -258,6 +261,9 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
 
   free(buf);
 
+  // TIMER_STOP_PRINT();
+  // PF("mesh_name: %s\n", name_cpy);
+
   // ---------------------------------------------------------
 
   ASSETM_PF("[assetm] loaded mesh '%s'\n", name);
@@ -267,6 +273,20 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
   shput(mesh_idxs, name_cpy, mesh_data_len);
   arrput(mesh_data, mesh);
   mesh_data_len++;
+}
+int assetm_add_mesh(mesh_t* mesh, const char* name)
+{
+  // copy name and path as passed name might be deleted
+  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
+  assert(name_cpy != NULL);
+  strcpy(name_cpy, name);
+  
+  // put texture index in tex array into the value of the hashmap with the texture name as key 
+  // and put the created texture into the tex array
+  shput(mesh_idxs, name_cpy, mesh_data_len);
+  arrput(mesh_data, *mesh);
+  mesh_data_len++;
+  return mesh_data_len -1;
 }
 
 // shaders ----------------------------------------------------------------------------------------

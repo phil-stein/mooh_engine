@@ -12,6 +12,7 @@
 #include "core/io/file_io.h"
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
+#include "core/io/asset_io.h"
 #include "core/state.h"
 #include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
@@ -50,20 +51,41 @@ int main(void)
 
 void app_init()
 {
+  core_data = core_data_get();
+  
   // // @TMP: testing event sys 
   // event_sys_register_entity_added(added);
   // event_sys_register_entity_removed(removed);
   // event_sys_register_entity_parented(parented);
   // event_sys_register_entity_parent_removed(parent_rm);
+
+  // -- scene --
+  const char scene_name[] = "test.scene";
+  // save_sys_write_scene_to_file(scene_name);
+  TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
+  // in game will be done by camera-controller
+  // input_center_cursor_pos();
+  camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
+  camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));
   
-  core_data = core_data_get();
-  // pause physics and scripts on start
-  // core_data->phys_act = false;
-  // core_data->scripts_act = false;
-  // @TODO: do this in program_start()
-  //        maybe not, it'll be done load_scene()
-  // TIMER_FUNC_STATIC(cubemap_t cube_map = assetm_load_cubemap_hdr("#cubemaps/gothic_manor_01_2k.hdr"));
-  // core_data->cube_map = cube_map;
+
+  // -- terrain --
+  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
+  TIMER_FUNC_STATIC(terrain_create(25));
+
+  TIMER_FUNC_STATIC(gui_init());
+
+  // @TMP: testing asset_io
+  // // asset_io_convert_mesh("demon02.fbx", "demon02.mesh");
+  // TIMER_START("mesh loading .mesh");
+  // mesh_t m = asset_io_load_mesh("demon02.mesh");
+  // TIMER_STOP_PRINT();
+  // int mat  = assetm_get_material_idx(MATERIAL_TEMPLATE_DEFAULT);
+  // int mesh = assetm_add_mesh(&m, "demon02.mesh");
+  // int id   = state_add_entity(VEC3_XYZ(0, 4, 0), VEC3(0), VEC3(1), mesh, mat, 0, NULL, NULL, NULL, NULL, -1);
+  // P_INT(id);
+  // 2.5x faster :)
+
 
   // // -- add entities --
   // // int quad_id     = 
@@ -109,20 +131,9 @@ void app_init()
   // 
   // state_add_dir_light(VEC3_XYZ(0, 10, 0), VEC3_XYZ(0.2f, 1.0f, 0.2f), RGB_F(1.0f, 0.6f, 0.6f), 8.5f, true, 2048, 2048);
   // state_add_point_light(VEC3_XYZ(-10,  10, 10), RGB_F_RGB(300), 1.0f);
- 
-  const char scene_name[] = "test.scene";
-  // save_sys_write_scene_to_file(scene_name);
-  TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
 
-  // in game will be done by camera-controller
-  // input_center_cursor_pos();
-  camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
-  camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));
-  
-  TIMER_FUNC_STATIC(gui_init());
 
   // -- terrain --
-
   // vec2* info = malloc(sizeof(vec2) * TERRAIN_LAYOUT_VERT_INFO_LEN(core_data));
   // for (int i = 0; i < TERRAIN_LAYOUT_VERT_INFO_LEN(core_data); ++i)
   // { info[i][0] = 0.0f; info[i][1] = 0.0f; }
@@ -146,10 +157,6 @@ void app_init()
   // P_INT(core_data->terrain_layout_len);
   // TIMER_FUNC_STATIC(terrain_create(25));
   // core_data->terrain_scl = 100;
-  
-  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
-  TIMER_FUNC_STATIC(terrain_create(25));
-
 }
 
 

@@ -61,7 +61,8 @@ _OBJS +=					 		\
 	terrain.o						\
 	save_sys.o					\
 	event_sys.o					\
-	cubemap.o
+	cubemap.o						\
+	asset_io.o
 # physics
 _OBJS += 							\
 	phys_world.o				\

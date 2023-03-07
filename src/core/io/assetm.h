@@ -50,6 +50,7 @@ mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* file, const int line);
 int assetm_get_mesh_idx_dbg(const char* name, const char* file, const int line);
 mesh_t* assetm_get_mesh_dbg(const char* name, const char* file, const int line);
 void assetm_create_mesh_dbg(const char* name, const char* file, const int line);
+int assetm_add_mesh(mesh_t* mesh, const char* name);
 // @DOC: get a mesh by its idx
 //       idx: index into the assetm array of meshes
 #define assetm_get_mesh_by_idx(idx)     assetm_get_mesh_by_idx_dbg(idx, __FILE__, __LINE__)

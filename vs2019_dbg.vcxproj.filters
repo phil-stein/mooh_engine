@@ -36,13 +36,7 @@
     <ClCompile Include="src\core\types\texture.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\assetm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\camera.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\file_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\glad.c">
@@ -52,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\program.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\renderer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\state.c">
@@ -78,9 +69,6 @@
     <ClCompile Include="src\data\test_comp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\editor\app.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\editor\gizmo.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -91,9 +79,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="external\zip\zip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\serialization.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\phys\phys_dynamics.c">
@@ -123,13 +108,31 @@
     <ClCompile Include="src\core\event_sys.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\renderer_direct.c">
+    <ClCompile Include="src\core\renderer\renderer_extra.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\renderer_extra.c">
+    <ClCompile Include="src\core\renderer\renderer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\save_sys.c">
+    <ClCompile Include="src\core\renderer\renderer_direct.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\asset_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\assetm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\save_sys.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor\app.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\file_io.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\types\cubemap.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\serialization\serialization.c">
@@ -161,25 +164,16 @@
     <ClInclude Include="src\core\types\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\assetm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\core_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\file_io.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\program.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\core\renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\state.h">
@@ -257,9 +251,6 @@
     <ClInclude Include="external\zip\miniz.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\serialization.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\phys\phys_dynamics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -287,13 +278,28 @@
     <ClInclude Include="src\core\event_sys.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\renderer_direct.h">
+    <ClInclude Include="src\core\io\asset_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\renderer_extra.h">
+    <ClInclude Include="src\core\io\file_io.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\save_sys.h">
+    <ClInclude Include="src\core\io\assetm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\renderer_extra.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\renderer_direct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\renderer\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\io\save_sys.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\types\cubemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\serialization\serialization.h">

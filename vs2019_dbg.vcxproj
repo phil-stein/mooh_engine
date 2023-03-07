@@ -125,7 +125,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSET_PATH="assets/";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER;DEBUG_DRAW;PHYS_DEBUG;DEBUG_TIMER_DEBUG;_CONSOLE;%(PreprocessorDefinitions);DEBUG_TIMER</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSET_PATH="assets/";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER;DEBUG_DRAW;PHYS_DEBUG;INCLUDE_PLAY_MODE;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)external;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -155,23 +155,24 @@
   <ItemGroup>
     <ClCompile Include="external\ufbx\ufbx.c" />
     <ClCompile Include="external\zip\zip.c" />
-    <ClCompile Include="src\core\assetm.c" />
     <ClCompile Include="src\core\camera.c" />
     <ClCompile Include="src\core\core_data.c" />
     <ClCompile Include="src\core\debug\debug_draw.c" />
     <ClCompile Include="src\core\debug\debug_timer.c" />
     <ClCompile Include="src\core\event_sys.c" />
-    <ClCompile Include="src\core\file_io.c" />
     <ClCompile Include="src\core\glad.c" />
     <ClCompile Include="src\core\input.c" />
+    <ClCompile Include="src\core\io\assetm.c" />
+    <ClCompile Include="src\core\io\asset_io.c" />
+    <ClCompile Include="src\core\io\file_io.c" />
+    <ClCompile Include="src\core\io\save_sys.c" />
     <ClCompile Include="src\core\program.c" />
-    <ClCompile Include="src\core\renderer.c" />
-    <ClCompile Include="src\core\renderer_direct.c" />
-    <ClCompile Include="src\core\renderer_extra.c" />
-    <ClCompile Include="src\core\save_sys.c" />
-    <ClCompile Include="src\core\serialization.c" />
+    <ClCompile Include="src\core\renderer\renderer.c" />
+    <ClCompile Include="src\core\renderer\renderer_direct.c" />
+    <ClCompile Include="src\core\renderer\renderer_extra.c" />
     <ClCompile Include="src\core\state.c" />
     <ClCompile Include="src\core\terrain.c" />
+    <ClCompile Include="src\core\types\cubemap.c" />
     <ClCompile Include="src\core\types\framebuffer.c" />
     <ClCompile Include="src\core\types\material.c" />
     <ClCompile Include="src\core\types\mesh.c" />
@@ -182,12 +183,7 @@
     <ClCompile Include="src\data\material_template.c" />
     <ClCompile Include="src\data\shader_template.c" />
     <ClCompile Include="src\data\test_comp.c" />
-    <ClCompile Include="src\editor\app.c">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Workspace\C\mooh\src;C:\Workspace\C\mooh\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalUsingDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ASSET_PATH=\"../../assets/\";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER</AdditionalUsingDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Workspace\C\mooh\src;C:\Workspace\C\mooh\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalUsingDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ASSET_PATH=\"../../assets/\";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER</AdditionalUsingDirectories>
-    </ClCompile>
+    <ClCompile Include="src\editor\app.c" />
     <ClCompile Include="src\editor\gizmo.c" />
     <ClCompile Include="src\editor\gui.c" />
     <ClCompile Include="src\editor\terrain_edit.c" />
@@ -203,23 +199,24 @@
     <ClInclude Include="external\ufbx\ufbx.h" />
     <ClInclude Include="external\zip\miniz.h" />
     <ClInclude Include="external\zip\zip.h" />
-    <ClInclude Include="src\core\assetm.h" />
     <ClInclude Include="src\core\camera.h" />
     <ClInclude Include="src\core\core_data.h" />
     <ClInclude Include="src\core\debug\debug_draw.h" />
     <ClInclude Include="src\core\debug\debug_timer.h" />
     <ClInclude Include="src\core\event_sys.h" />
-    <ClInclude Include="src\core\file_io.h" />
     <ClInclude Include="src\core\input.h" />
+    <ClInclude Include="src\core\io\assetm.h" />
+    <ClInclude Include="src\core\io\asset_io.h" />
+    <ClInclude Include="src\core\io\file_io.h" />
+    <ClInclude Include="src\core\io\save_sys.h" />
     <ClInclude Include="src\core\program.h" />
-    <ClInclude Include="src\core\renderer.h" />
-    <ClInclude Include="src\core\renderer_direct.h" />
-    <ClInclude Include="src\core\renderer_extra.h" />
-    <ClInclude Include="src\core\save_sys.h" />
-    <ClInclude Include="src\core\serialization.h" />
+    <ClInclude Include="src\core\renderer\renderer.h" />
+    <ClInclude Include="src\core\renderer\renderer_direct.h" />
+    <ClInclude Include="src\core\renderer\renderer_extra.h" />
     <ClInclude Include="src\core\state.h" />
     <ClInclude Include="src\core\str_util.h" />
     <ClInclude Include="src\core\terrain.h" />
+    <ClInclude Include="src\core\types\cubemap.h" />
     <ClInclude Include="src\core\types\framebuffer.h" />
     <ClInclude Include="src\core\types\material.h" />
     <ClInclude Include="src\core\types\mesh.h" />
