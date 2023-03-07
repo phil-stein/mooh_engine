@@ -140,7 +140,7 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, co
   char path[ASSET_PATH_MAX +64];
   int len = 0;
   sprintf(path, "%stextures/%s", core_data->asset_path, name);
-  buf = (void*)file_read_len(path, &len);
+  buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in assetm_create_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, file, line);
 #else 
@@ -184,7 +184,7 @@ void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int*
   char path[ASSET_PATH_MAX +64];
   int len = 0;
   sprintf(path, "%stextures/%s", core_data->asset_path, name);
-  buf = (void*)file_read_len(path, &len);
+  buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
 #else 
@@ -243,7 +243,7 @@ void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
   char path[ASSET_PATH_MAX +64];
   int len = 0;
   sprintf(path, "%smeshes/%s", core_data->asset_path, name);
-  buf = (void*)file_read_len(path, &len);
+  buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
 #else
   zip_entry_open(zip_meshes, name);

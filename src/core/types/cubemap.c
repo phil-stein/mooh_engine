@@ -43,7 +43,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   char _path[ASSET_PATH_MAX +64];
   int len = 0;
   sprintf(_path, "%stextures/%s", core_data->asset_path, path);
-  buf = (void*)file_read_len(_path, &len);
+  buf = (void*)file_io_read_len(_path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
 // #else 

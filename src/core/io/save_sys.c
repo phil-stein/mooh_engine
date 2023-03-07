@@ -46,7 +46,7 @@ void save_sys_write_scene_to_file(const char* name)
   
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, name);
-  file_write(path, (const char*)buffer, (int)arrlen(buffer));
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
 
   arrfree(buffer);
@@ -61,7 +61,7 @@ void save_sys_load_scene_from_file(const char* name)
   P_STR(core_data->asset_path);
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, name);
-  u8* buffer = (u8*)file_read_bytes(path, &length);
+  u8* buffer = (u8*)file_io_read_bytes(path, &length);
   
   save_sys_deserialize_scene(buffer, &offset);
 
@@ -126,7 +126,7 @@ void save_sys_write_empty_scene_to_file()
 
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, "-_-_new_-_-");
-  file_write(path, (const char*)buffer, (int)arrlen(buffer));
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
 }
@@ -254,7 +254,7 @@ void save_sys_write_terrain_to_file(const char* name)
 
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, name);
-  file_write(path, (const char*)buffer, (int)arrlen(buffer));
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
 }
@@ -265,7 +265,7 @@ void save_sys_load_terrain_from_file(const char* name)
   
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, name);
-  u8* buffer = (u8*)file_read_bytes(path, &length);
+  u8* buffer = (u8*)file_io_read_bytes(path, &length);
   
   save_sys_deserialize_terrain(buffer, &offset);
 

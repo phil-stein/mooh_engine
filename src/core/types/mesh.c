@@ -182,6 +182,19 @@ mesh_t mesh_load(const char* path)
 }
 mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
 {
+  f32* verts   = NULL;
+  u32* indices = NULL; 
+  mesh_load_data_from_memory(data,  size, name, &verts, &indices);
+  
+  mesh_t mesh;
+  mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
+  arrfree(verts);
+  arrfree(indices);
+
+  return mesh;
+}
+void mesh_load_data_from_memory(const void* data, size_t size, const char* name, f32** verts, u32** indices)
+{
   ufbx_load_opts opts = { NULL }; // Optional, pass NULL for defaults
   ufbx_error error; // Optional, pass NULL if you don't care about errors
   ufbx_scene *scene = ufbx_load_memory(data, size, &opts, &error);
@@ -190,8 +203,7 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
   // Use and inspect `scene`, it's just plain data!
 
   // Geometry is always stored in a consistent indexed format:
-  float* verts   = NULL;
-  u32*   indices = NULL;
+
   // ufbx_mesh* cube = ufbx_find_mesh(scene, "Cube");
   assert(scene->meshes.size > 0);
   ufbx_mesh* m = &scene->meshes.data[0];
@@ -254,7 +266,7 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
     for (size_t vertex_ix = 0; vertex_ix < face.num_indices; vertex_ix++) 
     {
       size_t index = face.index_begin + vertex_ix;
-      arrput(indices, (u32)index);
+      arrput((*indices), (u32)index);
       ufbx_vec3 pos    = m->vertex_position.data[m->vertex_position.indices[index]];
       ufbx_vec3 normal = ufbx_get_vertex_vec3(&m->vertex_normal, index);
       ufbx_vec2 uv     = m->vertex_uv.data[m->vertex_uv.indices[index]];
@@ -271,25 +283,19 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
       // arrput(verts, tan[0]);
       // arrput(verts, tan[1]);
       // arrput(verts, tan[2]);
-      arrput(verts, pos.v[0]);
-      arrput(verts, pos.v[2]);
-      arrput(verts, -pos.v[1]);
-      arrput(verts, normal.v[0]);
-      arrput(verts, normal.v[2]);
-      arrput(verts, -normal.v[1]);
-      arrput(verts, uv.v[0]);
-      arrput(verts, uv.v[1]);
-      arrput(verts, tan[0]);
-      arrput(verts, tan[2]);
-      arrput(verts, -tan[1]);
+      arrput((*verts), pos.v[0]);
+      arrput((*verts), pos.v[2]);
+      arrput((*verts), -pos.v[1]);
+      arrput((*verts), normal.v[0]);
+      arrput((*verts), normal.v[2]);
+      arrput((*verts), -normal.v[1]);
+      arrput((*verts), uv.v[0]);
+      arrput((*verts), uv.v[1]);
+      arrput((*verts), tan[0]);
+      arrput((*verts), tan[2]);
+      arrput((*verts), -tan[1]);
     }
   }
 
   ufbx_free_scene(scene);
-  mesh_t mesh;
-  mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
-  arrfree(verts);
-  arrfree(indices);
-  return mesh;
-
 }

@@ -393,10 +393,10 @@ typedef struct shader_file_token
 
 shader_t shader_load_from_path(const char* file_path, const char* name)
 {
-  if (!file_check_exists(file_path)) { ERR("shader file doesnt exist. '%s': '%s'", name, file_path); }
+  if (!file_io_check_exists(file_path)) { ERR("shader file doesnt exist. '%s': '%s'", name, file_path); }
 
   int txt_len = 0;
-  char* txt = file_read_len(file_path, &txt_len);
+  char* txt = file_io_read_len(file_path, &txt_len);
 
   shader_tok t[64];
   int t_len = 0;

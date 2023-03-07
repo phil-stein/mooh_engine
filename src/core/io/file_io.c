@@ -3,7 +3,7 @@
 
 #include <direct.h>
 
-int file_check_exists(const char* file_path)
+int file_io_check_exists(const char* file_path)
 {
   bool exists = true;
   FILE* f = fopen(file_path, "rb");
@@ -13,7 +13,7 @@ int file_check_exists(const char* file_path)
   return exists;
 }
 
-char* file_read(const char* file_path)
+char* file_io_read(const char* file_path)
 {
 	printf("called read_text_file()\n");
     FILE* f;
@@ -46,7 +46,7 @@ char* file_read(const char* file_path)
 
     return text;
 }
-char* file_read_len(const char* file_path, int* length)
+char* file_io_read_len(const char* file_path, int* length)
 {
     FILE* f;
     char* text;
@@ -76,7 +76,7 @@ char* file_read_len(const char* file_path, int* length)
     *length = len;
     return text;
 }
-u8* file_read_bytes(const char* file_path, int* length)
+u8* file_io_read_bytes(const char* file_path, int* length)
 {
     FILE* f;
     u8* text;
@@ -106,7 +106,7 @@ u8* file_read_bytes(const char* file_path, int* length)
     *length = len;
     return text;
 }
-void file_write(const char* file_path, const char* txt, int len)
+void file_io_write(const char* file_path, const char* txt, int len)
 {
     FILE* f;
 
@@ -123,6 +123,22 @@ void file_write(const char* file_path, const char* txt, int len)
 
     fclose(f);
 }
+void file_io_write_bytes(const char* file_path, const u8* data, int len)
+{
+    FILE* f;
 
+    f = fopen(file_path, "wb");
+    if (f == NULL) 
+    {
+        fprintf(stderr, "[ERROR] loading text-file at: %s\n", file_path);
+        assert(false);
+    }
+
+    int rtn = fwrite(data, sizeof(u8), len, f);
+    assert(rtn != EOF);
+    // fprintf(f, "%s", txt);
+
+    fclose(f);
+}
 
 

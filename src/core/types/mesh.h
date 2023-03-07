@@ -42,5 +42,13 @@ mesh_t mesh_load(const char* file_path);
 //       size: length of data
 //       name: name to be given the mesh
 mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name);
+// @DOC: load mesh verts and indices from memory and put it into arrays
+//       ! verts & indices have to be NULL, and freed using arrfree() afterwards
+//       data:    contents of .fbx file
+//       size:    length of data
+//       name:    name to be given the mesh
+//       verts:   ptr to array for vertices, has to be freed using arrfree()
+//       indices: ptr to array for indices, has to be freed using arrfree()
+void mesh_load_data_from_memory(const void* data, size_t size, const char* name, f32** verts, u32** indices);
 
 #endif
