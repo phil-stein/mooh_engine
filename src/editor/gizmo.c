@@ -8,7 +8,7 @@
 #include "core/renderer/renderer_extra.h"
 #include "core/debug/debug_draw.h"
 #include "core/state.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 #include "core/core_data.h"
 
 

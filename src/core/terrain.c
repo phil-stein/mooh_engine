@@ -1,5 +1,5 @@
 #include "core/terrain.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 #include "core/core_data.h"
 #include "core/camera.h"
 #include "core/window.h"

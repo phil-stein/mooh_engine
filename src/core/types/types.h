@@ -1,13 +1,13 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "../../global/global.h"
-#include "../../core/types/texture.h"
-#include "../../core/types/material.h" 
-#include "../../core/types/mesh.h" 
-#include "../../core/types/shader.h" 
-#include "../../core/types/framebuffer.h"
-#include "../../math/math_inc.h"
+#include "global/global.h"
+#include "core/types/texture.h"
+#include "core/types/material.h" 
+#include "core/types/mesh.h" 
+#include "core/types/shader.h" 
+#include "core/types/framebuffer.h"
+#include "math/math_inc.h"
 
 
 typedef struct

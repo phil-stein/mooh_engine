@@ -24,6 +24,7 @@ CORE_DIR  		 		= $(SRC_DIR)/core
 CORE_TYPES_DIR 		= $(SRC_DIR)/core/types
 CORE_DEBUG_DIR 		= $(SRC_DIR)/core/debug
 CORE_RENDERER_DIR = $(SRC_DIR)/core/renderer
+CORE_IO_DIR 			= $(SRC_DIR)/core/io
 DATA_DIR  		 		= $(SRC_DIR)/data
 PHYS_DIR  		 		= $(SRC_DIR)/phys
 SERIALIZATION_DIR = $(SRC_DIR)/serialization
@@ -126,6 +127,10 @@ $(OBJ_DIR)/%.o: $(CORE_RENDERER_DIR)/%.c
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_TYPES_DIR)/%.c
+	echo $< -> $@	
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
+
+$(OBJ_DIR)/%.o: $(CORE_IO_DIR)/%.c
 	echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 

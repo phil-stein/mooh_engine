@@ -1,7 +1,7 @@
 #ifdef DEBUG_DRAW
 
 #include "core/debug/debug_draw.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 #include "core/renderer/renderer.h"
 #include "core/renderer/renderer_direct.h"
 

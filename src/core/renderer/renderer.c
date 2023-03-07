@@ -4,7 +4,7 @@
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/state.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 #include "core/input.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"

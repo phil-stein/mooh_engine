@@ -1,7 +1,7 @@
 #include "core/state.h"
-#include "core/assetm.h"
 #include "core/core_data.h"
 #include "core/event_sys.h"
+#include "core/io/assetm.h"
 #include "core/debug/debug_draw.h"
 #include "data/entity_template.h"
 #include "math/math_inc.h"

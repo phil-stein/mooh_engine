@@ -1,7 +1,7 @@
 #include "core/types/cubemap.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 #include "core/core_data.h"
-#include "core/file_io.h"
+#include "core/io/file_io.h"
 #include "math/math_inc.h"
 
 #include "GLAD/glad.h"

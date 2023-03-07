@@ -5,7 +5,7 @@
 #include "core/window.h"
 #include "core/camera.h"
 #include "core/state.h"
-#include "core/assetm.h"
+#include "core/io/assetm.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"

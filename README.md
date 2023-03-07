@@ -25,12 +25,12 @@ main resources:
 
 ## next steps
   - *optimizations*
-    - [multithreading](#multithreading) `WIP | cur goal`
+    - [custom asset formats](#optimizations) `cur goal`
+    - [multithreading](#multithreading) `WIP` 
       - sample / study proj
       - write abstraction ?
       - asset loading via zip
       - sep. main, renderer, app, etc.
-    - [custom asset formats](#optimizations)
     - [precompute brdf, equirect, etc](#optimizations)
     - [batch renderer](#optimizations)
   - *base*

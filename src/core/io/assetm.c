@@ -1,5 +1,5 @@
-#include "core/assetm.h"
-#include "core/file_io.h"
+#include "core/io/assetm.h"
+#include "core/io/file_io.h"
 #include "core/core_data.h"
 #include "core/types/shader.h"
 #include "core/types/mesh.h"
