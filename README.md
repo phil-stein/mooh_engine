@@ -66,7 +66,7 @@ main resources:
         aka. parenting is broken prob. in serialization
   - [ ] removing objects in editor causes crash
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
-  - [ ] serialization or something adds pointlights every u play 
+  - [x] serialization or something adds pointlights every u play 
   - [x] play mode doesnt work anymore     
   - [x] deselecting doesnt clear the outline buffer
   - [ ] freeing cubemap doesnt seem to actually free any memory
@@ -261,7 +261,7 @@ main resources:
   - [ ] undo
     - [ ] keep track of changes
     - [ ] john jackman or some on yt pixeleditor
-  - [ ] give trigger colliders a different color
+  - [x] give trigger colliders a different color
   - [x] draw line between parent & child
     - [x] indicate which side is parent/child
   - [x] outline on selected entity
@@ -307,6 +307,7 @@ main resources:
   - [ ] physics
   - [ ] rendering ?
     - decouple entities from main-thread
+    - duplicate world, etc. -> merge
   - [ ] terrain
 
 ## audio system

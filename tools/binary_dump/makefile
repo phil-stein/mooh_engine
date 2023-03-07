@@ -24,8 +24,8 @@ OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
 OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 OBJS +=																	\
-	../../src/editor/bin/serialization.o	\
-	../../src/editor/bin/file_io.o	
+	../../build/bin_core_editor/serialization.o	\
+	../../build/bin_core_editor/file_io.o	
 
 _INC = $(SRC_DIR)      \
 			 $(MOOH_EXT_DIR) \

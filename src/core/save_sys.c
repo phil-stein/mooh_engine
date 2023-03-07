@@ -167,18 +167,19 @@ void save_sys_serialize_scene(u8** buffer)
   {
     save_sys_serialize_dir_light(buffer, &dir_lights[i]);
   } 
-   
+  
+  // @NOTE: now get serialized with entity
   // -- point lights --
 
-  int point_lights_len = 0;
-  point_light_t* point_lights = state_get_point_light_arr(&point_lights_len);
-   
-  serialization_serialize_u32(buffer, point_lights_len);
+  // int point_lights_len = 0;
+  // point_light_t* point_lights = state_get_point_light_arr(&point_lights_len);
+  //  
+  // serialization_serialize_u32(buffer, point_lights_len);
 
-  for (u32 i = 0; i < point_lights_len; ++i)
-  {
-    save_sys_serialize_point_light(buffer, &point_lights[i]);
-  } 
+  // for (u32 i = 0; i < point_lights_len; ++i)
+  // {
+  //   save_sys_serialize_point_light(buffer, &point_lights[i]);
+  // } 
   
   SERIALIZATION_P("[serialization] serialized scene");
 }
@@ -226,15 +227,19 @@ void save_sys_deserialize_scene(u8* buffer, u32* offset)
     save_sys_deserialize_dir_light(buffer, offset);
   }
 
+  // @NOTE: now get serialized with entities
   // -- point lights --
-   
-  u32 point_lights_len = serialization_deserialize_u32(buffer, offset);
-  P_U32(point_lights_len);
+  
+  // @BUGG: previous pointlight entites get serialized & deserialized
+  //        then deserilaize_pointlight adds new entities
 
-  for (u32 i = 0; i < point_lights_len; ++i)
-  {
-    save_sys_deserialize_point_light(buffer, offset);
-  } 
+  // u32 point_lights_len = serialization_deserialize_u32(buffer, offset);
+  // P_U32(point_lights_len);
+
+  // for (u32 i = 0; i < point_lights_len; ++i)
+  // {
+  //   save_sys_deserialize_point_light(buffer, offset);
+  // } 
   
   SERIALIZATION_P("[serialization] deserialized scene");
 }
@@ -336,6 +341,14 @@ void save_sys_serialize_entity(u8** buffer, entity_t* e)
   serialization_serialize_vec3(buffer, e->rot);   
   serialization_serialize_vec3(buffer, e->scl);  
 
+  serialization_serialize_u8(buffer, e->point_light_idx >= 0 ? 1 : 0);  // if has point light
+  if (e->point_light_idx >= 0)
+  {
+    bool error = false;
+    point_light_t* l = state_get_point_light(e->point_light_idx, &error); ASSERT(!error);
+    save_sys_serialize_point_light(buffer, l);
+  }
+
   serialization_serialize_s32(buffer, e->parent); 
   serialization_serialize_s32(buffer, e->children_len);
   for (u32 i = 0; i < e->children_len; ++i)
@@ -352,10 +365,17 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
   serialization_deserialize_vec3(buffer, offset, rot); 
   serialization_deserialize_vec3(buffer, offset, scl); 
 
-  int idx = state_add_entity_from_template(pos, rot, scl, table_idx);
+  int id = state_add_entity_from_template(pos, rot, scl, table_idx);
  
   bool error = false;
-  entity_t* e = state_get_entity(idx, &error); ASSERT(!error);
+  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
+  
+  // @TODO:
+  u8 has_point_light = serialization_deserialize_u8(buffer, offset);  // if has point light
+  if (has_point_light)
+  {
+    e->point_light_idx = save_sys_deserialize_point_light(buffer, offset, id);
+  }
 
   e->parent = serialization_deserialize_s32(buffer, offset);        
   e->children_len = serialization_deserialize_s32(buffer, offset);  
@@ -399,15 +419,16 @@ void save_sys_serialize_point_light(u8** buffer, point_light_t* l)
   serialization_serialize_vec3(buffer, l->pos);
   serialization_serialize_vec3(buffer, l->color);
   serialization_serialize_f32(buffer, l->intensity);
+  // entity_id gets set in entity_deserealize
 }
-void save_sys_deserialize_point_light(u8* buffer, u32* offset)
+int save_sys_deserialize_point_light(u8* buffer, u32* offset, int entity_id)
 {
   vec3 pos, color;
   serialization_deserialize_vec3(buffer, offset, pos);
   serialization_deserialize_vec3(buffer, offset, color);
   f32 intensity = serialization_deserialize_f32(buffer, offset);
 
-  state_add_point_light_empty(pos, color, intensity);
+  return state_add_point_light(pos, color, intensity, entity_id);
 }
 
 

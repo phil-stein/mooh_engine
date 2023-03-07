@@ -583,6 +583,7 @@ int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
   if (e->point_light_idx < 0)
   {
     e->point_light_idx = point_lights_len -1;
+    l.entity_id = entity_id;
   }
   else { P_ERR("tried attaching point light to entity that already has one"); }
   
@@ -594,6 +595,14 @@ int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
 void state_remove_point_light(int idx)
 {
   ERR_CHECK(idx >= 0 && idx < point_lights_len, "'idx' passed to 'state_remove_point_light()' invalid: '%d', max: '%d'", idx, point_lights_len);
+
+  // remove from attached entity
+  if (point_lights[idx].entity_id >= 0)
+  {
+    bool error = false;
+    entity_t* e = state_get_entity(point_lights[idx].entity_id, &error); ASSERT(!error);
+    e->point_light_idx = -1;
+  }
  
   // move all lights down one to replace the given light
   for (int i = idx; i < point_lights_len +1; ++i)

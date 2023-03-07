@@ -37,7 +37,7 @@ void save_sys_serialize_point_light(u8** buffer, point_light_t* l);
 void save_sys_deserialize_scene(u8* buffer, u32* offset);
 void save_sys_deserialize_entity(u8* buffer, u32* offset);
 void save_sys_deserialize_dir_light(u8* buffer, u32* offset);
-void save_sys_deserialize_point_light(u8* buffer, u32* offset);
+int save_sys_deserialize_point_light(u8* buffer, u32* offset, int entity_id);
 
 
 void save_sys_write_terrain_to_file(const char* name);

@@ -191,6 +191,8 @@ typedef struct point_light_t
   rgbf  color;      // color of light
   float intensity;  // multiplier for lights effect on the world
 
+  int entity_id;    // either -1 or entity id the light is attached to
+
 }point_light_t;
 
 typedef struct scene_t
