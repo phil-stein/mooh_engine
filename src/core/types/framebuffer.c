@@ -51,8 +51,7 @@ void framebuffer_create_rgb(u32* tex_buffer, u32* fbo, u32* rbo, f32 size_diviso
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		fprintf(stderr, "-!!!-> ERROR_CREATING_FRAMEBUFFER");
-		assert(0);
+		ERR("-!!!-> ERROR_CREATING_FRAMEBUFFER");
 	}
 
 	// unbind the framebuffer, opengl now renders to the default buffer again

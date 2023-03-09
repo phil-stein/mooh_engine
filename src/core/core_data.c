@@ -128,7 +128,7 @@ INLINE void core_data_init_renderer()
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32)));
 
   // quad
-  core_data.quad_mesh = assetm_get_mesh_idx("quad.fbx");
+  core_data.quad_mesh = assetm_get_mesh_idx("quad");
  
   // line
   const f32 verts[] = 

@@ -24,6 +24,7 @@ int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* file, co
 texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* file, const int line);
 void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, const int line);
 void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* file, const int line); // @NOTE: no longer in use
+int assetm_add_texture(texture_t* tex, const char* name);
 // @DOC: get a textures index in the assetm array of textures, used in f.e. assetm_get_texture_by_idx()
 //       name: name of texture
 //       srgb: if tex isnt loaded yet, this decides if its loaded as a srgb texture for hdr

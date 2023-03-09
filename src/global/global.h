@@ -75,17 +75,26 @@ typedef void (empty_callback)(void);
 
 
 #define PF(...)		  printf(__VA_ARGS__)
+#define P(msg)		  PF("%s\n", msg)
+#define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
 
 #define P_LNE()     PF("---------------------------\n") 
 
-#define P_INT(v) 	  PF("%s: %d\n", #v, v)
-#define P_U32(v) 	  PF("%s: %u\n", #v, v)
-#define P_F32(v) 	  PF("%s: %f\n", #v, v)
-#define P_STR(v) 	  PF("%s: \"%s\"\n", #v, v)
-#define P_CHAR(v) 	PF("%s: %c\n", #v, (char)(v))
-#define P_BOOL(v) 	PF("%s: %s\n", #v, STR_BOOL(v))
+#define P_SIGNED(v) 	PF("%s: %d\n", #v, v)
+#define P_INT(v) 	    P_SIGNED((v)) 
+#define P_S32(v) 	    P_SIGNED((v)) 
+#define P_S16(v) 	    P_SIGNED((v)) 
+#define P_S8(v) 	    P_SIGNED((v)) 
+#define P_UNSIGNED(v) PF("%s: %u\n", #v, v)
+#define P_U32(v)      P_UNSIGNED((v))
+#define P_U16(v)      P_UNSIGNED((v))
+#define P_U8(v)       P_UNSIGNED((v))
 
-#define P(msg)		  PF("%s\n", msg)
+#define P_F32(v) 	    PF("%s: %f\n", #v, v)
+#define P_BOOL(v) 	  PF("%s: %s\n", #v, STR_BOOL(v))
+
+#define P_CHAR(v) 	  PF("%s: %c\n", #v, (char)(v))
+#define P_STR(v) 	    PF("%s: \"%s\"\n", #v, v)
 #define P_TXT(txt)  PF("%s:\n%s\n", #txt, txt)
 
 // #define P_ERR(msg)	PF("[ERROR] %s\n -> file: %s, line: %d\n", msg, __FILE__, __LINE__)
@@ -100,7 +109,6 @@ typedef void (empty_callback)(void);
 #define F32_NAN(v)  (isnan(v) != 0)
 #define P_NAN(v)    { if (F32_NAN(v)) { PF("%s is nan\n", #v); } }
 
-#define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
 
 typedef enum pf_mode
 {

@@ -54,7 +54,7 @@ typedef struct entity_template_t
 }entity_template_t;
 #define ENTITY_TEMPLATE_T_SET_DEFAULTS()  \
   .name = "default",                      \
-  .mesh = "cube.fbx",                     \
+  .mesh = "cube",                         \
   .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
   .init_f      = NULL,                    \
   .update_f    = NULL,                    \

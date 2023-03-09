@@ -3,6 +3,7 @@
 #include "core/event_sys.h"
 #include "core/io/assetm.h"
 #include "core/debug/debug_draw.h"
+#include "core/debug/debug_timer.h"
 #include "data/entity_template.h"
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
@@ -110,7 +111,6 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
   int mat  = 0; 
   if (def->mat > -1)    // isnt -1 as thats no mat
   { mat = assetm_get_material_idx(def->mat); }
-
 
   int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, table_idx);
 

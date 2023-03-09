@@ -108,7 +108,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   
   // render cubemap ----------------------------------------------------------------------
  
-  mesh_t* cube_mesh = assetm_get_mesh("cube.fbx");
+  mesh_t* cube_mesh = assetm_get_mesh("cube");
 
   mat4 proj;
   float pers = 90.0f;

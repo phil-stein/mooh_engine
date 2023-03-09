@@ -116,58 +116,56 @@ $(NAME): $(OBJS)
 
 # compile all .c files to .o files
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_RENDERER_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_TYPES_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_IO_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_DEBUG_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(DATA_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(PHYS_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(SERIALIZATION_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/ufbx/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC_NO_WARN) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/zip/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC_NO_WARN) -c $< -o $@ $(INC)
-
-
 
 
 # prevents make from fideling with files named clean
 .PHONY: clean
 
 clean:
-	del $(OUT)
-	del $(OBJS_WIN) 
+	@del $(OUT)
+	@del $(OBJS_WIN) 
 	@echo ---- clean done ---- 
 
 # clean and them make all

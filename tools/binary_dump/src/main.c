@@ -1,6 +1,7 @@
 #include "global/global.h"
 #include "math/math_inc.h"
-#include "core/file_io.h"
+#include "core/io/file_io.h"
+#include "core/io/save_sys.h"
 #include "serialization/serialization.h"
 
 #define STB_DS_IMPLEMENTATION // only define once
@@ -94,8 +95,13 @@ int main(int argc, char** args)
 void write_empty_scene_to_file(const char* name)
 {
   u8* buffer = NULL;
-
-  // serialization_serialize_scene(&buffer);
+  
+  serialization_serialize_u32(&buffer, SAVE_SYS_VERSION); // version
+  
+  // cubemap
+  serialization_serialize_f32(&buffer, 1.0f);  // intensity
+  serialization_serialize_str(&buffer, "#cubemaps/gothic_manor_01_2k.hdr");
+  
   serialization_serialize_u32(&buffer, 0); // world_len
   serialization_serialize_u32(&buffer, 0); // point_lights_len
   
@@ -112,8 +118,8 @@ void write_empty_scene_to_file(const char* name)
 
   char path[128];
   sprintf(path, ASSET_PATH"/%s%s", name, has_ending ? "" : ".scene");
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
   BIN_PF("[bin] wrote empty scene to \"%s\"\n", path);
-  file_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
 }

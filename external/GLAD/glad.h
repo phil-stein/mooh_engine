@@ -18,7 +18,7 @@
     Commandline:
         --profile="core" --api="gl=4.6" --generator="c" --spec="gl" --extensions="GL_ARB_bindless_texture,GL_ARB_gpu_shader_int64,GL_EXT_texture_filter_anisotropic"
     Online:
-        https://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.6&extensions=GL_ARB_bindless_texture&extensions=GL_ARB_gpu_shader_int64&extensions=GL_EXT_texture_filter_anisotropic
+        https://glad.dav1d.de/#profile=core&language=c&specification=gl&loader=on&api=gl%3D4.6&extensions=GL_ARB_bindless_texture&extensions=GL_ARGLenumB_gpu_shader_int64&extensions=GL_EXT_texture_filter_anisotropic
 */
 
 

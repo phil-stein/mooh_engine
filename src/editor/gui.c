@@ -744,8 +744,8 @@ void gui_hierarchy_win()
   // less height because the window bar on top and below
   hierarchy_win_ratio.w = 0.1f;
   hierarchy_win_ratio.h = 1.0f - template_win_ratio.h;
-  hierarchy_win_ratio.x = 0.0f;;
-  hierarchy_win_ratio.y = 0.0f; 
+  hierarchy_win_ratio.x = 0.0f;
+  hierarchy_win_ratio.y = 0.0f + top_bar_win_ratio.h; 
 
   hierarchy_win_rect = nk_rect(hierarchy_win_ratio.x * w, hierarchy_win_ratio.y * h, 
                                hierarchy_win_ratio.w * w, hierarchy_win_ratio.h * h);
@@ -808,7 +808,7 @@ void gui_light_hierarchy_win()
   light_hierarchy_win_ratio.w = 0.1f;
   light_hierarchy_win_ratio.h = 1.0f - template_win_ratio.h;
   light_hierarchy_win_ratio.x = 0.0f;
-  light_hierarchy_win_ratio.y = 0.0f; // @TODO: - menubar.h 
+  light_hierarchy_win_ratio.y = 0.0f + top_bar_win_ratio.h; 
 
   light_hierarchy_win_rect = nk_rect(light_hierarchy_win_ratio.x * w, light_hierarchy_win_ratio.y * h, 
                                      light_hierarchy_win_ratio.w * w, light_hierarchy_win_ratio.h * h);
@@ -936,9 +936,9 @@ void gui_framebuffer_win()
 
   // less height because the window bar on top and below
   const f32 w_ratio = 400.0f  / 1920.0f;
-  const f32 h_ratio = 1000.0f  / 1020.0f;
-  const f32 x_ratio = 10.0f / 1920.0f;
-  const f32 y_ratio = 10.0f  / 1020.0f;
+  const f32 h_ratio = 1000.0f / 1020.0f;
+  const f32 x_ratio = 0.0f    / 1920.0f;
+  const f32 y_ratio = 10.0f   / 1020.0f + top_bar_win_ratio.h;
 
   frameb_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
   if (nk_begin(ctx, "framebuffers", frameb_win_rect, window_float_flags)) 
@@ -993,9 +993,9 @@ void gui_debug_win()
 
   // less height because the window bar on top and below
   const f32 w_ratio = 400.0f  / 1920.0f;
-  const f32 h_ratio = 1000.0f  / 1020.0f;
-  const f32 x_ratio = 10.0f / 1920.0f;
-  const f32 y_ratio = 10.0f  / 1020.0f;
+  const f32 h_ratio = 1000.0f / 1020.0f;
+  const f32 x_ratio = 0.0f    / 1920.0f;
+  const f32 y_ratio = 10.0f   / 1020.0f + top_bar_win_ratio.h;
 
   debug_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
   if (nk_begin(ctx, "debug", debug_win_rect, window_float_flags)) 
@@ -1074,9 +1074,9 @@ void gui_core_data_win()
 
   // less height because the window bar on top and below
   const f32 w_ratio = 400.0f  / 1920.0f;
-  const f32 h_ratio = 1000.0f  / 1020.0f;
-  const f32 x_ratio = 10.0f / 1920.0f;
-  const f32 y_ratio = 10.0f  / 1020.0f;
+  const f32 h_ratio = 1000.0f / 1020.0f;
+  const f32 x_ratio = 0.0f    / 1920.0f;
+  const f32 y_ratio = 10.0f   / 1020.0f + top_bar_win_ratio.h;
 
   core_data_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
   if (nk_begin(ctx, "core_data", core_data_win_rect, window_float_flags)) 

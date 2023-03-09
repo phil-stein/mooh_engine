@@ -60,7 +60,7 @@ void app_init()
   // event_sys_register_entity_parent_removed(parent_rm);
 
   // -- scene --
-  const char scene_name[] = "test.scene";
+  const char scene_name[] =  "test.scene"; // "empty.scene";
   // save_sys_write_scene_to_file(scene_name);
   TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
   // in game will be done by camera-controller
@@ -70,8 +70,8 @@ void app_init()
   
 
   // -- terrain --
-  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
-  TIMER_FUNC_STATIC(terrain_create(25));
+  // TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
+  // TIMER_FUNC_STATIC(terrain_create(25));
 
   TIMER_FUNC_STATIC(gui_init());
 
@@ -85,6 +85,22 @@ void app_init()
   // int id   = state_add_entity(VEC3_XYZ(0, 4, 0), VEC3(0), VEC3(1), mesh, mat, 0, NULL, NULL, NULL, NULL, -1);
   // P_INT(id);
   // 2.5x faster :)
+
+  // @TMP: testing asset_io
+  // #define IMG_NAME "tmp.png" // "preview_bg.png" 
+  // asset_io_convert_texture("#internal/"IMG_NAME);
+  // TIMER_START("loading .tex"" -> "IMG_NAME);
+  // texture_t t = asset_io_load_texture("#internal/"IMG_NAME, true);
+  // TIMER_STOP_PRINT();
+  // int t_idx = assetm_add_texture(&t, "#internal/"IMG_NAME);
+  // int mat_idx = assetm_get_material_idx(MATERIAL_TEMPLATE_BRICK);
+  // P_INT(mat_idx);
+  // material_t* mat = assetm_get_material(MATERIAL_TEMPLATE_BRICK);
+  // P_INT(mat->albedo);
+  // mat->albedo = t_idx;
+  // P_INT(mat->albedo);
+  // mat = assetm_get_material(MATERIAL_TEMPLATE_BRICK);
+  // P_INT(mat->albedo);
 
 
   // // -- add entities --

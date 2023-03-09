@@ -16,3 +16,7 @@
 # vs files
 /.vs
 /vs2019
+
+# custom files
+*.tex
+*.mesh

@@ -18,7 +18,7 @@ int sphere_mesh;
 void debug_draw_init_func()
 {
   blank_tex   = assetm_get_texture_idx("#internal/blank.png", true);
-  sphere_mesh = assetm_get_mesh_idx("sphere.fbx");
+  sphere_mesh = assetm_get_mesh_idx("sphere");
 }
 
 void debug_draw_update_func()
@@ -28,7 +28,7 @@ void debug_draw_update_func()
   {
       if (queue[i].type == DEBUG_DRAW_SPHERE)
       {
-        mesh_t* m = assetm_get_mesh("sphere.fbx");
+        mesh_t* m = assetm_get_mesh("sphere");
         if (queue[i].is_model)
         { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
         else

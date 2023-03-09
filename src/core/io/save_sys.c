@@ -56,13 +56,11 @@ void save_sys_load_scene_from_file(const char* name)
 {
   u32 offset = 0;
   int length = 0;
- 
-  if (core_data == NULL) { ERR("u stupid\n") };
+
   P_STR(core_data->asset_path);
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_io_read_bytes(path, &length);
-  
   save_sys_deserialize_scene(buffer, &offset);
 
   ASSERT(strlen(name) < CUR_SCENE_NAME_MAX);
@@ -195,17 +193,10 @@ void save_sys_deserialize_scene(u8* buffer, u32* offset)
   PF("| serialization version: %d\n", cur_version);
 
   // -- cubemap --
-  if (cur_version >= 2)
-  {
-    f32 intensity = serialization_deserialize_f32(buffer, offset);
-    char* cube_map_name = serialization_deserialize_str(buffer, offset);
-    TIMER_FUNC_STATIC(core_data->cube_map = cubemap_load(cube_map_name));
-    core_data->cube_map.intensity = intensity;
-  }
-  else
-  {
-    TIMER_FUNC_STATIC(core_data->cube_map = cubemap_load("#cubemaps/gothic_manor_01_2k.hdr"));
-  }
+  f32 intensity = serialization_deserialize_f32(buffer, offset);
+  char* cube_map_name = serialization_deserialize_str(buffer, offset);
+  TIMER_FUNC_STATIC(core_data->cube_map = cubemap_load(cube_map_name));
+  core_data->cube_map.intensity = intensity;
 
   // -- entities --
 
@@ -369,8 +360,7 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
  
   bool error = false;
   entity_t* e = state_get_entity(id, &error); ASSERT(!error);
-  
-  // @TODO:
+   
   u8 has_point_light = serialization_deserialize_u8(buffer, offset);  // if has point light
   if (has_point_light)
   {

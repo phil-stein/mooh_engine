@@ -71,7 +71,10 @@ main resources:
   - [x] deselecting doesnt clear the outline buffer
   - [ ] freeing cubemap doesnt seem to actually free any memory
   - [ ] brick material on groud isnt the same as the other cubes
-    - they should all be referencing the same material_t 
+    - they should all be referencing the same material_t
+    - [x] assetm_get_material() creates each time called
+    - [x] check if other assetm_get_...() also create new each time
+    - [x] check if assetm_shader is even used, for custom shaders i guess
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -82,14 +85,16 @@ main resources:
   - [ ] lod system ?
   - [ ] octree or something for chunks, for entities / phys_objs
   - [ ] precompute brdf, etc., [also mentioned](#tools)
+  - [x] find out whats taking so long during loading
+    - stbi_load_from_memory in assetm_create_texture
   - [ ] custom asset formats
-    - [ ] mesh `WIP`
+    - [x] mesh
       - pure verts, nothing else
       - 3:pos + 3:norm + 2:uv + 3:tan  =  11: f32, 44: bytes 
       - quad: fbx:11.1kb / custom:176bytes = 1.5% 
       - demon02: fbx:1.68mb / custom:87kb  = 5.1%
       - prob. not realistic to be this drastic, but say 10% would still be amazing
-    - [ ] texture ?
+    - [ ] texture `WIP`
       - uncompressed for faster load time 
     - [ ] shader spir-v ?
   - [ ] only clear outline buffer when deselecting

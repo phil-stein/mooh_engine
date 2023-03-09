@@ -80,15 +80,15 @@ void gizmo_update()
     }
     else if (app_data->gizmo_type == GIZMO_TRANSLATE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/translate/gizmo.fbx"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/translate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }
     else if (app_data->gizmo_type == GIZMO_SCALE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/scale/gizmo.fbx"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/scale/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }    
     else if (app_data->gizmo_type == GIZMO_ROTATE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/rotate/gizmo.fbx"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/rotate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }
     
     // -- draw line --

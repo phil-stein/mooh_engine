@@ -72,7 +72,7 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
   }
 
   // -- draw lights --
-  mesh_t* sphere = assetm_get_mesh("sphere.fbx");
+  mesh_t* sphere = assetm_get_mesh("sphere");
   for (int i = 0; i < entities_len; ++i)
   {
     entity_t* ent = &entities[i];
@@ -109,27 +109,27 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
 
     mesh_t* hitboxes_translate[] = 
     {
-      assetm_get_mesh("gizmos/translate/x.fbx"),
-      assetm_get_mesh("gizmos/translate/y.fbx"),
-      assetm_get_mesh("gizmos/translate/z.fbx"),
-      assetm_get_mesh("gizmos/translate/xy.fbx"),
-      assetm_get_mesh("gizmos/translate/xz.fbx"),
-      assetm_get_mesh("gizmos/translate/yz.fbx"),
-      assetm_get_mesh("gizmos/translate/xyz.fbx")
+      assetm_get_mesh("gizmos/translate/x"),
+      assetm_get_mesh("gizmos/translate/y"),
+      assetm_get_mesh("gizmos/translate/z"),
+      assetm_get_mesh("gizmos/translate/xy"),
+      assetm_get_mesh("gizmos/translate/xz"),
+      assetm_get_mesh("gizmos/translate/yz"),
+      assetm_get_mesh("gizmos/translate/xyz")
     };
     mesh_t* hitboxes_scale[] = 
     {
-      assetm_get_mesh("gizmos/scale/x.fbx"),
-      assetm_get_mesh("gizmos/scale/y.fbx"),
-      assetm_get_mesh("gizmos/scale/z.fbx"),
-      assetm_get_mesh("gizmos/scale/xyz.fbx")
+      assetm_get_mesh("gizmos/scale/x"),
+      assetm_get_mesh("gizmos/scale/y"),
+      assetm_get_mesh("gizmos/scale/z"),
+      assetm_get_mesh("gizmos/scale/xyz")
     };
     mesh_t* hitboxes_rotate[] = 
     {
-      assetm_get_mesh("gizmos/rotate/x.fbx"),
-      assetm_get_mesh("gizmos/rotate/y.fbx"),
-      assetm_get_mesh("gizmos/rotate/z.fbx"),
-      assetm_get_mesh("gizmos/rotate/xyz.fbx")
+      assetm_get_mesh("gizmos/rotate/x"),
+      assetm_get_mesh("gizmos/rotate/y"),
+      assetm_get_mesh("gizmos/rotate/z"),
+      assetm_get_mesh("gizmos/rotate/xyz")
     };
 
     mesh_t** hitboxes = app_data->gizmo_type == 1 ? hitboxes_translate :

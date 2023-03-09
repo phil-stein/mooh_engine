@@ -18,12 +18,14 @@ char* file_io_read(const char* file_path);
 //       taken from: https://github.com/jdah/minecraft-weekend/blob/master/src/gfx/shader.c
 //       file_path: path to the file, including file name
 //       length:    gets set to the length of the returned file
-char* file_io_read_len(const char* file_path, int* length);
+char* file_io_read_len_dbg(const char* file_path, int* length, const char* file, const int line);
+#define  file_io_read_len(file_path, length) file_io_read_len_dbg((file_path), (length), __FILE__, __LINE__)
 
 // @DOC: read binary file
 //       file_path: path to the file, including file name
 //       length:    gets set to the length of the returned file
-u8* file_io_read_bytes(const char* file_path, int* length);
+u8* file_io_read_bytes_dbg(const char* file_path, int* length, const char* file, const int line);
+#define file_io_read_bytes(path, len) file_io_read_bytes_dbg((path), (len), __FILE__, __LINE__)
 
 // @DOC: writes text 'txt' into file at 'file_path', creates file if it doesnt exist
 //       file_path: path to the file, including file name

@@ -77,7 +77,7 @@ $(NAME): $(OBJS)
 
 # compile all .c files to .o files
 $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
-	echo $< -> $@	
+	@echo $< -> $@	
 	$(CC) -c $< -o $@ $(INC)
 
 # $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/ufbx/%.c
@@ -93,8 +93,8 @@ $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
 .PHONY: clean
 
 clean:
-	del $(OUT)
-	del $(OBJS_WIN) 
+	@del $(OUT)
+	@del $(OBJS_WIN) 
 	@echo ---- clean done ---- 
 
 # clean and them make all

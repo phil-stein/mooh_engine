@@ -1,4 +1,5 @@
 #include "core/types/texture.h"
+#include "core/debug/debug_opengl.h"
 #include "math/math_inc.h"
 
 #pragma GCC diagnostic push
@@ -29,12 +30,12 @@ void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, s
     // OpenGL has texture coordinates with (0, 0) on bottom
     stbi_set_flip_vertically_on_load(flip_vertical);
     u8* image = stbi_load(path, &width, &height, channel_num, STBI_rgb_alpha);
-    assert(image != NULL);
+    ASSERT(image != NULL);
 
     *pixels_out = malloc((double)(width * height * 4));
-    assert(*pixels_out != NULL);
+    ASSERT(*pixels_out != NULL);
     memcpy(*pixels_out, image, (double)(width * height * 4));
-    assert(*pixels_out != NULL);
+    ASSERT(*pixels_out != NULL);
     *width_out = width;
     *height_out = height;
 
@@ -43,6 +44,18 @@ void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, s
 
 u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int channel_num, bool srgb)
 {
+  // P_INT((int)width);
+  // P_INT((int)height);
+  // P_INT(channel_num);
+  // P_BOOL(srgb);
+  // P_INT((int)(width * height * channel_num));
+  // for (u32 i = 0; i < width * height * channel_num; ++i)
+  // {
+  //   ERR_CHECK(pixels[i] >= 0 && pixels[i] <= 255, "pixels[%d]: %u\n", i, pixels[i]);  // bruh
+  //   ERR_CHECK(pixels[i] == 255, "pixels[%d]: %u\n", i, pixels[i]);
+  // }
+  // P_INFO("passed pixel check");
+
   u32 handle;
 
   glGenTextures(1, &handle);
@@ -50,16 +63,16 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
 
   // no interpolation
   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
  
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0);
 
-  assert(channel_num >= 1);
-  assert(channel_num != 2);
-  assert(channel_num <= 4);
+  ASSERT(channel_num >= 1);
+  ASSERT(channel_num != 2);
+  ASSERT(channel_num <= 4);
   int gl_internal_format = 0;
   int gl_format          = 0;
   switch (channel_num)
@@ -67,22 +80,26 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
     case 1:
       gl_internal_format = srgb ? GL_SRGB8 : GL_R8;
       gl_format = GL_RED;
+      // P_INFO("GL_RED");
       break;
     case 3:
       gl_internal_format = srgb ? GL_SRGB : GL_RGB;
       gl_format = GL_RGB;
+      // P_INFO("GL_RGB");
       break;
     case 4:
       gl_internal_format = srgb ? GL_SRGB_ALPHA : GL_RGBA;
       gl_format = GL_RGBA;
+      // P_INFO("GL_RGBA");
       break;
   }
-  assert(gl_format != 0);
+  ASSERT(gl_format != 0);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, pixels);
+  GL_ERR_FUNC(glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, pixels));
   
   // must be called after glTexImage2D
-  glGenerateMipmap(GL_TEXTURE_2D);
+  GL_ERR_FUNC(glGenerateMipmap(GL_TEXTURE_2D));
+// @DOC: print all error including
   // not sure this does anything ???
   // float max = 4.0f;
   // glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &max);
@@ -153,7 +170,7 @@ u32 texture_load_cubemap(char* right, char* left, char* bottom, char* top, char*
             gl_format = GL_RGBA;
             break;
     }
-    assert(gl_format != 0);
+    ASSERT(gl_format != 0);
     if (data)
     {
       // we can increment the first param like this because the enum linearly increments
