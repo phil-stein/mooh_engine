@@ -25,7 +25,6 @@ main resources:
 
 ## next steps
   - *optimizations*
-    - [custom asset formats](#optimizations) `WIP | cur goal`
     - [multithreading](#multithreading) `WIP` 
       - sample / study proj
       - write abstraction ?
