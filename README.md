@@ -87,16 +87,16 @@ main resources:
   - [ ] precompute brdf, etc., [also mentioned](#tools)
   - [x] find out whats taking so long during loading
     - stbi_load_from_memory in assetm_create_texture
-  - [ ] custom asset formats
-    - [x] mesh
+  - [x] custom asset formats
+    - [x] mesh ~2.5x faster
       - pure verts, nothing else
       - 3:pos + 3:norm + 2:uv + 3:tan  =  11: f32, 44: bytes 
       - quad: fbx:11.1kb / custom:176bytes = 1.5% 
       - demon02: fbx:1.68mb / custom:87kb  = 5.1%
       - prob. not realistic to be this drastic, but say 10% would still be amazing
-    - [ ] texture `WIP`
+    - [x] texture ~10x faster
       - uncompressed for faster load time 
-    - [ ] shader spir-v ?
+  - [ ] shader spir-v ?
   - [ ] only clear outline buffer when deselecting
   - [ ] change zip archive for custom file format
     - all textures, etc. back to back in one file with a simple header
