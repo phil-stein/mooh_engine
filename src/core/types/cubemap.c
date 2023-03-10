@@ -2,6 +2,7 @@
 #include "core/io/assetm.h"
 #include "core/core_data.h"
 #include "core/io/file_io.h"
+#include "core/debug/debug_opengl.h"
 #include "math/math_inc.h"
 
 #include "GLAD/glad.h"
@@ -33,7 +34,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
 
   // fix seams betweencubemap faces
   // this shoud be activated in renderer
-  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+  _glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
   
   // load hdr image ----------------------------------------------------------------------
  
@@ -61,14 +62,14 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   u32 hdr_texture;
   if (data)
   {
-    glGenTextures(1, &hdr_texture);
-    glBindTexture(GL_TEXTURE_2D, hdr_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); 
+    _glGenTextures(1, &hdr_texture);
+    _glBindTexture(GL_TEXTURE_2D, hdr_texture);
+    _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data); 
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     stbi_image_free(data);
   }
@@ -78,33 +79,33 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   // gen framebuffer ---------------------------------------------------------------------
     
   u32 capture_fbo, capture_rbo;
-  glGenFramebuffers(1, &capture_fbo);
-  glGenRenderbuffers(1, &capture_rbo);
+  _glGenFramebuffers(1, &capture_fbo);
+  _glGenRenderbuffers(1, &capture_rbo);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+  _glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
 
   // gen cubemap -------------------------------------------------------------------------
  
   // @TODO: clear cubema ???
 
   u32 cubemap;
-  glGenTextures(1, &cubemap);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+  _glGenTextures(1, &cubemap);
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
   for (u32 i = 0; i < 6; ++i)
   {
     // note that we store each face with 16 bit floating point values
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 
+    _glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 
         512, 512, 0, GL_RGB, GL_FLOAT, NULL);
   }
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   // glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   
   // render cubemap ----------------------------------------------------------------------
  
@@ -126,133 +127,133 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   shader_use(&core_data->equirect_shader);
   shader_set_int(&core_data->equirect_shader, "equirect_map", 0);
   shader_set_mat4(&core_data->equirect_shader, "proj", proj);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, hdr_texture);
+  _glActiveTexture(GL_TEXTURE0);
+  _glBindTexture(GL_TEXTURE_2D, hdr_texture);
 
-  glDisable(GL_CULL_FACE);
-  glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glDisable(GL_CULL_FACE);
+  _glViewport(0, 0, 512, 512); // don't forget to configure the viewport to the capture dimensions.
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
   for (u32 i = 0; i < 6; ++i)
   {
     shader_set_mat4(&core_data->equirect_shader, "view", view_mats[i]);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
+    _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, cubemap, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindVertexArray(cube_mesh->vao);
+    _glBindVertexArray(cube_mesh->vao);
     if (cube_mesh->indexed)
-    { glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
+    { _glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
     else
-    { glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
+    { _glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
   }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+  _glBindFramebuffer(GL_FRAMEBUFFER, 0);  
   
   // then let OpenGL generate mipmaps from first mip face (combatting visible dots artifact)
-  glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
-  glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+  _glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
   
   // render irradiencemap ----------------------------------------------------------------
 
   u32 irradiance_map;
-  glGenTextures(1, &irradiance_map); 
-  glBindTexture(GL_TEXTURE_CUBE_MAP, irradiance_map);
+  _glGenTextures(1, &irradiance_map); 
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, irradiance_map);
   for (u32 i = 0; i < 6; ++i)
   {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, 
+    _glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 32, 32, 0, 
         GL_RGB, GL_FLOAT, NULL);
   }
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);  
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32);  
 
   shader_use(&core_data->irradiance_map_shader);
   shader_set_mat4(&core_data->irradiance_map_shader, "proj", proj);
   shader_set_int(&core_data->irradiance_map_shader, "environment_map", 0);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+  _glActiveTexture(GL_TEXTURE0);
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
 
-  glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glViewport(0, 0, 32, 32); // don't forget to configure the viewport to the capture dimensions.
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
   for (u32 i = 0; i < 6; ++i)
   {
     shader_set_mat4(&core_data->irradiance_map_shader, "view", view_mats[i]);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
+    _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
         GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradiance_map, 0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBindVertexArray(cube_mesh->vao);
+    _glBindVertexArray(cube_mesh->vao);
     if (cube_mesh->indexed)
-    { glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
+    { _glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
     else
-    { glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
+    { _glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
   }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  _glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   
   // gen radiance map --------------------------------------------------------------------
   
   u32 prefilter_map;
-  glGenTextures(1, &prefilter_map); 
-  glBindTexture(GL_TEXTURE_CUBE_MAP, prefilter_map);
+  _glGenTextures(1, &prefilter_map); 
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, prefilter_map);
   for (u32 i = 0; i < 6; ++i)
   {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, NULL);
+    _glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, 128, 128, 0, GL_RGB, GL_FLOAT, NULL);
   }
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+  _glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  _glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
 
   // render radiance map -----------------------------------------------------------------
   
   shader_use(&core_data->prefilter_shader);
   shader_set_mat4(&core_data->prefilter_shader, "proj", proj);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+  _glActiveTexture(GL_TEXTURE0);
+  _glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
   shader_set_int(&core_data->prefilter_shader, "environment_map", 0);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
   u32 max_mip_levels = 5;
   for (u32 mip = 0; mip < max_mip_levels; ++mip)
   {
     // reisze framebuffer according to mip-level size.
     u32 mip_w = 128 * pow(0.5, mip);
     u32 mip_h = 128 * pow(0.5, mip);
-    glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mip_w, mip_h);
-    glViewport(0, 0, mip_w, mip_h);
+    _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
+    _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mip_w, mip_h);
+    _glViewport(0, 0, mip_w, mip_h);
 
     float roughness = (float)mip / (float)(max_mip_levels - 1);
     shader_set_float(&core_data->prefilter_shader, "roughness", roughness);
     for (u32  i = 0; i < 6; ++i)
     {
       shader_set_mat4(&core_data->prefilter_shader, "view", view_mats[i]);
-      glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
+      _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
           GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilter_map, mip);
 
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       
-      glBindVertexArray(cube_mesh->vao);
+      _glBindVertexArray(cube_mesh->vao);
       if (cube_mesh->indexed)
-      { glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
+      { _glDrawElements(GL_TRIANGLES, cube_mesh->indices_count, GL_UNSIGNED_INT, 0); }
       else
-      { glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
+      { _glDrawArrays(GL_TRIANGLES, 0, cube_mesh->verts_count); }
     }
   }
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  _glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-  glEnable(GL_CULL_FACE);
+  _glEnable(GL_CULL_FACE);
   
-  glDeleteFramebuffers(1, &capture_fbo);
-  glDeleteRenderbuffers(1, &capture_rbo);
+  _glDeleteFramebuffers(1, &capture_fbo);
+  _glDeleteRenderbuffers(1, &capture_rbo);
 
   // texture_free_handle(prefilter_map);
   

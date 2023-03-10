@@ -1,19 +1,19 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
-#include "../../global/global.h"
-#include "../../core/types/types.h"
-#include "../../core/terrain.h"
-#include "../../math/math_inc.h"
+#include "global/global.h"
+#include "core/types/types.h"
+#include "core/terrain.h"
+#include "math/math_inc.h"
 
 
 #define DRAW_MESH(_mesh)                                                                \
       {                                                                                 \
-        glBindVertexArray(_mesh->vao);                                                  \
+        _glBindVertexArray(_mesh->vao);                                                 \
         if (_mesh->indexed)                                                             \
-        { glDrawElements(GL_TRIANGLES, _mesh->indices_count, GL_UNSIGNED_INT, 0); }     \
+        { _glDrawElements(GL_TRIANGLES, _mesh->indices_count, GL_UNSIGNED_INT, 0); }    \
         else                                                                            \
-        { glDrawArrays(GL_TRIANGLES, 0, _mesh->verts_count); }                          \
+        { _glDrawArrays(GL_TRIANGLES, 0, _mesh->verts_count); }                         \
       }
 
 void renderer_init();

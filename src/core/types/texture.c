@@ -44,30 +44,18 @@ void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, s
 
 u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int channel_num, bool srgb)
 {
-  // P_INT((int)width);
-  // P_INT((int)height);
-  // P_INT(channel_num);
-  // P_BOOL(srgb);
-  // P_INT((int)(width * height * channel_num));
-  // for (u32 i = 0; i < width * height * channel_num; ++i)
-  // {
-  //   ERR_CHECK(pixels[i] >= 0 && pixels[i] <= 255, "pixels[%d]: %u\n", i, pixels[i]);  // bruh
-  //   ERR_CHECK(pixels[i] == 255, "pixels[%d]: %u\n", i, pixels[i]);
-  // }
-  // P_INFO("passed pixel check");
+  u32 handle = 0;
 
-  u32 handle;
-
-  glGenTextures(1, &handle);
-  glBindTexture(GL_TEXTURE_2D, handle);
+  _glGenTextures(1, &handle);
+  _glBindTexture(GL_TEXTURE_2D, handle);
 
   // no interpolation
   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
  
-  GL_ERR_FUNC(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0);
 
   ASSERT(channel_num >= 1);
@@ -95,10 +83,10 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
   }
   ASSERT(gl_format != 0);
 
-  GL_ERR_FUNC(glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, pixels));
+  _glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, pixels);
   
   // must be called after glTexImage2D
-  GL_ERR_FUNC(glGenerateMipmap(GL_TEXTURE_2D));
+  _glGenerateMipmap(GL_TEXTURE_2D);
 // @DOC: print all error including
   // not sure this does anything ???
   // float max = 4.0f;

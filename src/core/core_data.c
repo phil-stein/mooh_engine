@@ -2,6 +2,7 @@
 #include "core/window.h"
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
+#include "core/debug/debug_opengl.h"
 
 
 
@@ -117,15 +118,15 @@ INLINE void core_data_init_renderer()
 	};
 
 	// screen quad VAO
-	glGenVertexArrays(1, &core_data.quad_vao);
-	glGenBuffers(1, &core_data.quad_vbo);
-	glBindVertexArray(core_data.quad_vao);
-	glBindBuffer(GL_ARRAY_BUFFER, core_data.quad_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(f32), &quad_verts, GL_STATIC_DRAW); // quad_verts is 24 long
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32)));
+	GL_ERR_FUNC(glGenVertexArrays(1, &core_data.quad_vao));
+	GL_ERR_FUNC(glGenBuffers(1, &core_data.quad_vbo));
+	GL_ERR_FUNC(glBindVertexArray(core_data.quad_vao));
+	GL_ERR_FUNC(glBindBuffer(GL_ARRAY_BUFFER, core_data.quad_vbo));
+	GL_ERR_FUNC(glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(f32), &quad_verts, GL_STATIC_DRAW)); // quad_verts is 24 long
+	GL_ERR_FUNC(glEnableVertexAttribArray(0));
+	GL_ERR_FUNC(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)0));
+	GL_ERR_FUNC(glEnableVertexAttribArray(1));
+	GL_ERR_FUNC(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32))));
 
   // quad
   core_data.quad_mesh = assetm_get_mesh_idx("quad");

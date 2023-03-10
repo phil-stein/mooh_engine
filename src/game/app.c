@@ -7,13 +7,13 @@
 #include "core/input.h"
 #include "core/renderer/renderer.h"
 #include "core/camera.h"
-#include "core/file_io.h"
-#include "core/assetm.h"
+#include "core/io/file_io.h"
+#include "core/io/assetm.h"
+#include "core/io/save_sys.h"
 #include "core/state.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
 #include "core/terrain.h"
-#include "core/save_sys.h"
 #include "data/entity_template.h"
 #include "phys/phys_world.h"
 
@@ -57,8 +57,8 @@ void app_init()
 
   const char scene_name[] = "test.scene";
   TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
-  TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
-  TIMER_FUNC_STATIC(terrain_create(25));
+  // TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
+  // TIMER_FUNC_STATIC(terrain_create(25));
 
   // in game will be done by camera-controller
   camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));

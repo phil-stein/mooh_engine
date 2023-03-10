@@ -26,10 +26,6 @@ main resources:
 ## next steps
   - *optimizations*
     - [multithreading](#multithreading) `WIP` 
-      - sample / study proj
-      - write abstraction ?
-      - asset loading via zip
-      - sep. main, renderer, app, etc.
     - [precompute brdf, equirect, etc](#optimizations)
     - [batch renderer](#optimizations)
   - *base*
@@ -42,15 +38,13 @@ main resources:
     - [missing post-fx, bloom, ssao, aa](#renderer)
   - *advanced*
     - [physics engine](#physics-engine)
-      - sweept collisions
-      - obb's
-      - spheres
     - [chunking for ents/phys_objs](#optimizations) 
   - *organization*
     - [comment all .h files in core](#organization) 
+    - [replace all gl funcs with debug _gl](#organization) 
 
 ## buggs
-  - [ ] since mat sys blank.png gets loaded twice (hdr / no hdr) 
+  - [ ] since mat sys blank.png gets loaded twice (hdr / no hdr) ? 
   - [ ] glfw mouse button & scroll callbacks 
     - works in nuklear, look at that
     - actually nuklear is stealing our callback from glfw
@@ -115,6 +109,7 @@ main resources:
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
+  - [x] replace all gl functions with _gl GL_ERR_FUNC() versions in debug_opengl.h
   - [x] change idx to id in state / entity / etc.
   - [x] ! get game comliling again
   - [ ] rename entity_t.table_idx -> template_idx

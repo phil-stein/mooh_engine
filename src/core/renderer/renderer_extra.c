@@ -6,6 +6,7 @@
 #include "core/camera.h"
 #include "core/state.h"
 #include "core/io/assetm.h"
+#include "core/debug/debug_opengl.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -27,14 +28,14 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
   app_data_t*  app_data  = app_data_get();  // @NOTE: fucks this gargage
   
   framebuffer_bind(&core_data->fb_mouse_pick);
-  glViewport(0, 0, w / 4, h / 4);
-  glClearColor(0.0, 0.0, 0.0, 1.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  _glViewport(0, 0, w / 4, h / 4);
+  _glClearColor(0.0, 0.0, 0.0, 1.0);
+  _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // -- opengl state --
-  glEnable(GL_DEPTH_TEST); // enable the z-buffer
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
+  _glEnable(GL_DEPTH_TEST); // enable the z-buffer
+  _glEnable(GL_CULL_FACE);
+  _glCullFace(GL_BACK);
 
   mat4 view, proj;
   camera_get_view_mat(view);
@@ -94,7 +95,7 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
   // -- draw gizmo --
   if (app_data->selected_id >= 0 || app_data->selected_id == -2) // entity or terrain
   {
-    glClear(GL_DEPTH_BUFFER_BIT);
+    _glClear(GL_DEPTH_BUFFER_BIT);
         
     // mat4 model;
     // if (app_data->selected_id >= 0)
@@ -153,11 +154,11 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
 void renderer_extra_draw_scene_outline()
 {
   // @OPTIMIZATION: only clear buffer when deselecting
-  glClearColor(0.0, 0.0, 0.0, 0.0);
+  _glClearColor(0.0, 0.0, 0.0, 0.0);
   int w, h; window_get_size(&w, &h);
-  glViewport(0, 0, w, h);
+  _glViewport(0, 0, w, h);
   framebuffer_bind(&core_data->fb_outline);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
+  _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear bg
   
   if (core_data->outline_id < 0)  // no entity to render outline for 
   {
@@ -167,7 +168,7 @@ void renderer_extra_draw_scene_outline()
 
   // draw in solid-mode for fbo
 	if (core_data->wireframe_mode_enabled == true)
-	{ glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
   
   bool error = false;
 	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
@@ -207,10 +208,9 @@ int renderer_extra_mouse_position_mouse_pick_id()
 
   f32 pixel[1];
 
-  glGetError(); // clear any previous errors
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, core_data->fb_mouse_pick.fbo);
-  glReadPixels((int)x, (int)y, 1, 1, GL_RED, GL_FLOAT, pixel);
-  glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, core_data->fb_mouse_pick.fbo);
+  _glReadPixels((int)x, (int)y, 1, 1, GL_RED, GL_FLOAT, pixel);
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
  
   framebuffer_unbind();
 
@@ -226,42 +226,42 @@ u32 renderer_extra_gen_brdf_lut()
   // gen framebuffer ---------------------------------------------------------------------
 
   unsigned int capture_fbo, capture_rbo;
-  glGenFramebuffers(1, &capture_fbo);
-  glGenRenderbuffers(1, &capture_rbo);
+  _glGenFramebuffers(1, &capture_fbo);
+  _glGenRenderbuffers(1, &capture_rbo);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+  _glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
 
   // gen brdf lut ------------------------------------------------------------------------
   
   unsigned int brdf_lut;
-  glGenTextures(1, &brdf_lut);
+  _glGenTextures(1, &brdf_lut);
 
-  glBindTexture(GL_TEXTURE_2D, brdf_lut);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  _glBindTexture(GL_TEXTURE_2D, brdf_lut);
+  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
-  glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdf_lut, 0);
+  _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
+  _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+  _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdf_lut, 0);
 
-  glViewport(0, 0, 512, 512);
+  _glViewport(0, 0, 512, 512);
   shader_use(&core_data->brdf_lut_shader);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-	glBindVertexArray(core_data->quad_vao);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	_glBindVertexArray(core_data->quad_vao);
+	_glDrawArrays(GL_TRIANGLES, 0, 6);
   
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  _glBindFramebuffer(GL_FRAMEBUFFER, 0);
  
-  glDeleteFramebuffers(1, &capture_fbo);
-  glDeleteRenderbuffers(1, &capture_rbo);
+  _glDeleteFramebuffers(1, &capture_fbo);
+  _glDeleteRenderbuffers(1, &capture_rbo);
 
   return brdf_lut;
 }

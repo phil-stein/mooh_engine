@@ -1,5 +1,6 @@
 #include "core/types/shader.h"
-#include "core/io/file_io.h" 
+#include "core/io/file_io.h"
+#include "core/debug/debug_opengl.h"
 
 #include "GLAD/glad.h"
 
@@ -17,52 +18,52 @@ u32 shader_create(const char* vert_shader_src, const char* frag_shader_src, cons
 	*has_error = false;
 
 	// vertex shader
-	u32 vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vert_shader_src, NULL);
-	glCompileShader(vertexShader);
+	u32 vertexShader = _glCreateShader(GL_VERTEX_SHADER);
+	_glShaderSource(vertexShader, 1, &vert_shader_src, NULL);
+	_glCompileShader(vertexShader);
 
 	// check for shader compile errors
 	int success;
 	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		fprintf(stderr, "%s-!!!-> ERROR_VERTEX_COMPILATION: [%s]\n -> %s\n", vert_shader_src, name, infoLog);
 		*has_error = true;
 	}
 
 	// fragment shader
-	u32 fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &frag_shader_src, NULL);
-	glCompileShader(fragmentShader);
+	u32 fragmentShader = _glCreateShader(GL_FRAGMENT_SHADER);
+	_glShaderSource(fragmentShader, 1, &frag_shader_src, NULL);
+	_glCompileShader(fragmentShader);
 
 	// check for shader compile errors
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
 		fprintf(stderr, "%s\n-!!!-> ERROR_FRAGMENT_COMPILATION: [%s]\n -> %s\n", frag_shader_src, name, infoLog);
 		*has_error = true;
 	}
 
 	// link shaders
-	u32 shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	u32 shaderProgram = _glCreateProgram();
+	_glAttachShader(shaderProgram, vertexShader);
+	_glAttachShader(shaderProgram, fragmentShader);
+	_glLinkProgram(shaderProgram);
 
 	// check for linking errors
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	_glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		_glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		fprintf(stderr, "-!!!-> ERROR_PROGRAM_LINKING: [%s]\n -> %s\n", name, infoLog);
 		*has_error = true;
 	}
 
 	// free the shaders
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	_glDeleteShader(vertexShader);
+	_glDeleteShader(fragmentShader);
 
 	return shaderProgram;
 }
@@ -76,83 +77,83 @@ u32 shader_create_tesselation(const char* vert_shader_src, const char* frag_shad
 	*has_error = false;
 
 	// vertex shader
-	u32 vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex_shader, 1, &vert_shader_src, NULL);
-	glCompileShader(vertex_shader);
+	u32 vertex_shader = _glCreateShader(GL_VERTEX_SHADER);
+	_glShaderSource(vertex_shader, 1, &vert_shader_src, NULL);
+	_glCompileShader(vertex_shader);
 
 	// check for shader compile errors
 	int success;
 	char infoLog[512];
-	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(vertex_shader, 512, NULL, infoLog);
 		fprintf(stderr, "%s-!!!-> ERROR_VERTEX_COMPILATION: [%s]\n -> %s\n", vert_shader_src, name, infoLog);
 		*has_error = true;
 	}
 	
   // tesselation control shader
-	u32 tcs_shader = glCreateShader(GL_TESS_CONTROL_SHADER);
-	glShaderSource(tcs_shader, 1, &tcs_shader_src, NULL);
-	glCompileShader(tcs_shader);
+	u32 tcs_shader = _glCreateShader(GL_TESS_CONTROL_SHADER);
+	_glShaderSource(tcs_shader, 1, &tcs_shader_src, NULL);
+	_glCompileShader(tcs_shader);
 
 	// check for shader compile errors
-	glGetShaderiv(tcs_shader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(tcs_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(tcs_shader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(tcs_shader, 512, NULL, infoLog);
 		fprintf(stderr, "%s-!!!-> ERROR_TESS_CONTROL_COMPILATION: [%s]\n -> %s\n", tcs_shader_src, name, infoLog);
 		*has_error = true;
 	}
 	
   // tesselation control shader
-	u32 tes_shader = glCreateShader(GL_TESS_EVALUATION_SHADER);
-	glShaderSource(tes_shader, 1, &tes_shader_src, NULL);
-	glCompileShader(tes_shader);
+	u32 tes_shader = _glCreateShader(GL_TESS_EVALUATION_SHADER);
+	_glShaderSource(tes_shader, 1, &tes_shader_src, NULL);
+	_glCompileShader(tes_shader);
 
 	// check for shader compile errors
-	glGetShaderiv(tes_shader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(tes_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(tes_shader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(tes_shader, 512, NULL, infoLog);
 		fprintf(stderr, "%s-!!!-> ERROR_TESS_EVALUATION_COMPILATION: [%s]\n -> %s\n", tes_shader_src, name, infoLog);
 		*has_error = true;
 	}
   // fragment shader
-	u32 fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &frag_shader_src, NULL);
-	glCompileShader(fragment_shader);
+	u32 fragment_shader = _glCreateShader(GL_FRAGMENT_SHADER);
+	_glShaderSource(fragment_shader, 1, &frag_shader_src, NULL);
+	_glCompileShader(fragment_shader);
 
 	// check for shader compile errors
-	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
+	_glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
+		_glGetShaderInfoLog(fragment_shader, 512, NULL, infoLog);
 		fprintf(stderr, "%s\n-!!!-> ERROR_FRAGMENT_COMPILATION: [%s]\n -> %s\n", frag_shader_src, name, infoLog);
 		*has_error = true;
 	}
 
 	// link shaders
-	u32 shader_program = glCreateProgram();
-	glAttachShader(shader_program, vertex_shader);
-	glAttachShader(shader_program, tcs_shader);
-	glAttachShader(shader_program, tes_shader);
-	glAttachShader(shader_program, fragment_shader);
-	glLinkProgram(shader_program);
+	u32 shader_program = _glCreateProgram();
+	_glAttachShader(shader_program, vertex_shader);
+	_glAttachShader(shader_program, tcs_shader);
+	_glAttachShader(shader_program, tes_shader);
+	_glAttachShader(shader_program, fragment_shader);
+	_glLinkProgram(shader_program);
 
 	// check for linking errors
-	glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
+	_glGetProgramiv(shader_program, GL_LINK_STATUS, &success);
 	if (!success) {
-		glGetProgramInfoLog(shader_program, 512, NULL, infoLog);
+		_glGetProgramInfoLog(shader_program, 512, NULL, infoLog);
 		fprintf(stderr, "-!!!-> ERROR_PROGRAM_LINKING: [%s]\n -> %s\n", name, infoLog);
 		*has_error = true;
 	}
 
 	// free the shaders
-	glDeleteShader(vertex_shader);
-	glDeleteShader(tcs_shader);
-	glDeleteShader(tes_shader);
-	glDeleteShader(fragment_shader);
+	_glDeleteShader(vertex_shader);
+	_glDeleteShader(tcs_shader);
+	_glDeleteShader(tes_shader);
+	_glDeleteShader(fragment_shader);
 
 	return shader_program;
 }
@@ -480,52 +481,52 @@ shader_t shader_load_from_path(const char* file_path, const char* name)
 // activate / use the shader 
 void shader_use(shader_t* s)
 {
-  glUseProgram(s->handle);
+  _glUseProgram(s->handle);
 }
 void shader_delete(shader_t* s)
 {
-	glDeleteProgram(s->handle);
+	_glDeleteProgram(s->handle);
 }
 
 // set a bool in the shader 
 // the given int is used as the bool ( 0/1 )
 void shader_set_bool(shader_t* s, const char* name, int value)
 {
-	glUniform1i(glGetUniformLocation(s->handle, name), value);
+	_glUniform1i(glGetUniformLocation(s->handle, name), value);
 }
 // set an integer in the shader
 void shader_set_int(shader_t* s, const char* name, int value)
 {
-	glUniform1i(glGetUniformLocation(s->handle, name), value);
+	_glUniform1i(glGetUniformLocation(s->handle, name), value);
 }
 // set a float in the shader
 void shader_set_float(shader_t* s, const char* name, f32 value)
 {
-	glUniform1f(glGetUniformLocation(s->handle, name), value);
+	_glUniform1f(glGetUniformLocation(s->handle, name), value);
 }
 // set a vec2 in the shader
 void shader_set_vec2_f(shader_t* s, const char* name, f32 x, f32 y)
 {
-	glUniform2f(glGetUniformLocation(s->handle, name), x, y);
+	_glUniform2f(glGetUniformLocation(s->handle, name), x, y);
 }
 // set a vec2 in the shader
 void shader_set_vec2(shader_t* s, const char* name, vec2 v)
 {
-	glUniform2f(glGetUniformLocation(s->handle, name), v[0], v[1]);
+	_glUniform2f(glGetUniformLocation(s->handle, name), v[0], v[1]);
 }
 // set a vec3 in the shader
 void shader_set_vec3_f(shader_t* s, const char* name, f32 x, f32 y, f32 z)
 {
-	glUniform3f(glGetUniformLocation(s->handle, name), x, y, z);
+	_glUniform3f(glGetUniformLocation(s->handle, name), x, y, z);
 }
 // set a vec3 in the shader
 void shader_set_vec3(shader_t* s, const char* name, vec3 v)
 {
-	glUniform3f(glGetUniformLocation(s->handle, name), v[0], v[1], v[2]);
+	_glUniform3f(glGetUniformLocation(s->handle, name), v[0], v[1], v[2]);
 }
 // set a matrix 4x4 in the shader
 void shader_set_mat4(shader_t* s, const char* name, mat4 value)
 {
-	u32 transformLoc = glGetUniformLocation(s->handle, name);
-	glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value[0]);
+	u32 transformLoc = _glGetUniformLocation(s->handle, name);
+	_glUniformMatrix4fv(transformLoc, 1, GL_FALSE, value[0]);
 }

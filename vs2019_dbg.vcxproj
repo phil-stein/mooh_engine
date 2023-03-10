@@ -125,7 +125,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSET_PATH="assets/";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER;DEBUG_DRAW;PHYS_DEBUG;INCLUDE_PLAY_MODE;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSET_PATH="assets/";EDITOR;ASSETM_NO_ZIP;DEBUG_TIMER;DEBUG_DRAW;DEBUG_OPENGL;PHYS_DEBUG;INCLUDE_PLAY_MODE;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)external;$(ProjectDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

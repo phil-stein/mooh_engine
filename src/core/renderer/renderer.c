@@ -8,6 +8,7 @@
 #include "core/input.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
+#include "core/debug/debug_opengl.h"
 #include "data/shader_template.h"
 
 
@@ -82,13 +83,13 @@ void renderer_init()
   };
 
   //  cube vao
-  glGenVertexArrays(1, &skybox_vao);
-  glGenBuffers(1, &skybox_vbo);
-  glBindVertexArray(skybox_vao);
-  glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
-  glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(f32), &skybox_verts, GL_STATIC_DRAW); // skybox_verts is 108 long
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
+  _glGenVertexArrays(1, &skybox_vao);
+  _glGenBuffers(1, &skybox_vbo);
+  _glBindVertexArray(skybox_vao);
+  _glBindBuffer(GL_ARRAY_BUFFER, skybox_vbo);
+  _glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(f32), &skybox_verts, GL_STATIC_DRAW); // skybox_verts is 108 long
+  _glEnableVertexAttribArray(0);
+  _glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
   // ----------------------------------------------------------------------------------------------
 
   brdf_lut = renderer_extra_gen_brdf_lut(); // @TODO: put in core_data
@@ -98,15 +99,15 @@ void renderer_init()
   // P_INT(texture_units);
 
   // -- opengl state --
-  glEnable(GL_DEPTH_TEST); // enable the z-buffer
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_BLEND); // enable blending of transparent texture
+  _glEnable(GL_DEPTH_TEST); // enable the z-buffer
+  _glEnable(GL_CULL_FACE);
+  _glCullFace(GL_BACK);
+  _glEnable(GL_BLEND); // enable blending of transparent texture
   //set blending function: 1 - source_alpha, e.g. 0.6(60%) transparency -> 1 - 0.6 = 0.4(40%)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //set blending function: 1 - source_alpha, e.g. 0.6(60%) transparency -> 1 - 0.6 = 0.4(40%)
-  glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+  _glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //set blending function: 1 - source_alpha, e.g. 0.6(60%) transparency -> 1 - 0.6 = 0.4(40%)
+  _glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
   // fix seams betweencubemap faces
-  glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+  _glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 }
 
 
@@ -118,13 +119,13 @@ void renderer_update()
  
   #ifdef EDITOR
   // -- opengl state --
-  glEnable(GL_DEPTH_TEST); // enable the z-buffer
-  glEnable(GL_CULL_FACE);
-  glCullFace(GL_BACK);
-  glEnable(GL_BLEND); // enable blending of transparent texture
+  _glEnable(GL_DEPTH_TEST); // enable the z-buffer
+  _glEnable(GL_CULL_FACE);
+  _glCullFace(GL_BACK);
+  _glEnable(GL_BLEND); // enable blending of transparent texture
   //set blending function: 1 - source_alpha, e.g. 0.6(60%) transparency -> 1 - 0.6 = 0.4(40%)
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-  glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+  _glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
+  _glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
   #endif
 
   // -- background --
@@ -204,8 +205,8 @@ void renderer_update()
     framebuffer_unbind();
   }
   core_data->show_shadows = shadow_caster_counter > 0 ? true : false;
-  glViewport(0, 0, w, h);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  _glViewport(0, 0, w, h);
+  _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   TIMER_STOP();
 
   // view & proj ------------------------------------------------------------
@@ -223,13 +224,13 @@ void renderer_update()
   // deferred ---------------------------------------------------------------
   
   if (core_data->wireframe_mode_enabled == true)
-	{ glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
+	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
 	else
-	{ glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
   framebuffer_bind(&core_data->fb_deferred);
   {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     entity_t* e;
     for (int i = 0; i < world_len; ++i)
@@ -251,17 +252,17 @@ void renderer_update()
 
       shader_set_vec3(mat_shader, "tint", mat->tint);
       int tex_idx = 0;
-      glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-      glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
       
-      glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-      glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
       
-      glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-      glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
       
-      glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-      glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
     
       ERR_CHECK(tex_idx <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_idx);
 
@@ -302,13 +303,13 @@ void renderer_update()
     shader_set_mat4(&core_data->skybox_shader, "proj", proj);
 
     // skybox cube
-    glBindVertexArray(skybox_vao);
-    glActiveTexture(GL_TEXTURE0);
+    _glBindVertexArray(skybox_vao);
+    _glActiveTexture(GL_TEXTURE0);
     shader_set_int(&core_data->skybox_shader, "cube_map", 0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.environment);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glDepthFunc(GL_LESS); // set depth function back to default
+    _glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.environment);
+    _glDrawArrays(GL_TRIANGLES, 0, 36);
+    _glBindVertexArray(0);
+    _glDepthFunc(GL_LESS); // set depth function back to default
     // ------------------------------------------------------------------------
   }
   framebuffer_unbind();
@@ -319,19 +320,19 @@ void renderer_update()
   framebuffer_bind(&core_data->fb_shadow_pass);
   {    
     if (core_data->wireframe_mode_enabled == true)
-    { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+    { _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
     
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
+    _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _glDisable(GL_DEPTH_TEST);
     shader_use(&core_data->shadow_pass_shader);
     
     int  tex_index = 0;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer03); 
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer03); 
     shader_set_int(&core_data->shadow_pass_shader, "normal", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer04); 
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer04); 
     shader_set_int(&core_data->shadow_pass_shader, "position", tex_index);
     tex_index++;
 
@@ -339,31 +340,34 @@ void renderer_update()
     // @UNSURE: limit shadow casters to 1 ??? 
     char buffer[28];
     shader_set_int(&core_data->shadow_pass_shader, "shadows_len", core_data->show_shadows ? 1 : 0);
-    for (int i = 0; i < 1; ++i)
+    if (core_data->show_shadows)
     {
-      dir_light_t* light = &dir_lights[i];
+      for (int i = 0; i < 1; ++i)
+      {
+        dir_light_t* light = &dir_lights[i];
 
-      int idx = i; //  - disabled_lights;
-      sprintf(buffer, "shadows[%d].direction", idx);
-      shader_set_vec3(&core_data->shadow_pass_shader, buffer, light->dir);
+        int idx = i; //  - disabled_lights;
+        sprintf(buffer, "shadows[%d].direction", idx);
+        shader_set_vec3(&core_data->shadow_pass_shader, buffer, light->dir);
 
-      sprintf(buffer, "shadows[%d].shadow_map", idx);
-      glActiveTexture(GL_TEXTURE0 + tex_index);
-      glBindTexture(GL_TEXTURE_2D, light->fb_shadow.buffer);
-      shader_set_int(&core_data->shadow_pass_shader, buffer, tex_index);
-      tex_index++;
-      sprintf(buffer, "shadows[%d].view", idx);
-      shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->view);
-      sprintf(buffer, "shadows[%d].proj", idx);
-      shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->proj);
-    
-      ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
+        sprintf(buffer, "shadows[%d].shadow_map", idx);
+        _glActiveTexture(GL_TEXTURE0 + tex_index);
+        _glBindTexture(GL_TEXTURE_2D, light->fb_shadow.buffer);
+        shader_set_int(&core_data->shadow_pass_shader, buffer, tex_index);
+        tex_index++;
+        sprintf(buffer, "shadows[%d].view", idx);
+        shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->view);
+        sprintf(buffer, "shadows[%d].proj", idx);
+        shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->proj);
+
+        ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
+      }
     }
     // -----------------------------------------------------
 
-    glBindVertexArray(core_data->quad_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glEnable(GL_DEPTH_TEST);
+    _glBindVertexArray(core_data->quad_vao);
+    _glDrawArrays(GL_TRIANGLES, 0, 6);
+    _glEnable(GL_DEPTH_TEST);
   }
   framebuffer_unbind();
   TIMER_STOP();
@@ -373,10 +377,10 @@ void renderer_update()
   framebuffer_bind(&core_data->fb_lighting);
   {    
     if (core_data->wireframe_mode_enabled == true)
-    { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
+    { _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
     
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
+    _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    _glDisable(GL_DEPTH_TEST);
     shader_use(&core_data->lighting_shader);
     
     // vec3 cam_pos; vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
@@ -385,36 +389,36 @@ void renderer_update()
     
     int  tex_index = 0;
 
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.irradiance);
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.irradiance);
     shader_set_int(&core_data->lighting_shader, "irradiance_map", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.prefilter);
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_CUBE_MAP, core_data->cube_map.prefilter);
     shader_set_int(&core_data->lighting_shader, "prefilter_map", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, brdf_lut);
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, brdf_lut);
     shader_set_int(&core_data->lighting_shader, "brdf_lut", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer);
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer);
     shader_set_int(&core_data->lighting_shader, "color", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer02);
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer02);
     shader_set_int(&core_data->lighting_shader, "material", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer03); 
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer03); 
     shader_set_int(&core_data->lighting_shader, "normal", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index);
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer04); 
+    _glActiveTexture(GL_TEXTURE0 + tex_index);
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_deferred.buffer04); 
     shader_set_int(&core_data->lighting_shader, "position", tex_index);
     tex_index++;
-    glActiveTexture(GL_TEXTURE0 + tex_index); 
-    glBindTexture(GL_TEXTURE_2D, core_data->fb_shadow_pass.buffer); 
+    _glActiveTexture(GL_TEXTURE0 + tex_index); 
+    _glBindTexture(GL_TEXTURE_2D, core_data->fb_shadow_pass.buffer); 
     shader_set_int(&core_data->lighting_shader, "shadow", tex_index);
     tex_index++;
 
@@ -454,9 +458,9 @@ void renderer_update()
     }
     // -----------------------------------------------------
 
-    glBindVertexArray(core_data->quad_vao);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glEnable(GL_DEPTH_TEST);
+    _glBindVertexArray(core_data->quad_vao);
+    _glDrawArrays(GL_TRIANGLES, 0, 6);
+    _glEnable(GL_DEPTH_TEST);
   }
   framebuffer_unbind();
   TIMER_STOP();
@@ -468,24 +472,24 @@ void renderer_update()
   TIMER_START("post fx");
   // post fx ---------------------------------------------
 
-  glClear(GL_COLOR_BUFFER_BIT);
+  _glClear(GL_COLOR_BUFFER_BIT);
 
-  glDisable(GL_DEPTH_TEST);
+  _glDisable(GL_DEPTH_TEST);
   shader_use(&core_data->post_fx_shader);
   shader_set_float(&core_data->post_fx_shader, "exposure", exposure);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, core_data->fb_lighting.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
+  _glActiveTexture(GL_TEXTURE0);
+  _glBindTexture(GL_TEXTURE_2D, core_data->fb_lighting.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
   shader_set_int(&core_data->post_fx_shader, "tex", 0);
 
 #ifdef OUTLINE
-  glActiveTexture(GL_TEXTURE1);
-  glBindTexture(GL_TEXTURE_2D, core_data->fb_outline.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
+  _glActiveTexture(GL_TEXTURE1);
+  _glBindTexture(GL_TEXTURE_2D, core_data->fb_outline.buffer);  // fb_mouse_pick.buffer); // dir_lights[0].fb_shadow.buffer // core_data->fb_deferred.buffer03);
   shader_set_int(&core_data->post_fx_shader, "outline", 1);
 #endif // OUTLINE
 
-  glBindVertexArray(core_data->quad_vao);
-  glDrawArrays(GL_TRIANGLES, 0, 6);
-  glEnable(GL_DEPTH_TEST);
+  _glBindVertexArray(core_data->quad_vao);
+  _glDrawArrays(GL_TRIANGLES, 0, 6);
+  _glEnable(GL_DEPTH_TEST);
 
   // -----------------------------------------------------
   TIMER_STOP();
@@ -516,23 +520,23 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
     
     sprintf(buf, "materials[%d].albedo", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
-    glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-    glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
+    _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+    _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
     
     sprintf(buf, "materials[%d].normal", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx); 
-    glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-    glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
+    _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+    _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
     
     sprintf(buf, "materials[%d].roughness", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
-    glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-    glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
+    _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+    _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
 
     sprintf(buf, "materials[%d].metallic", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
-    glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-    glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
+    _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+    _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
 
     sprintf(buf, "materials[%d].tint", i);
     shader_set_vec3(&core_data->terrain_shader, buf, mat->tint);
@@ -549,11 +553,11 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
 
   // draw mesh
   // glCullFace(GL_FRONT);
-  glBindVertexArray(chunk->vao);
+  _glBindVertexArray(chunk->vao);
   // render the mesh triangle strip by triangle strip - each row at a time
   for(u32 strip = 0; strip < chunk->strips_num; ++strip)
   {
-    glDrawElements(GL_TRIANGLE_STRIP,       // primitive type
+    _glDrawElements(GL_TRIANGLE_STRIP,       // primitive type
         chunk->verts_per_strip,             // number of indices to render
         GL_UNSIGNED_INT,                    // index data type
         (void*)(sizeof(u32)
@@ -566,11 +570,11 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
 void renderer_draw_terrain_mesh(terrain_chunk_t* chunk)
 {
   // draw mesh
-  glBindVertexArray(chunk->vao);
+  _glBindVertexArray(chunk->vao);
   // render the mesh triangle strip by triangle strip - each row at a time
   for(u32 strip = 0; strip < chunk->strips_num; ++strip)
   {
-    glDrawElements(GL_TRIANGLE_STRIP,       // primitive type
+    _glDrawElements(GL_TRIANGLE_STRIP,       // primitive type
         chunk->verts_per_strip,             // number of indices to render
         GL_UNSIGNED_INT,                    // index data type
         (void*)(sizeof(u32)
