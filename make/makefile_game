@@ -92,7 +92,7 @@ $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
 clean:
 	@del $(OUT)
 	@del $(OBJS_WIN) 
-	@echo ---- clean done ---- 
+	@echo ---- clean $(NAME) ---- 
 
 # clean and them make all
 cleanm: clean all

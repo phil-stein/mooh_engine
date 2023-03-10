@@ -326,7 +326,7 @@ void save_sys_deserialize_terrain_layout(u8* buffer, u32* offset, terrain_layout
 void save_sys_serialize_entity(u8** buffer, entity_t* e)
 { 
   if (e->is_dead) { return; }
-  serialization_serialize_s32(buffer, e->table_idx);
+  serialization_serialize_s32(buffer, e->template_idx);
 
   serialization_serialize_vec3(buffer, e->pos);  
   serialization_serialize_vec3(buffer, e->rot);   

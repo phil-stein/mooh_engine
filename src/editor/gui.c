@@ -326,7 +326,7 @@ void gui_properties_win()
       state_get_entity_arr(&world_len, &dead_len);
       
       nk_layout_row_dynamic(ctx, 25, 1);
-      nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, table_idx: %d", id, e->table_idx);
+      nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, table_idx: %d", id, e->template_idx);
       nk_labelf(ctx, NK_TEXT_LEFT, "parent: %d, #children: %d", e->parent, e->children_len);
       nk_layout_row_dynamic(ctx, 25, 2);
       static int parent_id = 0;
@@ -388,7 +388,7 @@ void gui_properties_win()
       if (e->mesh >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "mesh", NK_MINIMIZED))
       {
         mesh_t* m = assetm_get_mesh_by_idx(e->mesh);
-        gui_properties_mesh(m, e->mesh, e->table_idx);
+        gui_properties_mesh(m, e->mesh, e->template_idx);
         nk_tree_pop(ctx);
       }
 
@@ -401,7 +401,7 @@ void gui_properties_win()
         nk_tree_pop(ctx);
       }
 
-      const entity_template_t* def = entity_template_get(e->table_idx);
+      const entity_template_t* def = entity_template_get(e->template_idx);
       if (def->phys_flag != 0 && nk_tree_push(ctx, NK_TREE_TAB, "physics", NK_MINIMIZED))
       {
         gui_properties_physics(def, e);

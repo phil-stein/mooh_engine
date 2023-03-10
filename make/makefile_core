@@ -104,10 +104,10 @@ LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS)
 
 
 all: $(NAME)
-	@echo $(BIN_DIR)
-	@echo $(NAME)
-	@echo $(CC_ARGS)
-	@echo ---- mooh core ----
+	@echo bin dir:  $(BIN_DIR)
+	@echo lib name: $(NAME)
+	@echo gcc args: $(CC_ARGS)
+	@echo ---- compiled $(NAME) 
 
 # compile all object files to .exe
 $(NAME): $(OBJS) 
@@ -166,19 +166,19 @@ $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/zip/%.c
 clean:
 	@del $(OUT)
 	@del $(OBJS_WIN) 
-	@echo ---- clean done ---- 
+	@echo ---- clean $(NAME)  
 
 # clean and them make all
 cleanm: clean all
 
-run: all
-	@echo --- $(NAME) --- 
-	@$(OUT)
-
-cleanrun: clean all
-	@echo --- $(NAME) --- 
-	@$(OUT)
-
+# run: all
+# 	@echo --- $(NAME) --- 
+# 	@$(OUT)
+# 
+# cleanrun: clean all
+# 	@echo --- $(NAME) --- 
+# 	@$(OUT)
+# 
 
 
 

@@ -20,6 +20,8 @@ void asset_io_init()
   core_data = core_data_get();
 }
 
+// -- mesh --
+
 void asset_io_convert_mesh(const char* name)
 {
   // -- load fbx file into memory --
@@ -119,6 +121,8 @@ void asset_io_deserialize_mesh(u8* buffer, f32** verts, u32** indices)
     arrput(*verts, serialization_deserialize_f32(buffer, &offset));
   }
 }
+
+// -- textures --
 
 void asset_io_convert_texture_dbg(const char* name, const char* file, const int line)
 {
@@ -234,5 +238,13 @@ void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* 
   // const int header_size = (sizeof(u32) * 3);  // w, h, channels
   // data points to buffer + 12, which is eq to buffer + header_size
   *pixels = data; // buffer + header_size;
+}
+
+void asset_io_serialize_archive(const char* path, const char* file_ending)
+{
+  // e.g. path: "textures/", file_ending: ".tex"
+  //      path: "meshes/",   file_ending: ".mesh"
+
+
 }
 

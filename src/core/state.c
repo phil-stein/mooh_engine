@@ -145,11 +145,11 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int table_idx)
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
 {
   entity_t ent;
   ent.is_dead = false;
-  ent.table_idx = table_idx;
+  ent.template_idx = template_idx;
   
   // not using 'ENTITY_SET_...',  as already setting 'is_moved'
   vec3_copy(pos,  ent.pos);
@@ -201,7 +201,7 @@ int state_duplicate_entity(int id, vec3 offset)
   entity_t* e = state_get_entity(id, &err); ASSERT(!err);
   vec3 pos;
   vec3_add(e->pos, offset, pos);
-  int dupe = state_add_entity_from_template(pos, e->rot, e->scl, e->table_idx);
+  int dupe = state_add_entity_from_template(pos, e->rot, e->scl, e->template_idx);
 
   // attached point light
   if (e->point_light_idx >= 0)

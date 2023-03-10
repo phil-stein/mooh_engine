@@ -24,7 +24,11 @@ main resources:
 # -- todo --
 
 ## next steps
-  - *optimizations*
+  - *organization*
+    - [comment all .h files in core](#organization) `WIP` 
+    - [rest of organization](#organization) `WIP`
+  - *optimizations* 
+    - [custom asset archive files](#optimizations) `WIP`
     - [multithreading](#multithreading) `WIP` 
     - [precompute brdf, equirect, etc](#optimizations)
     - [batch renderer](#optimizations)
@@ -39,11 +43,9 @@ main resources:
   - *advanced*
     - [physics engine](#physics-engine)
     - [chunking for ents/phys_objs](#optimizations) 
-  - *organization*
-    - [comment all .h files in core](#organization) 
-    - [replace all gl funcs with debug _gl](#organization) 
 
 ## buggs
+  - [ ] fix ale error on #include's
   - [ ] since mat sys blank.png gets loaded twice (hdr / no hdr) ? 
   - [ ] glfw mouse button & scroll callbacks 
     - works in nuklear, look at that
@@ -52,22 +54,12 @@ main resources:
     - there is a apply transform option but its experimental
   - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
   - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
-  - [ ] deserializing scene sometimes adds pink point light infront of camera
   - [ ] terrain-chunks dont get culled properly 
   - [ ] point light entity *1* is not parented to the player, 
         but the player is it's parent
         aka. parenting is broken prob. in serialization
-  - [ ] removing objects in editor causes crash
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
-  - [x] serialization or something adds pointlights every u play 
-  - [x] play mode doesnt work anymore     
-  - [x] deselecting doesnt clear the outline buffer
   - [ ] freeing cubemap doesnt seem to actually free any memory
-  - [ ] brick material on groud isnt the same as the other cubes
-    - they should all be referencing the same material_t
-    - [x] assetm_get_material() creates each time called
-    - [x] check if other assetm_get_...() also create new each time
-    - [x] check if assetm_shader is even used, for custom shaders i guess
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -78,8 +70,6 @@ main resources:
   - [ ] lod system ?
   - [ ] octree or something for chunks, for entities / phys_objs
   - [ ] precompute brdf, etc., [also mentioned](#tools)
-  - [x] find out whats taking so long during loading
-    - stbi_load_from_memory in assetm_create_texture
   - [x] custom asset formats
     - [x] mesh ~2.5x faster
       - pure verts, nothing else
@@ -90,9 +80,11 @@ main resources:
     - [x] texture ~10x faster
       - uncompressed for faster load time 
   - [ ] shader spir-v ?
-  - [ ] only clear outline buffer when deselecting
-  - [ ] change zip archive for custom file format
+  - [ ] custom asset archive files
     - all textures, etc. back to back in one file with a simple header
+    - type specific or agnostic ?
+      - i.e. just serialize a bunch of buffers or have mesh/texture
+  - [ ] only clear outline buffer when deselecting
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -102,19 +94,12 @@ main resources:
   - zip archive not faster than straight files
 
 ## organization
-  - [x] factor out cubemap creating from assetm, into sep. file
-  - [x] factor out brdf creating from renderer
-  - [x] factor out mouse_pick & outline from renderer into sep. file 
-  - [ ] fix ale error on #include's
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
-  - [x] replace all gl functions with _gl GL_ERR_FUNC() versions in debug_opengl.h
-  - [x] change idx to id in state / entity / etc.
-  - [x] ! get game comliling again
-  - [ ] rename entity_t.table_idx -> template_idx
-  - [x] make serialization into generalized gitrepo
-    - [x] seperate serialization & save_sys 
+  - [ ] implement glfw opengl debug context, learnopengl page 439
+  - [ ] check shaders via reference compiler, page 444, debug_opengl.h
+  - [ ] framebuffer debug, page 444, debug_opengl.h
   - [ ] comment all .h files in core
     - [x] debug
       - [x] debug_draw.h
@@ -239,14 +224,10 @@ main resources:
   - [ ] cascaded shadows
     - from cherno video 
     - also on learnopengl
-  - [x] tiling
   - [ ] ssao
   - [ ] bloom
   - [ ] custom anti aliasing
   - [ ] water 
-  - [x] maybe do outlines ?     
-  - [x] immediate mode renderer, for gui, etc.
-  - [x] cubemap intensity
 
 ## entity system
   - [ ] structures ? (prefabs), [also mentioned](#base)
@@ -261,14 +242,6 @@ main resources:
   - [ ] undo
     - [ ] keep track of changes
     - [ ] john jackman or some on yt pixeleditor
-  - [x] give trigger colliders a different color
-  - [x] draw line between parent & child
-    - [x] indicate which side is parent/child
-  - [x] outline on selected entity
-  - [x] make a .h file with all color macros
-    - [x] parent / child lines
-    - [x] move the color of collider debug draw from phys to editor
-  - [x] check mouse over ui, doesnt work for debug, hierarchy, etc.
 
 ## physics engine
   - [ ] sphere
@@ -288,7 +261,6 @@ main resources:
     - [ ] octree & ray v. triangle ?
 
 ## multithreading
-  - decide on win32, C11, single header lib
   - maybe make abstraction for thread stuff ?
   - add [profiler](#base) first
   - architecture
@@ -299,7 +271,7 @@ main resources:
   - [x] make example program
   - [ ] asset loading
     - [ ] also works with zip ?
-    - [ ] textures
+    - [x] textures
     - [ ] meshes
     - [ ] shaders
     - [ ] scene ?

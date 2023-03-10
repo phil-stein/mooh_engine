@@ -66,9 +66,9 @@ typedef enum entity_phys_flag
 typedef struct entity_t
 {
   // -- entity system / state -- 
-  u32 id;        // @DOC: id for state_entity_get(id), not necessarily the index into state entity array
-  int table_idx; // @DOC: idx for entity_table_get(idx)
-  bool is_dead;  // @DOC: instead of deleting the entity from array, its marked dead and overwritten with the next added entity
+  u32 id;           // @DOC: id for state_entity_get(id), not necessarily the index into state entity array
+  int template_idx; // @DOC: idx for entity_template_get(idx)
+  bool is_dead;     // @DOC: instead of deleting the entity from array, its marked dead and overwritten with the next added entity
 
 
   // -- space ---

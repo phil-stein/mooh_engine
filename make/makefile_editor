@@ -57,13 +57,13 @@ LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS)
 
 
 all: core $(NAME)
-	@echo ---- done ----
+	@echo ---- compiled $(NAME)
 
 
 # compile mooh_core library
 # $(MAKE) -C .. -f makefile_core	
 core:
-	$(MAKE) -C .. core_editor	
+	@$(MAKE) -s -C .. core_editor	
 
 
 #	$(MAKE) -C ../.. when compiling from src/editor
@@ -95,17 +95,17 @@ $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
 clean:
 	@del $(OUT)
 	@del $(OBJS_WIN) 
-	@echo ---- clean done ---- 
+	@echo ---- clean $(NAME) 
 
 # clean and them make all
 cleanm: clean all
 
 run: all
-	@echo --- $(NAME) --- 
+	@echo ---- started $(NAME)
 	@$(OUT)
 
 cleanrun: clean all
-	@echo --- $(NAME) --- 
+	@echo ---- started $(NAME) 
 	@$(OUT)
 
 
