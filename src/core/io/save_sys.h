@@ -18,10 +18,13 @@
 #define SERALIZATION_PF(...) 
 
 
+// @DOC: initialize, call this before any other calls to save_sys
 void save_sys_init();
+
 
 void save_sys_write_scene_to_file(const char* name);
 void save_sys_load_scene_from_file(const char* name);
+
 #ifdef EDITOR
 void save_sys_write_scene_to_state_buffer();
 void save_sys_load_scene_from_state_buffer();

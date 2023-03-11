@@ -96,7 +96,7 @@ void gizmo_update()
     if (app_data->selected_id >= 0 && input_get_mouse_down(MOUSE_LEFT))
     {
       bool err = false;
-      entity_t* e = state_get_entity(app_data->selected_id, &err);
+      // entity_t* e = state_get_entity(app_data->selected_id, &err);
       assert(!err);
 
       if (app_data->gizmo_type == GIZMO_TRANSLATE)

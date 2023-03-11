@@ -3,14 +3,18 @@
 #include "core/io/file_io.h"
 #include "core/types/mesh.h"
 #include "core/core_data.h"
+#include "core/debug/debug_timer.h"
 #include "serialization/serialization.h"
 
 #include "stb/stb_ds.h"
 #include "stb/stb_image.h"
 
-#define NAME_MAX 64
-char name_src[NAME_MAX];
-char name_dest[NAME_MAX];
+#include <direct.h>
+#include "dirent/dirent.h"
+
+#define ASSET_IO_NAME_MAX 64
+char name_src[ASSET_IO_NAME_MAX];
+char name_dest[ASSET_IO_NAME_MAX];
 
 static core_data_t* core_data = NULL;
 
@@ -18,6 +22,20 @@ static core_data_t* core_data = NULL;
 void asset_io_init()
 {
   core_data = core_data_get();
+ 
+  // // @TMP: test archive
+  // u8* buffer = NULL;
+  // u32 buffer_len = 0;
+  // TIMER_START("archive");
+  // asset_io_serialize_archive(core_data->asset_path, strlen(core_data->asset_path), &buffer, &buffer_len, ASSET_TYPE_TEXTURE);
+  // TIMER_STOP_PRINT();
+
+  // // @TODO: make global path string
+  // char path[ASSET_PATH_MAX + 64];
+  // sprintf(path, "%s/%s", core_data->asset_path, "textures.pack");
+  // P_STR(path);
+  // file_io_write_bytes(path, buffer, buffer_len);
+  // free(buffer);
 }
 
 // -- mesh --
@@ -28,12 +46,12 @@ void asset_io_convert_mesh(const char* name)
   void*  buf = NULL;
   size_t buf_len = 0;
 
-  ERR_CHECK(strlen(name) < NAME_MAX - 5, "name for mesh too long");
+  ERR_CHECK(strlen(name) < ASSET_IO_NAME_MAX - 5, "name for mesh too long");
   sprintf(name_src,  "%s.fbx",  name);
   sprintf(name_dest, "%s.mesh", name);
 
 // #ifdef ASSETM_NO_ZIP
-  char path[ASSET_PATH_MAX +7 +NAME_MAX];
+  char path[ASSET_PATH_MAX +7 +ASSET_IO_NAME_MAX];
   int len = 0;
   sprintf(path, "%smeshes/%s", core_data->asset_path, name_src);
   buf = (void*)file_io_read_len(path, &len);
@@ -84,21 +102,25 @@ void asset_io_serialize_mesh(u8** buffer, f32* verts, u32 verts_len, u32* indice
 
 mesh_t asset_io_load_mesh(const char* name)
 {
+  // PF("[mesh] | %s |\n", name);
+  TIMER_START_COUNTER("read mesh file    |");
   int length = 0;
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
   u8* buffer = file_io_read_bytes(path, &length);
+  TIMER_STOP();
 
     
+  TIMER_START_COUNTER("make mesh         |");
   f32* verts   = NULL;
   u32* indices = NULL;
-
   asset_io_deserialize_mesh(buffer, &verts, &indices);
   
   mesh_t mesh;
   mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
   arrfree(verts);
   arrfree(indices);
+  TIMER_STOP();
 
   return mesh;
 }
@@ -131,7 +153,7 @@ void asset_io_convert_texture_dbg(const char* name, const char* file, const int 
   size_t buf_len = 0;
   
   // TIMER_START(" -> load tex file");
-  char path[ASSET_PATH_MAX + NAME_MAX + 12];
+  char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   int len = 0;
   sprintf(path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_io_read_len(path, &len);
@@ -193,15 +215,17 @@ u8* asset_io_serialize_texture(u8* pixels, u32 w, u32 h, u32 channels, u32* buff
 
 texture_t asset_io_load_texture(const char* name, bool srgb)
 {
+  // PF("[tex] | %s |\n", name);
+  TIMER_START_COUNTER("read texture file |");
   // copy name into name_dest without file ending '.png' etc.
   u32 i = 0; while(name[i] != '.' && name[i +1] != '\0') { name_dest[i] = name[i]; i++; } name_dest[i] = '\0';
-  // P_STR(name_dest);
   int length = 0;
-  char path[ASSET_PATH_MAX + NAME_MAX + 10];
+  char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   sprintf(path, "%stextures/%s%s", core_data->asset_path, name_dest, ".tex");
-  // P_STR(path);
   u8* buffer = file_io_read_bytes(path, &length);
+  TIMER_STOP();
 
+  TIMER_START_COUNTER("make texture      |");
   u8* pixels;
   u32 w, h, channels;
   asset_io_deserialize_texture(buffer, &pixels, &w, &h, &channels);
@@ -214,6 +238,7 @@ texture_t asset_io_load_texture(const char* name, bool srgb)
 
   free(buffer);
   // pixels is part of buffer
+  TIMER_STOP();
   
   return t;
 }
@@ -240,11 +265,62 @@ void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* 
   *pixels = data; // buffer + header_size;
 }
 
-void asset_io_serialize_archive(const char* path, const char* file_ending)
+void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, u8** rtn, u32* rtn_size, asset_type type)
 {
-  // e.g. path: "textures/", file_ending: ".tex"
-  //      path: "meshes/",   file_ending: ".mesh"
+	char path[256];
+	struct dirent* dp;
+	DIR* dir = opendir(dir_path);
+	// unable to open directory stream
+	if (!dir) { return; }
+
+	// recursively read the directory and its sub-directories
+	while ((dp = readdir(dir)) != NULL)
+	{
+		// check that the file currently read isn't a directory
+		if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+		{
+			// printf("%s, \t[-1]%c, [-2]%c, [-3]%c, [-4]%c\n", dp->d_name, dp->d_name[dp->d_namlen - 1], dp->d_name[dp->d_namlen - 2], dp->d_name[dp->d_namlen - 3], dp->d_name[dp->d_namlen - 4]);
+	
+			// construct new path from our base path
+			strcpy(path, dir_path);
+			strcat(path, "\\");
+			strcat(path, dp->d_name);		
+      
+      int d_name_len = strlen(dp->d_name);
+      // char* _name = path + initial_dir_path_len +1; // initial_... to cut off /assets/, +1 to cut off / 
+
+      // @UNSURE: use as way to pack albedo, metallic, normal, roughness into one file
+
+      if (type == ASSET_TYPE_TEXTURE        &&
+          dp->d_name[d_name_len - 4] == '.' &&
+		      dp->d_name[d_name_len - 3] == 't' &&
+		      dp->d_name[d_name_len - 2] == 'e' &&
+		      dp->d_name[d_name_len - 1] == 'x' )
+      {
+        PF("[.tex] \"%s\"\n -> \"%s\"\n", dp->d_name, path);
+        int length = 0;
+        u8* buffer = file_io_read_bytes(path, &length);
+        *rtn = realloc(*rtn, (*rtn_size + length) * sizeof(u8));
+        memcpy(*rtn + *rtn_size, buffer, length);
+        *rtn_size += length;
+      }
+      else if (type == ASSET_TYPE_MESH           &&
+               dp->d_name[d_name_len - 5] == '.' &&
+		           dp->d_name[d_name_len - 4] == 'm' &&
+		           dp->d_name[d_name_len - 3] == 'e' &&
+		           dp->d_name[d_name_len - 2] == 's' &&
+		           dp->d_name[d_name_len - 1] == 'h' )
+      {
+        // PF("[.mesh] \"%s\"\n -> \"%s\"\n", dp->d_name, _name);
+      }
 
 
+			asset_io_serialize_archive(path, initial_dir_path_len, rtn, rtn_size, type); // search recursively
+		}
+	}
+
+	// close the stream
+	closedir(dir);
+  
 }
 

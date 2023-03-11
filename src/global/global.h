@@ -1,6 +1,20 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+
+// include all files like this once and the only use global.h
+// // order is important, io_util & str_util before global
+// #define IO_UTIL_IMPLEMENTATION  // only define once
+// #include "global/io_util.h"     // only need to include here, normally included via global.h
+// #define STR_UTIL_IMPLEMENTATION // only define once
+// #include "global/str_util.h"    // only need to include here, normally included via global.h
+// #include "global/global.h"
+
+
+// util headers in this repo
+#include "io_util.h"  // needs  IO_UTIL_IMPLEMENTATION defined ONCE
+#include "str_util.h" // needs STR_UTIL_IMPLEMENTATION defined ONCE
+
 // libs needed basically everywhere
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +22,7 @@
 #include <math.h>
 #include <assert.h>
 #include <inttypes.h>
+
 
 // ifdef activates P... macros, ASSERT, ERR..., etc.
 #define DEBUG
@@ -78,7 +93,8 @@ typedef void (empty_callback)(void);
 #define P(msg)		  PF("%s\n", msg)
 #define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
 
-#define P_LNE()     PF("---------------------------\n") 
+// draw --- line as long as the current console is wide, only works on windows
+#define P_LINE()    { int w, h; io_util_get_console_size_win(&w, &h); for (int i = 0; i < w -1; ++i) { PF("-"); } PF("\n"); }
 
 #define P_SIGNED(v) 	PF("%s: %d\n", #v, v)
 #define P_INT(v) 	    P_SIGNED((v)) 

@@ -198,42 +198,24 @@ typedef struct point_light_t
 
 }point_light_t;
 
-typedef struct scene_t
-{
-  entity_t* world;  // array of all entities
-  int world_len;
-
-  dir_light_t* dir_lights;  // array of all dir lights
-  int dir_lights_len;
-
-  // @TODO: 
-
-  // point lights here
-
-  // settings
-  // e.g. cubemap
-  // -> dir "cubemap_orange"
-  // etc.
-
-}scene_t;
-
-// ??? how to save this
-// -> shouldnt save material & shader each time
-// -> use names (easier) or guids (faster) ?
-//
-// -- serialization --
+// @NOTE: not in use, [11.03.23]
+// typedef struct scene_t
+// {
+//   entity_t* world;  // array of all entities
+//   int world_len;
 // 
-// int, float, vec, rgb, etc.
-// -> direct
-// mesh, shader, textures
-// -> by name
-//
-// e.g. entity
-// vec3 pos, rot, scl;
-// char* mesh, shader, tex;
-// vec3 tint;
-//
-// every asset is 'one' file
-// -> .fbx, .png, .shader, etc.
+//   dir_light_t* dir_lights;  // array of all dir lights
+//   int dir_lights_len;
+// 
+//   // @TODO: 
+// 
+//   // point lights here
+// 
+//   // settings
+//   // e.g. cubemap
+//   // -> dir "cubemap_orange"
+//   // etc.
+// 
+// }scene_t;
 
 #endif

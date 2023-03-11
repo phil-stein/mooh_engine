@@ -15,6 +15,22 @@
 // ->
 // 11 * f32 per vert
 
+// --- texture format ---
+// u32: width
+// u32: height
+// u32: channels
+// u8[]: pixels, len is w * h * channels
+
+// @DOC: enum for all the asset types
+//       cur only used in assset_io_serialize_archive
+typedef enum asset_type
+{
+  ASSET_TYPE_TEXTURE,
+  ASSET_TYPE_MESH,
+  ASSET_TYPE_MATERIAL,
+  ASSET_TYPE_SHADER
+}asset_type;
+
 // @DOC: initialize asset_io call this before any other calls to asset_io
 void asset_io_init();
 // @DOC: convert .fbx to .mesh
@@ -62,5 +78,7 @@ texture_t asset_io_load_texture(const char* name, bool srgb);
 //       w:        gets set to width of texture
 //       channels: r = 1, rgb = 3, rgba = 4
 void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* channels);
+
+void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, u8** rtn, u32* rtn_size, asset_type type);
 
 #endif

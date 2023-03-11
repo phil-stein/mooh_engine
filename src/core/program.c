@@ -16,12 +16,20 @@
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
 
+// order is important, io_util & str_util before global
+#define IO_UTIL_IMPLEMENTATION  // only define once
+#include "global/io_util.h"     // only need to include here, normally included via global.h
+#define STR_UTIL_IMPLEMENTATION // only define once
+#include "global/str_util.h"    // only need to include here, normally included via global.h
+#include "global/global.h"
+
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
 #include "GLAD/glad.h"
 
 #include <time.h>
 
+// @TODO: put stb_image here to, its in texture.c i think
 #define STB_DS_IMPLEMENTATION       // only define once
 #include "stb/stb_ds.h"         
 
@@ -30,6 +38,12 @@ static core_data_t* core_data = NULL;
 
 void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
+  
+  int w, h;
+  io_util_get_console_size_win(&w, &h);
+  P_INT(w);
+  P_INT(h);
+
   TIMER_START(" -- program init -- ");
 
   if (!window_create(width, height, title, type))
@@ -39,6 +53,7 @@ void program_start(int width, int height, const char* title, window_type type, e
 	}
  
 	// ---- init ----
+  debug_timer_init();
 
   // asset path
   core_data = core_data_get();
@@ -66,6 +81,13 @@ void program_start(int width, int height, const char* title, window_type type, e
 
   TIMER_STOP_STATIC();  // program init timer
 
+  // @TMP: .tex loading
+  TIMER_COUNTER_PRINT("read texture file |");
+  TIMER_COUNTER_PRINT("make texture      |");
+  P_LINE();
+  TIMER_COUNTER_PRINT("read mesh file    |");
+  TIMER_COUNTER_PRINT("make mesh         |");
+
   char _title[64];
   sprintf(_title, "game :)");
 
@@ -87,7 +109,7 @@ void program_start(int width, int height, const char* title, window_type type, e
 
 		// ---- update ----
     TIMER_FUNC(terrain_update());
-
+    
     TIMER_FUNC(renderer_update());
     TIMER_FUNC(debug_draw_update());
     

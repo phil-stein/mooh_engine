@@ -1,5 +1,4 @@
 #include "core/debug/debug_timer.h"
-#include "core/str_util.h"
 
 #define GLFW_INCLUDE_NONE
 #include "GLFW/glfw3.h"
@@ -19,13 +18,23 @@ int state_timer_stack_len = 0;	       // ^ length
 timer_t* static_timer_stack = NULL; // array with the states of timer that stay once added
 int static_timer_stack_len = 0;         // ^ length
 
+struct { char* key; f32 value; }* timer_counters_sh = NULL;  // hashmap with all timer counters
+u32 timer_counter_hm_len = 0;
+
 char no_timer_name[] = "no name";
 
-void debug_timer_start_timer_func(char* name, const char* file, int line)
+void debug_timer_init()
+{
+  shdefault(timer_counters_sh, -1.0f);  // set default to be neg
+}
+
+void debug_timer_start_timer_func(char* name, bool counter_act, char* counter_name, const char* file, int line)
 {
 	timer_t t;
 	t.time = glfwGetTime();
 	t.name = name;
+  t.counter_act  = counter_act;
+  t.counter_name = counter_name;
 
 	char* file_name = str_util_find_last_of((char*)file, "\\");
   if (file_name == NULL || strlen(file_name) == 0)
@@ -54,13 +63,28 @@ bool debug_timer_can_stop_timer()
 
 timer_t debug_timer_stop_timer_func()
 {
+  // return empty if no timer in stack
 	if (timer_stack_len <= 0) { timer_t t; t.name = "x"; t.time = 0.0; return t; }
 
-	timer_t t = timer_stack[timer_stack_len - 1]; // get last elem
+  // remove from arr / stack
+	timer_t t = timer_stack[timer_stack_len - 1]; // get last elem // @NOTE: arrpop() does the same
 	arrdel(timer_stack, timer_stack_len -1);  // delete last elem
 	t.time = glfwGetTime() - t.time; // get the delta t
 	t.time *= 1000; // bring to millisecond range
 	timer_stack_len--;
+
+  // check for counter, put in arr
+  if (t.counter_act)
+  {
+    // first counter with this id, needs to be added, 0 bc. t.time is added after anyway
+    if (shget(timer_counters_sh, t.counter_name) < 0)  
+    { shput(timer_counters_sh, t.counter_name, 0.0f); }
+   
+    // add cur timers time
+    f32 total_t = shget(timer_counters_sh, t.counter_name);
+    total_t += t.time;
+    shput(timer_counters_sh, t.counter_name, total_t);  // key, value
+  }
 
 	// timer state
 	arrput(cur_state_timer_stack, t);
@@ -91,6 +115,18 @@ f64  debug_timer_stop_timer_static_print_func()
   static_timer_stack_len++;
 	printf("[TIMER] | %s | %.2fms, %.2fsec\n", t.name, t.time, t.time * 0.001f);
   return t.time;
+}
+
+// prints the counter time for counter_id
+void debug_timer_counter_print_func(char* counter_name)
+{
+  if (shget(timer_counters_sh, counter_name) < 0.0f) 
+  { PF("[ERROR TIMER COUNTER] tried stopping timer counter \"%s\", which doesnt exist\n", counter_name); return; }
+
+  f32 time = shget(timer_counters_sh, counter_name);
+	printf("[TIMER_COUNTER] | %s | %.2fms, %.2fsec\n", counter_name, time, time * 0.001f);
+  // remove from hashmap
+  ERR_CHECK(shdel(timer_counters_sh, counter_name) != 0, "timer counters tried deleting non existsing key"); 
 }
 
 timer_t* debug_timer_get_all(int* len)

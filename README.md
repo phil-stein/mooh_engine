@@ -25,7 +25,7 @@ main resources:
 
 ## next steps
   - *organization*
-    - [comment all .h files in core](#organization) `WIP` 
+    - [comment all .h files](#organization) `WIP` 
     - [rest of organization](#organization) `WIP`
   - *optimizations* 
     - [custom asset archive files](#optimizations) `WIP`
@@ -85,6 +85,12 @@ main resources:
     - type specific or agnostic ?
       - i.e. just serialize a bunch of buffers or have mesh/texture
   - [ ] only clear outline buffer when deselecting
+  - [ ] memory allocation optimization
+    - [ ] read game engine architecture page 427-
+    - [ ] stack allocator ?
+    - [ ] frame allocator ?
+    - [ ] pool allocator  ?
+    - [ ] chunk allocator ?
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -100,29 +106,19 @@ main resources:
   - [ ] implement glfw opengl debug context, learnopengl page 439
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
-  - [ ] comment all .h files in core
-    - [x] debug
-      - [x] debug_draw.h
-      - [x] debug_timer.h
+  - [ ] add missing P_TYPE() funcs to global.h
+  - [ ] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
+  - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
+  - [ ] comment all .h files
     - [x] types
-      - [x] framebuffer.h
-      - [x] material.h
-       - [ ] check @TODO: in mesh_t 
       - [x] mesh.h
-      - [x] shader.h
-      - [x] texture.h
-      - [x] types.h
+       - [ ] check @TODO: in mesh_t 
     - [ ] main
-      - [x] assetm.h
-      - [x] camera.h
-      - [x] core_data.h
-      - [x] event_sys.h
-      - [x] file_io.h
-      - [x] input.h
-      - [ ] program.h
-      - [ ] renderer.h
-      - [ ] renderer_direct.h
-      - [ ] serialization.h
+      - [x] program.h
+      - [x] renderer.h
+      - [x] renderer_direct.h
+      - [x] renderer_extra.h
+      - [ ] save_sys.h
       - [ ] state.h
       - [ ] str_util.h
       - [ ] terrain.h
@@ -144,6 +140,8 @@ main resources:
       - [ ] phys_response.h
       - [ ] phys_types.h
       - [ ] phys_world.h
+    - [ ] global.h
+    - [ ] serialization.h
 
 ## tools
   - [ ] binary dump
