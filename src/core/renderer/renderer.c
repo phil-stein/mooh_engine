@@ -263,6 +263,7 @@ void renderer_update()
       
       _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
       _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
+
     
       ERR_CHECK(tex_idx <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_idx);
 

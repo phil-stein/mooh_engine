@@ -8,6 +8,9 @@
 #define DIR_LIGHTS_MAX   6    // depends on max number set in lighting shader
 #define POINT_LIGHTS_MAX 12   // depends on max number set in lighting shader
 
+// shared variable dont use this just for error detection in state_get_entity()
+bool __state_get_entity_error_shared;
+
 // func decls --------------------------------------------------- 
 
 void state_init();
@@ -25,7 +28,9 @@ int state_duplicate_entity(int id, vec3 offset);
 void state_remove_entity(int id);
 
 entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line);
-#define state_get_entity(id, error) state_get_entity_dbg(id, error, __FILE__, __LINE__)
+#define state_get_entity_err(id, error) state_get_entity_dbg(id, error, __FILE__, __LINE__)
+#define state_get_entity(id)            state_get_entity_dbg(id, &__state_get_entity_error_shared, __FILE__, __LINE__);   \
+                                        ERR_CHECK(!__state_get_entity_error_shared, "get_entity failed\n") 
 
 void state_entity_add_child(int parent, int child);
 void state_entity_remove_child(int parent, int child);

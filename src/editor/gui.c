@@ -320,8 +320,7 @@ void gui_properties_win()
     int id = app_data->selected_id;
     if (id >= 0)  // entities
     {
-      bool error = false;
-      entity_t* e     = state_get_entity(id, &error); ASSERT(!error);
+      entity_t* e     = state_get_entity(id);
       int world_len = 0; int dead_len = 0;
       state_get_entity_arr(&world_len, &dead_len);
       
@@ -334,7 +333,7 @@ void gui_properties_win()
       if (nk_button_label(ctx, "set parent") && parent_id >= 0 && parent_id < world_len)
       {
         bool error = false;
-        state_get_entity(parent_id, &error);  // just checking if exists
+        state_get_entity_err(parent_id, &error);  // just checking if exists // @TODO: isnt there a state func for that
         if (!error)
         {
           state_entity_add_child_remove_parent(parent_id, id);
@@ -792,8 +791,7 @@ void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
     for (int i = 0; i < e->children_len; ++i)
     {
       ERR_CHECK(e->id != e->children[i], "id: %d, children_len: %d, child[%d]: %d\n", e->id, e->children_len, i, e->children[i]);
-      bool err = false;
-      entity_t* c = state_get_entity(e->children[i], &err); ASSERT(!err);
+      entity_t* c = state_get_entity(e->children[i]);
       gui_hierarchy_display_entity_and_children(c, offs); 
     }
   }   

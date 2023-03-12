@@ -349,17 +349,17 @@ void save_sys_serialize_entity(u8** buffer, entity_t* e)
 }
 void save_sys_deserialize_entity(u8* buffer, u32* offset)
 {
-  int table_idx = serialization_deserialize_s32(buffer, offset);
+  int template_idx = serialization_deserialize_s32(buffer, offset);
 
   vec3 pos, rot, scl;
   serialization_deserialize_vec3(buffer, offset, pos); 
   serialization_deserialize_vec3(buffer, offset, rot); 
   serialization_deserialize_vec3(buffer, offset, scl); 
 
-  int id = state_add_entity_from_template(pos, rot, scl, table_idx);
+  int id = state_add_entity_from_template(pos, rot, scl, template_idx);
+  P_INT(id);
  
-  bool error = false;
-  entity_t* e = state_get_entity(id, &error); ASSERT(!error);
+  entity_t* e = state_get_entity(id);
    
   u8 has_point_light = serialization_deserialize_u8(buffer, offset);  // if has point light
   if (has_point_light)
@@ -372,6 +372,7 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
   for (u32 i = 0; i < e->children_len; ++i)
   {
     arrput(e->children, serialization_deserialize_s32(buffer, offset));
+    P_INT(e->children[i]);
   }
   // PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
 }

@@ -170,8 +170,7 @@ void renderer_extra_draw_scene_outline()
 	if (core_data->wireframe_mode_enabled == true)
 	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
   
-  bool error = false;
-	entity_t* e = state_get_entity(core_data->outline_id, &error); ASSERT(!error);
+	entity_t* e = state_get_entity(core_data->outline_id);
   
   mesh_t* mesh = NULL;
   texture_t* tex = assetm_get_texture("#internal/blank.png", true);

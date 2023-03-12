@@ -57,9 +57,8 @@ void event_sys_trigger_entity_parent_removed(int parent, int child)   // on enti
 
 void event_sys_trigger_phys_collision(int id_01, int id_02)
 {  
-  bool error = false;
-  entity_t* e_01 = state_get_entity(id_01, &error); ASSERT(!error);
-  entity_t* e_02 = state_get_entity(id_02, &error); ASSERT(!error);
+  entity_t* e_01 = state_get_entity(id_01);
+  entity_t* e_02 = state_get_entity(id_02);
 
   // check if null
   if (e_01->collision_f) { e_01->collision_f(e_01, e_02); }
@@ -72,9 +71,8 @@ void event_sys_trigger_phys_collision(int id_01, int id_02)
 }
 void event_sys_trigger_phys_trigger(int id_01, int id_02)       // on two entities colliding, at least one is set to trigger 
 {
-  bool error = false;
-  entity_t* e_01 = state_get_entity(id_01, &error); ASSERT(!error);
-  entity_t* e_02 = state_get_entity(id_02, &error); ASSERT(!error);
+  entity_t* e_01 = state_get_entity(id_01);
+  entity_t* e_02 = state_get_entity(id_02);
 
   // check if null
   if (e_01->trigger_f) { e_01->trigger_f(e_01, e_02); }

@@ -60,7 +60,8 @@ void app_init()
   // event_sys_register_entity_parent_removed(parent_rm);
 
   // -- scene --
-  const char scene_name[] =  "test.scene"; // "empty.scene";
+  const char scene_name[] =  "test.scene";
+  // const char scene_name[] =  "empty.scene";
   // save_sys_write_scene_to_file(scene_name);
   TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
   // in game will be done by camera-controller

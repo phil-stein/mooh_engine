@@ -268,8 +268,8 @@ main resources:
     - physics
   - [x] make example program
   - [ ] asset loading
-    - [ ] also works with zip ?
     - [x] textures
+      - [ ] experiment with thread count
     - [ ] meshes
     - [ ] shaders
     - [ ] scene ?

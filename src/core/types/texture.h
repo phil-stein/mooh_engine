@@ -6,11 +6,13 @@
 
 typedef struct texture_t
 {
+  bool loaded;  // if has been loaded and registered with opengl, if false dont use
+
 	u32 handle; // handle used for opengl calls
 	int width;  // width of tex in pixels
 	int height; // height of tex in pixels
   // @OPTIMIZATION: @UNSURE: remove this
-	char* path; // path to texture file
+	// char* path; // path to texture file
 }texture_t;
 
 // @DOC: free the memory of a texture

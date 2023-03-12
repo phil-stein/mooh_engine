@@ -4,10 +4,11 @@
 
 // include all files like this once and the only use global.h
 // // order is important, io_util & str_util before global
-// #define IO_UTIL_IMPLEMENTATION  // only define once
-// #include "global/io_util.h"     // only need to include here, normally included via global.h
-// #define STR_UTIL_IMPLEMENTATION // only define once
-// #include "global/str_util.h"    // only need to include here, normally included via global.h
+// #define IO_UTIL_IMPLEMENTATION       // only define once
+// #include "global/io_util.h"          // only need to include here, normally included via global.h
+// #define STR_UTIL_IMPLEMENTATION      // only define once
+// #include "global/str_util.h"         // only need to include here, normally included via global.h
+// #define GLOBAL_BOOL_TYPE int/u8/etc. // optional is int by default
 // #include "global/global.h"
 
 
@@ -28,14 +29,18 @@
 #define DEBUG
 
 
-// null
+// -- null --
 #ifndef NULL
 	#define NULL (void*)0
 #endif
 
-// bool
+// -- bool --
+#ifndef GLOBAL_BOOL_TYPE
+  #define GLOBAL_BOOL_TYPE int
+#endif
+
 #ifndef bool
-	#define bool int
+	#define bool GLOBAL_BOOL_TYPE
 #endif
 #ifndef true
 	#define true 1
@@ -120,6 +125,7 @@ typedef void (empty_callback)(void);
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
 #define ERR_CHECK(c, ...) if(!(c)) { ERR(__VA_ARGS__); }
+#define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
 
 // print is f32 is nan
 #define F32_NAN(v)  (isnan(v) != 0)

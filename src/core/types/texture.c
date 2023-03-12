@@ -110,7 +110,7 @@ texture_t texture_create_from_path(const char* file_path, bool flip_vertical)
     tex.handle = handle;
     tex.width = width;
     tex.height = height;
-    tex.path = (char*)file_path;
+    // tex.path = (char*)file_path;
 
     printf("loaded texture from '%s', handle: '%d'\n", file_path, handle);
 

@@ -172,6 +172,7 @@
     <ClCompile Include="src\core\renderer\renderer_extra.c" />
     <ClCompile Include="src\core\state.c" />
     <ClCompile Include="src\core\terrain.c" />
+    <ClCompile Include="src\core\threadm.c" />
     <ClCompile Include="src\core\types\cubemap.c" />
     <ClCompile Include="src\core\types\framebuffer.c" />
     <ClCompile Include="src\core\types\material.c" />
@@ -216,6 +217,7 @@
     <ClInclude Include="src\core\state.h" />
     <ClInclude Include="src\core\str_util.h" />
     <ClInclude Include="src\core\terrain.h" />
+    <ClInclude Include="src\core\threadm.h" />
     <ClInclude Include="src\core\types\cubemap.h" />
     <ClInclude Include="src\core\types\framebuffer.h" />
     <ClInclude Include="src\core\types\material.h" />

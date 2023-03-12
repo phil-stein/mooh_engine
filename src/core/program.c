@@ -9,6 +9,7 @@
 #include "core/io/save_sys.h"
 #include "core/io/asset_io.h"
 #include "core/state.h"
+#include "core/threadm.h"
 #include "core/terrain.h"
 #include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
@@ -39,11 +40,6 @@ static core_data_t* core_data = NULL;
 void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
   
-  int w, h;
-  io_util_get_console_size_win(&w, &h);
-  P_INT(w);
-  P_INT(h);
-
   TIMER_START(" -- program init -- ");
 
   if (!window_create(width, height, title, type))
@@ -65,6 +61,7 @@ void program_start(int width, int height, const char* title, window_type type, e
 	TIMER_FUNC_STATIC(input_init());
   TIMER_FUNC_STATIC(asset_io_init());
   TIMER_FUNC_STATIC(assetm_init());
+  TIMER_FUNC_STATIC(threadm_init());
   
   TIMER_FUNC_STATIC(core_data_init());
 	TIMER_FUNC_STATIC(save_sys_init());
@@ -79,17 +76,20 @@ void program_start(int width, int height, const char* title, window_type type, e
   
   TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
 
+  // @TODO: 
+  //        - loading during runtime
+  // @UNSURE: 
+  //        - archive meshes and load that way
+  //        - check if even faster
+
+  u32* tex_arr_len_ptr = 0;
+  texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
+  TIMER_FUNC_STATIC_PRINT(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
+  
   TIMER_STOP_STATIC();  // program init timer
 
-  // @TMP: .tex loading
-  TIMER_COUNTER_PRINT("read texture file |");
-  TIMER_COUNTER_PRINT("make texture      |");
-  P_LINE();
-  TIMER_COUNTER_PRINT("read mesh file    |");
-  TIMER_COUNTER_PRINT("make mesh         |");
-
   char _title[64];
-  sprintf(_title, "game :)");
+  // sprintf(_title, "game :)"); // writitng every frame 
 
   bool first_frame = true;
 	while (!core_data->program_quit && !glfwWindowShouldClose(core_data->window))
@@ -107,7 +107,10 @@ void program_start(int width, int height, const char* title, window_type type, e
     sprintf(_title, "%s | fps: '%.1f'", title, core_data->cur_fps);
     window_set_title(_title);
 
-		// ---- update ----
+    // P_U32(*tex_arr_len_ptr);
+    // TIMER_FUNC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr)); // load registered textured, before next frame
+		
+    // ---- update ----
     TIMER_FUNC(terrain_update());
     
     TIMER_FUNC(renderer_update());

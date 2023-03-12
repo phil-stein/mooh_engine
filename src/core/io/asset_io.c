@@ -232,6 +232,7 @@ texture_t asset_io_load_texture(const char* name, bool srgb)
 
   u32 handle = texture_create_from_pixels(pixels, (size_t)w, (size_t)h, (int)channels, srgb); 
   texture_t t;
+  t.loaded = false;
   t.handle = handle;
   t.width = w;
   t.height = h;

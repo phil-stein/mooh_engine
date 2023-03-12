@@ -12,11 +12,27 @@
 #define ASSETM_P(txt)
 #define ASSETM_PF(...)
 
+typedef struct
+{
+  char* name;
+  bool  srgb;
+  int   idx;
+}texture_load_data_t;
+
+
 // @DOC: initializes assetm, call this before any other call to assetm
 void assetm_init();
 // @DOC: frees all allocated resources, call when exiting program
 void assetm_cleanup();
 
+// @DOC: get array of textures registered to get loaded by threadm
+texture_load_data_t* assetm_get_texture_register_arr(u32* len);
+// @DOC: get array pointer of textures registered to get loaded by threadm
+texture_load_data_t** assetm_get_texture_register_arr_ptr(u32** len);
+// @DOC: register a texture to be loaded 
+int assetm_register_texture_for_load(const char* name, bool srgb);
+// @DOC: overwrite the texture at index idx
+void assetm_overwrite_texture_idx(int idx, texture_t* t);
 // @DOC: get by its index 
 //       idx: index into the assetm array of textures
 texture_t* assetm_get_texture_by_idx(int idx);

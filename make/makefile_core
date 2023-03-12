@@ -62,7 +62,8 @@ _OBJS +=					 		\
 	save_sys.o					\
 	event_sys.o					\
 	cubemap.o						\
-	asset_io.o					
+	asset_io.o					\
+	threadm.o
 # physics
 _OBJS += 							\
 	phys_world.o				\

@@ -28,6 +28,11 @@ int texture_idxs_len = 0;
 texture_t* texture_data = NULL;
 int texture_data_len = 0;
 
+// array with the textures registered for loading but not filled with data yet
+texture_load_data_t* texture_register_arr = NULL;
+u32 texture_register_arr_len = 0;
+
+
 // ---- meshes ----
 // value: index of texture in 'tex', key: name of texture 
 struct { char* key;  int value; }* mesh_idxs = NULL;
@@ -114,16 +119,67 @@ void assetm_cleanup()
 
 // textures ---------------------------------------------------------------------------------------
 
-texture_t* assetm_get_texture_by_idx(int idx)
+texture_load_data_t* assetm_get_texture_register_arr(u32* len)
+{
+  *len = texture_register_arr_len;
+  return texture_register_arr;
+}
+texture_load_data_t** assetm_get_texture_register_arr_ptr(u32** len)
+{
+  *len = &texture_register_arr_len;
+  return &texture_register_arr;
+}
+
+int assetm_register_texture_for_load(const char* name, bool srgb)
+{  
+  texture_t t;
+  t.loaded = false;
+  t.handle = -1;
+  t.width  = 0;
+  t.height = 0; 
+
+  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
+  ASSERT(name_cpy != NULL);
+  strcpy(name_cpy, name);
+  
+  shput(texture_idxs, name_cpy, texture_data_len);
+  arrput(texture_data, t);
+  texture_data_len++;
+
+  texture_load_data_t data;
+  data.srgb = srgb;
+  data.idx  = texture_data_len -1;
+  data.name = name_cpy;
+  arrput(texture_register_arr, data);
+  texture_register_arr_len++;
+
+  // PF("[tex registered] %d | \"%s\"\n", data.idx, data.name);
+
+  return texture_data_len -1;
+}
+void assetm_overwrite_texture_idx(int idx, texture_t* t)
 {
   ASSERT(idx >= 0 && idx < texture_data_len);
+  
+  texture_t* tex = assetm_get_texture_by_idx(idx);
+  tex->loaded = true;
+  tex->handle = t->handle;
+  tex->width  = t->width;
+  tex->height = t->height;
+  // name already registered in assetm_register_texture_for_load() 
+}
+
+texture_t* assetm_get_texture_by_idx(int idx)
+{
   return &texture_data[idx];
 }
 int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* file, const int line)
 {
   if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_texture_dbg(name, srgb, file, line);
+    return assetm_register_texture_for_load(name, srgb);
+
+    // assetm_create_texture_dbg(name, srgb, file, line);
   }
   return shget(texture_idxs, name);
 }
