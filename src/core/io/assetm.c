@@ -177,9 +177,10 @@ int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* file, co
 {
   if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
   {
-    return assetm_register_texture_for_load(name, srgb);
-
-    // assetm_create_texture_dbg(name, srgb, file, line);
+    if (core_data->use_async_asset_arrs)
+    { return assetm_register_texture_for_load(name, srgb); }
+    else
+    { assetm_create_texture_dbg(name, srgb, file, line); }
   }
   return shget(texture_idxs, name);
 }

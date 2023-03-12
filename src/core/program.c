@@ -55,7 +55,7 @@ void program_start(int width, int height, const char* title, window_type type, e
   core_data = core_data_get();
   strcpy(core_data->asset_path, asset_path);
   sprintf(core_data->shaders_path, "%sshaders/", asset_path);
- 
+  core_data->use_async_asset_arrs = true; // use multithreaded asset loading 
 
   rand_seed(time(NULL));
 	TIMER_FUNC_STATIC(input_init());
@@ -85,6 +85,8 @@ void program_start(int width, int height, const char* title, window_type type, e
   u32* tex_arr_len_ptr = 0;
   texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
   TIMER_FUNC_STATIC_PRINT(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
+
+  core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
   
   TIMER_STOP_STATIC();  // program init timer
 
@@ -107,9 +109,6 @@ void program_start(int width, int height, const char* title, window_type type, e
     sprintf(_title, "%s | fps: '%.1f'", title, core_data->cur_fps);
     window_set_title(_title);
 
-    // P_U32(*tex_arr_len_ptr);
-    // TIMER_FUNC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr)); // load registered textured, before next frame
-		
     // ---- update ----
     TIMER_FUNC(terrain_update());
     

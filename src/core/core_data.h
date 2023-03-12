@@ -34,6 +34,8 @@ typedef struct core_data_t
   f32 cur_fps;       // frames per second
 
   // -- assetm --
+  
+  bool use_async_asset_arrs;    // use assetm_register_...() and threadm_load_..._arr(), or load direct
 
   char asset_path[ASSET_PATH_MAX];
   char shaders_path[SHADERS_PATH_MAX];
@@ -144,6 +146,7 @@ typedef struct core_data_t
   .delta_t = 0.0f,                            \
   .cur_fps = 0.0f,                            \
                                               \
+  .use_async_asset_arrs = false,              \
   .asset_path   = "\0",                       \
   .shaders_path = "\0",                       \
                                               \

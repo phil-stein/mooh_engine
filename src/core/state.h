@@ -1,15 +1,15 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "../global/global.h"
-#include "../core/types/types.h"
+#include "global/global.h"
+#include "core/types/types.h"
 
 // #define WORLD_MAX 12
 #define DIR_LIGHTS_MAX   6    // depends on max number set in lighting shader
 #define POINT_LIGHTS_MAX 12   // depends on max number set in lighting shader
 
 // shared variable dont use this just for error detection in state_get_entity()
-bool __state_get_entity_error_shared;
+extern bool __state_get_entity_error_shared;
 
 // func decls --------------------------------------------------- 
 

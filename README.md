@@ -270,6 +270,7 @@ main resources:
   - [ ] asset loading
     - [x] textures
       - [ ] experiment with thread count
+      - [ ] multithreaded when not loading arr
     - [ ] meshes
     - [ ] shaders
     - [ ] scene ?

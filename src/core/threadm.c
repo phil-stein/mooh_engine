@@ -48,7 +48,6 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   // need them as pointers, as they have to be reset at end of func
   texture_load_data_t* tex_arr = *tex_arr_ptr;
   u32 tex_arr_len = *tex_arr_len_ptr;
-  // P_U32(tex_arr_len);
   if (tex_arr == NULL || tex_arr_len <= 0) { return; }
 
   thream_load_tex_args_t args_arr[THREAD_MAX];

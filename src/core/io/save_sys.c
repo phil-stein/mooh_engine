@@ -357,7 +357,6 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
   serialization_deserialize_vec3(buffer, offset, scl); 
 
   int id = state_add_entity_from_template(pos, rot, scl, template_idx);
-  P_INT(id);
  
   entity_t* e = state_get_entity(id);
    
@@ -372,7 +371,6 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
   for (u32 i = 0; i < e->children_len; ++i)
   {
     arrput(e->children, serialization_deserialize_s32(buffer, offset));
-    P_INT(e->children[i]);
   }
   // PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
 }
