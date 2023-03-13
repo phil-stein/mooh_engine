@@ -1,5 +1,3 @@
-#ifdef  EDITOR
-
 #ifndef GUI_H
 #define GUI_H
 
@@ -51,7 +49,5 @@ void gui_core_data_win();
 
 
 void gui_color_selector(rgbf color);
-
-#endif
 
 #endif

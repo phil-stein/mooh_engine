@@ -8,7 +8,8 @@
 #  -fcommon: ignore duplicate variable definitions
 #  -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE
 # CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"  -DASSETM_NO_ZIP 
-CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"	-DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE
+# CC         = @gcc -g -Wall -DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE -DASSET_PATH=\"$(ASSET_PATH)\"
+CC         = @gcc -g -Wall -DASSET_PATH=\"$(ASSET_PATH)\"
 CC_NO_WARN = @gcc
 
 BUILD_DIR = ..\build
@@ -56,6 +57,7 @@ LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS)
 
 
 all: core $(NAME)
+	@echo asset path: $(ASSET_PATH)
 	@echo ---- done ----
 
 

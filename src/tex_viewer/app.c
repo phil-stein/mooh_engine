@@ -22,6 +22,8 @@
 
 #include "GLAD/glad.h"
 
+#include <direct.h>
+
 // bool app_data.wireframe_act = false;
 // float app_data.mouse_sensitivity = 0.125f;
 // int app_data.selected_id = -1; // -1 = not selected
@@ -45,10 +47,18 @@ void rotate_cam_by_mouse();
 int main(int argc, char** argv)
 {
   P_INT(argc);
+  P_STR(argv[1]);
+  u32 arg_len = strlen(argv[1]);
+  bool has_ending = ( argv[1][arg_len -4] == '.' &&
+                      argv[1][arg_len -3] == 't' &&
+                      argv[1][arg_len -2] == 'e' &&
+                      argv[1][arg_len -1] == 'x' );
+  sprintf(tex_path, "%s\\%s%s", _getcwd(NULL, 0), argv[1], has_ending ? "" : ".tex");
   // ASSERT(argc >= 2);
   // strcpy(tex_path, argv[1]);
   P_STR(tex_path);
 
+  P_STR(ASSET_PATH);
   program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   return 0;
 }
