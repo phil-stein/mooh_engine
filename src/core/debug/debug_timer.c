@@ -158,19 +158,18 @@ void debug_timer_clear_state()
 
 #else
 
-void debug_timer_start_timer_func(char* name, char* file, char* func)
-{ }
+void debug_timer_init() { }
 
-bool debug_timer_can_stop_timer()
-{ return false; }
+void   debug_timer_start_timer_func(char* name, bool counter_act, char* counter_name, const char* file, int line) { }
+
+bool debug_timer_can_stop_timer() { return false; }
 
 timer_t debug_timer_stop_timer_func()
 {
 	timer_t t; t.time = 0.0; t.name = "x"; t.file = "x"; t.line = -1; return t;
 }
 
-f64 debug_timer_stop_timer_print_func()
-{ return 0.0; }
+f64 debug_timer_stop_timer_print_func() { return 0.0; }
 
 timer_t* debug_timer_get_all_timers(int* len)
 {
@@ -178,7 +177,6 @@ timer_t* debug_timer_get_all_timers(int* len)
 	return NULL;
 }
 
-void debug_timer_clear_state()
-{ }
+void debug_timer_clear_state() { }
 
 #endif

@@ -102,6 +102,11 @@ bool core_data_is_play_func() { return core_data.phys_act || core_data.scripts_a
 
 INLINE void core_data_init_renderer()
 {
+  
+
+  // core_data.brdf_lut = renderer_extra_gen_brdf_lut(); // @TODO: put in core_data
+  core_data.brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle; 
+
   // -- primitives --
   	
   // screen quad 

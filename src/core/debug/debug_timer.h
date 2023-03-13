@@ -105,44 +105,25 @@ void debug_timer_clear_state();
 // to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 void debug_timer_init();
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
-void debug_timer_start_timer_func(char* name, char* counter_name, char* file, char* func);
+void debug_timer_start_timer_func(char* name, bool counter_act, char* counter_name, const char* file, int line);
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 #define TIMER_START(n)
-#define TIMER_START_COUNTER(n, counter_n) 
+#define TIMER_START_COUNTER_NAME(n, counter_n)
+#define TIMER_START_COUNTER(n)                
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 bool debug_timer_can_stop_timer();
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 timer_t  debug_timer_stop_timer_func();
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 #define TIMER_STOP()
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 f64 debug_timer_stop_timer_print_func();
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 #define TIMER_STOP_PRINT()
-
-
 #define TIMER_STOP_STATIC()
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 timer_t* debug_timer_get_all(int* len);
 
-// functions / macros in "debug_utils.h" are deactivated
-// to activate them define "DEBUG_UTIL_ACT" globally, f.e. in "global.h" or your ide
 void debug_timer_clear_state();
 
 void debug_timer_counter_print_func(char* counter_name);

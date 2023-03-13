@@ -60,6 +60,8 @@ typedef struct core_data_t
   bool wireframe_mode_enabled;
   bool show_shadows;
 
+  u32 brdf_lut;
+
   // created in core_data_init_renderer()
   framebuffer_t fb_deferred;
   framebuffer_t fb_lighting;
@@ -163,6 +165,8 @@ typedef struct core_data_t
                                               \
   .wireframe_mode_enabled = false,            \
   .show_shadows  = true,                      \
+                                              \
+  .brdf_lut = -1,                             \
                                               \
   .mouse_x = 0,                               \
   .mouse_y = 0,                               \

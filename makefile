@@ -68,4 +68,18 @@ game_make:
 	@$(MAKE) -s -C make -f makefile_game
 
 
+# --- tex_viewer ---
+
+# compile and run
+tex_viewer: 
+	@$(MAKE) -s -C make -f makefile_tex_viewer run
+
+
+# clean .o and .exe
+tex_viewer_clean:
+	@$(MAKE) -s -C make -f makefile_tex_viewer clean
+
+# just make dont run
+tex_viewer_make: 
+	@$(MAKE) -s -C make -f makefile_tex_viewer
 

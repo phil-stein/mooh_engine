@@ -27,6 +27,8 @@ main resources:
   - *organization*
     - [comment all .h files](#organization) `WIP` 
     - [rest of organization](#organization) `WIP`
+  - *buggs*
+    - [all buggs](#buggs)
   - *optimizations* 
     - [custom asset archive files](#optimizations) `WIP`
     - [multithreading](#multithreading) `WIP` 
@@ -69,7 +71,7 @@ main resources:
   - [ ] batch renderer
   - [ ] lod system ?
   - [ ] octree or something for chunks, for entities / phys_objs
-  - [ ] precompute brdf, etc., [also mentioned](#tools)
+  - [x] precompute brdf, etc., [also mentioned](#tools)
   - [x] custom asset formats
     - [x] mesh ~2.5x faster
       - pure verts, nothing else
@@ -79,11 +81,15 @@ main resources:
       - prob. not realistic to be this drastic, but say 10% would still be amazing
     - [x] texture ~10x faster
       - uncompressed for faster load time 
+    - [ ] cubemaps 
   - [ ] shader spir-v ?
-  - [ ] custom asset archive files
+  - [ ] custom asset archive files | not in use
     - all textures, etc. back to back in one file with a simple header
     - type specific or agnostic ?
       - i.e. just serialize a bunch of buffers or have mesh/texture
+    - [x] textures | not in use 
+    - [ ] meshes
+    - [ ] shaders
   - [ ] only clear outline buffer when deselecting
   - [ ] memory allocation optimization
     - [ ] read game engine architecture page 427-
@@ -109,6 +115,11 @@ main resources:
   - [ ] add missing P_TYPE() funcs to global.h
   - [ ] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
   - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
+  - [ ] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
+  - [ ] make most funcs _dbg error checked
+    - [ ] state
+    - [ ] etc.
+  - [ ] go through all files check for unecessary header includes, to lower compile time
   - [ ] comment all .h files
     - [x] types
       - [x] mesh.h
@@ -147,8 +158,11 @@ main resources:
   - [ ] binary dump
     - write empty scene, terrain, etc. to file
   - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
-  - [ ] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
-  - [ ] ... 
+  - [x] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
+    - [x] save framebuffer as tetxure, for brdf
+    - [ ] load instead of generate
+  - [ ] texture viewer for .tex files
+  - [ ] model viewer for .mesh files ?
 
 ## base
   - [x] load mesh

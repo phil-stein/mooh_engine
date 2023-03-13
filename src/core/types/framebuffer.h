@@ -1,9 +1,9 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "../../global/global.h"
-#include "../../math/math_inc.h" 
-#include "../../../external/GLAD/glad.h"
+#include "global/global.h"
+#include "math/math_inc.h" 
+#include "GLAD/glad.h"
 
 typedef enum framebuffer_type
 {
@@ -11,10 +11,40 @@ typedef enum framebuffer_type
 	FRAMEBUFFER_RGB16F			     = GL_RGBA16F, // @TODO: check if GL_RGB16F works as well
 	FRAMEBUFFER_SINGLE_CHANNEL	 = GL_RED,
 	FRAMEBUFFER_SINGLE_CHANNEL_F = GL_R16F,
-	FRAMEBUFFER_DEPTH			       = GL_DEPTH_COMPONENT,
+	FRAMEBUFFER_DEPTH			       = GL_DEPTH_COMPONENT,  // @UNSURE: not used i think, shadowmap ?
   FRAMEBUFFER_DEFERRED         = 0x9999,
 	
 }framebuffer_type;
+// @DOC: get the channel amoount in framebuffer_t.buffer, -1 is unknown / error
+#define FRAMEBUFFER_TYPE_TO_CHANNEL_NR(type)  ( (type) == FRAMEBUFFER_RGB              ?  3 :   \
+                                                (type) == FRAMEBUFFER_RGB16F           ?  4 :   \
+                                                (type) == FRAMEBUFFER_SINGLE_CHANNEL   ?  1 :   \
+                                                (type) == FRAMEBUFFER_SINGLE_CHANNEL_F ?  1 :   \
+                                                (type) == FRAMEBUFFER_DEPTH            ? -1 :   \
+                                                (type) == FRAMEBUFFER_DEFERRED         ?  4 :   \
+                                                -1 )
+
+// @DOC: get the GL_TYPE in framebuffer_t.buffer, -1 is unknown / error
+#define FRAMEBUFFER_TYPE_TO_GL_DATA_TYPE(type)  ( (type) == FRAMEBUFFER_RGB              ?  GL_UNSIGNED_BYTE :   \
+                                                  (type) == FRAMEBUFFER_RGB16F           ?  GL_UNSIGNED_BYTE :   \
+                                                  (type) == FRAMEBUFFER_SINGLE_CHANNEL   ?  GL_UNSIGNED_BYTE :   \
+                                                  (type) == FRAMEBUFFER_SINGLE_CHANNEL_F ?  GL_FLOAT :           \
+                                                  (type) == FRAMEBUFFER_DEPTH            ? -1 :                  \
+                                                  (type) == FRAMEBUFFER_DEFERRED         ?  GL_UNSIGNED_BYTE :   \
+                                                  -1 )
+// @DOC: get the vairable type in framebuffer_t.buffer, i.e. u8, f32, -1 is unknown / error
+#define FRAMEBUFFER_TYPE_TO_DATA_TYPE(type)  ( (type) == FRAMEBUFFER_RGB              ? u8  :   \
+                                               (type) == FRAMEBUFFER_RGB16F           ? u8  :   \
+                                               (type) == FRAMEBUFFER_SINGLE_CHANNEL   ? u8  :   \
+                                               (type) == FRAMEBUFFER_SINGLE_CHANNEL_F ? f32 :   \
+                                               (type) == FRAMEBUFFER_DEPTH            ? -1  :   \
+                                               (type) == FRAMEBUFFER_DEFERRED         ? u8  :   \
+                                               -1 )
+
+
+// @DOC: types are already opengl types just deferred isnt
+#define FRAMEBUFFER_TYPE_TO_GL_TYPE(type)  ( (type) == FRAMEBUFFER_DEFERRED ?  GL_RGBA : (type))
+
 typedef struct framebuffer_t
 {
 	u32 buffer;
@@ -57,6 +87,23 @@ void framebuffer_delete(framebuffer_t* fb);
 
 // @DOC: get the value at pixel[x, y] for a FRAMEBUFFER_RGBAF framebuffer
 void framebuffer_get_rgbaf_value(framebuffer_t* fb, u32 buffer, int x, int y, vec4 out);
+  // @TODO: get to work
+//@DOC: get the pixels out of a buffer in a framebuffer_t.buffer
+//      ! returned buffer needs to be freed
+//      ! doesnt work for msaa framebuffers
+u8* frambuffer_write_pixels_to_buffer(framebuffer_t* fb, u32* buffer_len);
+  // @TODO: get to work
+// @DOC: get the pixels out of a buffer in a framebuffer, direct without framebuffer_t
+//      ! returned buffer needs to be freed
+//      ! doesnt work for msaa framebuffers
+//      fbo:          framebuffer object registered with opengl
+//      width:        width of framebuffer
+//      height:       height of framebuffer
+//      channel_nr:   r: 1, rgb: 3, rgba: 4
+//      gl_type:      GL_RED, GL_RGB, GL_RGBA, etc.
+//      gl_data_type: GL_UNSIGNED_BYTE, GL_FLOAT
+//      buffer_len:   gets set to the length of returned buffer
+u8* frambuffer_write_pixels_to_buffer_fbo(u32 fbo, u32 width, u32 height, u32 channel_nr, u32 gl_type, u32 gl_data_type, u32* buffer_len);
 
 // @DOC: changes the framebuffers size to the one of the window
 void framebuffer_resize_to_window(framebuffer_t* fb);

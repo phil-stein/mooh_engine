@@ -121,6 +121,7 @@
 #define _glGenerateMipmap(...)                  GL_ERR_FUNC( glGenerateMipmap(__VA_ARGS__) )
 #define _glActiveTexture(...)                   GL_ERR_FUNC( glActiveTexture(__VA_ARGS__) )
 #define _glReadPixels(...)                      GL_ERR_FUNC( glReadPixels(__VA_ARGS__) )
+#define _glGetTexImage(...)                     GL_ERR_FUNC( glGetTexImage(__VA_ARGS__) )
 
 // -- shaders --
 #define _glCreateShader(...)                    glCreateShader(__VA_ARGS__); GL_GET_ERR()

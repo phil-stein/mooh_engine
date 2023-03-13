@@ -6,6 +6,8 @@
 #include "core/camera.h"
 #include "core/state.h"
 #include "core/io/assetm.h"
+#include "core/io/asset_io.h"
+#include "core/io/file_io.h"
 #include "core/debug/debug_opengl.h"
 
 #define GLFW_INCLUDE_NONE
@@ -220,26 +222,29 @@ int renderer_extra_mouse_position_mouse_pick_id()
 
 }
 
-u32 renderer_extra_gen_brdf_lut()
+u32 renderer_extra_gen_brdf_lut(const char* path)
 {
+  const int width  = 512;
+  const int height = 512;
+
   // gen framebuffer ---------------------------------------------------------------------
 
-  unsigned int capture_fbo, capture_rbo;
+  u32 capture_fbo, capture_rbo;
   _glGenFramebuffers(1, &capture_fbo);
   _glGenRenderbuffers(1, &capture_rbo);
 
   _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
   _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
   _glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, capture_fbo);
 
   // gen brdf lut ------------------------------------------------------------------------
   
-  unsigned int brdf_lut;
+  u32 brdf_lut;
   _glGenTextures(1, &brdf_lut);
 
   _glBindTexture(GL_TEXTURE_2D, brdf_lut);
-  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, 0);
   _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -247,10 +252,10 @@ u32 renderer_extra_gen_brdf_lut()
 
   _glBindFramebuffer(GL_FRAMEBUFFER, capture_fbo);
   _glBindRenderbuffer(GL_RENDERBUFFER, capture_rbo);
-  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+  _glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
   _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdf_lut, 0);
 
-  _glViewport(0, 0, 512, 512);
+  _glViewport(0, 0, width, height);
   shader_use(&core_data->brdf_lut_shader);
   _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
@@ -258,18 +263,32 @@ u32 renderer_extra_gen_brdf_lut()
 	_glDrawArrays(GL_TRIANGLES, 0, 6);
   
   _glBindFramebuffer(GL_FRAMEBUFFER, 0);
- 
+
   _glDeleteFramebuffers(1, &capture_fbo);
   _glDeleteRenderbuffers(1, &capture_rbo);
 
+  const int channel_nr = 2;
+
+  u32 pixels_len = 0;
+  // u8* pixels = frambuffer_write_pixels_to_buffer_fbo(capture_fbo, width, height, channel_nr, GL_RG16F, GL_FLOAT, &pixels_len);
+  texture_t t;
+  t.handle     = brdf_lut;
+  t.width      = width;
+  t.height     = height;
+  t.channel_nr = channel_nr;
+  asset_io_texture_write_pixels_to_file(&t,  GL_RG, path);
+  // Pu8* pixels = asset_io_texture_write_pixels_to_file(brdf_lut, width, height, channel_nr, GL_RG16F, GL_FLOAT, &pixels_len);
+
+  // u32 buffer_len = 0;
+  // u8* buffer = asset_io_serialize_texture(pixels, width, height, channel_nr, &buffer_len);
+
+  // file_io_write_bytes(path, buffer, buffer_len);
+
+  // free(pixels);
+  // free(buffer);
+
   return brdf_lut;
 }
-
-
-
-
-
-
 
 
 

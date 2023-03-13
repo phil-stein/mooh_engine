@@ -41,7 +41,8 @@ void renderer_extra_draw_scene_outline();
 
 // @DOC: generate brdf lut for cubemap
 //       ! should be done beforehand and saved as img
-u32 renderer_extra_gen_brdf_lut();
+//       path: path the bsrdf_lut gets saved to as '.tex'
+u32 renderer_extra_gen_brdf_lut(const char* path);
 
 
 #endif

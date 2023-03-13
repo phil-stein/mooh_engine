@@ -3,29 +3,25 @@
 
 #include <direct.h>
 
-int file_io_check_exists(const char* file_path)
+int file_io_check_exists_dbg(const char* file_path, const char* _file, const int _line)
 {
   bool exists = true;
   FILE* f = fopen(file_path, "rb");
   if (f == NULL) 
-  { exists = false; }
+  { exists = false; return false; }
   fclose(f);
   return exists;
 }
 
-char* file_io_read(const char* file_path)
+char* file_io_read_dbg(const char* file_path, const char* _file, const int _line)
 {
-	printf("called read_text_file()\n");
+	printf("called read_text_file()\n");  // fucks this 
     FILE* f;
     char* text;
     long len;
 
     f = fopen(file_path, "rb");
-    if (f == NULL) 
-    {
-        fprintf(stderr, "[ERROR] loading text-file at: %s\n", file_path);
-        ASSERT(false);
-    }
+    ERR_CHECK(f != NULL, "loading text-file at: %s \n  -> file: \"%s\", line: %d", file_path, _file, _line);
 
     // get len of file
     fseek(f, 0, SEEK_END);
@@ -42,18 +38,18 @@ char* file_io_read(const char* file_path)
     ASSERT(strlen(text) > 0);
     fclose(f);
 
-    printf("text: %s\n", text);
+    printf("text: %s\n", text); // fucks this then
 
     return text;
 }
-char* file_io_read_len_dbg(const char* file_path, int* length, const char* file, const int line)
+char* file_io_read_len_dbg(const char* file_path, int* length, const char* _file, const int _line)
 {
     FILE* f;
     char* text;
     long len;
 
     f = fopen(file_path, "rb");
-    ERR_CHECK(f != NULL, "loading text-file at: %s \ncalled from: '%s', line: %d\n", file_path, file, line);
+    ERR_CHECK(f != NULL, "loading text-file at: %s \n  -> file: \"%s\", line: %d", file_path, _file, _line);
 
     // get len of file
     fseek(f, 0, SEEK_END);
@@ -73,14 +69,14 @@ char* file_io_read_len_dbg(const char* file_path, int* length, const char* file,
     *length = len;
     return text;
 }
-u8* file_io_read_bytes_dbg(const char* file_path, int* length, const char* file, const int line)
+u8* file_io_read_bytes_dbg(const char* file_path, int* length, const char* _file, const int _line)
 {
     FILE* f;
     u8* text;
     long len;
 
     f = fopen(file_path, "rb");
-    ERR_CHECK(f != NULL, "loading text-file at: %s \ncalled from: '%s', line: %d\n", file_path, file, line);
+    ERR_CHECK(f != NULL, "loading text-file at: %s \n  -> file: \"%s\", line: %d", file_path, _file, _line);
 
     // get len of file
     fseek(f, 0, SEEK_END);
@@ -99,12 +95,12 @@ u8* file_io_read_bytes_dbg(const char* file_path, int* length, const char* file,
     *length = len;
     return text;
 }
-void file_io_write(const char* file_path, const char* txt, int len)
+void file_io_write_dbg(const char* file_path, const char* txt, int len, const char* _file, const int _line)
 {
     FILE* f;
 
     f = fopen(file_path, "wb");
-    ERR_CHECK(f != NULL, "loading text-file at: %s \n", file_path);
+    ERR_CHECK(f != NULL, "loading text-file at: %s \n  -> file: \"%s\", line: %d", file_path, _file, _line);
 
     int rtn = fwrite(txt, sizeof(char), len, f);
     ASSERT(rtn != EOF);
@@ -112,12 +108,12 @@ void file_io_write(const char* file_path, const char* txt, int len)
 
     fclose(f);
 }
-void file_io_write_bytes(const char* file_path, const u8* data, int len)
+void file_io_write_bytes_dbg(const char* file_path, const u8* data, int len, const char* _file, const int _line)
 {
     FILE* f;
 
     f = fopen(file_path, "wb");
-    ERR_CHECK(f != NULL, "loading text-file at: %s \n", file_path);
+    ERR_CHECK(f != NULL, "loading text-file at: %s \n  -> file: \"%s\", line: %d", file_path, _file, _line);
 
     int rtn = fwrite(data, sizeof(u8), len, f);
     ASSERT(rtn != EOF);

@@ -59,7 +59,7 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0);
 
   ASSERT(channel_num >= 1);
-  ASSERT(channel_num != 2);
+  // SSERT(channel_num != 2); // GL_RG, GL_RG16F
   ASSERT(channel_num <= 4);
   int gl_internal_format = 0;
   int gl_format          = 0;
@@ -69,6 +69,11 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
       gl_internal_format = srgb ? GL_SRGB8 : GL_R8;
       gl_format = GL_RED;
       // P_INFO("GL_RED");
+      break;
+    case 2:
+      gl_internal_format = GL_RG8;
+      gl_format = GL_RG;
+      // P_INFO("GL_RGB");
       break;
     case 3:
       gl_internal_format = srgb ? GL_SRGB : GL_RGB;
@@ -107,9 +112,10 @@ texture_t texture_create_from_path(const char* file_path, bool flip_vertical)
     free(pixels);
 
     texture_t tex;
-    tex.handle = handle;
-    tex.width = width;
-    tex.height = height;
+    tex.handle     = handle;
+    tex.width      = width;
+    tex.height     = height;
+    tex.channel_nr = channel_num;
     // tex.path = (char*)file_path;
 
     printf("loaded texture from '%s', handle: '%d'\n", file_path, handle);

@@ -46,7 +46,7 @@ void renderer_direct_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color)
 
 void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, texture_t* tex)
 {
-	// ---- mvp ----
+  // ---- mvp ----
 	
 	mat4 model;
 	mat4_make_model_2d(pos, size, 0.0f, model);

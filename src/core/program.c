@@ -67,6 +67,13 @@ void program_start(int width, int height, const char* title, window_type type, e
 	TIMER_FUNC_STATIC(save_sys_init());
   TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(renderer_extra_init());
+  // gen brdf_lut, only needs to be done once, is loaded from textures/#internal/brdf_lut.tex in core_data_init
+  // char _path[ASSET_PATH_MAX + 256];
+  // sprintf(_path, "%s/textures/#internal/brdf_lut.tex", core_data->asset_path);
+  // core_data->brdf_lut = 
+  // TIMER_FUNC_STATIC(renderer_extra_gen_brdf_lut(_path)); 
+  // core_data->brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle;
+  
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());

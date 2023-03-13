@@ -580,7 +580,6 @@ void framebuffer_get_rgbaf_value(framebuffer_t* fb, u32 buffer, int x, int y, ve
   window_get_size(&w, &h);
   y = h - y; // invert as buffer is rendered upside down
 
-  _glGetError(); // clear any previous errors
   _glBindFramebuffer(GL_READ_FRAMEBUFFER, fb->fbo);
   _glReadBuffer(GL_COLOR_ATTACHMENT0 + buffer);
   _glReadPixels((int)x, (int)y, 1, 1, GL_RGBA, GL_FLOAT, out);
@@ -588,6 +587,42 @@ void framebuffer_get_rgbaf_value(framebuffer_t* fb, u32 buffer, int x, int y, ve
  
   _glReadBuffer(GL_COLOR_ATTACHMENT0);
   framebuffer_unbind();
+}
+
+// @TODO: get to work
+u8* frambuffer_write_pixels_to_buffer(framebuffer_t* fb, u32* buffer_len)
+{
+  ASSERT(!fb->is_msaa);
+  u32 channel_nr = FRAMEBUFFER_TYPE_TO_CHANNEL_NR(fb->type);
+  ASSERT(channel_nr == 1 || channel_nr == 2 || channel_nr == 3 || channel_nr == 4);
+  *buffer_len = fb->width * fb->height * channel_nr;
+  u8* buffer = malloc(*buffer_len);
+  
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, fb->fbo);
+  _glReadBuffer(GL_COLOR_ATTACHMENT0);
+  _glReadPixels((int)0, (int)0, fb->width, fb->height, FRAMEBUFFER_TYPE_TO_GL_TYPE(fb->type), FRAMEBUFFER_TYPE_TO_GL_DATA_TYPE(fb->type), buffer);
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+  _glReadBuffer(GL_COLOR_ATTACHMENT0);
+  framebuffer_unbind();
+
+  return buffer;
+}
+// @TODO: get to work
+u8* frambuffer_write_pixels_to_buffer_fbo(u32 fbo, u32 width, u32 height, u32 channel_nr, u32 gl_type, u32 gl_data_type, u32* buffer_len)
+{
+  ASSERT(width > 0 && height > 0);
+  ASSERT(channel_nr == 1 || channel_nr == 2 || channel_nr == 3 || channel_nr == 4);
+  *buffer_len = width * height * channel_nr;
+  u8* buffer = malloc(*buffer_len);
+  
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
+  _glReadBuffer(GL_COLOR_ATTACHMENT0);
+  _glReadPixels(0, 0, width, height, gl_type, gl_data_type, buffer);
+  _glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+  _glReadBuffer(GL_COLOR_ATTACHMENT0);
+  framebuffer_unbind();
+
+  return buffer;
 }
 
 void framebuffer_resize_to_window(framebuffer_t* fb)

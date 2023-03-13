@@ -4,6 +4,7 @@
 #include "core/types/mesh.h"
 #include "core/core_data.h"
 #include "core/debug/debug_timer.h"
+#include "core/debug/debug_opengl.h"
 #include "serialization/serialization.h"
 
 #include "stb/stb_ds.h"
@@ -215,13 +216,19 @@ u8* asset_io_serialize_texture(u8* pixels, u32 w, u32 h, u32 channels, u32* buff
 
 texture_t asset_io_load_texture(const char* name, bool srgb)
 {
-  // PF("[tex] | %s |\n", name);
-  TIMER_START_COUNTER("read texture file |");
   // copy name into name_dest without file ending '.png' etc.
   u32 i = 0; while(name[i] != '.' && name[i +1] != '\0') { name_dest[i] = name[i]; i++; } name_dest[i] = '\0';
-  int length = 0;
   char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   sprintf(path, "%stextures/%s%s", core_data->asset_path, name_dest, ".tex");
+  
+  return asset_io_load_texture_full_path(path, srgb);
+}
+texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
+{
+  // PF("[tex] | %s |\n", name);
+  TIMER_START_COUNTER("read texture file |");
+
+  int length = 0;
   u8* buffer = file_io_read_bytes(path, &length);
   TIMER_STOP();
 
@@ -236,12 +243,18 @@ texture_t asset_io_load_texture(const char* name, bool srgb)
   t.handle = handle;
   t.width = w;
   t.height = h;
+  t.channel_nr = channels;
 
   free(buffer);
   // pixels is part of buffer
   TIMER_STOP();
   
   return t;
+}
+
+u32 asset_io_load_texture_handle(const char* name, bool srgb)
+{
+  return asset_io_load_texture(name, srgb).handle;
 }
 
 void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* channels)
@@ -323,5 +336,40 @@ void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, 
 	// close the stream
 	closedir(dir);
   
+}
+
+u8* asset_io_texture_write_pixels_to_buffer_u8(texture_t* t,  u32 gl_type, u32* buffer_len)
+{
+  *buffer_len = t->width * t->height * t->channel_nr * sizeof(u8);
+  u8* buffer = malloc(*buffer_len);
+  _glActiveTexture(GL_TEXTURE0);
+  _glBindTexture(GL_TEXTURE_2D, t->handle);
+  _glGetTexImage(GL_TEXTURE_2D, 0, gl_type, GL_UNSIGNED_BYTE, buffer);
+
+  return buffer;
+}
+// f32* asset_io_texture_write_pixels_to_buffer_f32(texture_t* t,  u32 gl_type, u32* buffer_len)
+// {
+//   *buffer_len = t->width * t->height * t->channel_nr * sizeof(f32);
+//   f32* buffer = malloc(*buffer_len);
+//   _glActiveTexture(GL_TEXTURE0);
+//   _glBindTexture(GL_TEXTURE_2D, t->handle);
+//   _glGetTexImage(GL_TEXTURE_2D, 0, gl_type, GL_FLOAT, buffer);
+// 
+//   return buffer;
+// }
+void asset_io_texture_write_pixels_to_file(texture_t* t,  u32 gl_type, const char* path)
+{
+  // u32 handle, u32 width, u32 height, u32 channel_nr, u32 gl_type,
+
+  u32 pixels_len = 0;
+  u8* pixels = asset_io_texture_write_pixels_to_buffer_u8(t, gl_type, &pixels_len);
+ 
+  u32 buffer_len = 0;
+  u8* buffer = asset_io_serialize_texture(pixels, t->width, t->height, t->channel_nr, &buffer_len);
+  
+  file_io_write_bytes(path, buffer, buffer_len);
+
+  free(pixels);
 }
 

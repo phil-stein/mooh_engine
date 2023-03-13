@@ -24,8 +24,6 @@
 // vao, vbo for the quad used in render_quad()
 u32 skybox_vao, skybox_vbo;
 
-u32 brdf_lut;
-
 const f32 exposure    = 1.25f;
 
 static core_data_t* core_data;
@@ -91,8 +89,6 @@ void renderer_init()
   _glEnableVertexAttribArray(0);
   _glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), (void*)0);
   // ----------------------------------------------------------------------------------------------
-
-  brdf_lut = renderer_extra_gen_brdf_lut(); // @TODO: put in core_data
 
   // int texture_units;
   // glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units); 
@@ -399,7 +395,7 @@ void renderer_update()
     shader_set_int(&core_data->lighting_shader, "prefilter_map", tex_index);
     tex_index++;
     _glActiveTexture(GL_TEXTURE0 + tex_index);
-    _glBindTexture(GL_TEXTURE_2D, brdf_lut);
+    _glBindTexture(GL_TEXTURE_2D, core_data->brdf_lut);
     shader_set_int(&core_data->lighting_shader, "brdf_lut", tex_index);
     tex_index++;
     _glActiveTexture(GL_TEXTURE0 + tex_index);

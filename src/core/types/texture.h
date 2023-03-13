@@ -8,9 +8,10 @@ typedef struct texture_t
 {
   bool loaded;  // if has been loaded and registered with opengl, if false dont use
 
-	u32 handle; // handle used for opengl calls
-	int width;  // width of tex in pixels
-	int height; // height of tex in pixels
+	u32 handle;     // handle used for opengl calls
+	int width;      // width of tex in pixels
+	int height;     // height of tex in pixels
+  int channel_nr; // r: 1, rgb: 3, rgba: 4 
   // @OPTIMIZATION: @UNSURE: remove this
 	// char* path; // path to texture file
 }texture_t;
