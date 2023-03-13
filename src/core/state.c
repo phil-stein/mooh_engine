@@ -33,7 +33,7 @@ bool entity_init_called = false;
 
 static core_data_t* core_data = NULL;
 
-// shared variable dont use this just for error detection in state_get_entity()
+// shared variable dont use this just for error detection in state_get_entity(), extern def in state.h
 bool __state_get_entity_error_shared = false;
 
 void state_init()
@@ -246,7 +246,7 @@ void state_remove_entity(int id)
 
   event_sys_trigger_entity_removed(id);
 }
-entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line)
+entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line)
 {
   // ERR_CHECK(id >= 0 && id < world_len, "invalid entity id: %d, [file: %s, line: %d]", id, file, line);
   // ERR_CHECK(!world[id].is_dead, "requested dead entity: %d, [file: %s, line: %d]", id, file, line);
@@ -341,7 +341,7 @@ void state_entity_local_model(int id, mat4 out)
   entity_t* e = state_get_entity(id);
   mat4_make_model(e->pos, e->rot, e->scl, out);
 }
-void state_entity_update_global_model_dbg(int id, char* file, int line)
+void state_entity_update_global_model_dbg(int id, char* _file, int _line)
 {
   // if (id == 0 || id == 1) { P("brrrrrr"); }
   if (id < 0 || id >= world_len) 
@@ -560,10 +560,10 @@ point_light_t* state_get_point_light_arr(int* len, int* dead_len)
   return point_lights;
 }
 
-point_light_t* state_get_point_light_dbg(int id, bool* error, const char* file, const int line)
+point_light_t* state_get_point_light_dbg(int id, bool* error, const char* _file, const int _line)
 {
   if (id < 0 || id >= point_lights_len) 
-  { ERR("id: %d, point_lights_len: %d \ncalled from: \"%s\", line: %d\n", id, point_lights_len, file, line); *error = true; return NULL; }
+  { ERR("id: %d, point_lights_len: %d \ncalled from: \"%s\", line: %d\n", id, point_lights_len, _file, _line); *error = true; return NULL; }
   *error = false;
   return &point_lights[id];
 }

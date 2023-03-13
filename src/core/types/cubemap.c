@@ -25,7 +25,7 @@ void cubemap_free()
   core_data->cube_map.loaded = false;
 }
 
-cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line) 
+cubemap_t cubemap_load_dbg(const char* path, const char* _file, const int _line) 
 {
   core_data = core_data_get();
  
@@ -46,7 +46,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
   sprintf(_path, "%stextures/%s", core_data->asset_path, path);
   buf = (void*)file_io_read_len(_path, &len);
   buf_len = len;
-  ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
+  ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in cubemap_load(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, _file, _line);
 // #else 
 //   zip_entry_open(zip_textures, path);
 //   {
@@ -257,7 +257,7 @@ cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line)
 
   // texture_free_handle(prefilter_map);
   
-  ASSETM_PF("[assetm] loaded cubemap '%s''\n", path);
+  ASSETM_PF("[cubemap] loaded cubemap '%s''\n", path);
 
   cubemap_t c;
   c.loaded = true;

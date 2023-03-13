@@ -4,7 +4,7 @@
 #include "../../core/types/types.h"
 
 void cubemap_free();
-cubemap_t cubemap_load_dbg(const char* path, const char* file, const int line); 
+cubemap_t cubemap_load_dbg(const char* path, const char* _file, const int _line); 
 // @DOC: load cubemap from .hdr file
 //       path: path to .hdr file
 #define cubemap_load(path)       cubemap_load_dbg(path, __FILE__, __LINE__)

@@ -241,7 +241,7 @@ void input_get_mouse_delta(f64* x, f64* y);
 // @DOC: puts the cursor in the middle of the window
 void input_center_cursor_pos();
 // @DOC: set if the cursor is visible
-void input_set_cursor_visible_dbg(bool visible, const char* file, const int line);
+void input_set_cursor_visible_dbg(bool visible, const char* _file, const int _line);
 #define input_set_cursor_visible(visible) input_set_cursor_visible_dbg((visible), __FILE__, __LINE__)
 
 // @DOC: glfw callback used internally

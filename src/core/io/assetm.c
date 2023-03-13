@@ -173,26 +173,26 @@ texture_t* assetm_get_texture_by_idx(int idx)
 {
   return &texture_data[idx];
 }
-int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* file, const int line)
+int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
   if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
   {
     if (core_data->use_async_asset_arrs)
     { return assetm_register_texture_for_load(name, srgb); }
     else
-    { assetm_create_texture_dbg(name, srgb, file, line); }
+    { assetm_create_texture_dbg(name, srgb, _file, _line); }
   }
   return shget(texture_idxs, name);
 }
-texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* file, const int line)
+texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
   if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_texture_dbg(name, srgb, file, line);
+    assetm_create_texture_dbg(name, srgb, _file, _line);
   }
   return &texture_data[shget(texture_idxs, name)];
 }
-void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, const int line)
+void assetm_create_texture_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
   // copy name and path as passed name might be deleted
   char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
@@ -274,7 +274,7 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* file, co
   // PF("[assetm] created texture: %s\n  -> idx: %d\n", name, shget(texture_idxs, name));
 }
 
-void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* file, const int line)
+void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* _file, const int _line)
 {
   void*  buf = NULL;
   size_t buf_len = 0;
@@ -284,14 +284,14 @@ void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int*
   sprintf(path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
-  ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, file, line);
+  ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, _file, _line);
 #else 
   zip_entry_open(zip_textures, name);
   {
     zip_entry_read(zip_textures, &buf, &buf_len);
   }
   zip_entry_close(zip_textures);
-  ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in assetm_create_texture() / assetm_get_texture(), doesn't exist in the zip archive.\n -> [FILE] '%s', [LINE] %d", name, file, line);
+  ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in assetm_create_texture() / assetm_get_texture(), doesn't exist in the zip archive.\n -> [FILE] '%s', [LINE] %d", name, _file, _line);
 #endif
   
   stbi_set_flip_vertically_on_load(true);
@@ -317,28 +317,28 @@ int assetm_add_texture(texture_t* tex, const char* name)
 
 // meshes -----------------------------------------------------------------------------------------
 
-mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* file, const int line)
+mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ERR_CHECK(idx >= 0 && idx < mesh_data_len, "called from file: '%s' line: %d\n", file, line);
+  ERR_CHECK(idx >= 0 && idx < mesh_data_len, "called from file: '%s' line: %d\n", _file, _line);
   return &mesh_data[idx];
 }
-int assetm_get_mesh_idx_dbg(const char* name, const char* file, const int line)
+int assetm_get_mesh_idx_dbg(const char* name, const char* _file, const int _line)
 {  
   if (shget(mesh_idxs, name) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_mesh_dbg(name, file, line);
+    assetm_create_mesh_dbg(name, _file, _line);
   }
   return shget(mesh_idxs, name);
 }
-mesh_t* assetm_get_mesh_dbg(const char* name, const char* file, const int line)
+mesh_t* assetm_get_mesh_dbg(const char* name, const char* _file, const int _line)
 {
   if (shget(mesh_idxs, name) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_mesh_dbg(name, file, line);
+    assetm_create_mesh_dbg(name, _file, _line);
   }
   return &mesh_data[shget(mesh_idxs, name)];
 }
-void assetm_create_mesh_dbg(const char* name, const char* file, const int line)
+void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line)
 {
   // copy name and path as passed name might be deleted
   char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
@@ -417,33 +417,33 @@ int assetm_add_mesh(mesh_t* mesh, const char* name)
 
 // shaders ----------------------------------------------------------------------------------------
 
-shader_t* assetm_get_shader_by_idx_dbg(int idx, const char* file, const int line)
+shader_t* assetm_get_shader_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ERR_CHECK(idx >= 0 && idx < shader_data_len, "index: %d, shader_data_len: %d\n -> [FILE] '%s', [LINE] %d", idx, shader_data_len, file, line);
+  ERR_CHECK(idx >= 0 && idx < shader_data_len, "index: %d, shader_data_len: %d\n -> [FILE] '%s', [LINE] %d", idx, shader_data_len, _file, _line);
   return &shader_data[idx];
 }
-int assetm_get_shader_idx_dbg(shader_template_type type, const char* file, const int line)
+int assetm_get_shader_idx_dbg(shader_template_type type, const char* _file, const int _line)
 {
-  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", file, line);
+  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
   if (hmget(shader_idxs, type) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_shader_dbg(type, file, line);
+    assetm_create_shader_dbg(type, _file, _line);
   }
   return hmget(shader_idxs, type);
 }
-shader_t* assetm_get_shader_dbg(shader_template_type type, const char* file, const int line)
+shader_t* assetm_get_shader_dbg(shader_template_type type, const char* _file, const int _line)
 {
-  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", file, line);
+  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
   if (hmget(shader_idxs, type) < 0) // @NOTE: changed from '<='
   {
-    assetm_create_shader_dbg(type, file, line);
+    assetm_create_shader_dbg(type, _file, _line);
   }
   return &shader_data[hmget(shader_idxs, type)];
 }
-void assetm_create_shader_dbg(shader_template_type type, const char* file, const int line)
+void assetm_create_shader_dbg(shader_template_type type, const char* _file, const int _line)
 {
-  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", file, line);
-  shader_t s = assetm_create_shader_from_template_dbg(type, file, line);
+  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
+  shader_t s = assetm_create_shader_from_template_dbg(type, _file, _line);
 
   ASSETM_PF("[assetm] loaded shader '%d'\n", type);
 
@@ -455,9 +455,9 @@ void assetm_create_shader_dbg(shader_template_type type, const char* file, const
   
   // PF("[assetm] created shader: %d\n  -> idx: %d\n", type, hmget(shader_idxs, type));
 }
-shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const char* file, const int line)
+shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const char* _file, const int _line)
 {
-  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", file, line);
+  ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
   // void*  buf = NULL;
   // size_t buf_len = 0;
 
@@ -492,9 +492,9 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
 
 // @TODO: use '_dbg' func's and macros for __FILE__ & __LINE__ as well 
 
-material_t* assetm_get_material_by_idx(int idx)
+material_t* assetm_get_material_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ASSERT(idx >= 0 && idx < material_data_len);
+  ERR_CHECK(idx >= 0 && idx < material_data_len, "wrong material idx\n  -> file: \"%s\", line: %d", _file, _line);
   return &material_data[idx];
 }
 int assetm_get_material_idx(material_template_type type)
@@ -503,14 +503,8 @@ int assetm_get_material_idx(material_template_type type)
   {
     assetm_create_material(type); 
   }
-  // else
-  // {
-  //   int idx = hmget(material_idxs, type);
-  //   PF("[idx | %d] material_idx: %d\n", type, idx);
-  // }
   return hmget(material_idxs, type);
 }
-// @BUGG: creates again each time is called
 material_t* assetm_get_material(material_template_type type)
 {
   if (hmget(material_idxs, type) < 0)

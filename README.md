@@ -41,14 +41,15 @@ main resources:
     - [cascaded shadows](#renderer)
     - [particle system](#base)
     - [trail renderer](#base)
-    - [missing post-fx, bloom, ssao, aa](#renderer)
+    - [ssao](#renderer)
+    - [aa](#renderer)
+    - [bloom](#renderer)
   - *advanced*
     - [physics engine](#physics-engine)
     - [chunking for ents/phys_objs](#optimizations) 
 
 ## buggs
   - [ ] fix ale error on #include's
-  - [ ] since mat sys blank.png gets loaded twice (hdr / no hdr) ? 
   - [ ] glfw mouse button & scroll callbacks 
     - works in nuklear, look at that
     - actually nuklear is stealing our callback from glfw
@@ -57,11 +58,10 @@ main resources:
   - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
   - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
   - [ ] terrain-chunks dont get culled properly 
-  - [ ] point light entity *1* is not parented to the player, 
-        but the player is it's parent
-        aka. parenting is broken prob. in serialization
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] freeing cubemap doesnt seem to actually free any memory
+  - [ ] changing WINDOW_MIN, _MAX, _FULL doesnt work
+  - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -87,16 +87,19 @@ main resources:
     - all textures, etc. back to back in one file with a simple header
     - type specific or agnostic ?
       - i.e. just serialize a bunch of buffers or have mesh/texture
+    - screws with multithreading, kind of, also very big files
+    - maybe just a couple at a time ?
     - [x] textures | not in use 
     - [ ] meshes
     - [ ] shaders
   - [ ] only clear outline buffer when deselecting
   - [ ] memory allocation optimization
     - [ ] read game engine architecture page 427-
-    - [ ] stack allocator ?
-    - [ ] frame allocator ?
-    - [ ] pool allocator  ?
-    - [ ] chunk allocator ?
+    - [ ] stack allocator   ?
+    - [ ] frame allocator   ?
+    - [ ] pool allocator    ?
+    - [ ] chunk allocator   ?
+    - [ ] randy memory pool ?
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -109,13 +112,15 @@ main resources:
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] use _dbg funcs for materials in assetm
-  - [ ] implement glfw opengl debug context, learnopengl page 439
+  - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
   - [ ] add missing P_TYPE() funcs to global.h
   - [ ] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
   - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
-  - [ ] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
+  - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
+  - [ ] make the _file & _line macro and compile out ?
+  - [ ] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h
   - [ ] make most funcs _dbg error checked
     - [ ] state
     - [ ] etc.
@@ -156,13 +161,13 @@ main resources:
 
 ## tools
   - [ ] binary dump
-    - write empty scene, terrain, etc. to file
+    - [x] empty scene
+    - [ ] empty terrain
   - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
   - [x] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
     - [x] save framebuffer as tetxure, for brdf
-    - [ ] load instead of generate
+    - [x] load instead of generate
   - [x] texture viewer for .tex files
-  - [ ] model viewer for .mesh files ?
 
 ## base
   - [x] load mesh
@@ -229,6 +234,7 @@ main resources:
   - [ ] add tags or equivalent to entities
     - for on_collision etc.
     - single or multiple ?
+  - [ ] add logo to exe
 
 ## renderer
   - [ ] blending
@@ -283,6 +289,7 @@ main resources:
   - [x] make example program
   - [ ] asset loading
     - [x] textures
+      - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#buggs)
       - [ ] experiment with thread count
       - [ ] multithreaded when not loading arr
     - [ ] meshes

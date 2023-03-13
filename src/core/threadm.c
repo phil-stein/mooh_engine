@@ -58,6 +58,7 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   {
     for (u32 i = 0; i < THREAD_MAX && tex_idx < tex_arr_len; ++i) // start X textures
     {
+      // PF("[threadm] start loaded \"%s\"\n", tex_arr[tex_idx].name);
       thread_arr[i] = threadm_start_load_texture_file(tex_arr[tex_idx].name, tex_arr[tex_idx].srgb, &args_arr[i]);
       thread_arr_len++;
       tex_idx++;

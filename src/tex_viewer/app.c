@@ -35,7 +35,9 @@ static core_data_t* core_data = NULL;
 
 char tex_path[512] = "\\Workspace\\C\\mooh_engine\\assets\\textures\\#internal\\preview_bg.tex";
 
-texture_t tex;
+texture_t  tex;
+texture_t  tex_rgb;
+texture_t* tex_act; // this one gets rendered
 
 vec3 cam_pos  = { 0, 0, 0 };
 vec2 tex_pos  = { 0, 0 };
@@ -74,7 +76,10 @@ void app_init()
 {
   core_data = core_data_get();
   
-  tex = asset_io_load_texture_full_path(tex_path, false);
+  tex     = asset_io_load_texture_full_path(tex_path, false);
+  tex_rgb = asset_io_load_texture_full_path_formatted(tex_path, false, 3);
+  
+  tex_act = &tex_rgb;
 
   char title[1024];
   sprintf(title, "[tex viewer] \"%s\" | w: %u | h: %u | %s", tex_path, tex.width, tex.height, tex.channel_nr == 1 ? "single/red" : tex.channel_nr == 2 ? "rg" : tex.channel_nr == 3 ? "rgb" : tex.channel_nr == 4 ? "rgba" : "ikd dude");
@@ -88,9 +93,15 @@ void app_update()
   _glViewport(0, 0, w, h);
   _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  renderer_direct_draw_quad_textured(cam_pos, tex_pos, tex_size, &tex);
+  renderer_direct_draw_quad_textured(cam_pos, tex_pos, tex_size, tex_act);
 
   // -- input --
+  
+  // switch textures
+  if (input_get_key_pressed(KEY_TAB))
+  {
+    tex_act = tex_act == &tex ? &tex_rgb : &tex;
+  }
 	
   float cam_speed = CAM_SPEED * core_data->delta_t;
   if (input_get_key_down(KEY_UP_ARROW))
@@ -126,11 +137,11 @@ void app_update()
     program_quit();
   }
   
-  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
-	{
-		app_data.wireframe_act = !app_data.wireframe_act;
-		core_data->wireframe_mode_enabled = app_data.wireframe_act;
-	}
+  // if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
+	// {
+	// 	app_data.wireframe_act = !app_data.wireframe_act;
+	// 	core_data->wireframe_mode_enabled = app_data.wireframe_act;
+	// }
 
   if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
   {

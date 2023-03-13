@@ -86,8 +86,6 @@ void program_start(int width, int height, const char* title, window_type type, e
   
   TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
 
-  // @TODO: 
-  //        - loading during runtime
   // @UNSURE: 
   //        - archive meshes and load that way
   //        - check if even faster

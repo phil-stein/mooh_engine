@@ -27,7 +27,7 @@ int state_duplicate_entity(int id, vec3 offset);
 
 void state_remove_entity(int id);
 
-entity_t* state_get_entity_dbg(int id, bool* error, char* file, int line);
+entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line);
 #define state_get_entity_err(id, error) state_get_entity_dbg(id, error, __FILE__, __LINE__)
 #define state_get_entity(id)            state_get_entity_dbg(id, &__state_get_entity_error_shared, __FILE__, __LINE__);   \
                                         ERR_CHECK(!__state_get_entity_error_shared, "get_entity failed\n") 
@@ -40,7 +40,7 @@ void state_entity_remove_child(int parent, int child);
 void state_entity_add_child_remove_parent(int parent, int child);
 
 void state_entity_local_model(int id, mat4 out);
-void state_entity_update_global_model_dbg(int id, char* file, int line);
+void state_entity_update_global_model_dbg(int id, char* _file, int _line);
 #define state_entity_update_global_model(id)  state_entity_update_global_model_dbg(id, __FILE__, __LINE__) 
 void state_entity_global_model_no_rotation(int id, mat4 out);
 void state_entity_model_no_scale(int id, mat4 out);
@@ -59,7 +59,7 @@ void state_remove_dir_light(int idx);
 
 
 point_light_t* state_get_point_light_arr(int* len, int* dead_len);
-point_light_t* state_get_point_light_dbg(int id, bool* error, const char* file, const int line);
+point_light_t* state_get_point_light_dbg(int id, bool* error, const char* _file, const int _line);
 #define        state_get_point_light(id, error) state_get_point_light_dbg((id), (error), __FILE__, __LINE__) 
 // bool state_add_point_light(vec3 pos, rgbf color, float intensity);
 int state_add_point_light_empty(vec3 pos, rgbf color, float intensity);           // point_light with new empty entity

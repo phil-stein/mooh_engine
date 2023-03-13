@@ -147,7 +147,7 @@ void asset_io_deserialize_mesh(u8* buffer, f32** verts, u32** indices)
 
 // -- textures --
 
-void asset_io_convert_texture_dbg(const char* name, const char* file, const int line)
+void asset_io_convert_texture_dbg(const char* name, const char* _file, const int _line)
 {
   // -- load file --
   void*  buf = NULL;
@@ -159,7 +159,7 @@ void asset_io_convert_texture_dbg(const char* name, const char* file, const int 
   sprintf(path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
-  ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in asset_io_convert_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, file, line);
+  ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in asset_io_convert_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, _file, _line);
 
   // -- load pixels --
   stbi_set_flip_vertically_on_load(true);
@@ -214,12 +214,18 @@ u8* asset_io_serialize_texture(u8* pixels, u32 w, u32 h, u32 channels, u32* buff
   return buffer;
 }
 
+u32 asset_io_load_texture_handle(const char* name, bool srgb)
+{
+  return asset_io_load_texture(name, srgb).handle;
+}
 texture_t asset_io_load_texture(const char* name, bool srgb)
 {
   // copy name into name_dest without file ending '.png' etc.
   u32 i = 0; while(name[i] != '.' && name[i +1] != '\0') { name_dest[i] = name[i]; i++; } name_dest[i] = '\0';
   char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   sprintf(path, "%stextures/%s%s", core_data->asset_path, name_dest, ".tex");
+  
+  // PF("[asset_io] loaded \"%s\"\n", name);
   
   return asset_io_load_texture_full_path(path, srgb);
 }
@@ -239,7 +245,7 @@ texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
 
   u32 handle = texture_create_from_pixels(pixels, (size_t)w, (size_t)h, (int)channels, srgb); 
   texture_t t;
-  t.loaded = false;
+  t.loaded = true;
   t.handle = handle;
   t.width = w;
   t.height = h;
@@ -248,13 +254,36 @@ texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
   free(buffer);
   // pixels is part of buffer
   TIMER_STOP();
-  
+ 
   return t;
 }
-
-u32 asset_io_load_texture_handle(const char* name, bool srgb)
+texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb, u32 target_channels)
 {
-  return asset_io_load_texture(name, srgb).handle;
+  // PF("[tex] | %s |\n", path);
+  TIMER_START_COUNTER("read texture file |");
+
+  int length = 0;
+  u8* buffer = file_io_read_bytes(path, &length);
+  TIMER_STOP();
+
+  TIMER_START_COUNTER("make texture      |");
+  u8* pixels;
+  u32 w, h, channels;
+  asset_io_deserialize_texture_formatted(buffer, target_channels, &pixels, &w, &h, &channels);
+
+  u32 handle = texture_create_from_pixels(pixels, (size_t)w, (size_t)h, (int)target_channels, srgb); 
+  texture_t t;
+  t.loaded = true;
+  t.handle = handle;
+  t.width = w;
+  t.height = h;
+  t.channel_nr = target_channels;
+
+  free(buffer);
+  free(pixels);
+  TIMER_STOP();
+ 
+  return t;
 }
 
 void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* channels)
@@ -277,6 +306,55 @@ void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* 
   // const int header_size = (sizeof(u32) * 3);  // w, h, channels
   // data points to buffer + 12, which is eq to buffer + header_size
   *pixels = data; // buffer + header_size;
+}
+void asset_io_deserialize_texture_formatted(u8* buffer, u32 target_channels, u8** pixels, u32* w, u32* h, u32* channels)
+{ 
+  // deserialize u8 header into u32
+  u8* data = buffer;
+  // w
+  *w  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
+  data += 4;
+  // P_U32(*w);
+  // h
+  *h  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
+  data += 4;
+  // P_U32(*h);
+  // channels
+  *channels  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
+  data += 4;
+  // P_U32(*channels);
+
+  // // const int header_size = (sizeof(u32) * 3);  // w, h, channels
+  // // data points to buffer + 12, which is eq to buffer + header_size
+  // *pixels = data; // buffer + header_size;
+  P_U32(*(channels));
+  P_U32(target_channels);
+  u32 data_len   = (*w) * (*h) * (*channels);
+  u32 pixels_len = (*w) * (*h) *  target_channels;
+  P_U32(  data_len);
+  P_U32(pixels_len);
+  MALLOC((*pixels), pixels_len * sizeof(u8));
+  u8* _pixels = (*pixels); 
+  u32 d_pos = 0;
+  u32 p_pos = 0;
+  P_U32(MIN(target_channels, (*channels)));
+  P_U32(MAX(0, target_channels - (*channels)));
+  for (u32 i = 0; i < data_len; i += MIN(target_channels, (*channels))) 
+  {
+    // copy pixels
+    for (u32 j = 0; j < MIN(target_channels, (*channels)); ++j) 
+    {
+      ERR_CHECK(p_pos < pixels_len, "[0] pixels_len: %d | p_pos: %d | i: %d |", pixels_len, p_pos, i);
+      ERR_CHECK(d_pos < data_len,   "[0] data_len: %d | d_pos: %d | i: %d | j: %d |", data_len, d_pos, i, j);
+      _pixels[p_pos++] = data[d_pos++];
+    }
+    // fill/skip rest
+    for (u32 j = 0; j < MAX(0, target_channels - (*channels)); ++j) 
+    {
+      ERR_CHECK(p_pos < pixels_len, "[1] pixels_len: %d | p_pos: %d | i: %d | j: %d |", pixels_len, p_pos, i, j);
+      _pixels[p_pos++] = (*channels) == 1 ? data[d_pos] : 255;
+    }
+  }
 }
 
 void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, u8** rtn, u32* rtn_size, asset_type type)

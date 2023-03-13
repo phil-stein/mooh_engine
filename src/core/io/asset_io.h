@@ -55,7 +55,7 @@ void asset_io_deserialize_mesh(u8* buffer, f32** verts, u32** indices);
 
 // @DOC: convert .png/.jpg/etc. to .tex
 //       name: name with file ending i.e. 'albedo.png'
-void asset_io_convert_texture_dbg(const char* name, const char* file, const int line);
+void asset_io_convert_texture_dbg(const char* name, const char* _file, const int _line);
 #define asset_io_convert_texture(name) asset_io_convert_texture_dbg((name), __FILE__, __LINE__)
 // @DOC: put header & pixels into byte buffer
 //       ! returned u8 buffer need to be freed
@@ -66,13 +66,16 @@ void asset_io_convert_texture_dbg(const char* name, const char* file, const int 
 //       buffer_len: gets set to the total returned buffer length
 //       returns:    u8 array of serialized data, needs to be freed
 u8* asset_io_serialize_texture(u8* pixels, u32 w, u32 h, u32 channels, u32* buffer_len);
+
+u32 asset_io_load_texture_handle(const char* name, bool srgb);
 // @DOC: load a .tex texture
 //       name: name of texture including file ending, i.e. 'albedo.png'
 //       srgb: whether to load the texture as srgb, for hdr
 texture_t asset_io_load_texture(const char* name, bool srgb);
 texture_t asset_io_load_texture_full_path(const char* path, bool srgb);
-u32 asset_io_load_texture_handle(const char* name, bool srgb);
-// @DOC: extract header & pixels from .tex file laoded into u8 buffer
+texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb, u32 target_channels);
+
+  // @DOC: extract header & pixels from .tex file laoded into u8 buffer
 //       buffer:   the loaded .tex file
 //       pixels:   gets set to point to the pixel data, in the returned u8* buffer, len = w * h * channels
 //       w:        gets set to width of texture
@@ -80,6 +83,8 @@ u32 asset_io_load_texture_handle(const char* name, bool srgb);
 //       w:        gets set to width of texture
 //       channels: r = 1, rgb = 3, rgba = 4
 void asset_io_deserialize_texture(u8* buffer, u8** pixels, u32* w, u32* h, u32* channels);
+// pixels also need to be freed
+void asset_io_deserialize_texture_formatted(u8* buffer, u32 target_channels, u8** pixels, u32* w, u32* h, u32* channels);
 
 // @NOTE: not done, dosnt have a header, just bunch of tex files one after another
 void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, u8** rtn, u32* rtn_size, asset_type type);
