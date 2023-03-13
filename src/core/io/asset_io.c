@@ -314,45 +314,48 @@ void asset_io_deserialize_texture_formatted(u8* buffer, u32 target_channels, u8*
   // w
   *w  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
   data += 4;
-  // P_U32(*w);
   // h
   *h  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
   data += 4;
-  // P_U32(*h);
   // channels
   *channels  = ((u32)data[3]) + ((u32)data[2] << 8) + ((u32)data[1] << 16) + ((u32)data[0] << 24);
   data += 4;
-  // P_U32(*channels);
 
-  // // const int header_size = (sizeof(u32) * 3);  // w, h, channels
-  // // data points to buffer + 12, which is eq to buffer + header_size
-  // *pixels = data; // buffer + header_size;
-  P_U32(*(channels));
-  P_U32(target_channels);
+  // P_U32(*(channels));
+  // P_U32(target_channels);
+  
   u32 data_len   = (*w) * (*h) * (*channels);
-  u32 pixels_len = (*w) * (*h) *  target_channels;
-  P_U32(  data_len);
-  P_U32(pixels_len);
+  u32 pixels_len = (*w) * (*h) *  target_channels; 
+  // P_U32( data_len);
+  // P_U32(pixels_len);
+
   MALLOC((*pixels), pixels_len * sizeof(u8));
   u8* _pixels = (*pixels); 
+  
   u32 d_pos = 0;
   u32 p_pos = 0;
-  P_U32(MIN(target_channels, (*channels)));
-  P_U32(MAX(0, target_channels - (*channels)));
-  for (u32 i = 0; i < data_len; i += MIN(target_channels, (*channels))) 
+  const u32 data_step      = MIN(target_channels, (*channels));
+  const u32 data_step_diff = MAX(0, (int)(*channels) - (int)target_channels);
+  const u32 pixels_step = MAX(0, (int)target_channels - (int)(*channels));
+  // P_U32(data_step);
+  // P_U32(data_step_diff);
+  // P_INT(pixels_step);
+  
+  for (u32 i = 0; i < data_len && i < pixels_len; i += data_step) 
   {
     // copy pixels
-    for (u32 j = 0; j < MIN(target_channels, (*channels)); ++j) 
+    for (u32 j = 0; j < data_step; ++j) 
     {
       ERR_CHECK(p_pos < pixels_len, "[0] pixels_len: %d | p_pos: %d | i: %d |", pixels_len, p_pos, i);
       ERR_CHECK(d_pos < data_len,   "[0] data_len: %d | d_pos: %d | i: %d | j: %d |", data_len, d_pos, i, j);
       _pixels[p_pos++] = data[d_pos++];
     }
+    d_pos += data_step_diff; // in case channels > than target_channels
     // fill/skip rest
-    for (u32 j = 0; j < MAX(0, target_channels - (*channels)); ++j) 
+    for (u32 j = 0; j < pixels_step; ++j) 
     {
       ERR_CHECK(p_pos < pixels_len, "[1] pixels_len: %d | p_pos: %d | i: %d | j: %d |", pixels_len, p_pos, i, j);
-      _pixels[p_pos++] = (*channels) == 1 ? data[d_pos] : 255;
+      _pixels[p_pos++] = (*channels) == 1 ? data[d_pos -1] : 255;
     }
   }
 }

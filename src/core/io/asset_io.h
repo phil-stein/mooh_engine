@@ -72,7 +72,14 @@ u32 asset_io_load_texture_handle(const char* name, bool srgb);
 //       name: name of texture including file ending, i.e. 'albedo.png'
 //       srgb: whether to load the texture as srgb, for hdr
 texture_t asset_io_load_texture(const char* name, bool srgb);
+// @DOC: load a .tex texture, from full path
+//       path: full path to texture including file ending, i.e. 'albedo.png'
+//       srgb: whether to load the texture as srgb, for hdr
 texture_t asset_io_load_texture_full_path(const char* path, bool srgb);
+// @DOC: load a .tex texture, from full path, format to x channels
+//       path: full path to texture including file ending, i.e. 'albedo.png'
+//       srgb: whether to load the texture as srgb, for hdr
+//       target_channels: 1 : r, 2: rg: 3: rgb, 4: rgba
 texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb, u32 target_channels);
 
   // @DOC: extract header & pixels from .tex file laoded into u8 buffer

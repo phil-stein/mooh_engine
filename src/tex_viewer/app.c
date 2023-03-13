@@ -77,7 +77,7 @@ void app_init()
   core_data = core_data_get();
   
   tex     = asset_io_load_texture_full_path(tex_path, false);
-  tex_rgb = asset_io_load_texture_full_path_formatted(tex_path, false, 3);
+  tex_rgb = asset_io_load_texture_full_path_formatted(tex_path, false, 3);  // 3: rgb
   
   tex_act = &tex_rgb;
 
