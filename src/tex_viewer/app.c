@@ -46,20 +46,27 @@ void rotate_cam_by_mouse();
 
 int main(int argc, char** argv)
 {
-  P_INT(argc);
-  P_STR(argv[1]);
+  ASSERT(argc >= 2);
+  
   u32 arg_len = strlen(argv[1]);
-  bool has_ending = ( argv[1][arg_len -4] == '.' &&
-                      argv[1][arg_len -3] == 't' &&
-                      argv[1][arg_len -2] == 'e' &&
-                      argv[1][arg_len -1] == 'x' );
-  sprintf(tex_path, "%s\\%s%s", _getcwd(NULL, 0), argv[1], has_ending ? "" : ".tex");
-  // ASSERT(argc >= 2);
-  // strcpy(tex_path, argv[1]);
-  P_STR(tex_path);
+  // opening from file explorer gives full path, from terminal just file name given
+  bool full_path  = ( argv[1][0] == 'C' &&
+                      argv[1][1] == ':' &&
+                      argv[1][2] == '\\' );
+  if (!full_path)
+  {
+    bool has_ending = ( argv[1][arg_len -4] == '.' &&
+                        argv[1][arg_len -3] == 't' &&
+                        argv[1][arg_len -2] == 'e' &&
+                        argv[1][arg_len -1] == 'x' );
+    sprintf(tex_path, "%s\\%s%s", _getcwd(NULL, 0), argv[1], has_ending ? "" : ".tex");
+  }
+  else
+  { strcpy(tex_path, argv[1]); }
+  
+  PF("[tex viewer] opening: \"%s\"\n", tex_path);
 
-  P_STR(ASSET_PATH);
-  program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
+  program_start(1400, 1400, "-", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   return 0;
 }
 
@@ -67,11 +74,11 @@ void app_init()
 {
   core_data = core_data_get();
   
-  // tex = asset_io_load_texture("#internal/brdf_lut.tex", false);
-  // tex = asset_io_load_texture("stylized_brick/stylized_bricks_albedo.jpg", false);
-  
   tex = asset_io_load_texture_full_path(tex_path, false);
 
+  char title[1024];
+  sprintf(title, "[tex viewer] \"%s\" | w: %u | h: %u | %s", tex_path, tex.width, tex.height, tex.channel_nr == 1 ? "single/red" : tex.channel_nr == 2 ? "rg" : tex.channel_nr == 3 ? "rgb" : tex.channel_nr == 4 ? "rgba" : "ikd dude");
+  window_set_title(title);
 }
 
 void app_update()
@@ -102,6 +109,17 @@ void app_update()
 	{
     cam_pos[0] += cam_speed;
 	}
+  // zoom
+	if (input_get_key_pressed(KEY_ADD) || input_get_key_pressed(KEY_NUMPAD_ADD))
+  {
+    vec2_add_f(tex_size, 0.5f, tex_size);
+    vec2_clamp_f(tex_size, 2.0f, 20.0f, tex_size);
+  }
+	if (input_get_key_pressed(KEY_SUB) || input_get_key_pressed(KEY_NUMPAD_SUBTRACT))
+  {
+    vec2_sub_f(tex_size, 0.5f, tex_size);
+    vec2_clamp_f(tex_size, 2.0f, 20.0f, tex_size);
+  }
 
   if (input_get_key_pressed(KEY_EXIT))
   {

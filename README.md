@@ -161,7 +161,7 @@ main resources:
   - [x] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
     - [x] save framebuffer as tetxure, for brdf
     - [ ] load instead of generate
-  - [ ] texture viewer for .tex files
+  - [x] texture viewer for .tex files
   - [ ] model viewer for .mesh files ?
 
 ## base

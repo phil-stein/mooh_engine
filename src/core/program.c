@@ -37,6 +37,9 @@
 
 static core_data_t* core_data = NULL;
 
+char  _title[WINDOW_TITLE_MAX];
+char __title[WINDOW_TITLE_MAX];
+
 void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
   
@@ -91,14 +94,13 @@ void program_start(int width, int height, const char* title, window_type type, e
 
   u32* tex_arr_len_ptr = 0;
   texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
-  TIMER_FUNC_STATIC_PRINT(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
+  TIMER_FUNC_STATIC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
 
   core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
   
   TIMER_STOP_STATIC();  // program init timer
 
-  char _title[64];
-  // sprintf(_title, "game :)"); // writitng every frame 
+  strcpy(_title, window_get_title()); 
 
   bool first_frame = true;
 	while (!core_data->program_quit && !glfwWindowShouldClose(core_data->window))
@@ -112,9 +114,9 @@ void program_start(int width, int height, const char* title, window_type type, e
     core_data->cur_fps      = 1 / core_data->delta_t;
     if (first_frame) { core_data->delta_t = 0.016f; first_frame = false; } // otherwise dt first frame is like 5 seconds
   
-    // --- title ----
-    sprintf(_title, "%s | fps: '%.1f'", title, core_data->cur_fps);
-    window_set_title(_title);
+    // // --- title ----
+    sprintf(__title, "%s | fps: '%.1f'", _title, core_data->cur_fps);
+    window_set_title(__title);
 
     // ---- update ----
     TIMER_FUNC(terrain_update());

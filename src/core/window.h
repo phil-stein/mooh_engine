@@ -5,6 +5,7 @@
 #include "core/core_data.h"
 #include "core/types/framebuffer.h"
 
+#define WINDOW_TITLE_MAX 512
 
 typedef enum window_type { WINDOW_MIN, WINDOW_MAX, WINDOW_FULL } window_type;
 #define P_WINDOW_TYPE(a)  { PF("%s\n", (a) == WINDOW_MIN ? "WINDOW_MIN" : (a) == WINDOW_MAX ? "WINDOW_MAX" : (a) == WINDOW_FULL ? "WINDOW_FULL" : "?UNKNOWN?"); }

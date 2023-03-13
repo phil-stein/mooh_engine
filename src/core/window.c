@@ -10,7 +10,7 @@
 static core_data_t* core_data;
 int monitor_w = 0;
 int monitor_h = 0;
-char* window_title;
+char window_title[WINDOW_TITLE_MAX];
 bool is_maximized = true;
 window_type win_type;
 
@@ -28,6 +28,8 @@ void maximize_callback(void* window, int maximized);
 // returns: <stddef.h> return_code
 bool window_create(const int width, const int height, const char* title, window_type type)
 {
+  strcpy(window_title, title);
+  
   core_data = core_data_get();
 
 	// enable error logging for glfw
@@ -190,7 +192,8 @@ void window_set_mode(window_type type)
 void window_set_title(const char* title)
 {
 	glfwSetWindowTitle(core_data->window, title);
-	window_title = (char*)title;
+	// window_title = (char*)title;
+  strcpy(window_title, title);
 }
 
 
