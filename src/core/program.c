@@ -37,52 +37,13 @@
 
 static core_data_t* core_data = NULL;
 
-char  _title[WINDOW_TITLE_MAX];
-char __title[WINDOW_TITLE_MAX];
+char  _title[WINDOW_TITLE_MAX];      // copy title
+char __title[WINDOW_TITLE_MAX +14];  // copy _title, add fps
 
 void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
 
-  s32 int_32  = 0;
-  s16 int_16  = 0;
-  s8  int_8   = 0;
-  u32 uint_32 = 0;
-  u16 uint_16 = 0;
-  u8  uint_8  = 0;
-
-  f32   floating_point = 0.5f;
-  bool  b = true;
-  s8    s_byte = '?';
-  char* str = "hello, there";
-  char* txt = "this is very textual\nmhhh yess\nlicrictically intricate";
-
-  P_INT(int_32);
-  P_S32(int_32); 
-  P_S16(int_16);	    
-  P_S8(int_8);	    
-  P_U32(uint_32);     
-  P_U16(uint_16);     
-  P_U8(uint_8);      
-                
-  P_F32(floating_point);	    
-  P_BOOL(b);	  
-                
-  P_CHAR(s_byte);	  
-  P_STR(str);	    
-  P_TXT(txt);   
-
-
-
-  // PF_MODE(PF_BOLD, PF_RED, PF_BG_BLACK); PF("[ERROR] "); PF_MODE_RESET(); 
-  // PF("hello\n"); 
-  // PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); PF(" -> file: %s, line: %d\n", __FILE__, __LINE__);
- 
-  P_INFO("info");
-
-  P_ERR("hello\n");
-
-  ASSERT(0);
-  abort();
+  // GLOBAL_TEST_P_MACROS();
   
   TIMER_START(" -- program init -- ");
 

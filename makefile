@@ -12,17 +12,16 @@ clean: core_clean editor_clean game_clean
 
 # --- core ---
 
+# CC_ARGS: -DPF_PRINT_LOCATION 
+
 EDITOR_CORE_NAME ="lib_mooh_core_editor.a" 
-EDITOR_CC_ARGS   ="-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DDEBUG_OPENGL -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"
-# EDITOR_CC_ARGS   ="-DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"
+EDITOR_CC_ARGS   ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DDEBUG_OPENGL -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"
 EDITOR_CORE_BIN		 ="bin_core_editor"
 
 GAME_CORE_NAME 	 ="lib_mooh_core.a" 
-# GAME_CC_ARGS     ="-DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG"
 GAME_CC_ARGS     ="-DASSETM_NO_ZIP"
 GAME_CORE_BIN		 ="bin_core_game"
 
-# ASSET_PATH			 = -DASSET_PATH=\"../assets/\"
 ASSET_PATH			 ="/Workspace/C/mooh_engine/assets/"
 
 # compile and link to .a
@@ -43,16 +42,16 @@ core_clean_game:
 
 # compile and run editor
 editor: 
-	@$(MAKE) -s -C make -f makefile_editor run ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_editor run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 
 # clean .o and .exe
 editor_clean:
-	@$(MAKE) -s -C make -f makefile_editor clean ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_editor clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 # just make dont run
 editor_make: 
-	@$(MAKE) -s -C make -f makefile_editor ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_editor ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 
 # --- game ---

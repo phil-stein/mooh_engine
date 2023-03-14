@@ -6,8 +6,11 @@
 # compiler plus flags, -g: debug info, -Wall: all warnings
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
-CC         = @gcc -g -Wall -DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE -DASSET_PATH=\"$(ASSET_PATH)\"
-CC_NO_WARN = @gcc
+# CC         = @gcc -g -Wall -DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE -DASSET_PATH=\"$(ASSET_PATH)\"
+CC         			= @gcc -g -Wall 
+CC_NO_WARN 			= @gcc
+CC							+= $(CC_ARGS)
+CC							+= -DASSET_PATH=\"$(ASSET_PATH)\"
 
 BUILD_DIR = ..\build
 

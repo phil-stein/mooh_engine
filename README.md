@@ -116,7 +116,7 @@ main resources:
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
   - [ ] add missing P_TYPE() funcs to global.h
-  - [ ] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
+  - [x] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
   - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
   - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
   - [ ] make the _file & _line macro and compile out ?
