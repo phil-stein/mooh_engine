@@ -179,7 +179,7 @@ void renderer_extra_draw_scene_outline()
   
   if (e->point_light_idx >= 0 && e->mesh < 0)                    // if no mesh, but is pointlight
   { 
-    mesh = assetm_get_mesh("gizmos/lightbulb.fbx"); 
+    mesh = assetm_get_mesh("gizmos/lightbulb"); 
     // @TODO: rot & scl should be the macro in editor/stylesheet.h, buts thats a dependency
     renderer_direct_draw_mesh_textured(e->pos, VEC3_XYZ(90, 0, 0), VEC3(2.35f), mesh, tex, RGB_F_RGB(1));
   }           

@@ -96,31 +96,31 @@ typedef void (empty_callback)(void);
 
 #define PF(...)		  printf(__VA_ARGS__)
 #define P(msg)		  PF("%s\n", msg)
-#define P_INFO(msg) PF("[%s, %d] %s\n", __FILE__, __LINE__, msg)
+#define P_INFO(msg) PF_COLOR(PF_YELLOW); PF("[INFO] "); PF_STYLE_RESET(); PF("%s\n", msg); PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); PF(" -> file: %s, line: %d\n", __FILE__, __LINE__); PF_STYLE_RESET()
 
 // draw --- line as long as the current console is wide, only works on windows
 #define P_LINE()    { int w, h; io_util_get_console_size_win(&w, &h); for (int i = 0; i < w -1; ++i) { PF("-"); } PF("\n"); }
 
-#define P_SIGNED(v) 	PF("%s: %d\n", #v, v)
-#define P_INT(v) 	    P_SIGNED((v)) 
-#define P_S32(v) 	    P_SIGNED((v)) 
-#define P_S16(v) 	    P_SIGNED((v)) 
-#define P_S8(v) 	    P_SIGNED((v)) 
-#define P_UNSIGNED(v) PF("%s: %u\n", #v, v)
-#define P_U32(v)      P_UNSIGNED((v))
-#define P_U16(v)      P_UNSIGNED((v))
-#define P_U8(v)       P_UNSIGNED((v))
+#define P_SIGNED(v) 	PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": %d\n", (v))
+#define P_INT(v) 	    P_SIGNED(v)
+#define P_S32(v) 	    P_SIGNED(v) 
+#define P_S16(v) 	    P_SIGNED(v) 
+#define P_S8(v) 	    P_SIGNED(v) 
+#define P_UNSIGNED(v) PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": %u\n", (v))
+#define P_U32(v)      P_UNSIGNED(v)
+#define P_U16(v)      P_UNSIGNED(v)
+#define P_U8(v)       P_UNSIGNED(v)
 
-#define P_F32(v) 	    PF("%s: %f\n", #v, v)
-#define P_BOOL(v) 	  PF("%s: %s\n", #v, STR_BOOL(v))
+#define P_F32(v) 	    PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": %f\n", (v))
+#define P_BOOL(v) 	  PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": %s\n", STR_BOOL(v))
 
-#define P_CHAR(v) 	  PF("%s: %c\n", #v, (char)(v))
-#define P_STR(v) 	    PF("%s: \"%s\"\n", #v, v)
-#define P_TXT(txt)  PF("%s:\n%s\n", #txt, txt)
+#define P_CHAR(v) 	  PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": '%c'\n", (char)(v))
+#define P_STR(v) 	    PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(": \"%s\"\n", (v)) 
+#define P_TXT(v)      PF_COLOR(PF_CYAN); PF("%s", #v); PF_STYLE_RESET(); PF(":\n%s\n", (v))    
 
 // #define P_ERR(msg)	PF("[ERROR] %s\n -> file: %s, line: %d\n", msg, __FILE__, __LINE__)
-#define P_ERR(...)	PF("[ERROR] "); PF(__VA_ARGS__); PF(" -> file: %s, line: %d\n", __FILE__, __LINE__)
-#define ASSERT(c) if(!(c)) { PF("[ASSERT] '%s'\n -> file: %s, line: %d\n", #c, __FILE__, __LINE__); abort(); }
+#define P_ERR(...)	PF_COLOR(PF_RED); PF("[ERROR] "); PF_MODE_RESET(); PF(__VA_ARGS__); PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); PF(" -> file: %s, line: %d\n", __FILE__, __LINE__); PF_STYLE_RESET()
+#define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); PF("[ASSERT]" ); PF_MODE_RESET(); PF("'%s'\n", #c); PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); PF(" -> file: %s, line: %d\n", __FILE__, __LINE__); PF_STYLE_RESET(); abort(); }
 // #define ERR(msg)  P_ERR(msg); abort();
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
@@ -168,6 +168,8 @@ typedef enum pf_bg
 #define PF_MODE(style, fg, bg)   PF("\033[%d;%d;%dm", style, fg, bg)
 #define PF_STYLE(style, color)   PF("\033[%d;%dm", style, color)
 #define PF_COLOR(color)          PF_STYLE(PF_NORMAL, color)
+#define PF_MODE_RESET()          PF_MODE(PF_NORMAL, PF_WHITE, PF_BG_BLACK)
+#define PF_STYLE_RESET()         PF_STYLE(PF_NORMAL, PF_WHITE)
 
 
 #define P_C_VERSION()                     \

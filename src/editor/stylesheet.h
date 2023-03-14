@@ -11,7 +11,7 @@
 
 #define GIZMO_POINT_LIGHT_ROT               VEC3_XYZ(90, 0, 0)
 #define GIZMO_POINT_LIGHT_SCL               VEC3(2.35f)
-#define GIZMO_POINT_LIGHT_MESH              "gizmos/lightbulb.fbx"
+#define GIZMO_POINT_LIGHT_MESH              "gizmos/lightbulb"
 
 // --- info --- 
 

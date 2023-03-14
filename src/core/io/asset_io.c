@@ -232,13 +232,13 @@ texture_t asset_io_load_texture(const char* name, bool srgb)
 texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
 {
   // PF("[tex] | %s |\n", name);
-  TIMER_START_COUNTER("read texture file |");
+  // TIMER_START_COUNTER("read texture file |");
 
   int length = 0;
   u8* buffer = file_io_read_bytes(path, &length);
   TIMER_STOP();
 
-  TIMER_START_COUNTER("make texture      |");
+  // TIMER_START_COUNTER("make texture      |");
   u8* pixels;
   u32 w, h, channels;
   asset_io_deserialize_texture(buffer, &pixels, &w, &h, &channels);
@@ -260,13 +260,13 @@ texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
 texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb, u32 target_channels)
 {
   // PF("[tex] | %s |\n", path);
-  TIMER_START_COUNTER("read texture file |");
+  // TIMER_START_COUNTER("read texture file |");
 
   int length = 0;
   u8* buffer = file_io_read_bytes(path, &length);
   TIMER_STOP();
 
-  TIMER_START_COUNTER("make texture      |");
+  // TIMER_START_COUNTER("make texture      |");
   u8* pixels;
   u32 w, h, channels;
   asset_io_deserialize_texture_formatted(buffer, target_channels, &pixels, &w, &h, &channels);
