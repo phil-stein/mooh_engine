@@ -3,6 +3,7 @@
 #include "core/io/file_io.h"
 #include "core/io/asset_io.h"
 #include "core/debug/debug_opengl.h"
+#include "core/debug/debug_timer.h"
 
 #include "stb/stb_ds.h"
 
@@ -54,22 +55,29 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   thread_t thread_arr[THREAD_MAX];
   u32 thread_arr_len = 0;
   u32 tex_idx = 0;
+  P_U32(tex_arr_len);
   while (tex_idx < tex_arr_len) // keep doing X threads / textures at a time until all are done
   {
+    TIMER_START(" -- start loading");
     for (u32 i = 0; i < THREAD_MAX && tex_idx < tex_arr_len; ++i) // start X textures
     {
       // PF("[threadm] start loaded \"%s\"\n", tex_arr[tex_idx].name);
       thread_arr[i] = threadm_start_load_texture_file(tex_arr[tex_idx].name, tex_arr[tex_idx].srgb, &args_arr[i]);
       thread_arr_len++;
       tex_idx++;
+      PF("started load: %d\n", tex_idx);
     }
+    TIMER_STOP_PRINT();
+    TIMER_START(" -- join threads");
     // wait till all threads finished
     for (u32 i = 0; i < thread_arr_len; ++i) 
     {
       threadm_join(&thread_arr[i]);
+      PF("joined thread: %d\n", i);
     }
     ASSERT(total_thread_count == 0);  // 0 means only main thread
-    
+    TIMER_STOP_PRINT();
+    TIMER_START(" -- create textures");
     // use data to register with opengl
     u32 i = 0;
     for (i = 0; i < thread_arr_len; ++i)  // create the X loaded textures
@@ -88,13 +96,16 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
       //    so -4 +1 is the same +0, +1, +2, +3, that the first loop has
       //    which wrote the data were accesing
       assetm_overwrite_texture_idx(tex_arr[tex_idx -thread_arr_len +i].idx, &t); 
+      PF("created: %d\n", tex_idx);
     }
-    
+    TIMER_STOP_PRINT();
+    TIMER_START(" -- destroy threads");
     for (u32 i = 0; i < thread_arr_len; ++i)
     {
       threadm_destroy(&thread_arr[i]);
     }
     thread_arr_len = 0;
+    TIMER_STOP_PRINT();
     
     // for (u32 i = 0; i < THREAD_MAX; ++i)
     // {
@@ -102,6 +113,7 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
     //   args_arr[i].buffer = NULL;
     // }
   }
+  ASSERT(tex_idx == tex_arr_len); // loaded all textures
 
   // free the passed array
   ARRFREE(tex_arr);

@@ -8,8 +8,8 @@
 #include "stb/stb_ds.h"
 
 
-debug_draw_t* queue = NULL;
-int           queue_len = 0;
+debug_draw_t* queue_arr = NULL;
+int           queue_arr_len = 0;
 
 int blank_tex;
 int sphere_mesh;
@@ -24,42 +24,42 @@ void debug_draw_init_func()
 void debug_draw_update_func()
 {
   texture_t* t = assetm_get_texture_by_idx(blank_tex);
-  for (int i = 0; i < queue_len; ++i)
+  for (int i = 0; i < queue_arr_len; ++i)
   {
-      if (queue[i].type == DEBUG_DRAW_SPHERE)
+      if (queue_arr[i].type == DEBUG_DRAW_SPHERE)
       {
         mesh_t* m = assetm_get_mesh("sphere");
-        if (queue[i].is_model)
-        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
+        if (queue_arr[i].is_model)
+        { renderer_direct_draw_mesh_textured_mat(queue_arr[i].model, m, t, queue_arr[i].tint); }
         else
-        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue_arr[i].pos, queue_arr[i].rot, queue_arr[i].scl, m, t, queue_arr[i].tint); }
       }
-      else if (queue[i].type == DEBUG_DRAW_LINE)
+      else if (queue_arr[i].type == DEBUG_DRAW_LINE)
       {
-        renderer_direct_draw_line(queue[i].pos, queue[i].rot, queue[i].tint, queue[i].scl[0]);  // using rot as pos2
+        renderer_direct_draw_line(queue_arr[i].pos, queue_arr[i].rot, queue_arr[i].tint, queue_arr[i].scl[0]);  // using rot as pos2
       }
-      else if (queue[i].type == DEBUG_DRAW_MESH)
+      else if (queue_arr[i].type == DEBUG_DRAW_MESH)
       {
-        mesh_t* m = assetm_get_mesh_by_idx(queue[i].mesh);
-        if (queue[i].is_model)
-        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, t, queue[i].tint); }
+        mesh_t* m = assetm_get_mesh_by_idx(queue_arr[i].mesh);
+        if (queue_arr[i].is_model)
+        { renderer_direct_draw_mesh_textured_mat(queue_arr[i].model, m, t, queue_arr[i].tint); }
         else 
-        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, t, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue_arr[i].pos, queue_arr[i].rot, queue_arr[i].scl, m, t, queue_arr[i].tint); }
       }
-      else if (queue[i].type == DEBUG_DRAW_MESH_TEX)
+      else if (queue_arr[i].type == DEBUG_DRAW_MESH_TEX)
       {
-        mesh_t*      m = assetm_get_mesh_by_idx(queue[i].mesh);
-        texture_t* tex = assetm_get_texture_by_idx(queue[i].tex);
-        if (queue[i].is_model)
-        { renderer_direct_draw_mesh_textured_mat(queue[i].model, m, tex, queue[i].tint); }
+        mesh_t*      m = assetm_get_mesh_by_idx(queue_arr[i].mesh);
+        texture_t* tex = assetm_get_texture_by_idx(queue_arr[i].tex);
+        if (queue_arr[i].is_model)
+        { renderer_direct_draw_mesh_textured_mat(queue_arr[i].model, m, tex, queue_arr[i].tint); }
         else 
-        { renderer_direct_draw_mesh_textured(queue[i].pos, queue[i].rot, queue[i].scl, m, tex, queue[i].tint); }
+        { renderer_direct_draw_mesh_textured(queue_arr[i].pos, queue_arr[i].rot, queue_arr[i].scl, m, tex, queue_arr[i].tint); }
       }
 
   }
-  ARRFREE(queue);
-  queue = NULL;
-  queue_len = 0;  // reset for next frame
+  ARRFREE(queue_arr);
+  queue_arr = NULL;
+  queue_arr_len = 0;  // reset for next frame
 }
 
 void debug_draw_sphere_register_func(vec3 pos, float scl, rgbf tint)
@@ -72,8 +72,8 @@ void debug_draw_sphere_register_func(vec3 pos, float scl, rgbf tint)
   vec3_copy(VEC3(scl), d.scl);
   vec3_copy(tint, d.tint);
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_sphere_register_model_func(mat4 model, float scl, rgbf tint)
@@ -84,8 +84,8 @@ void debug_draw_sphere_register_model_func(mat4 model, float scl, rgbf tint)
   mat4_copy(model, d.model);
   vec3_copy(tint, d.tint);
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_line_register_func(vec3 pos0, vec3 pos1, rgbf tint)
@@ -98,8 +98,8 @@ void debug_draw_line_register_func(vec3 pos0, vec3 pos1, rgbf tint)
   vec3_copy(VEC3(DEBUG_DEFAULT_LINE_WIDTH), d.scl);  // default width
   vec3_copy(tint, d.tint);
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_line_register_width_func(vec3 pos0, vec3 pos1, rgbf tint, f32 width)
@@ -112,8 +112,8 @@ void debug_draw_line_register_width_func(vec3 pos0, vec3 pos1, rgbf tint, f32 wi
   vec3_copy(VEC3(width), d.scl);
   vec3_copy(tint, d.tint);
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_mesh_register_func(vec3 pos, vec3 rot, vec3 scl, rgbf tint, int mesh)
@@ -127,8 +127,8 @@ void debug_draw_mesh_register_func(vec3 pos, vec3 rot, vec3 scl, rgbf tint, int 
   vec3_copy(tint, d.tint);
   d.mesh = mesh;
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_mesh_register_model_func(mat4 model, rgbf tint, int mesh)
@@ -140,8 +140,8 @@ void debug_draw_mesh_register_model_func(mat4 model, rgbf tint, int mesh)
   vec3_copy(tint, d.tint);
   d.mesh = mesh;
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 
@@ -155,8 +155,8 @@ void debug_draw_mesh_textured_register_model_func(mat4 model, rgbf tint, int mes
   d.mesh = mesh;
   d.tex  = tex;
 
-  arrput(queue, d);
-  queue_len++;
+  arrput(queue_arr, d);
+  queue_arr_len++;
 }
 
 void debug_draw_box_register_func(vec3 points[8], rgbf color)

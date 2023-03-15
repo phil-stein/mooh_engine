@@ -7,16 +7,16 @@
 
 #ifdef DEBUG_TIMER
 
-timer_t* timer_stack = NULL;	// stack of all active timers
-int timer_stack_len = 0;	    // ^ length
+timer_t* timer_stack_arr = NULL;	// stack of all active timers
+int timer_stack_arr_len = 0;	    // ^ length
 
-timer_t* cur_state_timer_stack = NULL; // array with the states of the timers popped last frame
-int cur_state_timer_stack_len = 0;	   // ^ length
-timer_t* state_timer_stack = NULL;     // array with the states of the timers popped last frame
-int state_timer_stack_len = 0;	       // ^ length
+timer_t* cur_state_timer_stack_arr = NULL; // array with the states of the timers popped last frame
+int cur_state_timer_stack_arr_len = 0;	   // ^ length
+timer_t* state_timer_stack_arr = NULL;     // array with the states of the timers popped last frame
+int state_timer_stack_arr_len = 0;	       // ^ length
 
-timer_t* static_timer_stack = NULL; // array with the states of timer that stay once added
-int static_timer_stack_len = 0;         // ^ length
+timer_t* static_timer_stack_arr = NULL; // array with the states of timer that stay once added
+int static_timer_stack_arr_len = 0;         // ^ length
 
 struct { char* key; f32 value; }* timer_counters_sh = NULL;  // hashmap with all timer counters
 u32 timer_counter_hm_len = 0;
@@ -52,28 +52,28 @@ void debug_timer_start_timer_func(char* name, bool counter_act, char* counter_na
   t.line = line;
 	// t.func = func;
 
-	arrpush(timer_stack, t);
-	timer_stack_len++;
+	arrpush(timer_stack_arr, t);
+	timer_stack_arr_len++;
 	
   DEBUG_TIMER_PF("started timer | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line);
 }
 
 bool debug_timer_can_stop_timer()
 {
-	return timer_stack_len > 0;
+	return timer_stack_arr_len > 0;
 }
 
 timer_t debug_timer_stop_timer_func(const char* _file, const int _line)
 {
   // return empty if no timer in stack
-	if (timer_stack_len <= 0) { timer_t t; t.name = "x"; t.time = 0.0; return t; }
+	if (timer_stack_arr_len <= 0) { timer_t t; t.name = "x"; t.time = 0.0; return t; }
 
   // remove from arr / stack
-	timer_t t = timer_stack[timer_stack_len - 1]; // get last elem // @NOTE: arrpop() does the same
-	arrdel(timer_stack, timer_stack_len -1);  // delete last elem
+	timer_t t = timer_stack_arr[timer_stack_arr_len - 1]; // get last elem // @NOTE: arrpop() does the same
+	arrdel(timer_stack_arr, timer_stack_arr_len -1);  // delete last elem
 	t.time = glfwGetTime() - t.time; // get the delta t
 	t.time *= 1000; // bring to millisecond range
-	timer_stack_len--;
+	timer_stack_arr_len--;
 
   // check for counter, put in arr
   if (t.counter_act)
@@ -89,8 +89,8 @@ timer_t debug_timer_stop_timer_func(const char* _file, const int _line)
   }
 
 	// timer state
-	arrput(cur_state_timer_stack, t);
-	cur_state_timer_stack_len++;
+	arrput(cur_state_timer_stack_arr, t);
+	cur_state_timer_stack_arr_len++;
 	DEBUG_TIMER_PF("stoppped timer | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line, _file, _line);
 
 	return t;
@@ -106,8 +106,8 @@ f64  debug_timer_stop_timer_print_func(const char* _file, const int _line)
 f64  debug_timer_stop_timer_static_func(const char* _file, const int _line)
 {
 	timer_t t = debug_timer_stop_timer_func(__FILE__, __LINE__);
-	arrput(static_timer_stack, t);
-  static_timer_stack_len++;
+	arrput(static_timer_stack_arr, t);
+  static_timer_stack_arr_len++;
   DEBUG_TIMER_PF("stopped static timer | %s |\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.file, t.line, _file, _line);
   return t.time;
 }
@@ -115,8 +115,8 @@ f64  debug_timer_stop_timer_static_func(const char* _file, const int _line)
 f64  debug_timer_stop_timer_static_print_func(const char* _file, const int _line)
 {
 	timer_t t = debug_timer_stop_timer_func(__FILE__, __LINE__);
-	arrput(static_timer_stack, t);
-  static_timer_stack_len++;
+	arrput(static_timer_stack_arr, t);
+  static_timer_stack_arr_len++;
 	// PF("[TIMER] | %s | %.2fms, %.2fsec\n", t.name, t.time, t.time * 0.001f);
 	PF("[TIMER] | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line, _file, _line);
   return t.time;
@@ -136,29 +136,29 @@ void debug_timer_counter_print_func(char* counter_name)
 
 timer_t* debug_timer_get_all(int* len)
 {
-	*len = state_timer_stack_len;
-	return state_timer_stack;
+	*len = state_timer_stack_arr_len;
+	return state_timer_stack_arr;
 }
 
 timer_t* debug_timer_get_all_static(int* len)
 {
-	*len = static_timer_stack_len;
-	return static_timer_stack;
+	*len = static_timer_stack_arr_len;
+	return static_timer_stack_arr;
 }
 
 void debug_timer_clear_state()
 {
 	// switch last / current frame timer state stack
-	timer_t* tmp				    = state_timer_stack;
-	int      tmp_len			  = state_timer_stack_len;
-	state_timer_stack		    = cur_state_timer_stack;
-	state_timer_stack_len	  = cur_state_timer_stack_len;
-	cur_state_timer_stack	  = tmp;
-	cur_state_timer_stack_len = tmp_len;
+	timer_t* tmp				    = state_timer_stack_arr;
+	int      tmp_len			  = state_timer_stack_arr_len;
+	state_timer_stack_arr		    = cur_state_timer_stack_arr;
+	state_timer_stack_arr_len	  = cur_state_timer_stack_arr_len;
+	cur_state_timer_stack_arr	  = tmp;
+	cur_state_timer_stack_arr_len = tmp_len;
 
-	ARRFREE(cur_state_timer_stack);
-	cur_state_timer_stack = NULL;
-	cur_state_timer_stack_len = 0;
+	ARRFREE(cur_state_timer_stack_arr);
+	cur_state_timer_stack_arr = NULL;
+	cur_state_timer_stack_arr_len = 0;
 }
 
 #else

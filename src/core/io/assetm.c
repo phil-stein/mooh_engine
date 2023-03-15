@@ -21,12 +21,12 @@ struct zip_t* zip_meshes;
 
 // ---- textures ----
 // value: index of texture in 'tex', key: name of texture 
-struct { char* key;  int value; }* texture_idxs = NULL;
-int texture_idxs_len = 0;
+struct { char* key;  int value; }* texture_idxs_sh = NULL;
+int texture_idxs_sh_len = 0;
 
 // array holding textures
-texture_t* texture_data = NULL;
-int texture_data_len = 0;
+texture_t* texture_data_arr = NULL;
+int texture_data_arr_len = 0;
 
 // array with the textures registered for loading but not filled with data yet
 texture_load_data_t* texture_register_arr = NULL;
@@ -35,30 +35,30 @@ u32 texture_register_arr_len = 0;
 
 // ---- meshes ----
 // value: index of texture in 'tex', key: name of texture 
-struct { char* key;  int value; }* mesh_idxs = NULL;
-int mesh_idxs_len = 0;
+struct { char* key;  int value; }* mesh_idxs_sh = NULL;
+int mesh_idxs_sh_len = 0;
 
 // array holding textures
-mesh_t* mesh_data = NULL;
-int mesh_data_len = 0;
+mesh_t* mesh_data_arr = NULL;
+int mesh_data_arr_len = 0;
 
 // ---- shaders ----
 // value: index of texture in 'tex', key: name of texture 
-struct { int key;  int value; }* shader_idxs = NULL;
-int shader_idxs_len = 0;
+struct { int key;  int value; }* shader_idxs_sh = NULL;
+int shader_idxs_sh_len = 0;
 
 // array holding textures
-shader_t* shader_data = NULL;
-int shader_data_len = 0;
+shader_t* shader_data_arr = NULL;
+int shader_data_arr_len = 0;
 
 // ---- materials ----
 // value: index of texture in 'tex', key: name of texture 
-struct { int key;  int value; }* material_idxs = NULL;
-int material_idxs_len = 0;
+struct { int key;  int value; }* material_idxs_sh = NULL;
+int material_idxs_sh_len = 0;
 
 // array holding textures
-material_t* material_data = NULL;
-int material_data_len = 0;
+material_t* material_data_arr = NULL;
+int material_data_arr_len = 0;
 
 
 
@@ -82,15 +82,15 @@ void assetm_init()
   // g = rand_u64(); P_U64(g);
  
   // set default return if key doesn't exist
-  shdefault(texture_idxs, -1);
-  shdefault(mesh_idxs, -1);
-  hmdefault(shader_idxs, -1);
-  hmdefault(material_idxs, -1);
+  shdefault(texture_idxs_sh, -1);
+  shdefault(mesh_idxs_sh, -1);
+  hmdefault(shader_idxs_sh, -1);
+  hmdefault(material_idxs_sh, -1);
   // set start length
-  arrsetcap(texture_data,  MAX_ITEMS);
-  arrsetcap(mesh_data,     MAX_ITEMS);
-  arrsetcap(shader_data,   MAX_ITEMS);
-  arrsetcap(material_data, MAX_ITEMS);
+  arrsetcap(texture_data_arr,  MAX_ITEMS);
+  arrsetcap(mesh_data_arr,     MAX_ITEMS);
+  arrsetcap(shader_data_arr,   MAX_ITEMS);
+  arrsetcap(material_data_arr, MAX_ITEMS);
 
   // open zip archive
   char path[ASSET_PATH_MAX + 64];
@@ -107,14 +107,14 @@ void assetm_cleanup()
   zip_close(zip_meshes);
   
   // free the allocated memory
-  SHFREE(texture_idxs);
-  ARRFREE(texture_data);
-  SHFREE(mesh_idxs);
-  ARRFREE(mesh_data);
-  HMFREE(shader_idxs);
-  ARRFREE(shader_data);
-  HMFREE (material_idxs);
-  ARRFREE(material_data);
+  SHFREE(texture_idxs_sh);
+  ARRFREE(texture_data_arr);
+  SHFREE(mesh_idxs_sh);
+  ARRFREE(mesh_data_arr);
+  HMFREE(shader_idxs_sh);
+  ARRFREE(shader_data_arr);
+  HMFREE (material_idxs_sh);
+  ARRFREE(material_data_arr);
 }
 
 // textures ---------------------------------------------------------------------------------------
@@ -142,24 +142,24 @@ int assetm_register_texture_for_load(const char* name, bool srgb)
   MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   
-  shput(texture_idxs, name_cpy, texture_data_len);
-  arrput(texture_data, t);
-  texture_data_len++;
+  shput(texture_idxs_sh, name_cpy, texture_data_arr_len);
+  arrput(texture_data_arr, t);
+  texture_data_arr_len++;
 
   texture_load_data_t data;
   data.srgb = srgb;
-  data.idx  = texture_data_len -1;
+  data.idx  = texture_data_arr_len -1;
   data.name = name_cpy;
   arrput(texture_register_arr, data);
   texture_register_arr_len++;
 
   // PF("[tex registered] %d | \"%s\"\n", data.idx, data.name);
 
-  return texture_data_len -1;
+  return texture_data_arr_len -1;
 }
 void assetm_overwrite_texture_idx(int idx, texture_t* t)
 {
-  ASSERT(idx >= 0 && idx < texture_data_len);
+  ASSERT(idx >= 0 && idx < texture_data_arr_len);
   
   texture_t* tex = assetm_get_texture_by_idx(idx);
   tex->loaded = true;
@@ -171,26 +171,26 @@ void assetm_overwrite_texture_idx(int idx, texture_t* t)
 
 texture_t* assetm_get_texture_by_idx(int idx)
 {
-  return &texture_data[idx];
+  return &texture_data_arr[idx];
 }
 int assetm_get_texture_idx_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
-  if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
+  if (shget(texture_idxs_sh, name) < 0) // @NOTE: changed from '<='
   {
     if (core_data->use_async_asset_arrs)
     { return assetm_register_texture_for_load(name, srgb); }
     else
     { assetm_create_texture_dbg(name, srgb, _file, _line); }
   }
-  return shget(texture_idxs, name);
+  return shget(texture_idxs_sh, name);
 }
 texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
-  if (shget(texture_idxs, name) < 0) // @NOTE: changed from '<='
+  if (shget(texture_idxs_sh, name) < 0) // @NOTE: changed from '<='
   {
     assetm_create_texture_dbg(name, srgb, _file, _line);
   }
-  return &texture_data[shget(texture_idxs, name)];
+  return &texture_data_arr[shget(texture_idxs_sh, name)];
 }
 void assetm_create_texture_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
@@ -266,15 +266,15 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* _file, c
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  shput(texture_idxs, name_cpy, texture_data_len);
-  arrput(texture_data, t);
-  texture_data_len++;
+  shput(texture_idxs_sh, name_cpy, texture_data_arr_len);
+  arrput(texture_data_arr, t);
+  texture_data_arr_len++;
 
   ASSETM_PF("[assetm] loaded texture '%s', handle: '%d'\n", name, handle);
-  // PF("[assetm] created texture: %s\n  -> idx: %d\n", name, shget(texture_idxs, name));
+  // PF("[assetm] created texture: %s\n  -> idx: %d\n", name, shget(texture_idxs_sh, name));
 }
 
-void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* _file, const int _line)
+void assetm_get_texture_data_arr_dbg(const char* name, int* width, int* height, int* channel_num, u8** pixels, const char* _file, const int _line)
 {
   void*  buf = NULL;
   size_t buf_len = 0;
@@ -308,10 +308,10 @@ int assetm_add_texture(texture_t* tex, const char* name)
   
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  shput(texture_idxs, name_cpy, texture_data_len);
-  arrput(texture_data, *tex);
-  texture_data_len++;
-  return texture_data_len -1;
+  shput(texture_idxs_sh, name_cpy, texture_data_arr_len);
+  arrput(texture_data_arr, *tex);
+  texture_data_arr_len++;
+  return texture_data_arr_len -1;
 }
 
 
@@ -319,24 +319,24 @@ int assetm_add_texture(texture_t* tex, const char* name)
 
 mesh_t* assetm_get_mesh_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ERR_CHECK(idx >= 0 && idx < mesh_data_len, "called from file: '%s' line: %d\n", _file, _line);
-  return &mesh_data[idx];
+  ERR_CHECK(idx >= 0 && idx < mesh_data_arr_len, "called from file: '%s' line: %d\n", _file, _line);
+  return &mesh_data_arr[idx];
 }
 int assetm_get_mesh_idx_dbg(const char* name, const char* _file, const int _line)
 {  
-  if (shget(mesh_idxs, name) < 0) // @NOTE: changed from '<='
+  if (shget(mesh_idxs_sh, name) < 0) // @NOTE: changed from '<='
   {
     assetm_create_mesh_dbg(name, _file, _line);
   }
-  return shget(mesh_idxs, name);
+  return shget(mesh_idxs_sh, name);
 }
 mesh_t* assetm_get_mesh_dbg(const char* name, const char* _file, const int _line)
 {
-  if (shget(mesh_idxs, name) < 0) // @NOTE: changed from '<='
+  if (shget(mesh_idxs_sh, name) < 0) // @NOTE: changed from '<='
   {
     assetm_create_mesh_dbg(name, _file, _line);
   }
-  return &mesh_data[shget(mesh_idxs, name)];
+  return &mesh_data_arr[shget(mesh_idxs_sh, name)];
 }
 void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line)
 {
@@ -394,11 +394,11 @@ void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  shput(mesh_idxs, name_cpy, mesh_data_len);
-  arrput(mesh_data, mesh);
-  mesh_data_len++;
+  shput(mesh_idxs_sh, name_cpy, mesh_data_arr_len);
+  arrput(mesh_data_arr, mesh);
+  mesh_data_arr_len++;
 
-  // PF("[assetm] created mesh: %s\n  -> name: %d\n", name, shget(mesh_idxs, name));
+  // PF("[assetm] created mesh: %s\n  -> name: %d\n", name, shget(mesh_idxs_sh, name));
 }
 int assetm_add_mesh(mesh_t* mesh, const char* name)
 {
@@ -409,36 +409,36 @@ int assetm_add_mesh(mesh_t* mesh, const char* name)
   
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  shput(mesh_idxs, name_cpy, mesh_data_len);
-  arrput(mesh_data, *mesh);
-  mesh_data_len++;
-  return mesh_data_len -1;
+  shput(mesh_idxs_sh, name_cpy, mesh_data_arr_len);
+  arrput(mesh_data_arr, *mesh);
+  mesh_data_arr_len++;
+  return mesh_data_arr_len -1;
 }
 
 // shaders ----------------------------------------------------------------------------------------
 
 shader_t* assetm_get_shader_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ERR_CHECK(idx >= 0 && idx < shader_data_len, "index: %d, shader_data_len: %d\n -> [FILE] '%s', [LINE] %d", idx, shader_data_len, _file, _line);
-  return &shader_data[idx];
+  ERR_CHECK(idx >= 0 && idx < shader_data_arr_len, "index: %d, shader_data_arr_len: %d\n -> [FILE] '%s', [LINE] %d", idx, shader_data_arr_len, _file, _line);
+  return &shader_data_arr[idx];
 }
 int assetm_get_shader_idx_dbg(shader_template_type type, const char* _file, const int _line)
 {
   ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
-  if (hmget(shader_idxs, type) < 0) // @NOTE: changed from '<='
+  if (hmget(shader_idxs_sh, type) < 0) // @NOTE: changed from '<='
   {
     assetm_create_shader_dbg(type, _file, _line);
   }
-  return hmget(shader_idxs, type);
+  return hmget(shader_idxs_sh, type);
 }
 shader_t* assetm_get_shader_dbg(shader_template_type type, const char* _file, const int _line)
 {
   ERR_CHECK(type != SHADER_TEMPLATE_NONE, "not a valid shader template\n -> [FILE] '%s', [LINE] %d", _file, _line);
-  if (hmget(shader_idxs, type) < 0) // @NOTE: changed from '<='
+  if (hmget(shader_idxs_sh, type) < 0) // @NOTE: changed from '<='
   {
     assetm_create_shader_dbg(type, _file, _line);
   }
-  return &shader_data[hmget(shader_idxs, type)];
+  return &shader_data_arr[hmget(shader_idxs_sh, type)];
 }
 void assetm_create_shader_dbg(shader_template_type type, const char* _file, const int _line)
 {
@@ -449,11 +449,11 @@ void assetm_create_shader_dbg(shader_template_type type, const char* _file, cons
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  hmput(shader_idxs, type, shader_data_len);
-  arrput(shader_data, s);
-  shader_data_len++;
+  hmput(shader_idxs_sh, type, shader_data_arr_len);
+  arrput(shader_data_arr, s);
+  shader_data_arr_len++;
   
-  // PF("[assetm] created shader: %d\n  -> idx: %d\n", type, hmget(shader_idxs, type));
+  // PF("[assetm] created shader: %d\n  -> idx: %d\n", type, hmget(shader_idxs_sh, type));
 }
 shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const char* _file, const int _line)
 {
@@ -494,27 +494,27 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
 
 material_t* assetm_get_material_by_idx_dbg(int idx, const char* _file, const int _line)
 {
-  ERR_CHECK(idx >= 0 && idx < material_data_len, "wrong material idx\n  -> file: \"%s\", line: %d", _file, _line);
-  return &material_data[idx];
+  ERR_CHECK(idx >= 0 && idx < material_data_arr_len, "wrong material idx\n  -> file: \"%s\", line: %d", _file, _line);
+  return &material_data_arr[idx];
 }
 int assetm_get_material_idx(material_template_type type)
 {  
-  if (hmget(material_idxs, type) < 0)
+  if (hmget(material_idxs_sh, type) < 0)
   {
     assetm_create_material(type); 
   }
-  return hmget(material_idxs, type);
+  return hmget(material_idxs_sh, type);
 }
 material_t* assetm_get_material(material_template_type type)
 {
-  if (hmget(material_idxs, type) < 0)
+  if (hmget(material_idxs_sh, type) < 0)
   {
     assetm_create_material(type); 
   }
-  // int idx = hmget(material_idxs, type);
+  // int idx = hmget(material_idxs_sh, type);
   // PF("[mat | %d] material_idx: %d\n", type, idx);
-  // PF("[mat | %d] mat.albedo: %d\n", type, material_data[idx].albedo);
-  return &material_data[hmget(material_idxs, type)];
+  // PF("[mat | %d] mat.albedo: %d\n", type, material_data_arr[idx].albedo);
+  return &material_data_arr[hmget(material_idxs_sh, type)];
 }
 void assetm_create_material(material_template_type type)
 {
@@ -525,12 +525,12 @@ void assetm_create_material(material_template_type type)
 
   // put texture index in tex array into the value of the hashmap with the texture name as key 
   // and put the created texture into the tex array
-  hmput(material_idxs, type, material_data_len);
-  arrput(material_data, mat);
-  material_data_len++;
+  hmput(material_idxs_sh, type, material_data_arr_len);
+  arrput(material_data_arr, mat);
+  material_data_arr_len++;
 
   ASSETM_PF("[assetm] loaded material '%d'\n", type);
-  // int idx = hmget(material_idxs, type);
+  // int idx = hmget(material_idxs_sh, type);
   // PF("[assetm] created material: %d\n  -> idx: %d\n", type, idx);
 }
 

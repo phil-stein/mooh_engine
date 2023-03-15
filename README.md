@@ -100,7 +100,7 @@ main resources:
     - [ ] pool allocator    ?
     - [ ] chunk allocator   ?
     - [ ] randy memory pool ?
-  - [ ] figure out why core_data_init() is taking so long
+  - [x] figure out why core_data_init() is taking so long: shaders
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -118,7 +118,7 @@ main resources:
   - [ ] put apps in different folder than core/phys/etc.
   - [ ] add missing P_TYPE() funcs to global.h
   - [x] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
-  - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
+  - [x] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
   - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
   - [x] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h, ARRFREE(), HMFREE, SHFREE
   - [x] make data a lib as well
