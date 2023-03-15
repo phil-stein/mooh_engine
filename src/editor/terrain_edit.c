@@ -107,7 +107,7 @@ void terrain_edit_update()
           chunk->verts[idx0 +1] += y_sum * app_data->terrain_edit_smooth_scalar * app_data->terrain_edit_strength * core_data->delta_t;
         }
       }
-      arrfree(smooth_verts);
+      ARRFREE(smooth_verts);
 
       if (changed_verts) { terrain_update_chunk_verts(chunk_idx); }
     }

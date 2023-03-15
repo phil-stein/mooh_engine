@@ -107,14 +107,14 @@ void assetm_cleanup()
   zip_close(zip_meshes);
   
   // free the allocated memory
-  shfree(texture_idxs);
-  arrfree(texture_data);
-  shfree(mesh_idxs);
-  arrfree(mesh_data);
-  hmfree(shader_idxs);
-  arrfree(shader_data);
-  hmfree(material_idxs);
-  arrfree(material_data);
+  SHFREE(texture_idxs);
+  ARRFREE(texture_data);
+  SHFREE(mesh_idxs);
+  ARRFREE(mesh_data);
+  HMFREE(shader_idxs);
+  ARRFREE(shader_data);
+  HMFREE (material_idxs);
+  ARRFREE(material_data);
 }
 
 // textures ---------------------------------------------------------------------------------------

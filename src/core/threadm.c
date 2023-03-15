@@ -104,7 +104,7 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   }
 
   // free the passed array
-  arrfree(tex_arr);
+  ARRFREE(tex_arr);
   *tex_arr_ptr = NULL;
   *tex_arr_len_ptr = 0;
 }

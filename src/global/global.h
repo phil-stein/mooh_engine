@@ -214,7 +214,9 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define FREE(ptr)                ASSERT(ptr != NULL); free(ptr)                         
 
 // stb_ds
-#define ARRFREE(a)               ASSERT(a != NULL); arrfree(a); a = NULL  // @TODO:
+#define ARRFREE(a)               arrfree((a)); (a) = NULL  
+#define HMFREE(a)                hmfree((a));  (a) = NULL
+#define SHFREE(a)                shfree((a));  (a) = NULL
 
 // -- debug func --
 

@@ -156,7 +156,7 @@ void debug_timer_clear_state()
 	cur_state_timer_stack	  = tmp;
 	cur_state_timer_stack_len = tmp_len;
 
-	arrfree(cur_state_timer_stack);
+	ARRFREE(cur_state_timer_stack);
 	cur_state_timer_stack = NULL;
 	cur_state_timer_stack_len = 0;
 }

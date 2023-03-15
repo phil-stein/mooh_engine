@@ -183,9 +183,9 @@ terrain_chunk_t terrain_generate_chunk(vec2* vert_info, u32 x_len, u32 z_len, f3
   chunk.verts       = verts;
   chunk.verts_len   = arrlen(verts);
 #else
-  arrfree(verts);
+  ARRFREE(verts);
 #endif
-  arrfree(indices);
+  ARRFREE(indices);
 
   return chunk;
 }
@@ -202,7 +202,7 @@ void terrain_remove_chunk(u32 idx)
 
   // needeed for terrain_edit.c
 #ifdef EDITOR
-  arrfree(chunk->verts);
+  ARRFREE(chunk->verts);
   chunk->verts_len = 0;
 #endif
 

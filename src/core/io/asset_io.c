@@ -76,12 +76,12 @@ void asset_io_convert_mesh(const char* name)
 
   u8* buffer = NULL;
   asset_io_serialize_mesh(&buffer, verts, arrlen(verts), indices, arrlen(indices));
-  arrfree(verts);
-  arrfree(indices);
+  ARRFREE(verts);
+  ARRFREE(indices);
    
   SPRINTF(ASSET_PATH_MAX + 7 + ASSET_IO_NAME_MAX, path, "%smeshes/%s", core_data->asset_path, name_dest);
   file_io_write_bytes(path, buffer, arrlen(buffer));
-  arrfree(buffer);
+  ARRFREE(buffer);
 }
 
 void asset_io_serialize_mesh(u8** buffer, f32* verts, u32 verts_len, u32* indices, u32 indices_len)
@@ -119,8 +119,8 @@ mesh_t asset_io_load_mesh(const char* name)
   
   mesh_t mesh;
   mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
-  arrfree(verts);
-  arrfree(indices);
+  ARRFREE(verts);
+  ARRFREE(indices);
   // TIMER_STOP();
 
   return mesh;

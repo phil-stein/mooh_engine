@@ -49,7 +49,7 @@ void save_sys_write_scene_to_file(const char* name)
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 }
 
 void save_sys_load_scene_from_file(const char* name)
@@ -85,7 +85,7 @@ void save_sys_write_scene_to_state_buffer()
 
   strcpy(state_buffer_scene_name, cur_scene_name);
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 
   vec3_copy(core_data->cam.pos,   state_cam_pos);
   vec3_copy(core_data->cam.front, state_cam_orientation);
@@ -126,7 +126,7 @@ void save_sys_write_empty_scene_to_file()
   SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, "-_-_new_-_-");
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 }
 #endif
 
@@ -247,7 +247,7 @@ void save_sys_write_terrain_to_file(const char* name)
   SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 }
 void save_sys_load_terrain_from_file(const char* name)
 {

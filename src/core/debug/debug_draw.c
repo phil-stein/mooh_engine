@@ -57,7 +57,7 @@ void debug_draw_update_func()
       }
 
   }
-  arrfree(queue);
+  ARRFREE(queue);
   queue = NULL;
   queue_len = 0;  // reset for next frame
 }

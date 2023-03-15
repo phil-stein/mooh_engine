@@ -188,8 +188,8 @@ mesh_t mesh_load_from_memory(const void* data, size_t size, const char* name)
   
   mesh_t mesh;
   mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
-  arrfree(verts);
-  arrfree(indices);
+  ARRFREE(verts);
+  ARRFREE(indices);
 
   return mesh;
 }

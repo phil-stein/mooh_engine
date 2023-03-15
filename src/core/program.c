@@ -97,7 +97,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   
   strcpy(_title, window_get_title()); 
   
-  TIMER_STOP_STATIC_PRINT();  // program init timer
+  TIMER_STOP_STATIC();  // program init timer
 
   bool first_frame = true;
 	while (!core_data->program_quit && !glfwWindowShouldClose(core_data->window))

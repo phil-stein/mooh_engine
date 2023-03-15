@@ -121,7 +121,7 @@ void write_empty_scene_to_file(const char* name)
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
   BIN_PF("[bin] wrote empty scene to \"%s\"\n", path);
 
-  arrfree(buffer);
+  ARRFREE(buffer);
 }
 
 

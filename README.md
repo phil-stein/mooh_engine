@@ -120,7 +120,7 @@ main resources:
   - [ ] use _dbg funcs for materials in assetm
   - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
   - [ ] make the _file & _line macro and compile out ?
-  - [ ] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h
+  - [x] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h, ARRFREE(), HMFREE, SHFREE
   - [x] make data a lib as well
   - [ ] make most funcs _dbg error checked
     - [ ] make _dbg check a macro to set easy and compile out

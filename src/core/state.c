@@ -85,13 +85,11 @@ void state_clear_scene()
 {
   phys_clear_state();
 
-  arrfree(world);
+  ARRFREE(world);
   world_len = 0;
-  world     = NULL;
 
-  arrfree(world_dead);
+  ARRFREE(world_dead);
   world_dead_len = 0;
-  world_dead     = NULL;
 
   dir_lights_len   = 0;
   point_lights_len = 0;
