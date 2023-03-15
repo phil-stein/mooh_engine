@@ -66,7 +66,7 @@ void save_sys_load_scene_from_file(const char* name)
   ASSERT(strlen(name) < CUR_SCENE_NAME_MAX);
   strcpy(cur_scene_name, name);
 
-  free(buffer);
+  FREE(buffer);
 }
 
 #ifdef EDITOR
@@ -260,7 +260,7 @@ void save_sys_load_terrain_from_file(const char* name)
   
   save_sys_deserialize_terrain(buffer, &offset);
 
-  free(buffer);
+  FREE(buffer);
 }
 void save_sys_serialize_terrain(u8** buffer)
 {
@@ -315,7 +315,8 @@ void save_sys_deserialize_terrain_layout(u8* buffer, u32* offset, terrain_layout
   u32 height_len = TERRAIN_LAYOUT_VERT_INFO_LEN(core_data);
   
   serialization_deserialize_ivec2(buffer, offset, l->pos);
-  l->vert_info = malloc(height_len * sizeof(vec2));
+  l->vert_info;
+  MALLOC(l->vert_info, height_len * sizeof(vec2));
   for (u32 i = 0; i < height_len; ++i)
   {
     l->vert_info[i][0] = serialization_deserialize_f32(buffer, offset);  // height

@@ -54,6 +54,8 @@ void debug_timer_start_timer_func(char* name, bool counter_act, char* counter_na
 
 	arrpush(timer_stack, t);
 	timer_stack_len++;
+	
+  DEBUG_TIMER_PF("started timer | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line);
 }
 
 bool debug_timer_can_stop_timer()
@@ -61,7 +63,7 @@ bool debug_timer_can_stop_timer()
 	return timer_stack_len > 0;
 }
 
-timer_t debug_timer_stop_timer_func()
+timer_t debug_timer_stop_timer_func(const char* _file, const int _line)
 {
   // return empty if no timer in stack
 	if (timer_stack_len <= 0) { timer_t t; t.name = "x"; t.time = 0.0; return t; }
@@ -89,31 +91,34 @@ timer_t debug_timer_stop_timer_func()
 	// timer state
 	arrput(cur_state_timer_stack, t);
 	cur_state_timer_stack_len++;
+	DEBUG_TIMER_PF("stoppped timer | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line, _file, _line);
 
 	return t;
 }
 
-f64  debug_timer_stop_timer_print_func()
+f64  debug_timer_stop_timer_print_func(const char* _file, const int _line)
 {
-	timer_t t = debug_timer_stop_timer_func();
-	printf("[TIMER] | %s | %.2fms, %.2fsec\n", t.name, t.time, t.time * 0.001f);
+	timer_t t = debug_timer_stop_timer_func(__FILE__, __LINE__);
+	PF("[TIMER] | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line, _file, _line);
 	return t.time;
 }
 
-f64  debug_timer_stop_timer_static_func()
+f64  debug_timer_stop_timer_static_func(const char* _file, const int _line)
 {
-	timer_t t = debug_timer_stop_timer_func();
+	timer_t t = debug_timer_stop_timer_func(__FILE__, __LINE__);
 	arrput(static_timer_stack, t);
   static_timer_stack_len++;
+  DEBUG_TIMER_PF("stopped static timer | %s |\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.file, t.line, _file, _line);
   return t.time;
 }
 
-f64  debug_timer_stop_timer_static_print_func()
+f64  debug_timer_stop_timer_static_print_func(const char* _file, const int _line)
 {
-	timer_t t = debug_timer_stop_timer_func();
+	timer_t t = debug_timer_stop_timer_func(__FILE__, __LINE__);
 	arrput(static_timer_stack, t);
   static_timer_stack_len++;
-	printf("[TIMER] | %s | %.2fms, %.2fsec\n", t.name, t.time, t.time * 0.001f);
+	// PF("[TIMER] | %s | %.2fms, %.2fsec\n", t.name, t.time, t.time * 0.001f);
+	PF("[TIMER] | %s | %.2fms | %.2fsec\n -> started \"%s\", line: %d\n -> stopped \"%s\", line: %d\n", t.name, t.time, t.time * 0.001f, t.file, t.line, _file, _line);
   return t.time;
 }
 
@@ -124,7 +129,7 @@ void debug_timer_counter_print_func(char* counter_name)
   { PF("[ERROR TIMER COUNTER] tried stopping timer counter \"%s\", which doesnt exist\n", counter_name); return; }
 
   f32 time = shget(timer_counters_sh, counter_name);
-	printf("[TIMER_COUNTER] | %s | %.2fms, %.2fsec\n", counter_name, time, time * 0.001f);
+	PF("[TIMER_COUNTER] | %s | %.2fms | %.2fsec\n", counter_name, time, time * 0.001f);
   // remove from hashmap
   ERR_CHECK(shdel(timer_counters_sh, counter_name) != 0, "timer counters tried deleting non existsing key"); 
 }

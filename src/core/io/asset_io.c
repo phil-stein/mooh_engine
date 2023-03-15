@@ -70,7 +70,7 @@ void asset_io_convert_mesh(const char* name)
   f32* verts   = NULL;
   u32* indices = NULL;
   mesh_load_data_from_memory(buf, buf_len, name_src, &verts, &indices);
-  free(buf);
+  FREE(buf);
   
   // -- save into file_dest as binary --
 
@@ -104,15 +104,15 @@ void asset_io_serialize_mesh(u8** buffer, f32* verts, u32 verts_len, u32* indice
 mesh_t asset_io_load_mesh(const char* name)
 {
   // PF("[mesh] | %s |\n", name);
-  TIMER_START_COUNTER("read mesh file    |");
+  // TIMER_START_COUNTER("read mesh file    |");
   int length = 0;
   char path[ASSET_PATH_MAX +64];
   sprintf(path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
   u8* buffer = file_io_read_bytes(path, &length);
-  TIMER_STOP();
+  // TIMER_STOP();
 
     
-  TIMER_START_COUNTER("make mesh         |");
+  // TIMER_START_COUNTER("make mesh         |");
   f32* verts   = NULL;
   u32* indices = NULL;
   asset_io_deserialize_mesh(buffer, &verts, &indices);
@@ -121,7 +121,7 @@ mesh_t asset_io_load_mesh(const char* name)
   mesh_make_indexed(verts, arrlen(verts), indices, arrlen(indices), &mesh);
   arrfree(verts);
   arrfree(indices);
-  TIMER_STOP();
+  // TIMER_STOP();
 
   return mesh;
 }
@@ -181,15 +181,16 @@ void asset_io_convert_texture_dbg(const char* name, const char* _file, const int
   
   // -- cleanup --
   stbi_image_free(pixels);
-  free(buf);
-  free(buffer);
+  FREE(buf);
+  FREE(buffer);
 }
 u8* asset_io_serialize_texture(u8* pixels, u32 w, u32 h, u32 channels, u32* buffer_len)
 {
   const int header_size = (sizeof(u32) * 3);  // w, h, channels
   const int pixels_len  = w * h * channels * sizeof(u8);
   *buffer_len = pixels_len + header_size;
-  u8* buffer = malloc(*buffer_len);
+  u8* buffer;
+  MALLOC(buffer, *buffer_len);
   
   // pack header into u8
   // w
@@ -236,7 +237,7 @@ texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
 
   int length = 0;
   u8* buffer = file_io_read_bytes(path, &length);
-  TIMER_STOP();
+  // TIMER_STOP();
 
   // TIMER_START_COUNTER("make texture      |");
   u8* pixels;
@@ -251,9 +252,9 @@ texture_t asset_io_load_texture_full_path(const char* path, bool srgb)
   t.height = h;
   t.channel_nr = channels;
 
-  free(buffer);
+  FREE(buffer);
   // pixels is part of buffer
-  TIMER_STOP();
+  // TIMER_STOP();
  
   return t;
 }
@@ -264,7 +265,7 @@ texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb,
 
   int length = 0;
   u8* buffer = file_io_read_bytes(path, &length);
-  TIMER_STOP();
+  // TIMER_STOP();
 
   // TIMER_START_COUNTER("make texture      |");
   u8* pixels;
@@ -279,9 +280,9 @@ texture_t asset_io_load_texture_full_path_formatted(const char* path, bool srgb,
   t.height = h;
   t.channel_nr = target_channels;
 
-  free(buffer);
-  free(pixels);
-  TIMER_STOP();
+  FREE(buffer);
+  FREE(pixels);
+  // TIMER_STOP();
  
   return t;
 }
@@ -422,7 +423,8 @@ void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, 
 u8* asset_io_texture_write_pixels_to_buffer_u8(texture_t* t,  u32 gl_type, u32* buffer_len)
 {
   *buffer_len = t->width * t->height * t->channel_nr * sizeof(u8);
-  u8* buffer = malloc(*buffer_len);
+  u8* buffer;
+  MALLOC(buffer, *buffer_len);
   _glActiveTexture(GL_TEXTURE0);
   _glBindTexture(GL_TEXTURE_2D, t->handle);
   _glGetTexImage(GL_TEXTURE_2D, 0, gl_type, GL_UNSIGNED_BYTE, buffer);
@@ -451,6 +453,6 @@ void asset_io_texture_write_pixels_to_file(texture_t* t,  u32 gl_type, const cha
   
   file_io_write_bytes(path, buffer, buffer_len);
 
-  free(pixels);
+  FREE(pixels);
 }
 

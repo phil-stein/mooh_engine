@@ -138,8 +138,8 @@ int assetm_register_texture_for_load(const char* name, bool srgb)
   t.width  = 0;
   t.height = 0; 
 
-  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
-  ASSERT(name_cpy != NULL);
+  char* name_cpy;
+  MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   
   shput(texture_idxs, name_cpy, texture_data_len);
@@ -195,8 +195,8 @@ texture_t* assetm_get_texture_dbg(const char* name, bool srgb, const char* _file
 void assetm_create_texture_dbg(const char* name, bool srgb, const char* _file, const int _line)
 {
   // copy name and path as passed name might be deleted
-  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
-  ASSERT(name_cpy != NULL);
+  char* name_cpy;
+  MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   u32 name_cpy_len = strlen(name_cpy);
   char name_cpy_char = name_cpy[name_cpy_len -4];
@@ -297,13 +297,13 @@ void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int*
   stbi_set_flip_vertically_on_load(true);
   *pixels = stbi_load_from_memory(buf, buf_len, width, height, channel_num, STBI_rgb_alpha);
 
-  free(buf);
+  FREE(buf);
 }
 int assetm_add_texture(texture_t* tex, const char* name)
 {
   // copy name and path as passed name might be deleted
-  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
-  ASSERT(name_cpy != NULL);
+  char* name_cpy;
+  MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   
   // put texture index in tex array into the value of the hashmap with the texture name as key 
@@ -341,8 +341,8 @@ mesh_t* assetm_get_mesh_dbg(const char* name, const char* _file, const int _line
 void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line)
 {
   // copy name and path as passed name might be deleted
-  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
-  ASSERT(name_cpy != NULL);
+  char* name_cpy;
+  MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   
   // load mesh -----------------------------------------------
@@ -403,8 +403,8 @@ void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line
 int assetm_add_mesh(mesh_t* mesh, const char* name)
 {
   // copy name and path as passed name might be deleted
-  char* name_cpy = malloc( (strlen(name) +1) * sizeof(char));
-  ASSERT(name_cpy != NULL);
+  char* name_cpy;
+  MALLOC(name_cpy, (strlen(name) +1) * sizeof(char));
   strcpy(name_cpy, name);
   
   // put texture index in tex array into the value of the hashmap with the texture name as key 

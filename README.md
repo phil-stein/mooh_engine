@@ -111,20 +111,22 @@ main resources:
 ## organization
   - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate save_sys.c into terrain & entities
-  - [ ] use _dbg funcs for materials in assetm
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
   - [ ] add missing P_TYPE() funcs to global.h
   - [x] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
   - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
+  - [ ] use _dbg funcs for materials in assetm
   - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
   - [ ] make the _file & _line macro and compile out ?
   - [ ] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h
+  - [ ] make data a lib as well
   - [ ] make most funcs _dbg error checked
+    - [ ] make _dbg check a macro to set easy and compile out
     - [ ] state
     - [ ] etc.
-  - [ ] go through all files check for unecessary header includes, to lower compile time
+  - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
   - [ ] comment all .h files
     - [x] types
       - [x] mesh.h

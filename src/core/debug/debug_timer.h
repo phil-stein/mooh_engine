@@ -15,7 +15,13 @@ typedef struct timer_t
 }timer_t;
 
 // @NOTE: if not defined all this gets stripped out
-#ifdef DEBUG_TIMER
+#ifdef DEBUG_TIMER 
+
+#ifdef DEBUG_TIMER_PRINT
+  #define DEBUG_TIMER_PF(...)   PF(__VA_ARGS__)
+#else
+  #define DEBUG_TIMER_PF(...)  
+#endif
 
 // @DOC: inintiallize, call this before any calls to debug_timer / its macros
 void debug_timer_init();
@@ -36,40 +42,40 @@ void   debug_timer_start_timer_func(char* name, bool counter_act, char* counter_
 //       n:  name of timer
 //       id: counter_id for timer, check debug_timer_start_func doc
 #define TIMER_START_COUNTER_NAME(n, counter_n) debug_timer_start_timer_func((n), true, (counter_n), __FILE__, __LINE__)
-#define TIMER_START_COUNTER(n)                 { char* n2 = n; TIMER_START_COUNTER_NAME((n), (n2)); }
+#define TIMER_START_COUNTER(n)                 TIMER_START_COUNTER_NAME((n), (n));
 
 // @DOC: check whether there is a timer on the stack to be stopped
 bool debug_timer_can_stop_timer();
 
 // @DOC: pops timer of stack, stopping it, also calculates the "timer.time" value
 //       ! used internally use "TIMER_STOP()" macro
-timer_t  debug_timer_stop_timer_func();
+timer_t  debug_timer_stop_timer_func(const char* _file, const int _line);
 // @DOC: stop timer without printing it, adds it to the static / normal array of timers to be checked
-#define TIMER_STOP() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_func()
+#define TIMER_STOP() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_func(__FILE__, __LINE__)
 
 // @DOC: stops timer / pops it off stack and prints a message based on the name given in "START_TIMER()"
 //       ! used internally use "TIMER_STOP_PRINT()" macro
-f64    debug_timer_stop_timer_print_func();
+f64    debug_timer_stop_timer_print_func(const char* _file, const int _line);
 // @DOC: stop timer and print it, adds it to the static / normal array of timers to be checked
-#define TIMER_STOP_PRINT() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_print_func()
+#define TIMER_STOP_PRINT() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_print_func(__FILE__, __LINE__)
 
 // @DOC: stops timer and adds it to the array returned by 'debug_timer_get_all_static()'
 //       these timers dont get removed from the array each frame
 //       ! used internally use "TIMER_STOP_STATIC()" macro
-f64  debug_timer_stop_timer_static_func();
+f64  debug_timer_stop_timer_static_func(const char* _file, const int _line);
 // @DOC: stops timer and adds it to the array returned by 'debug_timer_get_all_static()'
 //       these timers dont get removed from the array each frame
-#define TIMER_STOP_STATIC() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_static_func()
+#define TIMER_STOP_STATIC() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_static_func(__FILE__, __LINE__)
 
 // @DOC: stops timer and adds it to the array returned by 'debug_timer_get_all_static()'
 //       these timers dont get removed from the array each frame
 //       prints timers state when stopped
 //       ! used internally use "TIMER_STOP_STATIC_PRINT()" macro
-f64  debug_timer_stop_timer_static_print_func();
+f64  debug_timer_stop_timer_static_print_func(const char* _file, const int _line);
 // @DOC: stops timer and adds it to the array returned by 'debug_timer_get_all_static()'
 //       these timers dont get removed from the array each frame
 //       prints timers state when stopped
-#define TIMER_STOP_STATIC_PRINT() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_static_print_func()
+#define TIMER_STOP_STATIC_PRINT() if (!debug_timer_can_stop_timer()) { P_ERR("attempted to stop timer without starting one first."); } debug_timer_stop_timer_static_print_func(__FILE__, __LINE__)
 
 // @DOC: prints the accumulated times from all timers tagges with counter_id
 //       counter_id: id for the timer

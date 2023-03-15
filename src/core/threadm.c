@@ -76,7 +76,7 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
     {
       thream_load_tex_args_t* args = &args_arr[i]; // (thream_load_tex_args_t*)thread_arr[i].data;
       u32 handle = texture_create_from_pixels(args->pixels, (size_t)args->w, (size_t)args->h, (int)args->channels, args->srgb); 
-      free(args_arr[i].buffer);
+      FREE(args_arr[i].buffer);
       texture_t t;
       t.handle = handle;
       t.width = args->w;

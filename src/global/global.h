@@ -208,12 +208,23 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 
 #define SPRINTF(max, ...)  ASSERT(sprintf(__VA_ARGS__) < (max)) 
 
-#define MALLOC(a, s)       {(a) = malloc(s); ASSERT((a) != NULL); }
+#define MALLOC(a, s)       (a) = malloc(s); ASSERT((a) != NULL)     // done
 #define CALLOC(n, s)       ASSERT(calloc(n, s) != NULL)
 #define REALLOC(p, s)      ASSERT(realloc(p, s) != NULL)
-#define FREE(n)            ASSERT(n != NULL); free(n)
+#define FREE(n)            ASSERT(n != NULL); free(n)               // done
+
+// stb_ds
+#define ARRFREE(a)          ASSERT(a != NULL); arrfree(a); a = NULL
+
+// -- debug func --
+
+#define DBG(func, ...)       (func)(__VA_ARGS__, const char* _file, const int _line)
+#define DBG_F_L              , __FILE__, __LINE__
 
 #elif // GLOBAL_DEBUG
+
+#define DBG(func, ...)      (func)(__VA_ARGS__) 
+#define DBG_F_L              
 
 // @TODO: add missing macros here
 
@@ -233,6 +244,16 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define ERRF(...)  
 #define ERR_CHECK(c, msg) 
 #define ERR_CHECKF(c, ...) 
+
+
+// -- func wrapper --
+
+#define SPRINTF(max, ...)  sprintf(__VA_ARGS__) 
+
+#define MALLOC(a, s)       (a) = malloc(s) 
+#define CALLOC(n, s)       calloc(n, s)
+#define REALLOC(p, s)      realloc(p, s)
+#define FREE(n)            free(n)
 
 #endif
 

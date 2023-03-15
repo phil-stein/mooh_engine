@@ -12,7 +12,18 @@ clean: core_clean editor_clean game_clean
 
 # --- core ---
 
-# CC_ARGS: -DPF_PRINT_LOCATION 
+# CC_ARGS: 
+#		-DEDITOR 							adds a lot like mouse_picking, outline, etc.
+#		-DINCLUDE_PLAY_MODE		include play mode pause/play for editor
+#		-DGLOBAL_DEBUG				activates P_/PF_ macros and MALLOC()/FREE()/ etc.
+# 	-DPF_PRINT_LOCATION 	prints the file and place of all P_/PF_ calls
+#		-DDEBUG_TIMER					acitave TIMER_START.../TIMER_STOP.. macros
+# 	-DDEBUG_TIMER_PRINT		prints all started & stoppped timers
+#		-DDEBUG_DRAW					acivate the debug drawing functionality
+#		-DDEBUG_OPENGL				adds glGetError wrapper around all _gl... function macros
+#		-DPHYS_DEBUG					debug draw velocity, colliders, etc.
+#
+#		-DASSETM_NO_ZIP				disable loading from zip file, no longer in use anyway
 
 EDITOR_CORE_NAME ="lib_mooh_core_editor.a" 
 EDITOR_CC_ARGS   ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DDEBUG_OPENGL -DPHYS_DEBUG -DEDITOR -DINCLUDE_PLAY_MODE"

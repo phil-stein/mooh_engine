@@ -32,7 +32,7 @@ void texture_load_pixels(const char* path, u8** pixels_out, size_t* width_out, s
     u8* image = stbi_load(path, &width, &height, channel_num, STBI_rgb_alpha);
     ASSERT(image != NULL);
 
-    *pixels_out = malloc((double)(width * height * 4));
+    MALLOC(*pixels_out, (double)(width * height * 4));
     ASSERT(*pixels_out != NULL);
     memcpy(*pixels_out, image, (double)(width * height * 4));
     ASSERT(*pixels_out != NULL);

@@ -596,7 +596,8 @@ u8* frambuffer_write_pixels_to_buffer(framebuffer_t* fb, u32* buffer_len)
   u32 channel_nr = FRAMEBUFFER_TYPE_TO_CHANNEL_NR(fb->type);
   ASSERT(channel_nr == 1 || channel_nr == 2 || channel_nr == 3 || channel_nr == 4);
   *buffer_len = fb->width * fb->height * channel_nr;
-  u8* buffer = malloc(*buffer_len);
+  u8* buffer;
+  MALLOC(buffer, *buffer_len);
   
   _glBindFramebuffer(GL_READ_FRAMEBUFFER, fb->fbo);
   _glReadBuffer(GL_COLOR_ATTACHMENT0);
@@ -613,7 +614,8 @@ u8* frambuffer_write_pixels_to_buffer_fbo(u32 fbo, u32 width, u32 height, u32 ch
   ASSERT(width > 0 && height > 0);
   ASSERT(channel_nr == 1 || channel_nr == 2 || channel_nr == 3 || channel_nr == 4);
   *buffer_len = width * height * channel_nr;
-  u8* buffer = malloc(*buffer_len);
+  u8* buffer;
+  MALLOC(buffer, *buffer_len);
   
   _glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
   _glReadBuffer(GL_COLOR_ATTACHMENT0);

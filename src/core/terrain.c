@@ -224,7 +224,7 @@ void terrain_add_chunk(ivec2 pos)
   // make / use existing vert info array
   if (vert_info_zero == NULL)
   {
-    vert_info_zero = malloc(sizeof(vec2) * TERRAIN_LAYOUT_VERT_INFO_LEN(core_data));
+    MALLOC(vert_info_zero, sizeof(vec2) * TERRAIN_LAYOUT_VERT_INFO_LEN(core_data));
     for (int i = 0; i < TERRAIN_LAYOUT_VERT_INFO_LEN(core_data); ++i)
     { vert_info_zero[i][0] = 0.0f; vert_info_zero[i][1] = 0.0f; }
   }

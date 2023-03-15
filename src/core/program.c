@@ -40,11 +40,8 @@ static core_data_t* core_data = NULL;
 char  _title[WINDOW_TITLE_MAX];      // copy title
 char __title[WINDOW_TITLE_MAX +14];  // copy _title, add fps
 
-void program_start(int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
+void DBG(program_start_dbg, int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
-
-  // GLOBAL_TEST_P_MACROS();
-  
   TIMER_START(" -- program init -- ");
 
   if (!window_create(width, height, title, type))
@@ -98,9 +95,9 @@ void program_start(int width, int height, const char* title, window_type type, e
 
   core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
   
-  TIMER_STOP_STATIC();  // program init timer
-
   strcpy(_title, window_get_title()); 
+  
+  TIMER_STOP_STATIC_PRINT();  // program init timer
 
   bool first_frame = true;
 	while (!core_data->program_quit && !glfwWindowShouldClose(core_data->window))
