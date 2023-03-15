@@ -48,13 +48,13 @@ void asset_io_convert_mesh(const char* name)
   size_t buf_len = 0;
 
   ERR_CHECK(strlen(name) < ASSET_IO_NAME_MAX - 5, "name for mesh too long");
-  sprintf(name_src,  "%s.fbx",  name);
-  sprintf(name_dest, "%s.mesh", name);
+  SPRINTF(ASSET_IO_NAME_MAX, name_src,  "%s.fbx",  name);
+  SPRINTF(ASSET_IO_NAME_MAX, name_dest, "%s.mesh", name);
 
 // #ifdef ASSETM_NO_ZIP
   char path[ASSET_PATH_MAX +7 +ASSET_IO_NAME_MAX];
   int len = 0;
-  sprintf(path, "%smeshes/%s", core_data->asset_path, name_src);
+  SPRINTF(ASSET_PATH_MAX + 7 + ASSET_IO_NAME_MAX, path, "%smeshes/%s", core_data->asset_path, name_src);
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
 // #else
@@ -79,7 +79,7 @@ void asset_io_convert_mesh(const char* name)
   arrfree(verts);
   arrfree(indices);
    
-  sprintf(path, "%smeshes/%s", core_data->asset_path, name_dest); 
+  SPRINTF(ASSET_PATH_MAX + 7 + ASSET_IO_NAME_MAX, path, "%smeshes/%s", core_data->asset_path, name_dest);
   file_io_write_bytes(path, buffer, arrlen(buffer));
   arrfree(buffer);
 }
@@ -107,7 +107,7 @@ mesh_t asset_io_load_mesh(const char* name)
   // TIMER_START_COUNTER("read mesh file    |");
   int length = 0;
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
   u8* buffer = file_io_read_bytes(path, &length);
   // TIMER_STOP();
 
@@ -156,7 +156,7 @@ void asset_io_convert_texture_dbg(const char* name, const char* _file, const int
   // TIMER_START(" -> load tex file");
   char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   int len = 0;
-  sprintf(path, "%stextures/%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12, path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in asset_io_convert_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, _file, _line);
@@ -176,7 +176,7 @@ void asset_io_convert_texture_dbg(const char* name, const char* _file, const int
   
   // -- write to file --
   for (u32 i = 0; i < strlen(name) - 4; ++i) { name_dest[i] = name[i]; name_dest[i +1] = '\0'; }
-  sprintf(path, "%stextures/%s.tex", core_data->asset_path, name_dest);  
+  SPRINTF(ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12, path, "%stextures/%s.tex", core_data->asset_path, name_dest);
   file_io_write_bytes(path, buffer, buffer_len);
   
   // -- cleanup --
@@ -224,7 +224,7 @@ texture_t asset_io_load_texture(const char* name, bool srgb)
   // copy name into name_dest without file ending '.png' etc.
   u32 i = 0; while(name[i] != '.' && name[i +1] != '\0') { name_dest[i] = name[i]; i++; } name_dest[i] = '\0';
   char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
-  sprintf(path, "%stextures/%s%s", core_data->asset_path, name_dest, ".tex");
+  SPRINTF(ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12, path, "%stextures/%s%s", core_data->asset_path, name_dest, ".tex");
   
   // PF("[asset_io] loaded \"%s\"\n", name);
   
@@ -396,7 +396,7 @@ void asset_io_serialize_archive(const char* dir_path, int initial_dir_path_len, 
         PF("[.tex] \"%s\"\n -> \"%s\"\n", dp->d_name, path);
         int length = 0;
         u8* buffer = file_io_read_bytes(path, &length);
-        *rtn = realloc(*rtn, (*rtn_size + length) * sizeof(u8));
+        REALLOC(*rtn, (*rtn_size + length) * sizeof(u8));
         memcpy(*rtn + *rtn_size, buffer, length);
         *rtn_size += length;
       }

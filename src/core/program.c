@@ -56,7 +56,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   // asset path
   core_data = core_data_get();
   strcpy(core_data->asset_path, asset_path);
-  sprintf(core_data->shaders_path, "%sshaders/", asset_path);
+  SPRINTF(SHADERS_PATH_MAX, core_data->shaders_path, "%sshaders/", asset_path);
   core_data->use_async_asset_arrs = true; // use multithreaded asset loading 
 
   rand_seed(time(NULL));
@@ -112,7 +112,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
     if (first_frame) { core_data->delta_t = 0.016f; first_frame = false; } // otherwise dt first frame is like 5 seconds
   
     // // --- title ----
-    sprintf(__title, "%s | fps: '%.1f'", _title, core_data->cur_fps);
+    SPRINTF(WINDOW_TITLE_MAX, __title, "%s | fps: '%.1f'", _title, core_data->cur_fps);
     window_set_title(__title);
 
     // ---- update ----

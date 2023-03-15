@@ -45,7 +45,7 @@ void save_sys_write_scene_to_file(const char* name)
   save_sys_serialize_scene(&buffer);
   
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%s%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
 
@@ -59,7 +59,7 @@ void save_sys_load_scene_from_file(const char* name)
 
   P_STR(core_data->asset_path);
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%s%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_io_read_bytes(path, &length);
   save_sys_deserialize_scene(buffer, &offset);
 
@@ -80,7 +80,7 @@ void save_sys_write_scene_to_state_buffer()
   // !!! DO THIS NEXT
   // also add searching .h files for func-defs to term_docs
 
-  state_buffer = realloc(state_buffer, arrlen(buffer) * sizeof(u8));
+  REALLOC(state_buffer, arrlen(buffer) * sizeof(u8));
   memcpy(state_buffer, buffer, arrlen(buffer) * sizeof(u8));
 
   strcpy(state_buffer_scene_name, cur_scene_name);
@@ -123,7 +123,7 @@ void save_sys_write_empty_scene_to_file()
   SERIALIZATION_P("[serialization] serialized empty scene");
 
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%s%s", core_data->asset_path, "-_-_new_-_-");
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, "-_-_new_-_-");
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
@@ -244,7 +244,7 @@ void save_sys_write_terrain_to_file(const char* name)
   save_sys_serialize_terrain(&buffer);
 
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%s%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   arrfree(buffer);
@@ -255,7 +255,7 @@ void save_sys_load_terrain_from_file(const char* name)
   int length = 0;
   
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%s%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_io_read_bytes(path, &length);
   
   save_sys_deserialize_terrain(buffer, &offset);
@@ -315,7 +315,6 @@ void save_sys_deserialize_terrain_layout(u8* buffer, u32* offset, terrain_layout
   u32 height_len = TERRAIN_LAYOUT_VERT_INFO_LEN(core_data);
   
   serialization_deserialize_ivec2(buffer, offset, l->pos);
-  l->vert_info;
   MALLOC(l->vert_info, height_len * sizeof(vec2));
   for (u32 i = 0; i < height_len; ++i)
   {

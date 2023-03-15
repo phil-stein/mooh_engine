@@ -127,6 +127,7 @@ f64 debug_timer_stop_timer_print_func();
 
 #define TIMER_STOP_PRINT()
 #define TIMER_STOP_STATIC()
+#define TIMER_STOP_STATIC_PRINT()
 
 timer_t* debug_timer_get_all(int* len);
 

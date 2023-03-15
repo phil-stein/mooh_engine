@@ -94,9 +94,9 @@ void assetm_init()
 
   // open zip archive
   char path[ASSET_PATH_MAX + 64];
-  sprintf(path, "%s/textures.zip", core_data->asset_path); 
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s/textures.zip", core_data->asset_path);
   zip_textures  = zip_open(path, 0, 'r');
-  sprintf(path, "%s/meshes.zip", core_data->asset_path); 
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s/meshes.zip", core_data->asset_path);
   zip_meshes    = zip_open(path, 0, 'r');
 
 }
@@ -207,7 +207,7 @@ void assetm_create_texture_dbg(const char* name, bool srgb, const char* _file, c
 
   // TIMER_START("texture loading .tex");    
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%stextures/%s%s", core_data->asset_path, name_cpy, ".tex");
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%stextures/%s%s", core_data->asset_path, name_cpy, ".tex");
   // PF("[assetm_create_texture] "); P_STR(path);
   
 #ifdef EDITOR
@@ -281,7 +281,7 @@ void assetm_get_texture_data_dbg(const char* name, int* width, int* height, int*
 #ifdef ASSETM_NO_ZIP
   char path[ASSET_PATH_MAX +64];
   int len = 0;
-  sprintf(path, "%stextures/%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%stextures/%s", core_data->asset_path, name);
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "cubemap_hdr '%s' requested in assetm_load_cubemap_hdr(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", path, _file, _line);
@@ -349,7 +349,7 @@ void assetm_create_mesh_dbg(const char* name, const char* _file, const int _line
 
   // TIMER_START("mesh loading .mesh");    
   char path[ASSET_PATH_MAX +64];
-  sprintf(path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%smeshes/%s%s", core_data->asset_path, name, ".mesh");
   
 #ifdef EDITOR
   if (!file_io_check_exists(path)) // .mesh
@@ -468,9 +468,9 @@ shader_t assetm_create_shader_from_template_dbg(shader_template_type type, const
   const shader_template_t* s = shader_template_get(type);
 
   char vert_path[ASSET_PATH_MAX +64]; 
-  sprintf(vert_path, "%s%s", core_data->shaders_path, s->vert);
+  SPRINTF(ASSET_PATH_MAX + 64, vert_path, "%s%s", core_data->shaders_path, s->vert);
   char frag_path[ASSET_PATH_MAX +64]; 
-  sprintf(frag_path, "%s%s", core_data->shaders_path,s->frag);
+  SPRINTF(ASSET_PATH_MAX + 64, frag_path, "%s%s", core_data->shaders_path,s->frag);
 
   return shader_create_from_file(vert_path, frag_path, s->set_uniforms_f, s->name);
 	

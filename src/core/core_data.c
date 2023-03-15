@@ -26,15 +26,15 @@ void core_data_init()
 
   char vert_path[ASSET_PATH_MAX + 64];
   char frag_path[ASSET_PATH_MAX + 64];
-  sprintf(vert_path, "%sshaders/cubemap/render_equirect.vert", core_data.asset_path);
-  sprintf(frag_path, "%sshaders/cubemap/render_equirect.frag", core_data.asset_path);
+  SPRINTF(ASSET_PATH_MAX + 64, vert_path, "%sshaders/cubemap/render_equirect.vert", core_data.asset_path);
+  SPRINTF(ASSET_PATH_MAX + 64, frag_path, "%sshaders/cubemap/render_equirect.frag", core_data.asset_path);
   core_data.equirect_shader = shader_create_from_file(vert_path, frag_path, NULL, "equirect_render_shader");
  
-  sprintf(frag_path, "%sshaders/cubemap/irradiance_map.frag", core_data.asset_path);
+  SPRINTF(ASSET_PATH_MAX + 64, frag_path, "%sshaders/cubemap/irradiance_map.frag", core_data.asset_path);
   core_data.irradiance_map_shader = shader_create_from_file(vert_path, 
 					      frag_path, NULL, "irradiance_map_shader");
  
-  sprintf(frag_path, "%sshaders/cubemap/prefilter_map.frag", core_data.asset_path);
+  SPRINTF(ASSET_PATH_MAX + 64, frag_path, "%sshaders/cubemap/prefilter_map.frag", core_data.asset_path);
   core_data.prefilter_shader = shader_create_from_file(vert_path, 
 					      frag_path, NULL, "prefilter_shader");
 

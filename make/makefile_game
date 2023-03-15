@@ -37,6 +37,7 @@ OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 _LIBS = 						\
 	_mooh_core				\
+	_mooh_data				\
 	glfw3							\
 	gdi32							\
 	user32						\
@@ -54,7 +55,7 @@ INC = $(patsubst %,-I %,$(_INC))
 LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS) 
 
 
-all: core $(NAME)
+all: data core $(NAME)
 	@echo asset path: $(ASSET_PATH)
 	@echo ---- compiled $(NAME)
 
@@ -63,6 +64,8 @@ all: core $(NAME)
 # $(MAKE) -f makefile_core	
 core:
 	$(MAKE) -C .. core_game
+data:
+	$(MAKE) -C .. data
 
 #	$(MAKE) -C ../.. when compiling from src/editor
 

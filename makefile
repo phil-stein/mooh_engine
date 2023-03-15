@@ -8,7 +8,7 @@
 
 all: editor
 
-clean: core_clean editor_clean game_clean
+clean: data_clean core_clean editor_clean game_clean
 
 # --- core ---
 
@@ -30,8 +30,15 @@ EDITOR_CC_ARGS   ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DD
 EDITOR_CORE_BIN		 ="bin_core_editor"
 
 GAME_CORE_NAME 	 ="lib_mooh_core.a" 
-GAME_CC_ARGS     ="-DASSETM_NO_ZIP"
+GAME_CC_ARGS     ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP"
 GAME_CORE_BIN		 ="bin_core_game"
+
+DATA_NAME 	 		 ="lib_mooh_data.a" 
+DATA_CC_ARGS     ="-DGLOBAL_DEBUG "
+DATA_BIN		 		 ="bin_data"
+
+TEX_VIEWER_CC_ARGS  ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP"
+
 
 ASSET_PATH			 ="/Workspace/C/mooh_engine/assets/"
 
@@ -48,6 +55,16 @@ core_clean_editor:
 	@$(MAKE) -s -C make -f makefile_core clean NAME=$(EDITOR_CORE_NAME) BIN_DIR=$(EDITOR_CORE_BIN)
 core_clean_game:
 	@$(MAKE) -s -C make -f makefile_core clean NAME=$(GAME_CORE_NAME) BIN_DIR=$(GAME_CORE_BIN)
+
+# --- data ---
+
+# compile and link to .a
+data:
+	@$(MAKE) -s -C make -f makefile_data clean all NAME=$(DATA_NAME) CC_ARGS=$(DATA_CC_ARGS) BIN_DIR=$(DATA_BIN)
+# clean .o and .exe
+data_clean:
+	@$(MAKE) -s -C make -f makefile_data NAME=$(DATA_NAME) BIN_DIR=$(DATA_BIN) clean
+
 
 # --- editor ---
 
@@ -69,30 +86,30 @@ editor_make:
 
 # compile and run
 game: 
-	@$(MAKE) -s -C make -f makefile_game run ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_game run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 
 # clean .o and .exe
 game_clean:
-	@$(MAKE) -s -C make -f makefile_game clean ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_game clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 # just make dont run
 game_make: 
-	@$(MAKE) -s -C make -f makefile_game ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_game ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 
 # --- tex_viewer ---
 
 # compile and run
 tex_viewer: 
-	@$(MAKE) -s -C make -f makefile_tex_viewer run ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_tex_viewer run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 
 
 # clean .o and .exe
 tex_viewer_clean:
-	@$(MAKE) -s -C make -f makefile_tex_viewer clean ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_tex_viewer clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 
 # just make dont run
 tex_viewer_make: 
-	@$(MAKE) -s -C make -f makefile_tex_viewer ASSET_PATH=$(ASSET_PATH)
+	@$(MAKE) -s -C make -f makefile_tex_viewer ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 

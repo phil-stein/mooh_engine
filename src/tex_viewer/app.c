@@ -48,7 +48,7 @@ void rotate_cam_by_mouse();
 
 int main(int argc, char** argv)
 {
-  ASSERT(argc >= 2);
+  ERR_CHECK(argc >= 2, "no argument given, provide .tex file name with or without .tex extension\n");
   
   u32 arg_len = strlen(argv[1]);
   // opening from file explorer gives full path, from terminal just file name given
@@ -91,6 +91,7 @@ void app_update()
   int w, h;
   window_get_size(&w, &h);
   _glViewport(0, 0, w, h);
+  _glClearColor(0.1f, 0.1f, 0.1f, 1);
   _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
   renderer_direct_draw_quad_textured(cam_pos, tex_pos, tex_size, tex_act);

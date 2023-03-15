@@ -71,12 +71,6 @@ _OBJS += 							\
 	phys_collision.o		\
 	phys_resolution.o	  \
 	phys_debug_draw.o
-# data
-_OBJS += 				 			\
-	entity_template.o   \
-	shader_template.o   \
-	material_template.o \
-	test_comp.o
 # serialization
 _OBJS += 							\
 	serialization.o
@@ -88,7 +82,8 @@ OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 
 _LIBS = 						\
-	
+	_mooh_data
+
 #glfw3dll 					
 
 LIBS     = $(patsubst %,-l %,$(_LIBS))
@@ -137,10 +132,6 @@ $(OBJ_DIR)/%.o: $(CORE_IO_DIR)/%.c
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(CORE_DEBUG_DIR)/%.c
-	@echo $< -> $@	
-	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
-
-$(OBJ_DIR)/%.o: $(DATA_DIR)/%.c
 	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 

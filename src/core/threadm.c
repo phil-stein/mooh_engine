@@ -135,7 +135,7 @@ int threadm_load_tex_file_f(void* data)
   { name_buffer[i] = args->name[i]; i++; } name_buffer[i] = '\0';
   int length = 0;
   char path[ASSET_PATH_MAX + THREADM_NAME_MAX + 12];
-  sprintf(path, "%stextures/%s%s", core_data->asset_path, name_buffer, ".tex");
+  SPRINTF(ASSET_PATH_MAX + THREADM_NAME_MAX + 12, path, "%stextures/%s%s", core_data->asset_path, name_buffer, ".tex");
   args->buffer = file_io_read_bytes(path, &length);
 
   asset_io_deserialize_texture(args->buffer, &args->pixels, &args->w, &args->h, &args->channels);

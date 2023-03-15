@@ -1,8 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "../../global/global.h"
-#include "../../math/math_inc.h"
+#include "global/global.h"
+#include "math/math_inc.h"
 
 
 // @NOTE: mute or show shader messages

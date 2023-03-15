@@ -184,8 +184,7 @@ shader_t shader_create_from_file(const char* vert_path, const char* frag_path, u
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	vert_src = calloc(1, len +1);
-	assert(vert_src != NULL);
+	MALLOC(vert_src, len +1);
 
 	// fill text buffer
 	fread(vert_src, sizeof(char), len, f);
@@ -213,7 +212,7 @@ shader_t shader_create_from_file(const char* vert_path, const char* frag_path, u
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	frag_src = calloc(1, len +1);
+	MALLOC(frag_src, len +1);
 	assert(frag_src != NULL);
 
 	// fill text buffer
@@ -267,7 +266,7 @@ shader_t shader_create_from_file_tesselation(const char* vert_path, const char* 
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	vert_src = calloc(1, len +1);
+	MALLOC(vert_src, len +1);
 	assert(vert_src != NULL);
 
 	// fill text buffer
@@ -296,7 +295,7 @@ shader_t shader_create_from_file_tesselation(const char* vert_path, const char* 
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	tcs_src = calloc(1, len +1);
+	MALLOC(tcs_src, len +1);
 	assert(tcs_src != NULL);
 
 	// fill text buffer
@@ -323,7 +322,7 @@ shader_t shader_create_from_file_tesselation(const char* vert_path, const char* 
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	tes_src = calloc(1, len +1);
+	MALLOC(tes_src, len +1);
 	assert(tes_src != NULL);
 
 	// fill text buffer
@@ -350,7 +349,7 @@ shader_t shader_create_from_file_tesselation(const char* vert_path, const char* 
 	fseek(f, 0, SEEK_SET);
 
 	// alloc memory 
-	frag_src = calloc(1, len +1);
+	MALLOC(frag_src, len +1);
 	assert(frag_src != NULL);
 
 	// fill text buffer
@@ -467,11 +466,12 @@ shader_t shader_load_from_path(const char* file_path, const char* name)
   if (vert <= -1 || frag <= -1) { ERR("vert or frag shader missing"); }
  
   // -- tmp --
-  char vert_name[16], frag_name[16];
+  const int NAME_SIZE = 16;
+  char vert_name[NAME_SIZE], frag_name[NAME_SIZE];
   strcpy(vert_name, t[vert].val);
   strcpy(frag_name, t[frag].val);
-  sprintf(t[vert].val, "assets/shaders/%s", vert_name);
-  sprintf(t[frag].val, "assets/shaders/%s", frag_name);
+  SPRINTF(NAME_SIZE, t[vert].val, "assets/shaders/%s", vert_name);
+  SPRINTF(NAME_SIZE, t[frag].val, "assets/shaders/%s", frag_name);
 
   shader_t s = shader_create_from_file(t[vert].val, t[frag].val, NULL, name);
 

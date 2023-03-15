@@ -7,8 +7,8 @@
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
 # CC         = @gcc -g -Wall -DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE -DASSET_PATH=\"$(ASSET_PATH)\"
-CC         			= @gcc -g -Wall 
 CC_NO_WARN 			= @gcc
+CC         			= @gcc -g -Wall 
 CC							+= $(CC_ARGS)
 CC							+= -DASSET_PATH=\"$(ASSET_PATH)\"
 
@@ -42,6 +42,7 @@ OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 _LIBS = 						\
 	_mooh_core_editor	\
+	_mooh_data				\
 	glfw3							\
 	gdi32							\
 	user32						\
@@ -53,13 +54,14 @@ LIBS     = $(patsubst %,-l %,$(_LIBS))
 _INC = 							  				\
 		$(EXTERNAL_DIR)	  				\
  		$(SRC_DIR)								\
- 		$(APP_INC)								
+ 		$(APP_INC)								\
+		$(DATA_DIR)
 INC = $(patsubst %,-I %,$(_INC))
 
 LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS) 
 
 
-all: core $(NAME)
+all: data core $(NAME)
 	@echo asset path: $(ASSET_PATH)
 	@echo $(CC)
 	@echo ---- compiled $(NAME)
@@ -69,6 +71,8 @@ all: core $(NAME)
 # $(MAKE) -C .. -f makefile_core	
 core:
 	@$(MAKE) -s -C .. core_editor	
+data:
+	@$(MAKE) -s -C .. data	
 
 
 #	$(MAKE) -C ../.. when compiling from src/editor

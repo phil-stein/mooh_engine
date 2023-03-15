@@ -30,8 +30,7 @@ char* file_io_read_dbg(const char* file_path, const char* _file, const int _line
     fseek(f, 0, SEEK_SET);
 
     // alloc memory 
-    text = calloc(1, len * sizeof(char));
-    ASSERT(text != NULL);
+    MALLOC(text, len * sizeof(char));
     
     // fill text buffer
     fread(text, 1, len, f);
@@ -58,8 +57,7 @@ char* file_io_read_len_dbg(const char* file_path, int* length, const char* _file
     fseek(f, 0, SEEK_SET);
 
     // alloc memory 
-    text = calloc(1, len);
-    ASSERT(text != NULL);
+    MALLOC(text, len * sizeof(char));
 
     // fill text buffer
     fread(text, sizeof(char), len, f);
@@ -85,8 +83,7 @@ u8* file_io_read_bytes_dbg(const char* file_path, int* length, const char* _file
     fseek(f, 0, SEEK_SET);
 
     // alloc memory 
-    text = calloc(1, len);
-    ASSERT(text != NULL);
+    MALLOC(text, len * sizeof(char));
 
     // fill text buffer
     fread(text, sizeof(char), len, f);
