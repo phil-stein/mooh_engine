@@ -1,0 +1,108 @@
+# silent echo calls
+# MAKEFLAGS += --silent
+# instead silencing individual calls with '@'
+
+
+# compiler plus flags, -g: debug info, -Wall: all warnings
+#  -DEDITOR: compile with editor
+#  -fcommon: ignore duplicate variable definitions
+CC         = @gcc -g -Wall -DASSET_PATH=\"../../assets/\"	-DEDITOR -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG 
+CC_NO_WARN = @gcc
+
+NAME = editor.exe
+OUT  = build\$(NAME)
+
+SRC_DIR   = ..
+GLOBL_DIR = $(SRC_DIR)/global
+DATA_DIR  = $(SRC_DIR)/data
+APP_DIR   = .
+
+OBJ_DIR = bin
+
+# app
+_OBJS = 				 			\
+	app.o					 			\
+	gui.o					 			\
+	gizmo.o							\
+	terrain_edit.o
+
+# put the OBJ_DIR in front of the obj names
+OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
+OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
+
+LIB_DIR = ../../libs/win64
+
+_LIBS = 						\
+	_mooh_core				\
+	glfw3							\
+	gdi32							\
+	user32						\
+	kernel32					\
+	opengl32					
+
+LIBS     = $(patsubst %,-l %,$(_LIBS))
+
+EXTERNAL_DIR = ../../external
+APP_INC			 = .
+
+_INC = 							  				\
+		$(EXTERNAL_DIR)	  				\
+ 		$(SRC_DIR)								\
+ 		$(APP_INC)								
+INC = $(patsubst %,-I %,$(_INC))
+
+LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS) 
+
+
+all: core $(NAME)
+	@echo ---- done ----
+
+
+# compile mooh_core library
+core:
+	$(MAKE) -C ../..
+
+# @cd ../.. && $(MAKE) && @cd src/editor
+
+# compile all object files to .exe
+$(NAME): $(OBJS) 
+	$(CC) -o $(OUT) $(OBJS) $(LIB_LINK)
+
+
+# compile all .c files to .o files
+$(OBJ_DIR)/%.o: $(APP_DIR)/%.c
+	echo $< -> $@	
+	$(CC) -c $< -o $@ $(INC)
+
+# $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/ufbx/%.c
+# 	echo $< -> $@	
+# 	$(CC_NO_WARN) -c $< -o $@ $(INC)
+# 
+# $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/zip/%.c
+# 	echo $< -> $@	
+#  	$(CC_NO_WARN) -c $< -o $@ $(INC)
+
+
+# prevents make from fideling with files named clean
+.PHONY: clean
+
+clean:
+	del $(OUT)
+	del $(OBJS_WIN) 
+	@echo ---- clean done ---- 
+
+# clean and them make all
+cleanm: clean all
+
+run: all
+	@echo --- $(NAME) --- 
+	@$(OUT)
+
+cleanrun: clean all
+	@echo --- $(NAME) --- 
+	@$(OUT)
+
+
+
+
+

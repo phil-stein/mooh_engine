@@ -3,6 +3,7 @@
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
 #include "core/debug/debug_opengl.h"
+#include "core/debug/debug_timer.h"
 
 
 
@@ -103,8 +104,7 @@ bool core_data_is_play_func() { return core_data.phys_act || core_data.scripts_a
 INLINE void core_data_init_renderer()
 {
   
-
-  // core_data.brdf_lut = renderer_extra_gen_brdf_lut(); // @TODO: put in core_data
+  // core_data.brdf_lut = renderer_extra_gen_brdf_lut(); 
   core_data.brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle; 
 
   // -- primitives --
@@ -123,15 +123,15 @@ INLINE void core_data_init_renderer()
 	};
 
 	// screen quad VAO
-	GL_ERR_FUNC(glGenVertexArrays(1, &core_data.quad_vao));
-	GL_ERR_FUNC(glGenBuffers(1, &core_data.quad_vbo));
-	GL_ERR_FUNC(glBindVertexArray(core_data.quad_vao));
-	GL_ERR_FUNC(glBindBuffer(GL_ARRAY_BUFFER, core_data.quad_vbo));
-	GL_ERR_FUNC(glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(f32), &quad_verts, GL_STATIC_DRAW)); // quad_verts is 24 long
-	GL_ERR_FUNC(glEnableVertexAttribArray(0));
-	GL_ERR_FUNC(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)0));
-	GL_ERR_FUNC(glEnableVertexAttribArray(1));
-	GL_ERR_FUNC(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32))));
+	_glGenVertexArrays(1, &core_data.quad_vao);
+	_glGenBuffers(1, &core_data.quad_vbo);
+	_glBindVertexArray(core_data.quad_vao);
+	_glBindBuffer(GL_ARRAY_BUFFER, core_data.quad_vbo);
+	_glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(f32), &quad_verts, GL_STATIC_DRAW); // quad_verts is 24 long
+	_glEnableVertexAttribArray(0);
+	_glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)0);
+	_glEnableVertexAttribArray(1);
+	_glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), (void*)(2 * sizeof(f32)));
 
   // quad
   core_data.quad_mesh = assetm_get_mesh_idx("quad");
@@ -188,22 +188,28 @@ INLINE void core_data_init_renderer()
 	window_set_texturebuffer_to_update_to_screen_size(&core_data.fb_outline);  // updates framebuffer on window resize
 
   // -- shaders --
-
-  core_data.basic_shader       = assetm_create_shader_from_template(SHADER_TEMPLATE_BASIC);
   
-  core_data.shadow_shader      = assetm_create_shader_from_template(SHADER_TEMPLATE_SHADOW_MAP);
+  TIMER_START("shaders");
 
-  core_data.deferred_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_DEFERRED);
+  TIMER_FUNC_STATIC(core_data.basic_shader       = assetm_create_shader_from_template(SHADER_TEMPLATE_BASIC));
+  
+  TIMER_FUNC_STATIC(core_data.shadow_shader      = assetm_create_shader_from_template(SHADER_TEMPLATE_SHADOW_MAP));
+
+  TIMER_FUNC_STATIC(core_data.deferred_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_DEFERRED));
 	
-  core_data.skybox_shader      = assetm_create_shader_from_template(SHADER_TEMPLATE_SKYBOX);
+  TIMER_FUNC_STATIC(core_data.skybox_shader      = assetm_create_shader_from_template(SHADER_TEMPLATE_SKYBOX));
   
-  core_data.shadow_pass_shader = assetm_create_shader_from_template(SHADER_TEMPLATE_SHADOW_PASS);
+  TIMER_FUNC_STATIC(core_data.shadow_pass_shader = assetm_create_shader_from_template(SHADER_TEMPLATE_SHADOW_PASS));
   
-  core_data.lighting_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_LIGHTING);
+  TIMER_FUNC_STATIC(core_data.lighting_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_LIGHTING));
 
-  core_data.post_fx_shader     = assetm_create_shader_from_template(SHADER_TEMPLATE_POST_FX);
+  TIMER_FUNC_STATIC(core_data.post_fx_shader     = assetm_create_shader_from_template(SHADER_TEMPLATE_POST_FX));
 
-  core_data.brdf_lut_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_BRDF_LUT);
+  // @TODO: macro this
+  // @NOTE: takes very long
+  // core_data.brdf_lut_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_BRDF_LUT));
 
-  core_data.mouse_pick_shader  = assetm_create_shader_from_template(SHADER_TEMPLATE_MOUSE_PICK);
+  TIMER_FUNC_STATIC(core_data.mouse_pick_shader  = assetm_create_shader_from_template(SHADER_TEMPLATE_MOUSE_PICK));
+
+  TIMER_STOP_STATIC();
 }

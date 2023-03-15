@@ -1,5 +1,0 @@
-* text=auto
-
-# Treat all .fbx files (even ASCII) as binary
-*.fbx binary
-

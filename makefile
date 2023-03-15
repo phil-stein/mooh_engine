@@ -40,76 +40,76 @@ DATA_BIN		 		 ="bin_data"
 TEX_VIEWER_CC_ARGS  ="-DGLOBAL_DEBUG -DASSETM_NO_ZIP"
 
 
-ASSET_PATH			 ="/Workspace/C/mooh_engine/assets/"
+ASSET_PATH			 ="/Workspace/C/mooh_engine/_assets/"
 
 # compile and link to .a
 core_editor:
-	@$(MAKE) -s -C make -f makefile_core NAME=$(EDITOR_CORE_NAME) CC_ARGS=$(EDITOR_CC_ARGS) BIN_DIR=$(EDITOR_CORE_BIN)
+	@$(MAKE) -s -C _make -f makefile_core NAME=$(EDITOR_CORE_NAME) CC_ARGS=$(EDITOR_CC_ARGS) BIN_DIR=$(EDITOR_CORE_BIN)
 core_game:
-	@$(MAKE) -s -C make -f makefile_core NAME=$(GAME_CORE_NAME) CC_ARGS=$(GAME_CC_ARGS) BIN_DIR=$(GAME_CORE_BIN)
+	@$(MAKE) -s -C _make -f makefile_core NAME=$(GAME_CORE_NAME) CC_ARGS=$(GAME_CC_ARGS) BIN_DIR=$(GAME_CORE_BIN)
 
 # clean .o and .a 
 core_clean: core_clean_editor core_clean_game
 
 core_clean_editor:
-	@$(MAKE) -s -C make -f makefile_core clean NAME=$(EDITOR_CORE_NAME) BIN_DIR=$(EDITOR_CORE_BIN)
+	@$(MAKE) -s -C _make -f makefile_core clean NAME=$(EDITOR_CORE_NAME) BIN_DIR=$(EDITOR_CORE_BIN)
 core_clean_game:
-	@$(MAKE) -s -C make -f makefile_core clean NAME=$(GAME_CORE_NAME) BIN_DIR=$(GAME_CORE_BIN)
+	@$(MAKE) -s -C _make -f makefile_core clean NAME=$(GAME_CORE_NAME) BIN_DIR=$(GAME_CORE_BIN)
 
 # --- data ---
 
 # compile and link to .a
 data:
-	@$(MAKE) -s -C make -f makefile_data clean all NAME=$(DATA_NAME) CC_ARGS=$(DATA_CC_ARGS) BIN_DIR=$(DATA_BIN)
+	@$(MAKE) -s -C _make -f makefile_data clean all NAME=$(DATA_NAME) CC_ARGS=$(DATA_CC_ARGS) BIN_DIR=$(DATA_BIN)
 # clean .o and .exe
 data_clean:
-	@$(MAKE) -s -C make -f makefile_data NAME=$(DATA_NAME) BIN_DIR=$(DATA_BIN) clean
+	@$(MAKE) -s -C _make -f makefile_data NAME=$(DATA_NAME) BIN_DIR=$(DATA_BIN) clean
 
 
 # --- editor ---
 
 # compile and run editor
 editor: 
-	@$(MAKE) -s -C make -f makefile_editor run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_editor run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 
 # clean .o and .exe
 editor_clean:
-	@$(MAKE) -s -C make -f makefile_editor clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_editor clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 # just make dont run
 editor_make: 
-	@$(MAKE) -s -C make -f makefile_editor ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_editor ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(EDITOR_CC_ARGS)
 
 
 # --- game ---
 
 # compile and run
 game: 
-	@$(MAKE) -s -C make -f makefile_game run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_game run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 
 # clean .o and .exe
 game_clean:
-	@$(MAKE) -s -C make -f makefile_game clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_game clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 # just make dont run
 game_make: 
-	@$(MAKE) -s -C make -f makefile_game ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_game ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(GAME_CC_ARGS)
 
 
 # --- tex_viewer ---
 
 # compile and run
 tex_viewer: 
-	@$(MAKE) -s -C make -f makefile_tex_viewer run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_tex_viewer run ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 
 
 # clean .o and .exe
 tex_viewer_clean:
-	@$(MAKE) -s -C make -f makefile_tex_viewer clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_tex_viewer clean ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 
 # just make dont run
 tex_viewer_make: 
-	@$(MAKE) -s -C make -f makefile_tex_viewer ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
+	@$(MAKE) -s -C _make -f makefile_tex_viewer ASSET_PATH=$(ASSET_PATH) CC_ARGS=$(TEX_VIEWER_CC_ARGS)
 

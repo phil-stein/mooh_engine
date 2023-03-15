@@ -100,6 +100,7 @@ main resources:
     - [ ] pool allocator    ?
     - [ ] chunk allocator   ?
     - [ ] randy memory pool ?
+  - [ ] figure out why core_data_init() is taking so long
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -114,16 +115,17 @@ main resources:
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
+  - [ ] put apps in different folder than core/phys/etc.
   - [ ] add missing P_TYPE() funcs to global.h
   - [x] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
   - [ ] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
-  - [ ] use _dbg funcs for materials in assetm
   - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
-  - [ ] make the _file & _line macro and compile out ?
   - [x] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h, ARRFREE(), HMFREE, SHFREE
   - [x] make data a lib as well
+  - [ ] make global submodule again, check if phys, serialization are still submodules
   - [ ] make most funcs _dbg error checked
-    - [ ] make _dbg check a macro to set easy and compile out
+    - [ ] use _dbg funcs for materials in assetm
+    - [ ] make _dbg check a macro to set easy and compile out ?
     - [ ] state
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
