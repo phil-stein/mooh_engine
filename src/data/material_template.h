@@ -1,10 +1,12 @@
 #ifndef MATERIAL_TEMPLATE_H 
 #define MATERIAL_TEMPLATE_H 
 
-#include "../global/global.h"
-#include "../data/shader_template.h"
-#include "../math/math_inc.h"
+#include "global/global.h"
+#include "data/shader_template.h"
+#include "math/math_inc.h"
 
+// @DOC: act as index for material_template_get()
+//       ! if out of order materials will be loaded as the wrong material
 typedef enum material_template_type
 {
   MATERIAL_TEMPLATE_EMPTY,
@@ -25,7 +27,8 @@ typedef enum material_template_type
 
 }material_template_type;
 
-
+// @DOC: template for material
+//       specifies all data needed to make material
 typedef struct material_template_t
 {
   const char* albedo;
@@ -43,8 +46,8 @@ typedef struct material_template_t
   shader_template_type shader_template;  // SHADER_TEMPLATE_NONE for default
 
 }material_template_t;
-
-// @NOTE: is this better, than having the values in the .c file ?
+// @DOC: default values given to all templates in material_template.c 
+//       and then individually overwritten if needed 
 #define MATERIAL_TEMPLATE_DEFAULT_INIT()        \
     .albedo = NULL,                             \
     .normal = NULL,                             \
@@ -58,8 +61,12 @@ typedef struct material_template_t
     .tile = { 1, 1 },                           \
     .shader_template = SHADER_TEMPLATE_NONE
 
-
+// @DOC: get pointer to material template by its index, see material_template_type
+//       idx: index for template, use material_template_type
 const material_template_t* material_template_get(int idx);
+
+// @DOC: get all templates in arr
+//       len: gets set to arr's length
 const material_template_t* material_template_get_all(int* len);
 
 #endif

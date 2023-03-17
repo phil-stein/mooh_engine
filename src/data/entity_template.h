@@ -6,6 +6,8 @@
 #include "../math/math_inc.h"
 
 
+// @DOC: act as index for entity_template_get()
+//       ! if out of order entities will be loaded as the wrong entity
 typedef enum entity_template_type 
 {
   ENTITY_TEMPLATE_QUAD,
@@ -27,7 +29,8 @@ typedef enum entity_template_type
 }entity_template_type;
 
 
-// template for entites
+// @DOC: template for entity
+//       specifies all data needed to make entity except transform
 typedef struct entity_template_t
 {
   char* name;
@@ -52,6 +55,8 @@ typedef struct entity_template_t
   vec3 aabb_offset; // offset from objects position
 
 }entity_template_t;
+// @DOC: default values given to all templates in entity_template.c 
+//       and then individually overwritten if needed 
 #define ENTITY_TEMPLATE_T_SET_DEFAULTS()  \
   .name = "default",                      \
   .mesh = "cube",                         \
@@ -67,7 +72,7 @@ typedef struct entity_template_t
   .aabb_offset = { 0, 0, 0 },             \
   .is_trigger  = false                   
 
-// removed () bc. vs19 is fckn stupid
+// @DOC: values for an empty entity
 #define ENTITY_TEMPLATE_T_EMPTY()         \
 {                                         \
   .name = "empty",                        \
@@ -85,8 +90,12 @@ typedef struct entity_template_t
   .is_trigger  = false                    \
 }
 
+// @DOC: get pointer to entity template by its index, see entity_template_type
+//       idx: index for template, use entity_template_type
 const entity_template_t* entity_template_get(int idx);
 
+// @DOC: get all templates in arr
+//       len: gets set to arr's length
 const entity_template_t* entity_template_get_all(int* len);
 
 #endif

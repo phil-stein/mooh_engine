@@ -123,10 +123,10 @@ main resources:
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
   - [ ] comment all .h files
-    - [ ] data
-      - [ ] entity_template.h
-      - [ ] material_template.h
-      - [ ] shader_template.h
+    - [x] data
+      - [x] entity_template.h
+      - [x] material_template.h
+      - [x] shader_template.h
     - [ ] editor
       - [ ] app.h
       - [ ] gizmo.h
