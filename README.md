@@ -133,13 +133,12 @@ main resources:
       - [ ] gui.h
       - [ ] terrain_edit.h
     - [ ] phys
-      - [ ] phys_collisions.h
-      - [ ] phys_debug_draw.h
-      - [ ] phys_dynamics.h
-      - [ ] phys_resolution.h
-      - [ ] phys_response.h
-      - [ ] phys_types.h
-      - [ ] phys_world.h
+      - [x] phys_collisions.h
+      - [x] phys_debug_draw.h
+      - [x] phys_dynamics.h
+      - [x] phys_resolution.h
+      - [x] phys_types.h
+      - [x] phys_world.h
     - [ ] global.h
     - [ ] str_util.h
     - [ ] io_util.h
