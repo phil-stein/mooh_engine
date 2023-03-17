@@ -18,6 +18,8 @@ const entity_template_t entity_template_table[] =
     .name = "sphere01",
     .mesh = "sphere",
     .mat  = MATERIAL_TEMPLATE_DEFAULT,
+    .phys_flag = ENTITY_HAS_SPHERE,
+    .radius    = 2.0f,
   },
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
@@ -94,7 +96,7 @@ const entity_template_t entity_template_table[] =
     .mass = 5.0f,
     .friction = 0.05f, 
     .aabb_size   = { 0.5f, 2.0f, 0.5f },
-    .aabb_offset = { 0.0f, 2.15f, 0.0f },
+    .collider_offset = { 0.0f, 2.15f, 0.0f },
   },
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),

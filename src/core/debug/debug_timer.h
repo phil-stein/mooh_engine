@@ -143,6 +143,7 @@ void debug_timer_counter_print_func(char* counter_name);
 #define TIMER_FUNC_PRINT(func)          func
 #define TIMER_FUNC_STATIC(func)         func
 #define TIMER_FUNC_STATIC_PRINT(func)   func
+#define TIMER_FUNC_COUNTER(func,name)   func
 
 #endif
 

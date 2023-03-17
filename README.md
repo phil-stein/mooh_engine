@@ -44,7 +44,7 @@ main resources:
     - [aa](#renderer)
     - [bloom](#renderer)
   - *advanced*
-    - [physics engine](#physics-engine)
+    - [physics engine](#physics engine)
     - [chunking for ents/phys_objs](#optimizations) 
 
 ## buggs
@@ -53,13 +53,13 @@ main resources:
     - actually nuklear is stealing our callback from glfw
   - [ ] obj sizes are different than in blender
     - there is a apply transform option but its experimental
-  - [ ] math_ivec2.h doesnt get included in terrain.c, maybe everywhere
   - [?] some shader sometimes buggs, my have been caused by the point below, weird matrices and such
   - [ ] terrain-chunks dont get culled properly 
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] freeing cubemap doesnt seem to actually free any memory
   - [ ] changing WINDOW_MIN, _MAX, _FULL doesnt work
   - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#multithreading)
+  - [ ] mesh loading blender coord sys to mine, gizmo is fcked [also mentioned](#base)
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -128,7 +128,7 @@ main resources:
     - [ ] editor
       - [ ] app.h
       - [x] gizmo.h
-      - [ ] gui.h
+      - [x] gui.h
       - [ ] terrain_edit.h
     - [ ] global.h   `WIP`
     - [ ] str_util.h `WIP`
@@ -146,7 +146,7 @@ main resources:
 ## base
   - [x] load mesh
     - [ ] triangularize mesh ? (not really necessary as blender does it)
-    - [x] blender coord sys to mine
+    - [ ] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
   - [ ] asset manager
     - [ ] free assets
       - [x] textures
@@ -156,7 +156,6 @@ main resources:
     - [ ] load shaders from zip
     - [ ] load cubemaps from zip
     - [ ] handle missing assets
-    - [ ] custom asset formats [descr. here](#optimization)
   - [ ] structures (prefabs)
     ```c
       // this way structures can be added regardless of world id's
@@ -189,6 +188,10 @@ main resources:
     - [x] collision / trigger
     - [ ] etc.
     - [ ] custom game events (day to night, etc.)
+      - prob. need to be done in game
+      - unless arbitrary func pointer, like void* for funcs
+    - [ ] pooling
+  - [ ] billboards
   - [ ] particle system
     - cpu / gpu side or mix ?
     - [ ] pooling
@@ -204,11 +207,6 @@ main resources:
   - [ ] debug tools
     - [ ] add profiler
   - [ ] controller support ?
-  - [x] add tags or equivalent to entities
-    - just use flag
-    - for on_collision etc.
-    - single or multiple ?
-  - [ ] add logo to exe
 
 ## renderer
   - [ ] blending
@@ -219,6 +217,7 @@ main resources:
   - [ ] ssao
   - [ ] bloom
   - [ ] custom anti aliasing
+    - maybe try built in again 
   - [ ] water 
 
 ## entity system

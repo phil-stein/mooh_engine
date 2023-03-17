@@ -601,13 +601,16 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       nk_property_float(ctx, "force.z", -2048.0f, &obj->rb.force[2], 2048.0f, 0.1f, 0.01f);
 
       nk_labelf(ctx, NK_TEXT_LEFT, "is_grounded: %s", STR_BOOL(obj->collider.is_grounded));
+
     }
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE))
     {
       nk_labelf(ctx, NK_TEXT_LEFT, " -- sphere --");
-      nk_labelf(ctx, NK_TEXT_LEFT, "radius: %f", def->radius);
+      nk_labelf(ctx, NK_TEXT_LEFT, "radius: %.2f", def->radius);
       
       nk_labelf(ctx, NK_TEXT_LEFT, "is trigger: %s", STR_BOOL(def->is_trigger));
+      
+      phys_debug_draw_sphere_collider(obj);
     }
     if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX))
     {
@@ -622,8 +625,8 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
         phys_rotate_box_y(e->id);
       }
 
-      phys_debug_draw_box_collider(obj, def->is_trigger ? INFO_COLLIDER_TRIGGER_COLOR : 
-                                        (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY) ? INFO_COLLIDER_DYNAMIC_COLOR : INFO_COLLIDER_STATIC_COLOR));
+      phys_debug_draw_box_collider(obj);
+
     }
   }
 

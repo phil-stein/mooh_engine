@@ -136,7 +136,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
     vec3_copy(half_extents, aabb[1]);
     vec3_mul_f(aabb[0], -1, aabb[0]);
     
-    phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->aabb_offset, def->is_trigger);
+    phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->collider_offset, def->is_trigger);
   }
   else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -151,7 +151,11 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
     vec3_copy(half_extents, aabb[1]);
     vec3_mul_f(aabb[0], -1, aabb[0]);
     
-    phys_add_obj_box(id, pos, scl, aabb, (f32*)def->aabb_offset, def->is_trigger);
+    phys_add_obj_box(id, pos, scl, aabb, (f32*)def->collider_offset, def->is_trigger);
+  }
+  else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE))
+  {
+    phys_add_obj_sphere(id, pos, scl, def->radius, (f32*)def->collider_offset, def->is_trigger);
   }
   
   return id; 

@@ -270,23 +270,15 @@ u32 renderer_extra_gen_brdf_lut(const char* path)
   const int channel_nr = 2;
 
   u32 pixels_len = 0;
-  // u8* pixels = frambuffer_write_pixels_to_buffer_fbo(capture_fbo, width, height, channel_nr, GL_RG16F, GL_FLOAT, &pixels_len);
   texture_t t;
   t.handle     = brdf_lut;
   t.width      = width;
   t.height     = height;
   t.channel_nr = channel_nr;
   asset_io_texture_write_pixels_to_file(&t,  GL_RG, path);
-  // Pu8* pixels = asset_io_texture_write_pixels_to_file(brdf_lut, width, height, channel_nr, GL_RG16F, GL_FLOAT, &pixels_len);
 
-  // u32 buffer_len = 0;
-  // u8* buffer = asset_io_serialize_texture(pixels, width, height, channel_nr, &buffer_len);
-
-  // file_io_write_bytes(path, buffer, buffer_len);
-
-  // free(pixels);
-  // free(buffer);
-
+  pixels_len++; // so gcc doesnt complain about unused variable
+    
   return brdf_lut;
 }
 

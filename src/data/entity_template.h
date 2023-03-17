@@ -53,7 +53,7 @@ typedef struct entity_template_t
     vec3 aabb_size;   // total aabb size from min to max
   };
   bool is_trigger;
-  vec3 aabb_offset; // offset from objects position
+  vec3 collider_offset; // offset from objects position
 
 }entity_template_t;
 // @DOC: default values given to all templates in entity_template.c 
@@ -71,7 +71,7 @@ typedef struct entity_template_t
   .mass        = 1.0f,                    \
   .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
-  .aabb_offset = { 0, 0, 0 },             \
+  .collider_offset = { 0, 0, 0 },         \
   .is_trigger  = false                   
 
 // @DOC: values for an empty entity
@@ -89,7 +89,7 @@ typedef struct entity_template_t
   .mass        = 1.0f,                    \
   .friction    = 0.1f,                    \
   .aabb_size   = { 1, 1, 1 },             \
-  .aabb_offset = { 0, 0, 0 },             \
+  .collider_offset = { 0, 0, 0 },         \
   .is_trigger  = false                    \
 }
 

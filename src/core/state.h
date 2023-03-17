@@ -33,6 +33,7 @@ entity_t* state_get_entity_arr(int* len, int* dead_len);
 int** state_get_template_entity_idxs_arr(int* len);
 
 // @DOC: add an entity, based on an entity_template
+//       also adds the appropriate phys objs
 //       returns added entities id
 //       pos: position
 //       rot: rotation
@@ -40,6 +41,7 @@ int** state_get_template_entity_idxs_arr(int* len);
 //       template_idx: idx for entity_template_get() in entity_template.c
 int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_idx);
 // @DOC: add an entity
+//       ! doesnt add any phys objs, only state_add_entity_from template() does that
 //       returns added entities id
 //       pos:          position
 //       rot:          rotation

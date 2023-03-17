@@ -40,6 +40,7 @@ static core_data_t* core_data = NULL;
 char  _title[WINDOW_TITLE_MAX];      // copy title
 char __title[WINDOW_TITLE_MAX +14];  // copy _title, add fps
 
+
 void DBG(program_start_dbg, int width, int height, const char* title, window_type type, empty_callback* init_f, empty_callback* update_f, const char* asset_path)
 {
   TIMER_START(" -- program init -- ");
