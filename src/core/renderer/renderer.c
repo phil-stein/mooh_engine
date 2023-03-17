@@ -109,6 +109,11 @@ void renderer_init()
 
 void renderer_update()
 {
+  core_data->draw_calls_total       = 0;
+  core_data->draw_calls_screen_quad = 0;
+  core_data->draw_calls_deferred    = 0;
+  core_data->draw_calls_shadow      = 0;
+    
 	int w, h;
 	window_get_size(&w, &h);
   // glViewport(0, 0, w, h);
@@ -191,12 +196,15 @@ void renderer_update()
 
       mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh);
       DRAW_MESH(mesh); 
+      core_data->draw_calls_total++;
+      core_data->draw_calls_shadow++;
     }
     for (int i = 0; i < core_data->terrain_chunks_len; ++i) 
     { 
       if (!core_data->terrain_chunks[i].loaded || !core_data->terrain_chunks[i].visible) { continue; }
       shader_set_mat4(&core_data->shadow_shader, "model", core_data->terrain_chunks[i].model);
       renderer_draw_terrain_mesh(&core_data->terrain_chunks[i]); 
+      core_data->draw_calls_shadow++; // draw terrain inc's draw_calls_total
     }
     framebuffer_unbind();
   }
@@ -284,12 +292,15 @@ void renderer_update()
 
       mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh);
       DRAW_MESH(mesh);
+      core_data->draw_calls_total++;
+      core_data->draw_calls_deferred++;
     }
     
     for (int i = 0; i < core_data->terrain_chunks_len; ++i) 
     { 
       if (!core_data->terrain_chunks[i].loaded || !core_data->terrain_chunks[i].visible) { continue; }
       renderer_draw_terrain(view, proj, &core_data->terrain_chunks[i]); 
+      core_data->draw_calls_deferred++; // draw terrain inc's draw_calls_total
     }
     
     // skybox -----------------------------------------------------------------
@@ -307,6 +318,7 @@ void renderer_update()
     _glDrawArrays(GL_TRIANGLES, 0, 36);
     _glBindVertexArray(0);
     _glDepthFunc(GL_LESS); // set depth function back to default
+    core_data->draw_calls_total++;
     // ------------------------------------------------------------------------
   }
   framebuffer_unbind();
@@ -335,8 +347,8 @@ void renderer_update()
 
     // lights ----------------------------------------------
     // @UNSURE: limit shadow casters to 1 ??? 
-    const int BUFFER_SIZE = 28;
-    char buffer[BUFFER_SIZE];
+    #define BUF_SIZE1 28
+    char buffer[BUF_SIZE1];
     shader_set_int(&core_data->shadow_pass_shader, "shadows_len", core_data->show_shadows ? 1 : 0);
     if (core_data->show_shadows)
     {
@@ -345,27 +357,30 @@ void renderer_update()
         dir_light_t* light = &dir_lights[i];
 
         int idx = i; //  - disabled_lights;
-        SPRINTF(BUFFER_SIZE, buffer, "shadows[%d].direction", idx);
+        SPRINTF(BUF_SIZE1, buffer, "shadows[%d].direction", idx);
         shader_set_vec3(&core_data->shadow_pass_shader, buffer, light->dir);
 
-        SPRINTF(BUFFER_SIZE, buffer, "shadows[%d].shadow_map", idx);
+        SPRINTF(BUF_SIZE1, buffer, "shadows[%d].shadow_map", idx);
         _glActiveTexture(GL_TEXTURE0 + tex_index);
         _glBindTexture(GL_TEXTURE_2D, light->fb_shadow.buffer);
         shader_set_int(&core_data->shadow_pass_shader, buffer, tex_index);
         tex_index++;
-        SPRINTF(BUFFER_SIZE, buffer, "shadows[%d].view", idx);
+        SPRINTF(BUF_SIZE1, buffer, "shadows[%d].view", idx);
         shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->view);
-        SPRINTF(BUFFER_SIZE, buffer, "shadows[%d].proj", idx);
+        SPRINTF(BUF_SIZE1, buffer, "shadows[%d].proj", idx);
         shader_set_mat4(&core_data->shadow_pass_shader, buffer, light->proj);
 
         ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
       }
     }
+    #undef BUF_SIZE1
     // -----------------------------------------------------
 
     _glBindVertexArray(core_data->quad_vao);
     _glDrawArrays(GL_TRIANGLES, 0, 6);
     _glEnable(GL_DEPTH_TEST);
+    core_data->draw_calls_total++;
+    core_data->draw_calls_screen_quad++;
   }
   framebuffer_unbind();
   TIMER_STOP();
@@ -423,8 +438,8 @@ void renderer_update()
     ERR_CHECK(tex_index <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_index);
 
     // lights ----------------------------------------------
-    const int BUFFER_SIZE = 28;
-    char buffer[BUFFER_SIZE];
+    #define BUF_SIZE2 28
+    char buffer[BUF_SIZE2];
     // int  shadow_idx = 0;
     shader_set_int(&core_data->lighting_shader, "dir_lights_len", dir_lights_len);
     for (int i = 0; i < dir_lights_len; ++i)
@@ -432,12 +447,12 @@ void renderer_update()
       dir_light_t* light = &dir_lights[i];
 
       int idx = i; //  - disabled_lights;
-      SPRINTF(BUFFER_SIZE, buffer, "dir_lights[%d].direction", idx);
+      SPRINTF(BUF_SIZE2, buffer, "dir_lights[%d].direction", idx);
       shader_set_vec3(&core_data->lighting_shader, buffer, light->dir);
 
       vec3 color;
       vec3_mul_f(light->color, light->intensity, color);
-      SPRINTF(BUFFER_SIZE, buffer, "dir_lights[%d].color", idx);
+      SPRINTF(BUF_SIZE2, buffer, "dir_lights[%d].color", idx);
       shader_set_vec3(&core_data->lighting_shader, buffer, color);
     }
     shader_set_int(&core_data->lighting_shader, "point_lights_len", point_lights_len - point_lights_dead_len);
@@ -446,20 +461,25 @@ void renderer_update()
     {
       point_light_t* light = &point_lights[i];
       if (light->is_dead) { point_lights_disabled++; continue; }
+      entity_t* e = state_get_entity(light->entity_id);
+      vec3 l_pos; vec3_add(e->pos, light->offset, l_pos);
 
       int idx = i - point_lights_disabled;
-      SPRINTF(BUFFER_SIZE, buffer, "point_lights[%d].pos", idx);
-      shader_set_vec3(&core_data->lighting_shader, buffer, light->pos);
-      SPRINTF(BUFFER_SIZE, buffer, "point_lights[%d].color", idx);
+      SPRINTF(BUF_SIZE2, buffer, "point_lights[%d].pos", idx);
+      shader_set_vec3(&core_data->lighting_shader, buffer, l_pos); // light->pos_ptr);
+      SPRINTF(BUF_SIZE2, buffer, "point_lights[%d].color", idx);
       shader_set_vec3(&core_data->lighting_shader, buffer, light->color);
-      SPRINTF(BUFFER_SIZE, buffer, "point_lights[%d].intensity", idx);
+      SPRINTF(BUF_SIZE2, buffer, "point_lights[%d].intensity", idx);
       shader_set_float(&core_data->lighting_shader, buffer, light->intensity);
     }
+    #undef BUF_SIZE2
     // -----------------------------------------------------
 
     _glBindVertexArray(core_data->quad_vao);
     _glDrawArrays(GL_TRIANGLES, 0, 6);
     _glEnable(GL_DEPTH_TEST);
+    core_data->draw_calls_total++;
+    core_data->draw_calls_screen_quad++;
   }
   framebuffer_unbind();
   TIMER_STOP();
@@ -489,6 +509,8 @@ void renderer_update()
   _glBindVertexArray(core_data->quad_vao);
   _glDrawArrays(GL_TRIANGLES, 0, 6);
   _glEnable(GL_DEPTH_TEST);
+  core_data->draw_calls_total++;
+  core_data->draw_calls_screen_quad++;
 
   // -----------------------------------------------------
   TIMER_STOP();
@@ -509,8 +531,8 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
 
 
 	// ---- shader & draw call -----
-  const int BUF_SIZE = 64;
-  char buf[BUF_SIZE];
+  #define BUF_SIZE0 64
+  char buf[BUF_SIZE0];
   u32 tex_idx = 0;
   for (u32 i = 0; i < core_data->terrain_materials_len; ++i)
   {
@@ -518,38 +540,38 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
     
     shader_use(&core_data->terrain_shader);
     
-    SPRINTF(BUF_SIZE, buf, "materials[%d].albedo", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].albedo", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
     _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
     _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
     
-    SPRINTF(BUF_SIZE, buf, "materials[%d].normal", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].normal", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx); 
     _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
     _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
     
-    SPRINTF(BUF_SIZE, buf, "materials[%d].roughness", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].roughness", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
     _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
     _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
 
-    SPRINTF(BUF_SIZE, buf, "materials[%d].metallic", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].metallic", i);
     shader_set_int(&core_data->terrain_shader, buf, tex_idx);
     _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
     _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
 
-    SPRINTF(BUF_SIZE, buf, "materials[%d].tint", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].tint", i);
     shader_set_vec3(&core_data->terrain_shader, buf, mat->tint);
 
-    SPRINTF(BUF_SIZE, buf, "materials[%d].roughness_f", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].roughness_f", i);
     shader_set_float(&core_data->terrain_shader, buf, mat->roughness_f);
-    SPRINTF(BUF_SIZE, buf, "materials[%d].metallic_f", i);
+    SPRINTF(BUF_SIZE0, buf, "materials[%d].metallic_f", i);
     shader_set_float(&core_data->terrain_shader, buf, mat->metallic_f);
   }
   shader_set_mat4(&core_data->terrain_shader, "model", chunk->model);  // model gets updated in shadow map
   shader_set_mat4(&core_data->terrain_shader, "view", view);
   shader_set_mat4(&core_data->terrain_shader, "proj", proj);
-
+  #undef BUF_SIZE0
 
   // draw mesh
   // glCullFace(GL_FRONT);
@@ -563,6 +585,7 @@ void renderer_draw_terrain(mat4 view, mat4 proj, terrain_chunk_t* chunk)
         (void*)(sizeof(u32)
           * chunk->verts_per_strip
           * strip)); // offset to starting index
+    core_data->draw_calls_total++;
   }
   // glCullFace(GL_BACK);
 }
@@ -580,6 +603,7 @@ void renderer_draw_terrain_mesh(terrain_chunk_t* chunk)
         (void*)(sizeof(u32)
           * chunk->verts_per_strip
           * strip)); // offset to starting index
+    core_data->draw_calls_total++;
   }
 }
 

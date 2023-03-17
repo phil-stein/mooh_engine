@@ -26,7 +26,7 @@ uniform float metallic_f;
 uniform vec2 uv_tile;
 
 void main()
-{    
+{
   // store the fragment position vector in the first gbuffer texture
   position = vec4(_in.frag_pos, 1.0);
   vec2 uv  = _in.uv_coords * uv_tile; 

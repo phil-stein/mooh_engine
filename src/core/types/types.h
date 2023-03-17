@@ -168,7 +168,7 @@ typedef struct structure_t
 
 typedef struct dir_light_t
 {
-  vec3  pos;    // position
+  vec3  pos;    // position // @TODO: remove this, use other pos for shadows
   vec3  dir;    // direction vector
   rgbf  color;  // color of light
   // rgbf  ambient;
@@ -189,33 +189,14 @@ typedef struct point_light_t
 {
   bool is_dead;     // instead of deleting the light from array, its marked dead and overwritten with the next added point_light
   int  id;          // for state_get_point_light(id)
-  int entity_id;    // either -1 or entity id the light is attached to
+  int  entity_id;   // either -1 or entity id the light is attached to
   
-  vec3  pos;        // position
+  // f32*  pos_ptr;    // position, points to entity_t.pos
+  vec3  offset;     // position offset from its entity 'parent'
   rgbf  color;      // color of light
   float intensity;  // multiplier for lights effect on the world
 
 
 }point_light_t;
-
-// @NOTE: not in use, [11.03.23]
-// typedef struct scene_t
-// {
-//   entity_t* world;  // array of all entities
-//   int world_len;
-// 
-//   dir_light_t* dir_lights;  // array of all dir lights
-//   int dir_lights_len;
-// 
-//   // @TODO: 
-// 
-//   // point lights here
-// 
-//   // settings
-//   // e.g. cubemap
-//   // -> dir "cubemap_orange"
-//   // etc.
-// 
-// }scene_t;
 
 #endif

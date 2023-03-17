@@ -1,5 +1,6 @@
 #include "core/types/texture.h"
 #include "core/debug/debug_opengl.h"
+#include "core/debug/debug_timer.h"
 #include "math/math_inc.h"
 
 #pragma GCC diagnostic push
@@ -46,6 +47,8 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
 {
   u32 handle = 0;
 
+  TIMER_START_COUNTER("create from pixels -> gen tex");
+
   _glGenTextures(1, &handle);
   _glBindTexture(GL_TEXTURE_2D, handle);
 
@@ -57,6 +60,8 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
  
   _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, 0);
+
+  TIMER_STOP();
 
   ASSERT(channel_num >= 1);
   // SSERT(channel_num != 2); // GL_RG, GL_RG16F
@@ -88,10 +93,14 @@ u32 texture_create_from_pixels(u8* pixels, size_t width, size_t height, int chan
   }
   ASSERT(gl_format != 0);
 
+  TIMER_START_COUNTER("create from pixels -> tex image 2d");
   _glTexImage2D(GL_TEXTURE_2D, 0, gl_internal_format, width, height, 0, gl_format, GL_UNSIGNED_BYTE, pixels);
+  TIMER_STOP();
   
+  TIMER_START_COUNTER("create from pixels -> minmap");
   // must be called after glTexImage2D
   _glGenerateMipmap(GL_TEXTURE_2D);
+  TIMER_STOP();
 // @DOC: print all error including
   // not sure this does anything ???
   // float max = 4.0f;

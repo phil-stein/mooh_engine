@@ -66,6 +66,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   TIMER_FUNC_STATIC(threadm_init());
   
   TIMER_FUNC_STATIC(core_data_init());
+  TIMER_FUNC_STATIC(state_init());
 	TIMER_FUNC_STATIC(save_sys_init());
   TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(renderer_extra_init());
@@ -75,15 +76,18 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   // core_data->brdf_lut = 
   // TIMER_FUNC_STATIC(renderer_extra_gen_brdf_lut(_path)); 
   // core_data->brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle;
-  
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());
 	TIMER_FUNC_STATIC(init_f());     // init callback
-  TIMER_FUNC_STATIC(state_init());
   TIMER_FUNC_STATIC(debug_draw_init());
   
   TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
+
+  // @NOTE: entity->init() get called in the editor they get called when play is pressed
+  #ifndef EDITOR
+  TIMER_FUNC_STATIC(state_call_entity_init());
+  #endif
 
   // @UNSURE: 
   //        - archive meshes and load that way
@@ -92,8 +96,8 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   u32* tex_arr_len_ptr = 0;
   texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
   TIMER_FUNC_STATIC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
-
   core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
+
   
   strcpy(_title, window_get_title()); 
   
@@ -122,7 +126,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
     TIMER_FUNC(debug_draw_update());
     
     TIMER_FUNC(update_f());   // update callback
-    TIMER_FUNC(state_update(core_data->delta_t));
+    TIMER_FUNC(state_update());
 #ifdef EDITOR
     if (core_data->phys_act)
     {

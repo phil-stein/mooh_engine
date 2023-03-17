@@ -69,25 +69,10 @@
     <ClCompile Include="src\data\test_comp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\editor\gizmo.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\editor\gui.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="external\ufbx\ufbx.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="external\zip\zip.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\phys\phys_dynamics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\phys\phys_world.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\editor\terrain_edit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\core_data.c">
@@ -126,9 +111,6 @@
     <ClCompile Include="src\core\io\save_sys.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\editor\app.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\io\file_io.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -139,6 +121,24 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\threadm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="_external\zip\zip.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="_external\ufbx\ufbx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\app.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\gizmo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\gui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\terrain_edit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -203,15 +203,6 @@
     <ClInclude Include="src\data\test_comp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\editor\app.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\editor\gizmo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\editor\gui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\global\global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -245,12 +236,6 @@
     <ClInclude Include="src\math\math_vec4.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="external\ufbx\ufbx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="external\zip\zip.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="external\zip\miniz.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -261,9 +246,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\phys\phys_world.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\editor\terrain_edit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\phys\phys_response.h">
@@ -309,6 +291,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\threadm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\app.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\gizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\stylesheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\terrain_edit.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -42,7 +42,7 @@ void threadm_destroy(thread_t* thread)
 
 // -- specific --
 
-#define THREAD_MAX 4
+// #define THREAD_MAX 4
 
 void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_len_ptr)
 {
@@ -50,6 +50,9 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   texture_load_data_t* tex_arr = *tex_arr_ptr;
   u32 tex_arr_len = *tex_arr_len_ptr;
   if (tex_arr == NULL || tex_arr_len <= 0) { return; }
+  
+  // const int THREAD_MAX = 4; // vs studio can nibble my crusty ballsack
+#define THREAD_MAX 4
 
   thream_load_tex_args_t args_arr[THREAD_MAX];
   thread_t thread_arr[THREAD_MAX];
@@ -58,22 +61,22 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
   P_U32(tex_arr_len);
   while (tex_idx < tex_arr_len) // keep doing X threads / textures at a time until all are done
   {
-    TIMER_START(" -- start loading");
+    // TIMER_START(" -- start loading");
     for (u32 i = 0; i < THREAD_MAX && tex_idx < tex_arr_len; ++i) // start X textures
     {
       // PF("[threadm] start loaded \"%s\"\n", tex_arr[tex_idx].name);
       thread_arr[i] = threadm_start_load_texture_file(tex_arr[tex_idx].name, tex_arr[tex_idx].srgb, &args_arr[i]);
+      // PF("started load: %d, %s\n", tex_idx, tex_arr[tex_idx].name);
       thread_arr_len++;
       tex_idx++;
-      PF("started load: %d\n", tex_idx);
     }
-    TIMER_STOP_PRINT();
+    // TIMER_STOP_PRINT();
     TIMER_START(" -- join threads");
     // wait till all threads finished
     for (u32 i = 0; i < thread_arr_len; ++i) 
     {
       threadm_join(&thread_arr[i]);
-      PF("joined thread: %d\n", i);
+      // PF("joined thread: %d\n", i);
     }
     ASSERT(total_thread_count == 0);  // 0 means only main thread
     TIMER_STOP_PRINT();
@@ -83,7 +86,7 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
     for (i = 0; i < thread_arr_len; ++i)  // create the X loaded textures
     {
       thream_load_tex_args_t* args = &args_arr[i]; // (thream_load_tex_args_t*)thread_arr[i].data;
-      u32 handle = texture_create_from_pixels(args->pixels, (size_t)args->w, (size_t)args->h, (int)args->channels, args->srgb); 
+      TIMER_FUNC_COUNTER(u32 handle = texture_create_from_pixels(args->pixels, (size_t)args->w, (size_t)args->h, (int)args->channels, args->srgb), "create from pixels"); 
       FREE(args_arr[i].buffer);
       texture_t t;
       t.handle = handle;
@@ -95,23 +98,23 @@ void threadm_load_texture_arr(texture_load_data_t** tex_arr_ptr, u32* tex_arr_le
       //    i is 0 - 3
       //    so -4 +1 is the same +0, +1, +2, +3, that the first loop has
       //    which wrote the data were accesing
-      assetm_overwrite_texture_idx(tex_arr[tex_idx -thread_arr_len +i].idx, &t); 
-      PF("created: %d\n", tex_idx);
+      TIMER_FUNC_COUNTER(assetm_overwrite_texture_idx(tex_arr[tex_idx -thread_arr_len +i].idx, &t), "overwrite texture"); 
+      // PF("created: %d, %s\n", tex_idx -thread_arr_len +i, tex_arr[tex_idx -thread_arr_len +i].name);
     }
+    TIMER_COUNTER_PRINT("create from pixels");
+    TIMER_COUNTER_PRINT("create from pixels -> gen tex");
+    TIMER_COUNTER_PRINT("create from pixels -> tex image 2d");
+    TIMER_COUNTER_PRINT("create from pixels -> minmap");
+    TIMER_COUNTER_PRINT("overwrite texture");
     TIMER_STOP_PRINT();
-    TIMER_START(" -- destroy threads");
+    P_LINE();
+    // TIMER_START(" -- destroy threads");
     for (u32 i = 0; i < thread_arr_len; ++i)
     {
       threadm_destroy(&thread_arr[i]);
     }
     thread_arr_len = 0;
-    TIMER_STOP_PRINT();
-    
-    // for (u32 i = 0; i < THREAD_MAX; ++i)
-    // {
-    //   if (args_arr[i].buffer != NULL) { free(args_arr[i].buffer); }
-    //   args_arr[i].buffer = NULL;
-    // }
+    // TIMER_STOP_PRINT();
   }
   ASSERT(tex_idx == tex_arr_len); // loaded all textures
 

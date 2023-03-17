@@ -189,13 +189,15 @@ void app_update()
     int world_len = 0;
     int world_dead_len = 0;
     entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+    vec3 pos;
     for (int i = 0; i < world_len; ++i)
     {
       if (world[i].point_light_idx >= 0) 
       {
         bool error = false;
         point_light_t* p = state_get_point_light(world[i].point_light_idx, &error); ASSERT(!error);
-        debug_draw_mesh_register(world[i].pos, GIZMO_POINT_LIGHT_ROT, GIZMO_POINT_LIGHT_SCL, p->color, assetm_get_mesh_idx(GIZMO_POINT_LIGHT_MESH)); 
+        vec3_add(world[i].pos, p->offset, pos);
+        debug_draw_mesh_register(pos, GIZMO_POINT_LIGHT_ROT, GIZMO_POINT_LIGHT_SCL, p->color, assetm_get_mesh_idx(GIZMO_POINT_LIGHT_MESH)); 
       }
     }
   }

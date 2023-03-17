@@ -11,11 +11,14 @@
 #include "stb/stb_ds.h"
 
 
-entity_t* world_arr = NULL;
+entity_t* world_arr = NULL;   // all entities
 int       world_arr_len = 0;
 
-int* world_dead_arr = NULL;
+int* world_dead_arr = NULL;   // all entities marked dead, aka. ready to be overwritten
 int  world_dead_arr_len = 0;
+
+int** template_entity_idxs_arr = NULL;  // array of arrays with all entities belonging to one template arr[template][i] = i'th ent of template
+int   template_entity_idxs_arr_len = 0;
 
 dir_light_t dir_lights_arr[DIR_LIGHTS_MAX];
 int         dir_lights_arr_len = 0;
@@ -40,10 +43,12 @@ void state_init()
 {
   core_data = core_data_get();
 
-  // @NOTE: entity->init() get called in state_init(), in the editor they get called when play is pressed
-#ifndef EDITOR
-  state_call_entity_init();
-#endif
+  int templates_len = 0;
+  entity_template_get_all(&templates_len);
+  MALLOC(template_entity_idxs_arr, templates_len * sizeof(int*));
+  template_entity_idxs_arr_len = templates_len;
+  for (u32 i = 0; i < template_entity_idxs_arr_len; ++i)
+  { template_entity_idxs_arr[i] = NULL; }
 }
 void state_call_entity_init()
 {
@@ -54,7 +59,7 @@ void state_call_entity_init()
   }
 }
 
-void state_update(float dt)
+void state_update()
 {
   // @NOTE: gets called in state_init(), this only affects the editor
 #ifdef EDITOR
@@ -71,13 +76,16 @@ void state_update(float dt)
 
     state_entity_update_global_model(i);
     
+    // call entity update func
     if (core_data->scripts_act && world_arr[i].update_f != NULL)
-    { world_arr[i].update_f(&world_arr[i], dt); }
+    { world_arr[i].update_f(&world_arr[i], core_data->delta_t); }
 
-    if (world_arr[i].point_light_idx >= 0)
-    {
-      vec3_copy(world_arr[i].pos, point_lights_arr[world_arr[i].point_light_idx].pos);
-    }
+    // @NOTE: no longer works this way [12.03.23]
+    // // set point light pos to entity pos
+    // if (world_arr[i].point_light_idx >= 0)
+    // {
+    //   // vec3_copy(world_arr[i].pos, point_lights_arr[world_arr[i].point_light_idx].pos);
+    // }
   }
 }
 
@@ -101,10 +109,15 @@ entity_t* state_get_entity_arr(int* len, int* dead_len)
   *dead_len = world_dead_arr_len;
   return world_arr;
 }
-
-int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
+int** state_get_template_entity_idxs_arr(int* len)
 {
-  const entity_template_t* def = entity_template_get(table_idx);
+  *len = template_entity_idxs_arr_len;
+  return template_entity_idxs_arr;
+}
+
+int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_idx)
+{
+  const entity_template_t* def = entity_template_get(template_idx);
   int mesh = -1;
   if (!(strlen(def->mesh) == 1 && def->mesh[0] == '-')) // isnt equal to "-", that means no mesh
   { mesh = assetm_get_mesh_idx(def->mesh); }
@@ -112,7 +125,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
   if (def->mat > -1)    // isnt -1 as thats no mat
   { mat = assetm_get_material_idx(def->mat); }
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, table_idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, template_idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -140,7 +153,6 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int table_idx)
     
     phys_add_obj_box(id, pos, scl, aabb, (f32*)def->aabb_offset, def->is_trigger);
   }
-
   
   return id; 
 }
@@ -187,6 +199,13 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
   }
   
   event_sys_trigger_entity_added(id);
+ 
+  // add to templates_entity_idxs_arr
+  if (template_idx >= 0) 
+  { 
+    arrput(template_entity_idxs_arr[template_idx], id); 
+    // template_entity_idxs_arr_len++; 
+  }
 
   return id;
 }
@@ -207,7 +226,7 @@ int state_duplicate_entity(int id, vec3 offset)
   {
     bool error = false;
     point_light_t* p = state_get_point_light(e->point_light_idx, &error); ASSERT(!error);
-    state_add_point_light(pos, p->color, p->intensity, dupe);
+    state_add_point_light(p->offset, p->color, p->intensity, dupe);
   }
 
   return dupe;
@@ -521,7 +540,7 @@ bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool c
   if (dir_lights_arr_len >= DIR_LIGHTS_MAX -1) { return false; }
   
   dir_light_t l;
-  vec3_copy(pos, l.pos);
+  // vec3_copy(pos, l.pos);
   vec3_copy(dir, l.dir);
   vec3_copy(color, l.color);
   // vec3_copy(ambient, l.ambient);
@@ -569,11 +588,11 @@ point_light_t* state_get_point_light_dbg(int id, bool* error, const char* _file,
 int state_add_point_light_empty(vec3 pos, rgbf color, float intensity)
 {
   int id = state_add_empty_entity(pos, VEC3(0), VEC3(1));
-  return state_add_point_light(pos, color, intensity, id);
+  return state_add_point_light(VEC3(0), color, intensity, id);
 }
 
 
-int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
+int state_add_point_light(vec3 offset, rgbf color, float intensity, int entity_id)
 {
   if (point_lights_arr_len - point_lights_dead_arr_len >= POINT_LIGHTS_MAX -1) 
   { return -1; P_ERR("tried adding point light but already max amount of point lights"); }
@@ -581,7 +600,7 @@ int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
   point_light_t l;
   l.entity_id = entity_id;
   l.is_dead = false;
-  vec3_copy(pos, l.pos);
+  vec3_copy(offset, l.offset);
   vec3_copy(color, l.color);
   l.intensity    = intensity;
   
@@ -609,6 +628,8 @@ int state_add_point_light(vec3 pos, rgbf color, float intensity, int entity_id)
   {
     e->point_light_idx = id;
     // l.entity_id = entity_id;
+    // l.pos_ptr = e->pos;
+    // P_VEC3(l.pos_ptr);
   }
   else { ERR("tried attaching point light to entity that already has one"); }
   

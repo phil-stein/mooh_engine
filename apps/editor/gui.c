@@ -21,6 +21,8 @@
 #include "phys/phys_world.h"
 #include "phys/phys_debug_draw.h"
 
+#include "stb/stb_ds.h"
+
 #include "GLAD/glad.h"
 
 #define NK_INCLUDE_FIXED_TYPES
@@ -399,6 +401,11 @@ void gui_properties_win()
         gui_properties_point_light(p, e->point_light_idx);
         nk_tree_pop(ctx);
       }
+      else 
+      {
+        if (nk_button_label(ctx, "add pointlight"))
+        { state_add_point_light(VEC3(0), VEC3(1), 1.0f, e->id); }
+      }
 
       const entity_template_t* def = entity_template_get(e->template_idx);
       if (def->phys_flag != 0 && nk_tree_push(ctx, NK_TREE_TAB, "physics", NK_MINIMIZED))
@@ -550,11 +557,14 @@ void gui_properties_point_light(point_light_t* p, int idx)
   nk_layout_row_dynamic(ctx, 30, 1);
   nk_labelf(ctx, NK_LEFT, "id: %d, arr idx: %d", p->id, idx);
   
-  nk_label(ctx, "position", NK_TEXT_LEFT);
+  nk_label(ctx, "position offset", NK_TEXT_LEFT);
   nk_layout_row_dynamic(ctx, 30, 3);
-  nk_property_float(ctx, "p.x", -2048.0f, &p->pos[0], 2048.0f, 0.1f, 0.01f);
-  nk_property_float(ctx, "p.y", -2048.0f, &p->pos[1], 2048.0f, 0.1f, 0.01f);
-  nk_property_float(ctx, "p.z", -2048.0f, &p->pos[2], 2048.0f, 0.1f, 0.01f);
+  nk_property_float(ctx, "p.x", -2048.0f, &p->offset[0], 2048.0f, 0.1f, 0.01f);
+  nk_property_float(ctx, "p.y", -2048.0f, &p->offset[1], 2048.0f, 0.1f, 0.01f);
+  nk_property_float(ctx, "p.z", -2048.0f, &p->offset[2], 2048.0f, 0.1f, 0.01f);
+  // nk_labelf(ctx, NK_LEFT, "p.x %.2f", (*p->pos_ptr)[0]);
+  // nk_labelf(ctx, NK_LEFT, "p.y %.2f", (*p->pos_ptr)[1]);
+  // nk_labelf(ctx, NK_LEFT, "p.z %.2f", (*p->pos_ptr)[2]);
 
   gui_color_selector(p->color);
   
@@ -862,7 +872,7 @@ void gui_light_hierarchy_win()
         sprintf(buf, "point light: %d", i);
         bool selec = i == selected && selected_type == SEL_LIGHT_POINT;
         nk_selectable_label(ctx, buf, NK_TEXT_LEFT, &selec);
-        if (selec) { selected = i; selected_type = SEL_LIGHT_POINT; debug_draw_sphere_register(pl[i].pos, 0.35f, pl[i].color); } // select
+        // if (selec) { selected = i; selected_type = SEL_LIGHT_POINT; debug_draw_sphere_register(pl[i].pos, 0.35f, pl[i].color); } // select
         if (!selec && i == selected && selected_type == SEL_LIGHT_POINT) 
         { selected = -1; selected_type = SEL_LIGHT_NONE; }                                                                       // deselect
       }
@@ -912,10 +922,13 @@ void gui_light_hierarchy_win()
         selected = -1;
       }
 
-      nk_label(ctx, "position", NK_TEXT_LEFT);
-      nk_property_float(ctx, "p.x", -2048.0f, &l->pos[0], 2048.0f, 0.1f, 0.01f);
-      nk_property_float(ctx, "p.y", -2048.0f, &l->pos[1], 2048.0f, 0.1f, 0.01f);
-      nk_property_float(ctx, "p.z", -2048.0f, &l->pos[2], 2048.0f, 0.1f, 0.01f);
+      nk_label(ctx, "position offset", NK_TEXT_LEFT);
+      nk_property_float(ctx, "p.x", -2048.0f, &l->offset[0], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "p.y", -2048.0f, &l->offset[1], 2048.0f, 0.1f, 0.01f);
+      nk_property_float(ctx, "p.z", -2048.0f, &l->offset[2], 2048.0f, 0.1f, 0.01f);
+      // nk_labelf(ctx, NK_LEFT, "p.x %.2f", (*l->pos_ptr)[0]);
+      // nk_labelf(ctx, NK_LEFT, "p.y %.2f", (*l->pos_ptr)[1]);
+      // nk_labelf(ctx, NK_LEFT, "p.z %.2f", (*l->pos_ptr)[2]);
       
       gui_color_selector(l->color);
       
@@ -998,6 +1011,30 @@ void gui_debug_win()
   debug_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
   if (nk_begin(ctx, "debug", debug_win_rect, window_float_flags)) 
   {
+    
+    nk_layout_row_dynamic(ctx, 25, 1);
+    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_total:         %9u", core_data->draw_calls_total);
+    nk_labelf(ctx, NK_TEXT_LEFT, "  draw_calls_shadow:      %6u", core_data->draw_calls_shadow);
+    nk_labelf(ctx, NK_TEXT_LEFT, "  draw_calls_deferred:    %6u", core_data->draw_calls_deferred);
+    nk_labelf(ctx, NK_TEXT_LEFT, "  draw_calls_screen_quad: %2u", core_data->draw_calls_screen_quad);
+    nk_labelf(ctx, NK_TEXT_LEFT, "  draw_call for cubemap:    1");
+
+    
+    int idxs_len = 0;
+    int** idxs = state_get_template_entity_idxs_arr(&idxs_len);
+    for (u32 t = 0; t < idxs_len; ++t)
+    {
+      nk_labelf(ctx, NK_TEXT_LEFT, "template: %d", t);
+      
+      u32 len = arrlen(idxs[t]);
+      for (u32 i = 0; i < len; ++i)
+      {
+        nk_labelf(ctx, NK_TEXT_LEFT, "  -> %d", idxs[t][i]);
+      }
+    }
+
+    // nk_spacing(ctx, 1);
+
     #ifdef DEBUG_TIMER
     if (nk_tree_push(ctx, NK_TREE_TAB, "static timers", NK_MINIMIZED))
     {
@@ -1084,6 +1121,11 @@ void gui_core_data_win()
     nk_labelf(ctx, NK_TEXT_LEFT, "delta_t: %f", core_data->delta_t);   
     nk_labelf(ctx, NK_TEXT_LEFT, "cur_fps: %f", core_data->cur_fps);
         
+    nk_spacing(ctx, 1);
+    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_total:       %u", core_data->draw_calls_total);
+    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_shadow:      %u", core_data->draw_calls_shadow);
+    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_deferred:    %u", core_data->draw_calls_deferred);
+    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_screen_quad: %u", core_data->draw_calls_screen_quad);
     nk_spacing(ctx, 1);
     nk_checkbox_label(ctx, "wireframe_mode_enabled", &core_data->wireframe_mode_enabled);
     nk_checkbox_label(ctx, "show_shadows", &core_data->show_shadows);

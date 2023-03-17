@@ -123,7 +123,7 @@ void save_sys_write_empty_scene_to_file()
   SERIALIZATION_P("[serialization] serialized empty scene");
 
   char path[ASSET_PATH_MAX +64];
-  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, "-_-_new_-_-");
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, SAVE_SYS_EMPTY_SCENE_NAME);
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
 
   ARRFREE(buffer);
@@ -404,20 +404,20 @@ void save_sys_deserialize_dir_light(u8* buffer, u32* offset)
 }
 
 void save_sys_serialize_point_light(u8** buffer, point_light_t* l)
-{ 
-  serialization_serialize_vec3(buffer, l->pos);
+{
+  serialization_serialize_vec3(buffer, l->offset);
   serialization_serialize_vec3(buffer, l->color);
   serialization_serialize_f32(buffer, l->intensity);
   // entity_id gets set in entity_deserealize
 }
 int save_sys_deserialize_point_light(u8* buffer, u32* offset, int entity_id)
 {
-  vec3 pos, color;
-  serialization_deserialize_vec3(buffer, offset, pos);
+  vec3 _offset, color;
+  serialization_deserialize_vec3(buffer, offset, _offset);
   serialization_deserialize_vec3(buffer, offset, color);
   f32 intensity = serialization_deserialize_f32(buffer, offset);
 
-  return state_add_point_light(pos, color, intensity, entity_id);
+  return state_add_point_light(_offset, color, intensity, entity_id);
 }
 
 

@@ -10,17 +10,17 @@
 
 typedef struct terrain_chunk_t
 {
-  bool loaded;
-  bool visible;
+  bool loaded;     // is loaded or not 
+  bool visible;    // is visible or not
 
-  vec3 pos, scl;
-  mat4 model;
-  bool is_moved;  // 'dirtyflag' for the model matrix
+  vec3 pos, scl;   // position scale, no rotation
+  mat4 model;      // model matrix
+  bool is_moved;   // 'dirtyflag' for the model matrix
 
   // opengl stuff
-  u32 vao, vbo, ebo;
-  u32 strips_num;
-  u32 verts_per_strip;
+  u32 vao, vbo, ebo;    // vertex array obj, vertex buffer obj, element buffer obj
+  u32 strips_num;       // amount of strips in mesh, used for rendering
+  u32 verts_per_strip;  // vertices in one strip in mesh, used for rendering
 
   // for terrain_edit.c
 #ifdef EDITOR
@@ -58,16 +58,17 @@ typedef struct terrain_chunk_t
     .verts_per_strip = 0    \
   }
 #endif                    
-//  .rot = { 0, 0, 0 },    
 
 typedef struct terrain_layout_t
 {
-  ivec2 pos;
+  ivec2 pos;        // postion
   vec2* vert_info;  // [0]: height, [1]: material 
   // f32*  material;
 
 }terrain_layout_t;
 #define TERRAIN_LAYOUT_VERT_INFO_LEN(_core_data) ((_core_data)->terrain_x_len * (_core_data)->terrain_z_len)
+
+// @DOC: @TODO:
 
 void terrain_init();
 void terrain_create(f32 uv_tile);

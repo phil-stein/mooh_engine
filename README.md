@@ -32,8 +32,7 @@ main resources:
   - *optimizations* 
     - [custom asset archive files](#optimizations) `WIP`
     - [multithreading](#multithreading) `WIP` 
-    - [precompute brdf, equirect, etc](#optimizations)
-    - [batch renderer](#optimizations)
+    - [batch renderer](#optimizations) `WIP`
   - *base*
     - [structures](#base) `WIP`
   - *graphics*
@@ -49,7 +48,6 @@ main resources:
     - [chunking for ents/phys_objs](#optimizations) 
 
 ## buggs
-  - [ ] fix ale error on #include's
   - [ ] glfw mouse button & scroll callbacks 
     - works in nuklear, look at that
     - actually nuklear is stealing our callback from glfw
@@ -61,28 +59,22 @@ main resources:
   - [ ] minimizing window to sys tray causes framebuffer crash [also mentioned here]()
   - [ ] freeing cubemap doesnt seem to actually free any memory
   - [ ] changing WINDOW_MIN, _MAX, _FULL doesnt work
-  - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed
+  - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#multithreading)
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
   - [ ] use textures with r = roughness, g = metallic, ...
   - [ ] change the white tex for no normal
   - [ ] occlusion culling 
-  - [ ] batch renderer
+  - [ ] batch renderer `WIP`
+    - [x] keep track of draw calls 
+    - [x] keep track of all template ents
+    - [ ] mark static, in template / editor ?
+    - [ ] instanced draw all static templates
   - [ ] lod system ?
   - [ ] octree or something for chunks, for entities / phys_objs
-  - [x] precompute brdf, etc., [also mentioned](#tools)
-  - [x] custom asset formats
-    - [x] mesh ~2.5x faster
-      - pure verts, nothing else
-      - 3:pos + 3:norm + 2:uv + 3:tan  =  11: f32, 44: bytes 
-      - quad: fbx:11.1kb / custom:176bytes = 1.5% 
-      - demon02: fbx:1.68mb / custom:87kb  = 5.1%
-      - prob. not realistic to be this drastic, but say 10% would still be amazing
-    - [x] texture ~10x faster
-      - uncompressed for faster load time 
+  - [ ] custom asset formats
     - [ ] cubemaps 
-  - [ ] shader spir-v ?
   - [ ] custom asset archive files | not in use
     - all textures, etc. back to back in one file with a simple header
     - type specific or agnostic ?
@@ -101,6 +93,7 @@ main resources:
     - [ ] chunk allocator   ?
     - [ ] randy memory pool ?
   - [x] figure out why core_data_init() is taking so long: shaders
+  - [ ] shader spir-v ?
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -115,34 +108,21 @@ main resources:
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
-  - [ ] put apps in different folder than core/phys/etc.
   - [ ] add missing P_TYPE() funcs to global.h
-  - [x] add macro to print location in P(), PF(), P_TYPE(), etc. like in P_INFO(), in global.h
-  - [x] rename all stbd_ds arr, hm & sh vars to be f.e. world_arr, texture_idxs_sh, texture_data_hm, etc.
-  - [x] rename all file & line vars in _dbg funcs to _file & _line to avoid confusion
-  - [x] replace malloc, calloc, free, etc. with MALLOC, CALLOC, FREE from global.h, ARRFREE(), HMFREE, SHFREE
-  - [x] make data a lib as well
+  - [ ] add icons to exe
+    - [ ] texture_view
+    - [ ] editor
   - [ ] make global submodule again, check if phys, serialization are still submodules
-  - [ ] make most funcs _dbg error checked
-    - [ ] use _dbg funcs for materials in assetm
-    - [ ] make _dbg check a macro to set easy and compile out ?
+  - [ ] remove pos  maybe also cast_shadow, etc. from dir light
+  - [ ] make most funcs _dbg error checked ? 
+    - [ ] use _dbg funcs for materials in assetm ?
+    - [x] make _dbg check a macro to set easy and compile out ?
+      - when compiled out _file & _line cause errors
+      - are _file & _line impacting performance ?
     - [ ] state
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
   - [ ] comment all .h files
-    - [x] types
-      - [x] mesh.h
-       - [ ] check @TODO: in mesh_t 
-    - [ ] main
-      - [x] program.h
-      - [x] renderer.h
-      - [x] renderer_direct.h
-      - [x] renderer_extra.h
-      - [ ] save_sys.h
-      - [ ] state.h
-      - [ ] str_util.h
-      - [ ] terrain.h
-      - [ ] window.h
     - [ ] data
       - [ ] entity_template.h
       - [ ] material_template.h
@@ -161,6 +141,8 @@ main resources:
       - [ ] phys_types.h
       - [ ] phys_world.h
     - [ ] global.h
+    - [ ] str_util.h
+    - [ ] io_util.h
     - [ ] serialization.h
 
 ## tools
@@ -295,6 +277,7 @@ main resources:
     - [x] textures
       - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#buggs)
       - [ ] experiment with thread count
+      - [ ] load textures with pbo's, is supposed to be faster `WIP`
       - [ ] multithreaded when not loading arr
     - [ ] meshes
     - [ ] shaders

@@ -10,7 +10,7 @@
 # CC         = @gcc -g -Wall -DASSET_PATH=\"../assets/\"  -DASSETM_NO_ZIP 
 # CC         = @gcc -g -Wall -DEDITOR  -DASSETM_NO_ZIP -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE -DASSET_PATH=\"$(ASSET_PATH)\"
 CC_NO_WARN = @gcc
-CC         = @gcc -g -Wall -DDEBUG -DASSET_PATH=\"$(ASSET_PATH)\"
+CC         = @gcc -g -Wall 
 CC				 += $(CC_ARGS)
 CC				 += -DASSET_PATH=\"$(ASSET_PATH)\"
 
@@ -23,7 +23,7 @@ SRC_DIR   = ../src
 APPS_DIR  = ../apps
 GLOBL_DIR = $(SRC_DIR)/global
 DATA_DIR  = $(SRC_DIR)/data
-APP_DIR   = $(SRC_DIR)/tex_viewer
+APP_DIR   = $(APPS_DIR)/tex_viewer
 
 OBJ_DIR = $(BUILD_DIR)\bin_tex_viewer
 LIB_DIR = ..\_libs\win64
@@ -54,7 +54,7 @@ LIBS     = $(patsubst %,-l %,$(_LIBS))
 _INC = 							  				\
 		$(EXTERNAL_DIR)	  				\
  		$(SRC_DIR)								\
- 		$(APP_INC)								\
+ 		$(APPS_DIR)								\
 		$(DATA_DIR)
 INC = $(patsubst %,-I %,$(_INC))
 

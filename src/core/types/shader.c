@@ -466,12 +466,13 @@ shader_t shader_load_from_path(const char* file_path, const char* name)
   if (vert <= -1 || frag <= -1) { ERR("vert or frag shader missing"); }
  
   // -- tmp --
-  const int NAME_SIZE = 16;
+  #define NAME_SIZE 16
   char vert_name[NAME_SIZE], frag_name[NAME_SIZE];
   strcpy(vert_name, t[vert].val);
   strcpy(frag_name, t[frag].val);
   SPRINTF(NAME_SIZE, t[vert].val, "assets/shaders/%s", vert_name);
   SPRINTF(NAME_SIZE, t[frag].val, "assets/shaders/%s", frag_name);
+  #undef NAME_SIZE
 
   shader_t s = shader_create_from_file(t[vert].val, t[frag].val, NULL, name);
 

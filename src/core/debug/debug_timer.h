@@ -91,6 +91,8 @@ void debug_timer_counter_print_func(char* counter_name);
 // @DOC: encapsulate function in timer start and stop_static_print, e.g. TIMER_FUNC_STATIC_PRINT(func());
 #define TIMER_FUNC_STATIC_PRINT(func)   TIMER_START(#func); func; TIMER_STOP_STATIC_PRINT()
 
+#define TIMER_FUNC_COUNTER(func,name)   TIMER_START_COUNTER_NAME(#func, name); func; TIMER_STOP()
+
 // @DOC: get the array/stack of current timers, these get reset each debug_timer_clear_state() call, i.e. each frame
 timer_t* debug_timer_get_all(int* len);
 

@@ -33,7 +33,7 @@ app_data_t app_data = APP_DATA_INIT();
 
 static core_data_t* core_data = NULL;
 
-char tex_path[512] = "\\Workspace\\C\\mooh_engine\\assets\\textures\\#internal\\preview_bg.tex";
+char tex_path[512] = "\\Workspace\\C\\mooh_engine\\_assets\\textures\\#internal\\preview_bg.tex";
 
 texture_t  tex;
 texture_t  tex_rgb;

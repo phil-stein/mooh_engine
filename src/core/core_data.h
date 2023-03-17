@@ -56,7 +56,13 @@ typedef struct core_data_t
   mesh_t line_mesh;
 
   // -- renderer --
-  
+ 
+  // after renderer_update() has run this is all draw calls
+  u32 draw_calls_total; 
+  u32 draw_calls_shadow;     
+  u32 draw_calls_deferred;
+  u32 draw_calls_screen_quad;
+
   bool wireframe_mode_enabled;
   bool show_shadows;
 
@@ -81,6 +87,10 @@ typedef struct core_data_t
   shader_t mouse_pick_shader;
   
   cubemap_t cube_map;
+ 
+  // -- renderer_extra --
+
+  int outline_id; // used in renderer_extra_draw_outline()
 
   // -- input --
 
@@ -126,8 +136,6 @@ typedef struct core_data_t
   bool scripts_act;
 #endif
 
-  int outline_id; // used in renderer_draw_outline()
-
 }core_data_t;
 
 // value for phys_act & scripts_act
@@ -163,10 +171,17 @@ typedef struct core_data_t
                                               \
   .quad_mesh = -1,                            \
                                               \
+  .draw_calls_total       = 0,                \
+  .draw_calls_screen_quad = 0,                \
+  .draw_calls_deferred    = 0,                \
+  .draw_calls_shadow      = 0,                \
+                                              \
   .wireframe_mode_enabled = false,            \
   .show_shadows  = true,                      \
                                               \
   .brdf_lut = -1,                             \
+                                              \
+  .outline_id  = -1,                          \
                                               \
   .mouse_x = 0,                               \
   .mouse_y = 0,                               \
@@ -192,8 +207,6 @@ typedef struct core_data_t
                                               \
   .phys_act    = PLAY_ACT_VALUE,              \
   .scripts_act = PLAY_ACT_VALUE,              \
-                                              \
-  .outline_id  = -1,                          \
 }
 
 
