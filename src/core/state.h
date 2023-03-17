@@ -45,6 +45,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
 //       rot:          rotation
 //       scl:          scale
 //       mesh:         assetm idx for a mesh
+//       tags_flag:    flag with tags defined in data/entity_tags.h
 //       mat:          assetm idx for a material
 //       phys_flag:    physics 'components' to be attached
 //       init_f:       initialization function called on start of game
@@ -52,7 +53,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
 //       collision_f:  called every time entity collides, only if entity has a collider
 //       trigger_f:    called every time entity collides and entity or colliding object is trigger, only if entity has a collider
 //       template_idx: entity_template idx, -1 for no template
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx);
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flag, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx);
 // @DOC: add an empty entity
 //       returns added entities id
 //       pos: position

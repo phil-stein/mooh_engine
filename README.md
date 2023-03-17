@@ -103,7 +103,6 @@ main resources:
   - zip archive not faster than straight files
 
 ## organization
-  - [ ] replace phys_act & scripts_act with flag
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
@@ -123,26 +122,16 @@ main resources:
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
   - [ ] comment all .h files
-    - [x] data
-      - [x] entity_template.h
-      - [x] material_template.h
-      - [x] shader_template.h
+    - [ ] math
+      - [ ] math_mat4.h
+      - [ ] math_space.h
     - [ ] editor
       - [ ] app.h
-      - [ ] gizmo.h
+      - [x] gizmo.h
       - [ ] gui.h
       - [ ] terrain_edit.h
-    - [ ] phys
-      - [x] phys_collisions.h
-      - [x] phys_debug_draw.h
-      - [x] phys_dynamics.h
-      - [x] phys_resolution.h
-      - [x] phys_types.h
-      - [x] phys_world.h
-    - [ ] global.h
-    - [ ] str_util.h
-    - [ ] io_util.h
-    - [ ] serialization.h
+    - [ ] global.h   `WIP`
+    - [ ] str_util.h `WIP`
 
 ## tools
   - [ ] binary dump
@@ -174,7 +163,7 @@ main resources:
       // also entities need a reference to which structure they are a part of 
       struct structure_def_t
       {
-        entity_t* e;
+        int entity_id;  // idx for state_get_entity()
         int parent_idx; // idx into structure_t, not world
       };
       struct structure_t
@@ -215,8 +204,8 @@ main resources:
   - [ ] debug tools
     - [ ] add profiler
   - [ ] controller support ?
-  - [x] serialize cube_map
-  - [ ] add tags or equivalent to entities
+  - [x] add tags or equivalent to entities
+    - just use flag
     - for on_collision etc.
     - single or multiple ?
   - [ ] add logo to exe

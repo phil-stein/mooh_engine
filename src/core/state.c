@@ -125,7 +125,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   if (def->mat > -1)    // isnt -1 as thats no mat
   { mat = assetm_get_material_idx(def->mat); }
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, template_idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->tags_flag, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, template_idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -157,12 +157,13 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flags, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
 {
   entity_t ent;
   ent.is_dead = false;
   ent.template_idx = template_idx;
-  
+  ent.tags_flag = tags_flags;
+
   // not using 'ENTITY_SET_...',  as already setting 'is_moved'
   vec3_copy(pos,  ent.pos);
   vec3_copy(rot,  ent.rot);
@@ -211,7 +212,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, entity_phy
 }
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
 {
-  return state_add_entity(pos, rot, scl, -1, -1, 0, NULL, NULL, NULL, NULL, -1);
+  return state_add_entity(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, -1);
 }
 
 int state_duplicate_entity(int id, vec3 offset)

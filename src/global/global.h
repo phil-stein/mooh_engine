@@ -64,7 +64,7 @@ typedef double			        f64;
 
 typedef void (empty_callback)(void);
 
-// #define INLINE static inline __attribute( (always_inline) )
+// @DOC: inlining works different in msvc and gcc
 #if defined(_MSC_VER)
 #  define INLINE __forceinline
 #else
@@ -73,17 +73,28 @@ typedef void (empty_callback)(void);
 
 // ---- helper ----
 
-#define FLAG(a) (1 << (a)) // aka. 2^a, 0, 2, 4, 8, ...
+// @DOC: make number with bit a set 
+//       1 << 0 0000
+//       1 << 1 0001
+//       1 << 2 0010
+//       1 << 3 0100
+//       1 << 4 1000
+//       aka. 1<<a == 2^a, 0, 2, 4, 8, ...
+#define FLAG(a) (1 << (a)) 
 
-// a: 00010010
-// b: 00000010
-// &: 00000010 true bc. >1
+// @DOC: check if flag a and b have a set bit in common
+//       a: 00010010
+//       b: 00000010
+//       &: 00000010 true bc. >1
 #define HAS_FLAG(a, b)   ((a) & (b))
 
+// @DOC: set all shared bits between a and b to 0 in a 
 #define REMOVE_FLAG(a, b) ((a) &= ~(b))
 
 
+// @DOC: turn macro input to string
 #define STR_VAR(v)  (#v)
+// @DOC: turn bool to string
 #define STR_BOOL(v) ((v) ? "true" : "false")
 
 // ifdef activates P... macros, ASSERT, ERR..., etc.
@@ -94,6 +105,7 @@ typedef void (empty_callback)(void);
 
 // -- style --
 
+// @DOC: @TODO:
 typedef enum pf_mode
 {
   PF_NORMAL     = 0,

@@ -34,6 +34,7 @@ typedef enum entity_template_type
 typedef struct entity_template_t
 {
   char* name;
+  s64   tags_flag;  // 0 is no tags
 
   char* mesh;   // name for assetm, "-" means no mesh
   int   mat;    // idx for material_template.c, -1 means no mesh
@@ -59,6 +60,7 @@ typedef struct entity_template_t
 //       and then individually overwritten if needed 
 #define ENTITY_TEMPLATE_T_SET_DEFAULTS()  \
   .name = "default",                      \
+  .tags_flag = 0,                         \
   .mesh = "cube",                         \
   .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
   .init_f      = NULL,                    \
@@ -76,6 +78,7 @@ typedef struct entity_template_t
 #define ENTITY_TEMPLATE_T_EMPTY()         \
 {                                         \
   .name = "empty",                        \
+  .tags_flag = 0,                         \
   .mesh = "-",                            \
   .mat  = 0,                              \
   .init_f      = NULL,                    \

@@ -1,4 +1,5 @@
 #include "data/test_comp.h"
+#include "data/entity_tags.h"
 #include "core/core_data.h"
 #include "core/input.h"
 #include "core/camera.h"
@@ -136,7 +137,11 @@ void player_on_trigger(entity_t* this, entity_t* trig)
 {
   // PF("player_on_trigger: %d\n", trig->id);
 
-  ENTITY_FORCE_Y(this, 50.0f);
+  // check if trigger has tag
+  if (HAS_FLAG(trig->tags_flag, TAG_UP_FORCE))
+  {
+    ENTITY_FORCE_Y(this, 50.0f);
+  }
 }
 
 

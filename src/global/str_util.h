@@ -1,16 +1,23 @@
 #ifndef STR_UTIL_H
 #define STR_UTIL_H
 
+// @NOTE: need to define STR_UTIL_IMPLEMENTATION once before including 
+//        #define STR_UTIL_IMPLEMENTATION
+//        #include "str_util.h"
+
 #include "global.h"
 
 #include <string.h>
 #include <math.h>   // abs()
 
+// @DOC: find last occurance of str
 char* str_util_find_last_of(char* str, char* identifier);
+// @DOC: truncate str at pos
 char* str_util_trunc(char* str, int pos);
 
 #endif
 
+// @DOC: need to define this once before including 
 #ifdef STR_UTIL_IMPLEMENTATION
 
 char* str_util_find_last_of(char* str, char* identifier)

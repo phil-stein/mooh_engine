@@ -1,4 +1,5 @@
 #include "data/entity_template.h"
+#include "data/entity_tags.h"
 #include "data/test_comp.h"
 
 
@@ -72,6 +73,7 @@ const entity_template_t entity_template_table[] =
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "cube_dynamic",
+    .tags_flag = TAG_CUBE_DYN, 
     .mesh = "cube",
     .mat  = MATERIAL_TEMPLATE_PLANKS,
     .phys_flag = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_BOX,
@@ -81,6 +83,7 @@ const entity_template_t entity_template_table[] =
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "player_test",
+    .tags_flag = TAG_PLAYER,
     .mesh = "demon02",
     .mat  = MATERIAL_TEMPLATE_DEMON02,
     .init_f      = player_init,
@@ -96,6 +99,7 @@ const entity_template_t entity_template_table[] =
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "cube_static_trigger",
+    .tags_flag = TAG_UP_FORCE,
     .mesh = "cube",
     .mat  = MATERIAL_TEMPLATE_METALL,
     .phys_flag = ENTITY_HAS_BOX,

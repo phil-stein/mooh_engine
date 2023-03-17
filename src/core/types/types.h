@@ -44,7 +44,8 @@ typedef void (update_callback)(struct entity_t* this, float dt);
 typedef void (collision_callback)(struct entity_t* this, struct entity_t* ent);
 typedef void (trigger_callback)(struct entity_t* this, struct entity_t* ent);
 
-typedef enum enitity_comp_flag
+// @NOTE: not in use
+typedef enum entity_comp_flag
 {
   ENTITY_HAS_NO_COMP     = 0,         // @DOC: default, no components
   ENTITY_HAS_POINT_LIGHT = FLAG(0),   // @DOC: indicates entity has pointlight, accesible via entity_t.point_light_idx
@@ -66,10 +67,12 @@ typedef enum entity_phys_flag
 typedef struct entity_t
 {
   // -- entity system / state -- 
-  u32 id;           // @DOC: id for state_entity_get(id), not necessarily the index into state entity array
-  int template_idx; // @DOC: idx for entity_template_get(idx)
-  bool is_dead;     // @DOC: instead of deleting the entity from array, its marked dead and overwritten with the next added entity
-
+  u32  id;            // id for state_entity_get(id), not necessarily the index into state entity array
+  int  template_idx;  // idx for entity_template_get(idx)
+  bool is_dead;       // instead of deleting the entity from array, its marked dead and overwritten with the next added entity
+  // flag where individual flags can be set and checked by app, i.e. HAS_FLAG(e->tag_flag, TAG_ENEMY);
+  // max flag is FLAG(64) on 64bit, generally its FLAG(sizeof(s64))
+  s64 tags_flag;  
 
   // -- space ---
   vec3 pos;   // position, local space 

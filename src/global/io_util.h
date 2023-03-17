@@ -1,11 +1,20 @@
 #ifndef IO_UTIL_H
 #define IO_UTIL_H
 
+// @NOTE: need to define IO_UTIL_IMPLEMENTATION once before including 
+//        #define IO_UTIL_IMPLEMENTATION
+//        #include "io_util.h"
+
+
+// @DOC: get width and height of current console
+//       w: gets set to console width
+//       h: gets set to console height
 void io_util_get_console_size_win(int* w, int* h);
 
 
 #endif
 
+// @DOC: need to define this once before including 
 #ifdef IO_UTIL_IMPLEMENTATION
 
 #include <windows.h>
