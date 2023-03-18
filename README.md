@@ -235,7 +235,7 @@ main resources:
     - [ ] john jackman or some on yt pixeleditor
 
 ## physics engine
-  - [ ] sphere
+  - [x] sphere
   - [x] aabb
     - [ ] parented aabb's dont change pos correct
     - [ ] "rotate" aabb's in 90° steps

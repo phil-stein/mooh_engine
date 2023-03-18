@@ -138,6 +138,10 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
     
     phys_add_obj_rb_box(id, pos, scl, def->mass, def->friction, aabb, (f32*)def->collider_offset, def->is_trigger);
   }
+  else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_SPHERE) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
+  {
+    phys_add_obj_rb_sphere(id, pos, scl, def->mass, def->friction, def->radius, (f32*)def->collider_offset, def->is_trigger);
+  }
   else if (HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
     phys_add_obj_rb(id, pos, def->mass, def->friction);

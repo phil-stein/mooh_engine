@@ -19,13 +19,15 @@ const entity_template_t entity_template_table[] =
     .mesh = "sphere",
     .mat  = MATERIAL_TEMPLATE_DEFAULT,
     .phys_flag = ENTITY_HAS_SPHERE,
-    .radius    = 2.0f,
+    .radius    = 1.0f,
   },
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "sphere02",
     .mesh = "sphere",
     .mat  = MATERIAL_TEMPLATE_METALL,
+    .phys_flag = ENTITY_HAS_SPHERE,
+    .radius    = 1.0f,
   },
   {
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
@@ -92,7 +94,7 @@ const entity_template_t entity_template_table[] =
     .update_f    = player_update,
     .collision_f = player_on_collision,
     .trigger_f   = player_on_trigger,
-    .phys_flag = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_BOX,
+    .phys_flag   = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_BOX,
     .mass = 5.0f,
     .friction = 0.05f, 
     .aabb_size   = { 0.5f, 2.0f, 0.5f },
@@ -125,6 +127,16 @@ const entity_template_t entity_template_table[] =
     .name = "devil_paladin_weapon",
     .mesh = "mooh_weapon01",
     .mat  = MATERIAL_TEMPLATE_PALADIN_WEAPON,
+  },
+  {
+    ENTITY_TEMPLATE_T_SET_DEFAULTS(),
+    .name = "sphere_dyn01",
+    .mesh = "sphere",
+    .mat  = MATERIAL_TEMPLATE_DEFAULT,
+    .phys_flag = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_SPHERE,
+    .mass = 2.0f,
+    .friction = 0.05f, 
+    .radius    = 1.0f,
   },
 };
 
