@@ -156,6 +156,22 @@ main resources:
     - [ ] load shaders from zip
     - [ ] load cubemaps from zip
     - [ ] handle missing assets
+  - [ ] release system
+    - [ ] package assets & exe
+      - obv, just the custom / needed assets
+      - archive if done yet 
+    - [ ] set asset_path to cwd/assets
+    - [ ] maybe check if folder build_01 exist and name build_02, etc.
+    - [ ] put date in folder / exe name or .txt file or some
+  - [ ] make entities have 'local variables'
+    - ents have init_f and update_f, but no local data
+      if i set speed in on init_f, it affects all entities with that init_f
+      i also cant set it from anywhere else, unless i make a function specific to that
+    - maybe make void struct with X size and cast it to ones with actual members
+    - struct { int[5] }data; struc{ u32 bool vec3 }data_player, 
+      ((data_player)entity_t.data).member
+    - [ ] f.e. use it to set speed/orientation/target/color/.etc on projecticle
+          from the players code, aka. spawn projecticle, set its data
   - [ ] structures (prefabs)
     ```c
       // this way structures can be added regardless of world id's
@@ -236,13 +252,13 @@ main resources:
 
 ## physics engine
   - [x] sphere
+    - [ ] proper debug draw for sphere
   - [x] aabb
     - [ ] parented aabb's dont change pos correct
-    - [ ] "rotate" aabb's in 90° steps
     - [ ] change aabb in editor
   - [ ] plane
   - [ ] obb (replace aabb, or use aabb as optimization)
-  - [ ] fix buoancy in resolution, actually in phys_debug_draw()
+  - [ ] fix buoancy in resolution, actually in phys_debug_draw() ? 
   - [ ] sweeping collision
   - [ ] organize in grid, octree, etc ?
     - only checking collisions in the same/neighbouring grids

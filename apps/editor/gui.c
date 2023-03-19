@@ -619,11 +619,12 @@ void gui_properties_physics(const entity_template_t* def, entity_t* e)
       nk_labelf(ctx, NK_TEXT_LEFT, "[offset] x: %.2f y: %.2f, z: %.2f", obj->collider.offset[0], obj->collider.offset[1], obj->collider.offset[2]);
       
       nk_labelf(ctx, NK_TEXT_LEFT, "is trigger: %s", STR_BOOL(def->is_trigger));
-     
-      if (nk_button_label(ctx, "rotate box y"))
-      {
-        phys_rotate_box_y(e->id);
-      }
+    
+      // doesnt make much sense, just use obb
+      // if (nk_button_label(ctx, "rotate box y"))
+      // {
+      //   phys_rotate_box_y(e->id);
+      // }
 
       phys_debug_draw_box_collider(obj);
 

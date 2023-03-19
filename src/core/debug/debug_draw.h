@@ -46,6 +46,8 @@ void debug_draw_update_func();
 
 // draw sphere ------------------------------------------------------------------------------------
 
+void debug_draw_draw_circle(vec3 plane, vec3 pos, f32 radius, f32* color);
+
 // @DOC: register a sphere to be rendered in debug_draw_update
 //       pos:  position of sphere
 //       scl:  scale of sphere
