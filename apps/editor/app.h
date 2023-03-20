@@ -1,5 +1,5 @@
-#ifndef GAME_H
-#define GAME_H
+#ifndef APP_H
+#define APP_H
 
 #include "global/global.h"
 #include "core/input.h"

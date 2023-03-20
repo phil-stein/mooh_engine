@@ -26,6 +26,7 @@ main resources:
 ## next steps
   - *organization*
     - [comment all .h files](#organization) `WIP` 
+    - [release system](#organization)
     - [rest of organization](#organization) `WIP`
   - *buggs*
     - [all buggs](#buggs)
@@ -35,6 +36,9 @@ main resources:
     - [batch renderer](#optimizations) `WIP`
   - *base*
     - [structures](#base) `WIP`
+    - [local entity data](#base)
+  - *editor*
+    - [undo/redo](#level editor)
   - *graphics*
     - [blending](#renderer)
     - [cascaded shadows](#renderer)
@@ -59,7 +63,9 @@ main resources:
   - [ ] freeing cubemap doesnt seem to actually free any memory
   - [ ] changing WINDOW_MIN, _MAX, _FULL doesnt work
   - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#multithreading)
-  - [ ] mesh loading blender coord sys to mine, gizmo is fcked [also mentioned](#base)
+  - [x] mesh loading blender coord sys to mine, gizmo is fcked [also mentioned](#base)
+  - [ ] getting entity_t to 256bytes makes physics no longer work
+    - le what mate
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -93,7 +99,7 @@ main resources:
     - [ ] chunk allocator   ?
     - [ ] randy memory pool ?
   - [x] figure out why core_data_init() is taking so long: shaders
-  - [ ] shader spir-v ?
+    - [ ] shader spir-v ?
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -103,6 +109,13 @@ main resources:
   - zip archive not faster than straight files
 
 ## organization
+  - [ ] release system
+    - [ ] package assets & exe
+      - obv, just the custom / needed assets
+      - archive if done yet 
+    - [ ] set asset_path to cwd/assets
+    - [ ] maybe check if folder build_01 exist and name build_02, etc.
+    - [ ] put date in folder / exe name or .txt file or some
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
@@ -130,8 +143,6 @@ main resources:
       - [x] gizmo.h
       - [x] gui.h
       - [ ] terrain_edit.h
-    - [ ] global.h   `WIP`
-    - [ ] str_util.h `WIP`
 
 ## tools
   - [ ] binary dump
@@ -156,18 +167,12 @@ main resources:
     - [ ] load shaders from zip
     - [ ] load cubemaps from zip
     - [ ] handle missing assets
-  - [ ] release system
-    - [ ] package assets & exe
-      - obv, just the custom / needed assets
-      - archive if done yet 
-    - [ ] set asset_path to cwd/assets
-    - [ ] maybe check if folder build_01 exist and name build_02, etc.
-    - [ ] put date in folder / exe name or .txt file or some
+  - [ ] hot-reload shaders
   - [ ] make entities have 'local variables'
     - ents have init_f and update_f, but no local data
       if i set speed in on init_f, it affects all entities with that init_f
       i also cant set it from anywhere else, unless i make a function specific to that
-    - maybe make void struct with X size and cast it to ones with actual members
+    - maybe make void struct with X size and cast it to ones with actual members, all ents have more data though
     - struct { int[5] }data; struc{ u32 bool vec3 }data_player, 
       ((data_player)entity_t.data).member
     - [ ] f.e. use it to set speed/orientation/target/color/.etc on projecticle

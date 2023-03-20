@@ -3,12 +3,27 @@
 #include "core/core_data.h"
 #include "core/input.h"
 #include "core/camera.h"
+#include "core/state.h"
 #include "core/io/save_sys.h"
 #include "core/debug/debug_draw.h"
 #include "math/math_inc.h"
 
+#include "stb/stb_ds.h"
 
 static core_data_t* core_data = NULL;
+
+typedef struct
+{
+  int  var0;
+  bool act;
+  f32  var1;
+  vec3 vector;
+
+}local_data_test_t;
+
+local_data_test_t* local_data_arr = NULL;
+u32 local_data_arr_len            = 0;
+int local_data_id                 = -1;
 
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
@@ -18,12 +33,38 @@ void player_init(entity_t* this)
 {
   core_data = core_data_get();
   vec3_copy(this->pos, start_pos);
-  input_center_cursor_pos(); 
+  input_center_cursor_pos(0, 0);
   input_set_cursor_visible(false);
+
+  // continue here
+  // local_data_id = state_get_entity_local_data_id();
+
+  // P("player_init() called");
+  // local_data_test_t data = { .var0 = 0, .act = false, .var1 = 0.5f, .vector = { 0, 0, 0} };
+  // arrput(local_data_arr, data);
+  // entity_local_data_key_t data_key =  { .arr_idx = local_data_arr_len, .type_id = local_data_id };
+  // this->local_data[0] =  data_key; // .ptr = (void*)&local_data_arr[local_data_arr_len] };
+  // local_data_arr_len++;
+  // P_INT(this->id);
+  // P_U32(this->local_data[0].arr_idx);
+  // P_INT(this->local_data[0].type_id);
 }
 void player_update(entity_t* this, f32 dt)
 {
-  // @NOTE: moving object with physics
+  // // how we can store local data for entities
+  // // local_data_test_t* data = (local_data_test_t*)this->local_data;
+  // P_INT(this->id);
+  // P_U32(this->local_data[0].arr_idx);
+  // P_INT(this->local_data[0].type_id);
+  // ASSERT(local_data_id >= 0);
+  // ASSERT(this->local_data[0].type_id == local_data_id);
+  // local_data_test_t* data = &local_data_arr[this->local_data[0].arr_idx];
+  // P_INT(data->var0);
+  // P_VEC3(data->vector);
+  // vec3_add(data->vector, VEC3_X(0.1f), data->vector);
+  // data->var0++;
+
+  //  @NOTE: moving object with physics
   f32 speed      = 500.0f * dt;
   f32 jump_force = 600.0f * 80.0f * dt;
   if (input_get_key_down(KEY_LEFT_SHIFT))
@@ -56,6 +97,22 @@ void player_update(entity_t* this, f32 dt)
   if (this->is_grounded && input_get_key_pressed(KEY_SPACE))
   { ENTITY_FORCE_Y(this, jump_force); }
   
+  // @NOTE: reset when falling down
+  if (this->pos[1] < -2.0f)
+  { 
+    P_INFO("player fell, reloading scene");
+    P_VEC3(this->pos);
+
+    save_sys_load_scene_from_state_buffer();
+    // ENTITY_SET_POS(this, start_pos); 
+
+    // // @TMP: reseting local data
+    // local_data_test_t data = { .var0 = 0, .act = false, .var1 = 0.5f, .vector = { 0, 0, 0} };
+    // local_data_arr[0] = data;
+    // entity_local_data_key_t data_key =  { .arr_idx = 0, .type_id = local_data_id };
+    // this->local_data[0] =  data_key; 
+  }
+
   // @NOTE: set camera orientation
   vec3 cam_pos; 
   vec3_copy(core_data->cam.pos, cam_pos); // camera_get_pos(cam_pos);
@@ -119,13 +176,6 @@ void player_update(entity_t* this, f32 dt)
   // P_F32(CLAMP(8.0f * dt, 0.08f, 0.2f));
   vec3_add(cam_pos, dif, cam_pos);
   camera_set_pos(cam_pos);
-
-  // @NOTE: reset when falling down
-  if (this->pos[1] < -2.0f)
-  { 
-    save_sys_load_scene_from_file("test.scene");
-    // ENTITY_SET_POS(this, start_pos); 
-  }
 
 }
 

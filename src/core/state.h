@@ -93,6 +93,10 @@ void state_entity_remove_child(int parent, int child);
 //       child:  new child entity id
 void state_entity_add_child_remove_parent(int parent, int child);
 
+// @DOC: get an unused local data id to check if entity_t.local_data[X] and data's type are the same
+//       just returns a u32 and increments it
+u32 state_get_entity_local_data_id();
+
 // @DOC: entity model matrix without parent entities influence
 //       id:  id of entity
 //       out: get filled with model matrix

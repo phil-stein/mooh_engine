@@ -14,6 +14,7 @@
 #include "core/event_sys.h"
 #include "core/debug/debug_draw.h"
 #include "core/debug/debug_timer.h"
+#include "serialization/serialization.h"
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
 
@@ -68,6 +69,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   
   TIMER_FUNC_STATIC(core_data_init());
   TIMER_FUNC_STATIC(state_init());
+  TIMER_FUNC_STATIC(serialization_init());
 	TIMER_FUNC_STATIC(save_sys_init());
   TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(renderer_extra_init());
@@ -93,17 +95,17 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   // @UNSURE: 
   //        - archive meshes and load that way
   //        - check if even faster
-
   u32* tex_arr_len_ptr = 0;
   texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
   TIMER_FUNC_STATIC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
   core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
 
-  
   strcpy(_title, window_get_title()); 
   
   TIMER_STOP_STATIC();  // program init timer
 
+  P_U32((u32)sizeof(entity_t));
+  
   bool first_frame = true;
 	while (!core_data->program_quit && !glfwWindowShouldClose(core_data->window))
 	{

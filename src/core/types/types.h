@@ -56,13 +56,20 @@ typedef enum entity_comp_flag
 typedef enum entity_phys_flag
 {
   ENTITY_HAS_RIGIDBODY = FLAG(0),    // @DOC: indicates the phys_obj_t the entity is simulated with has a rigidbody   
-  ENTITY_HAS_SPHERE    = FLAG(1),    // @TODO:   
+  ENTITY_HAS_SPHERE    = FLAG(1),    // @DOC: indicates the phys_obj_t the entity is simulated with has a sphere collider
   ENTITY_HAS_BOX       = FLAG(2),    // @DOC: indicates the phys_obj_t the entity is simulated with has a box collider, aka. aabb
   ENTITY_HAS_PLANE     = FLAG(3),    // @TODO:   
   ENTITY_HAS_CONVEX    = FLAG(4),    // @TODO:     
   ENTITY_HAS_CAPSULE   = FLAG(5),    // @TODO:   
 
 }entity_phys_flag;
+
+#define ENTITY_LOCAL_DATA_MAX 4
+typedef struct 
+{ 
+  u32 arr_idx; 
+  int type_id; 
+}entity_local_data_key_t;
 
 typedef struct entity_t
 {
@@ -95,7 +102,10 @@ typedef struct entity_t
   int point_light_idx;   // normally -1, if >= 0 
   // @NOTE: should probably be the whole point_light_t in here or
   //        i need to force add_point_light() to associate with existing point light
-  // point_light_t point_light;
+  //        point_light_t point_light;
+  //        although would make every entiy sizeof(point_light_t) bigger, while
+  //        most of them dont use that space at all
+  //        keeping 'components' in arr's seperate from the entities prob. is better anyway
       
   // -- physics --
   entity_phys_flag phys_flag; // 0 if no flags, use HAS_FLAG() to check if flags are present
@@ -108,11 +118,70 @@ typedef struct entity_t
   collision_callback* collision_f;
   trigger_callback*   trigger_f;
 
+  // @TODO: find way to check type before assiging
+  // @DOC: this is NULL, or points to a struct of local entity data, aka. data unique to this entity,
+  //       otherwise every entity with the same init_f/update_f function would use the same variables/data
+  //       in that .c file / function
+  //       
+  //       ! this whole thing breaks appart when u cast to the wrong struct type, which c will let u do
+  //       ! what if an entity needs local data in to .c files for different init_f/update_f
+  //       
+  //       other idea:
+  //       entity_t { struct { u32 arr_idx, int type_id } local_data[X] }; 
+  //       in .c file 
+  //       #define SOME_DATA_ID 11
+  //       first of use idx for arr, is safer that way, i think
+  //       when assigning make data[X].type_id = SOME_DATA_ID
+  //       if data[X].type_id < 0 && data[X].type_idx != SOME_DATA_ID // already assigned but not this
+  //       use data[X +1] etc.
+  //       when getting make sure it is == SOME_DATA_ID
+  //       then in some file/function check all the id's, or distribute them like assetm ids through a function
+  //
+  //       usage: 
+  //       in .c file
+  //       struct some_data_t { int var0, vec3 var1, etc. };
+  //       some_data_t* data_arr = NULL;  // stb_ds arr, doesnt have to be stb_ds, but dyn arr is safer
+  //       u32 data_arr_len      = 0;
+  //       void some_init(entity_t* this)
+  //       {
+  //          some_data_t data = { .var0 = 0, .var1 = { 0, 0, 0 } };
+  //          arrput(data_arr, data);
+  //          this->local_data = (void*)&data_arr[data_arr_len];
+  //          data_arr_len++;
+  //       }
+  //       void some_update(entity_t* this)
+  //       {
+  //          local_data_test_t* data = (local_data_test_t*)this->local_data;
+  //          data->var0 = 10;
+  //       }
+  // void* local_data;  
+  // entity_local_data_key_t local_data[ENTITY_LOCAL_DATA_MAX];
+
+  // continue here
+  u8 byte_00;
+  u8 byte_01;
+  u8 byte_02;
+  u8 byte_03;
+  u8 byte_04;
+  u8 byte_05;
+  u8 byte_06;
+  u8 byte_07;
+  u8 byte_08;
+  u8 byte_09;
+  u8 byte_10;
+  u8 byte_11;
+  // u8 byte_12; // breaks here, at 13 bytes 
+  // int tmp0;
+  // int tmp1;
+  // int tmp2;
+  // u8  tmp_quater0; // breaks here as well
+  // int tmp3;        // breaks at the 4'th
+
   // -- hierarchy --
   // int so they can be -1, for no parent
   int  parent;
   int* children;
-  int  children_len;
+  int  children_len;  
 
 }entity_t;
 

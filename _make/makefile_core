@@ -36,11 +36,11 @@ OBJ_DIR = ..\_build\$(BIN_DIR)
 
 # external: ufbx, zip
 _OBJS += 				 			\
+	glad.o				 			\
 	ufbx.o							\
 	zip.o
 # core
 _OBJS +=					 		\
-	glad.o				 			\
 	core_data.o					\
 	window.o			 			\
 	program.o			 			\
@@ -144,6 +144,10 @@ $(OBJ_DIR)/%.o: $(PHYS_DIR)/%.c
 $(OBJ_DIR)/%.o: $(SERIALIZATION_DIR)/%.c
 	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
+
+$(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/GLAD/%.c
+	@echo $< -> $@	
+	$(CC_NO_WARN) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(EXTERNAL_DIR)/ufbx/%.c
 	@echo $< -> $@	

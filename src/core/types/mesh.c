@@ -272,19 +272,19 @@ void mesh_load_data_from_memory(const void* data, size_t size, const char* name,
       ufbx_vec2 uv     = m->vertex_uv.data[m->vertex_uv.indices[index]];
      
       // @NOTE: flip to go from blender coord sys to the engines
-      // arrput(verts, pos.v[0]);
-      // arrput(verts, pos.v[1]);
-      // arrput(verts, pos.v[2]);
-      // arrput(verts, normal.v[0]);
-      // arrput(verts, normal.v[1]);
-      // arrput(verts, normal.v[2]);
-      // arrput(verts, uv.v[0]);
-      // arrput(verts, uv.v[1]);
-      // arrput(verts, tan[0]);
-      // arrput(verts, tan[1]);
-      // arrput(verts, tan[2]);
+      // arrput((*verts), pos.v[0]);
+      // arrput((*verts), pos.v[1]);
+      // arrput((*verts), pos.v[2]);
+      // arrput((*verts), normal.v[0]);
+      // arrput((*verts), normal.v[1]);
+      // arrput((*verts), normal.v[2]);
+      // arrput((*verts), uv.v[0]);
+      // arrput((*verts), uv.v[1]);
+      // arrput((*verts), tan[0]);
+      // arrput((*verts), tan[1]);
+      // arrput((*verts), tan[2]);
       arrput((*verts), pos.v[0]);
-      arrput((*verts), pos.v[2]);
+      arrput((*verts), pos.v[2]); 
       arrput((*verts), -pos.v[1]);
       arrput((*verts), normal.v[0]);
       arrput((*verts), normal.v[2]);

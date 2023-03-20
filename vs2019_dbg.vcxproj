@@ -162,7 +162,6 @@
     <ClCompile Include="src\core\debug\debug_draw.c" />
     <ClCompile Include="src\core\debug\debug_timer.c" />
     <ClCompile Include="src\core\event_sys.c" />
-    <ClCompile Include="src\core\glad.c" />
     <ClCompile Include="src\core\input.c" />
     <ClCompile Include="src\core\io\assetm.c" />
     <ClCompile Include="src\core\io\asset_io.c" />
@@ -190,9 +189,9 @@
     <ClCompile Include="src\phys\phys_debug_draw.c" />
     <ClCompile Include="src\phys\phys_dynamics.c" />
     <ClCompile Include="src\phys\phys_resolution.c" />
-    <ClCompile Include="src\phys\phys_response.c" />
     <ClCompile Include="src\phys\phys_world.c" />
     <ClCompile Include="src\serialization\serialization.c" />
+    <ClCompile Include="_external\GLAD\glad.c" />
     <ClCompile Include="_external\ufbx\ufbx.c" />
     <ClCompile Include="_external\zip\zip.c" />
   </ItemGroup>
@@ -248,7 +247,6 @@
     <ClInclude Include="src\phys\phys_debug_draw.h" />
     <ClInclude Include="src\phys\phys_dynamics.h" />
     <ClInclude Include="src\phys\phys_resolution.h" />
-    <ClInclude Include="src\phys\phys_response.h" />
     <ClInclude Include="src\phys\phys_types.h" />
     <ClInclude Include="src\phys\phys_world.h" />
     <ClInclude Include="src\serialization\serialization.h" />

@@ -34,6 +34,9 @@ int  point_lights_dead_arr_len = 0;
 bool entity_init_called = false;
 #endif
 
+// used for checking if entity_t.local_data[X].type_id and a components/init_f&update_f's struct type for the data are the same
+u32 entity_local_data_id_cur = 0;
+
 static core_data_t* core_data = NULL;
 
 // shared variable dont use this just for error detection in state_get_entity(), extern def in state.h
@@ -354,6 +357,11 @@ void state_entity_add_child_remove_parent(int parent, int child)
   if (c->parent >= 0 && c->parent != parent)
   { state_entity_remove_child(parent, child); }
   state_entity_add_child(parent, child);
+}
+
+u32 state_get_entity_local_data_id()
+{
+  return entity_local_data_id_cur++;
 }
 
 void state_entity_local_model(int id, mat4 out)

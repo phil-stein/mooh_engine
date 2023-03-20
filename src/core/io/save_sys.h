@@ -29,9 +29,10 @@ void save_sys_init();
 void save_sys_write_scene_to_file(const char* name);
 // @DOC: deserialize and load a scene from a .scene file
 //       name: name of .scene file to be loaded
-void save_sys_load_scene_from_file(const char* name);
+void save_sys_load_scene_from_file_dbg(const char* name, const char* _file, const int _line);
+#define save_sys_load_scene_from_file(name) save_sys_load_scene_from_file_dbg((name), __FILE__, __LINE__)
 
-#ifdef EDITOR
+// #ifdef EDITOR
 // @DOC: serialize whole scene and write a buffer in save_sys.c 
 void save_sys_write_scene_to_state_buffer();
 // @DOC: deserialize and load a scene from a buffer in save_sys.c
@@ -39,7 +40,7 @@ void save_sys_load_scene_from_state_buffer();
 
 // @DOC: writes an empty scene to file, name define by SAVE_SYS_EMPTY_SCENE_NAME
 void save_sys_write_empty_scene_to_file();
-#endif
+// #endif // EDITOR
 
 // @DOC: serialize the whole scene into byte buffer
 //       buffer: pointer to stb_ds u8 array

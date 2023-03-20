@@ -61,8 +61,8 @@ void app_init()
   // TIMER_FUNC_STATIC(terrain_create(25));
 
   // in game will be done by camera-controller
-  camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
-  camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));
+  vec3_copy(VEC3_XYZ(0.0f,   6.0f,  10.0f), core_data->cam.pos);
+  vec3_copy(VEC3_XYZ(0.0f,  -0.15f, -1.0f), core_data->cam.front);
   
   
   // TIMER_FUNC_STATIC(gui_init());
@@ -202,6 +202,8 @@ void rotate_cam_by_mouse()
 	dir[0] = (f32)cos(yaw_rad) * (f32)cos(pitch_rad);
 	dir[1] = (f32)sin(pitch_rad);
 	dir[2] = (f32)sin(yaw_rad) * (f32)cos(pitch_rad);
-	camera_set_front(dir);
+	// camera_set_front(dir);
+  vec3_copy(dir, core_data->cam.front);
+
 }
 

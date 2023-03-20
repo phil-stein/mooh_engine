@@ -7,9 +7,7 @@
 #include "core/debug/debug_timer.h"
 #include "serialization/serialization.h"
 
-#ifdef EDITOR
 #include "core/camera.h"
-#endif
 
 #include "stb/stb_ds.h"
 
@@ -17,13 +15,11 @@
 #define CUR_SCENE_NAME_MAX 128
 char cur_scene_name[CUR_SCENE_NAME_MAX] = "";
 
-#ifdef EDITOR
 u8* state_buffer = NULL;
 char state_buffer_scene_name[CUR_SCENE_NAME_MAX] = "";
 
 vec3 state_cam_pos         = { 0, 0, 0 };
 vec3 state_cam_orientation = { 0, 0, 0 };
-#endif
 
 static core_data_t* core_data = NULL;
 
@@ -52,14 +48,15 @@ void save_sys_write_scene_to_file(const char* name)
   ARRFREE(buffer);
 }
 
-void save_sys_load_scene_from_file(const char* name)
+void save_sys_load_scene_from_file_dbg(const char* name, const char* _file, const int _line)
 {
   u32 offset = 0;
   int length = 0;
 
+  // PF("save_sys_load_scene_from_file() called from\n -> \"%s\", line: %d\n", _file, _line);
   P_STR(core_data->asset_path);
   char path[ASSET_PATH_MAX +64];
-  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
+  SPRINTF(ASSET_PATH_MAX +64, path, "%s%s", core_data->asset_path, name);
   u8* buffer = (u8*)file_io_read_bytes(path, &length);
   save_sys_deserialize_scene(buffer, &offset);
 
@@ -69,7 +66,6 @@ void save_sys_load_scene_from_file(const char* name)
   FREE(buffer);
 }
 
-#ifdef EDITOR
 void save_sys_write_scene_to_state_buffer()
 {
   u8* buffer = NULL;
@@ -105,6 +101,7 @@ void save_sys_load_scene_from_state_buffer()
   camera_set_front(state_cam_orientation);
 }
 
+#ifdef EDITOR
 void save_sys_write_empty_scene_to_file()
 {
   u8* buffer = NULL;
