@@ -2,6 +2,7 @@
 #include "editor/app.h"
 #include "editor/stylesheet.h"
 #include "core/window.h"
+#include "core/program.h"
 #include "core/camera.h"
 #include "core/input.h"
 #include "core/renderer/renderer.h"
@@ -356,6 +357,10 @@ void gizmo_update()
         vec3_copy(VEC3(0), delta_rot);
         vec3_copy(VEC3(0), delta_scl);
       }
+      // to sync collider debug displays when editing entity with gizmo
+      #ifdef EDITOR
+      program_sync_phys();
+      #endif
 
     }
     else { start_value_set = false; } // reset if no entity selected 

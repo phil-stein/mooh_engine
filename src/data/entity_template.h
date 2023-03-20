@@ -26,6 +26,8 @@ typedef enum entity_template_type
   ENTITY_TEMPLATE_PALADIN_BODY,
   ENTITY_TEMPLATE_PALADIN_ARMOUR,
   ENTITY_TEMPLATE_PALADIN_WEAPON,
+  ENTITY_TEMPLATE_SPHERE_DYN,
+
 }entity_template_type;
 
 

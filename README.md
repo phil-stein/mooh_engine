@@ -116,6 +116,8 @@ main resources:
     - [ ] set asset_path to cwd/assets
     - [ ] maybe check if folder build_01 exist and name build_02, etc.
     - [ ] put date in folder / exe name or .txt file or some
+  - [ ] rename state_remove_entity() & state_duplicate_entity() to
+        state_entity_remove() & state_duplicate_entity()
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
@@ -245,6 +247,7 @@ main resources:
   - [ ] structures ? (prefabs), [also mentioned](#base)
 
 ## level editor
+  - [ ] pause mid game
   - [ ] structure editor
     - seperate ?
   - [ ] particle system editor

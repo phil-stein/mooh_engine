@@ -1,5 +1,6 @@
 #include "data/test_comp.h"
 #include "data/entity_tags.h"
+#include "data/entity_template.h"
 #include "core/core_data.h"
 #include "core/input.h"
 #include "core/camera.h"
@@ -79,6 +80,23 @@ void player_update(entity_t* this, f32 dt)
   // vec3_mul_f(front, 2.0f, test);
   // vec3_add(this->pos, test, test);
   // debug_draw_line_register(this->pos, test, RGB_F(1, 0, 1));
+
+  // shoot ball
+
+  if (input_get_key_pressed(KEY_ENTER))
+  {
+    // static int projectile_id = -1;
+    // if (projectile_id >= 0) { state_remove_entity(projectile_id); }
+    vec3 projectile_pos, projectile_force;
+    vec3_mul_f(front, 2.0f, projectile_pos);
+    vec3_add(this->pos, projectile_pos, projectile_pos);
+    projectile_pos[1] += 2.0f;
+    int projectile_id = state_add_entity_from_template(projectile_pos, VEC3(0), VEC3(0.2f), ENTITY_TEMPLATE_SPHERE_DYN);
+    
+    entity_t* projectile = state_get_entity(projectile_id);
+    vec3_mul_f(front, 2000.0f, projectile_force);
+    ENTITY_SET_FORCE(projectile, projectile_force);
+  }
   
   vec3_mul_f(front, speed, front);
   vec3_mul_f(back, speed, back);
