@@ -194,4 +194,156 @@ void debug_draw_box_register_width_func(vec3 points[8], rgbf color, f32 width)
   debug_draw_line_register_width(points[6], points[2], color, width); 
   debug_draw_line_register_width(points[7], points[3], color, width); 
 }
+
+// @TODO: make this instead of using fixed resolution circles
+// @NOTE: testing different method
+// void circle_test(vec3 plane, vec3 pos,  f32 radius, f32* color)
+// {
+//   // for vec3[axis_0], either x or y
+//   u32 axis_0  = plane[0] > 0 ? 0 : 1;
+//   // for vec3[axis_1], either y or z
+//   u32 axis_1  = plane[1] > 0 && axis_0 != 1 ? 1 : 2;
+// 
+//   // line on x axis / axis_0 
+//   vec3 axis = { 0, 0, 0 };
+//   axis[axis_0] = radius;
+//   vec3 p_axis_0_min, p_axis_0_max;
+//   vec3_copy(pos, p_axis_0_min);
+//   vec3_copy(pos, p_axis_0_max);
+//   vec3_sub(p_axis_0_min, axis, p_axis_0_min);
+//   vec3_add(p_axis_0_max, axis, p_axis_0_max);
+//   
+//   // line on y axis / axis_1
+//   axis[axis_0] = 0.0f;  // back to ( 0, 0, 0 )
+//   axis[axis_1] = radius;
+//   vec3 p_axis_1_min, p_axis_1_max;
+//   vec3_copy(pos, p_axis_1_min);
+//   vec3_copy(pos, p_axis_1_max);
+//   vec3_sub(p_axis_1_min, axis, p_axis_1_min);
+//   vec3_add(p_axis_1_max, axis, p_axis_1_max);
+//   
+//   struct { vec3 p0; vec3 p1 }* line_arr = NULL;
+//   u32 line_arr_len = 0;
+// 
+//   // oi u lazy fuckwit
+// 
+//   // also make this use line a line strip thingy
+//   // not individual lines that are each a draw call
+// 
+//   int resolution = 3;
+//   for (u32 i = 0; i < resolution; ++i)
+//   {
+//     // calc and add lines to arr for quarter circle
+//     // resolution is how many lines per quarter circle
+//   }
+// 
+//   // draw the quarter aain but flip
+// 
+// }
+void debug_draw_draw_circle_func(vec3 plane, vec3 pos,  f32 radius, f32* color)
+{
+  // circle_test(plane, pos,  radius, color);
+  // return;
+  
+  // for vec3[axis_0], either x or y
+  u32 axis_0  = plane[0] > 0 ? 0 : 1;
+  // for vec3[axis_1], either y or z
+  u32 axis_1  = plane[1] > 0 && axis_0 != 1 ? 1 : 2;
+
+  // line on x axis / axis_0 
+  vec3 axis = { 0, 0, 0 };
+  axis[axis_0] = radius;
+  vec3 p_axis_0_min, p_axis_0_max;
+  vec3_copy(pos, p_axis_0_min);
+  vec3_copy(pos, p_axis_0_max);
+  vec3_sub(p_axis_0_min, axis, p_axis_0_min);
+  vec3_add(p_axis_0_max, axis, p_axis_0_max);
+  
+  // line on y axis / axis_1
+  axis[axis_0] = 0.0f;  // back to ( 0, 0, 0 )
+  axis[axis_1] = radius;
+  vec3 p_axis_1_min, p_axis_1_max;
+  vec3_copy(pos, p_axis_1_min);
+  vec3_copy(pos, p_axis_1_max);
+  vec3_sub(p_axis_1_min, axis, p_axis_1_min);
+  vec3_add(p_axis_1_max, axis, p_axis_1_max);
+  
+  // use pythag to determine point on sphere, with radius and either x, y coord 
+  // r^2 = x^2 + y^2
+  // x = 0.5f
+  // y = sqrt( r^2 - x^2 )
+  // actually x, y here is axis_0 & axis_1
+  vec3 mid_p_0 = { 0.0f, 0.0f, 0.0f};
+  mid_p_0[axis_0] = radius * 0.5f;
+  mid_p_0[axis_1] = F32_SQRT( pow(radius, 2) - pow(mid_p_0[axis_0], 2) );
+ 
+  
+  // y = 0.5f
+  // x = sqrt( r^2 - y^2 )
+  // actually x, y here is axis_0 & axis_1
+  vec3 mid_p_1 = { 0.0f, 0.0f, 0.0f};
+  mid_p_1[axis_1] = radius * 0.5f;
+  mid_p_1[axis_0] = F32_SQRT( pow(radius, 2) - pow(mid_p_1[axis_1], 2) );
+  
+  // // y = -0.5f
+  // // x = sqrt( r^2 - y^2 )
+  // vec3 mid_p_y_flip_y = { 0.0f, -0.5f };
+  // mid_p_y_flip_y[0] = F32_SQRT( pow(obj->collider.sphere.radius, 2) - pow(mid_p_y_flip_y[1], 2) );
+  // vec3_add(mid_p_y_flip_y, obj->pos, mid_p_y_flip_y);
+  vec3 mid_p_1_flip_1;
+  vec3_copy(mid_p_1, mid_p_1_flip_1);
+  mid_p_1_flip_1[axis_1] *= -1.0f; // neg. y / axis_1
+
+
+  vec3 mid_p_0_flip_1;
+  vec3_copy(mid_p_0, mid_p_0_flip_1);
+  mid_p_0_flip_1[axis_1] *= -1.0f; // neg. y / axis_1
+
+  vec3 mid_p_0_flip_01;
+  vec3_copy(mid_p_0_flip_1, mid_p_0_flip_01);
+  mid_p_0_flip_01[axis_0] *= -1.0f; // neg. x / axis_0
+  
+  vec3 mid_p_1_flip_01;
+  vec3_copy(mid_p_1_flip_1, mid_p_1_flip_01);
+  mid_p_1_flip_01[axis_0] *= -1.0f; // neg. x / axis_0
+ 
+  vec3 mid_p_1_flip_0;
+  vec3_copy(mid_p_1, mid_p_1_flip_0);
+  mid_p_1_flip_0[axis_0] *= -1.0f; // neg. x / axis_0
+  
+  vec3 mid_p_0_flip_0;
+  vec3_copy(mid_p_0, mid_p_0_flip_0);
+  mid_p_0_flip_0[axis_0] *= -1.0f; // neg. x / axis_0
+
+  vec3_add(mid_p_0, pos, mid_p_0);
+  vec3_add(mid_p_1, pos, mid_p_1); 
+  vec3_add(mid_p_1_flip_1, pos, mid_p_1_flip_1);
+  vec3_add(mid_p_0_flip_1, pos, mid_p_0_flip_1);
+  vec3_add(mid_p_0_flip_01, pos, mid_p_0_flip_01);
+  vec3_add(mid_p_1_flip_01, pos, mid_p_1_flip_01);
+  vec3_add(mid_p_1_flip_0,  pos, mid_p_1_flip_0);
+  vec3_add(mid_p_0_flip_0,  pos, mid_p_0_flip_0);
+
+  debug_draw_line_register(p_axis_1_max, mid_p_0, color);
+  //
+  debug_draw_line_register(mid_p_0, mid_p_1, color);
+  debug_draw_line_register(mid_p_1, p_axis_0_max, color);
+  //
+  debug_draw_line_register(p_axis_0_max, mid_p_1_flip_1, color);
+  //
+  debug_draw_line_register(mid_p_1_flip_1, mid_p_0_flip_1, color);
+  debug_draw_line_register(mid_p_0_flip_1, p_axis_1_min, color);
+  //
+  debug_draw_line_register(p_axis_1_min, mid_p_0_flip_01, color);
+  //
+  debug_draw_line_register(mid_p_0_flip_01, mid_p_1_flip_01, color);
+  debug_draw_line_register(mid_p_1_flip_01, p_axis_0_min, color);
+  //
+  debug_draw_line_register(p_axis_0_min, mid_p_1_flip_0, color);
+  //
+  debug_draw_line_register(mid_p_1_flip_0, mid_p_0_flip_0, color);
+  debug_draw_line_register(mid_p_0_flip_0, p_axis_1_max, color);
+
+}
+
 #endif

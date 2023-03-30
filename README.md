@@ -228,6 +228,7 @@ main resources:
     - [ ] integrate trail renderer
   - [ ] trail renderer
   - [ ] debug tools
+    - [ ] debug_draw_circle() with resolution
     - [ ] add profiler
   - [ ] controller support ?
 

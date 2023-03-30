@@ -17,6 +17,7 @@
 #include "serialization/serialization.h"
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
+#include "phys/phys_debug_draw.h"
 
 // order is important, io_util & str_util before global
 #define IO_UTIL_IMPLEMENTATION  // only define once
@@ -166,6 +167,14 @@ void program_sync_phys()
   {
     phys_obj_t* obj = &phys_objs[i];
     entity_t*   e   = &world[obj->entity_idx];
+    
+    #ifdef EDITOR
+    if (core_data->phys_debug_act)
+    {
+      if (PHYS_OBJ_HAS_COLLIDER(obj))  { phys_debug_draw_collider(obj); }
+		  if (PHYS_OBJ_HAS_RIGIDBODY(obj)) { phys_debug_draw_velocity(obj); }
+    }
+    #endif
 
     // either the attached entity or its parent have moved
     if (e->is_moved) // || (world[obj->entity_idx].parent >= 0 && world[world[obj->entity_idx].parent].is_moved) )  

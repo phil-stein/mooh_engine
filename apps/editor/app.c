@@ -237,12 +237,18 @@ void app_update()
   //   P("|entities end|");
   // }
 
+  // save map & terrain
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S) && !core_data_is_play())
   { 
     save_sys_write_scene_to_file(SCENE_FILE_NAME); 
     save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
   }
+ 
+  // toggle phys debug display, only works in play_mode as it happens in program_phys_sync
+  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_TAB) && core_data_is_play())
+  { core_data->phys_debug_act = !core_data->phys_debug_act; }
 
+  // toggle shadows
   if (input_get_key_pressed(KEY_SPACE))
   { core_data->show_shadows = !core_data->show_shadows; }
 
@@ -279,8 +285,9 @@ void app_update()
     int id = state_duplicate_entity(app_data.selected_id, VEC3_XYZ(2, 0, 0));
     app_data.selected_id = id;
   }
-
-  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
+ 
+  // toggle wireframe, ctrl+tab is toggle phys display
+  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE) && !input_get_key_down(KEY_LEFT_CONTROL))
 	{
 		app_data.wireframe_act = !app_data.wireframe_act;
 		core_data->wireframe_mode_enabled = app_data.wireframe_act;

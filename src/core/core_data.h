@@ -130,9 +130,11 @@ typedef struct core_data_t
 #ifdef INCLUDE_PLAY_MODE
 // #ifdef EDITOR
   bool phys_act;
+  bool phys_debug_act;
   bool scripts_act;
 #else 
   bool phys_act;
+  bool phys_debug_act;
   bool scripts_act;
 #endif
 
@@ -205,8 +207,9 @@ typedef struct core_data_t
   .terrain_draw_dist = 2,                     \
   .terrain_cull_dist = 3,                     \
                                               \
-  .phys_act    = PLAY_ACT_VALUE,              \
-  .scripts_act = PLAY_ACT_VALUE,              \
+  .phys_act       = PLAY_ACT_VALUE,           \
+  .phys_debug_act = false,                    \
+  .scripts_act    = PLAY_ACT_VALUE,           \
 }
 
 
