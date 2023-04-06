@@ -147,6 +147,15 @@ INLINE void core_data_init_renderer()
   mesh_make((f32*)verts, (int)verts_len, &core_data.line_mesh);
 
   // -- framebuffers --
+  // core_data.fb_deferred_msaa.type = FRAMEBUFFER_DEFERRED;
+  // core_data.fb_deferred_msaa.is_msaa = true;
+  // core_data.fb_deferred_msaa.samples = 4;
+  // core_data.fb_deferred_msaa.width  = 0;
+  // core_data.fb_deferred_msaa.height = 0;
+  // core_data.fb_deferred_msaa.size_divisor = 1;
+  // framebuffer_create(&core_data.fb_deferred_msaa);
+  // window_set_texturebuffer_to_update_to_screen_size(&core_data.fb_deferred_msaa);
+
   core_data.fb_deferred.type = FRAMEBUFFER_DEFERRED;
   core_data.fb_deferred.is_msaa = false;
   core_data.fb_deferred.width  = 0;

@@ -1,6 +1,11 @@
 #include "data/material_template.h"
 
 
+// #ifdef EDITOR
+#define TEMPLATE_STR_MAX 1024
+char template_str[TEMPLATE_STR_MAX];
+// #endif
+
 // @NOTE: figure out a way to f.e. ASSERT(table_idx == MATERIAL_TEMPLATE_...)
 //        basically to check at compile-time if the enums reference the right position in the array
 //        macros dont work
@@ -200,7 +205,7 @@ const int material_table_len = sizeof(material_table) / sizeof(material_table[0]
 
 const material_template_t* material_template_get(int idx)
 {
-  assert(idx < material_table_len);
+  ASSERT(idx < material_table_len);
   return &material_table[idx]; 
 }
 
@@ -209,3 +214,38 @@ const material_template_t* material_template_get_all(int* len)
   *len = material_table_len;
   return material_table;
 }
+
+
+// #ifdef EDITOR
+const char* material_template_generate_string(material_template_t* m) // , const char* albedo, const char* normal, const char* roughness, const char* metall)
+{
+  SPRINTF(TEMPLATE_STR_MAX, template_str, 
+  "\
+   {                                  \n\
+   MATERIAL_TEMPLATE_DEFAULT_INIT(),  \n\
+   .albedo = %s,                      \n\
+   .normal = %s,                      \n\
+   .roughn = %s,                      \n\
+   .metall = %s,                      \n\
+   .tint   = { %f, %f, %f },          \n\
+   .roughn_f = %f,                    \n\
+   .metall_f = %f,                    \n\
+   .shader_template = %s              \n\
+   .tile_scl = %f,                    \n\
+   .tile_by_scl = %s,                 \n\
+   .tile = { %f, %f },                \n\
+   },\n",
+  // albedo, normal, roughness, metall,
+  m->albedo, m->normal, m->roughn, m->metall,
+  m->tint[0], m->tint[1], m->tint[2],
+  m->roughn_f,
+  m->metall_f,
+  "SHADER_TEMPLATE_NONE",
+  m->tile_scl,
+  STR_BOOL(m->tile_by_scl),
+  m->tile[0], m->tile[1]
+  );
+
+  return template_str;
+}
+// #endif

@@ -81,9 +81,11 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line);
                                         ERR_CHECK(!__state_get_entity_error_shared, "get_entity failed\n") 
 
 // @DOC: add a child to an entity
-//       parent: id of entity to be the parent
-//       child:  id of entity to be the child
-void state_entity_add_child(int parent, int child);
+//       parent:         id of entity to be the parent
+//       child:          id of entity to be the child
+//       keep_transform: offset the child by the parents transform 
+//                       to maintain global pos 
+void state_entity_add_child(int parent, int child, bool keep_transform);
 // @DOC: remove a child from an entity
 //       parent: id of parent entity 
 //       child:  id of child entity 
@@ -93,9 +95,9 @@ void state_entity_remove_child(int parent, int child);
 //       child:  new child entity id
 void state_entity_add_child_remove_parent(int parent, int child);
 
-// @DOC: get an unused local data id to check if entity_t.local_data[X] and data's type are the same
-//       just returns a u32 and increments it
-u32 state_get_entity_local_data_id();
+// @TODO: @DOC: recursively count all childrens children_len
+//      len: need to be 0
+void state_get_entity_total_children_len(int id, u32* len);
 
 // @DOC: entity model matrix without parent entities influence
 //       id:  id of entity
@@ -115,13 +117,6 @@ void state_entity_model_no_scale(int id, mat4 out);
 void state_entity_model_no_scale_rotation(int id, mat4 out);
 // @DOC: @TODO:
 void state_entity_global_scale(int id, vec3 out);
-
-// @NOTE: structures not working
-// @DOC: make structure_t describing an entity and all its children
-structure_t state_make_structure_from_entity(int id);
-// @NOTE: structures not working
-// @DOC: needed internally for 'state_make_structure_from_entity()'
-void state_structure_add_entity_recursive(structure_t* s, entity_t* e);
 
 // @DOC: get the array of all dir lights
 //       len: gets set to arr's length

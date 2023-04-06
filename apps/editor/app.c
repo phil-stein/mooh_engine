@@ -1,5 +1,5 @@
 #include "editor/app.h"
-#include "editor/gui.h"
+#include "editor/gui/gui.h"
 #include "editor/gizmo.h"
 #include "editor/terrain_edit.h"
 #include "editor/stylesheet.h"
@@ -41,6 +41,7 @@ void added(int id)           { PF("! added entity: %d\n", id); }
 void removed(int id)         { PF("! removed entity: %d\n", id); }
 void parented(int p, int c)  { PF("! parented entity: %d, %d\n", p, c); }
 void parent_rm(int p, int c) { PF("! parent removed entity: %d, %d\n", p, c); }
+
 
 int main(void)
 {
@@ -215,7 +216,8 @@ void app_update()
 
 
   // -- input --
-  
+  //  if (input_get_key_pressed(KEY_SPACE))
+  // { save_sys_load_structure_from_file("paladin"); } 
   // // @TMP: print all entites and their children
   // if (input_get_key_pressed(KEY_SPACE))
   // {

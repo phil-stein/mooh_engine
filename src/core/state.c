@@ -29,13 +29,10 @@ int            point_lights_arr_len = 0;
 int* point_lights_dead_arr = NULL;
 int  point_lights_dead_arr_len = 0;
 
-  // @NOTE: entity->init() get called in state_init(), in the editor they get called when play is pressed
-#ifdef EDITOR
+// @NOTE: entity->init() get called in state_init(), in the editor they get called when play is pressed
+//        also used to call init_f direct in add_entity() during game
 bool entity_init_called = false;
-#endif
 
-// used for checking if entity_t.local_data[X].type_id and a components/init_f&update_f's struct type for the data are the same
-u32 entity_local_data_id_cur = 0;
 
 static core_data_t* core_data = NULL;
 
@@ -52,6 +49,12 @@ void state_init()
   template_entity_idxs_arr_len = templates_len;
   for (u32 i = 0; i < template_entity_idxs_arr_len; ++i)
   { template_entity_idxs_arr[i] = NULL; }
+
+
+// gest called in state_update() in editor
+#ifndef EDITOR
+  state_call_entity_init();
+#endif
 }
 void state_call_entity_init()
 {
@@ -60,6 +63,7 @@ void state_call_entity_init()
     if (world_arr[i].init_f != NULL)
     { world_arr[i].init_f(&world_arr[i]); }
   }
+  entity_init_called = true;
 }
 
 void state_update()
@@ -69,7 +73,6 @@ void state_update()
   if (!entity_init_called && core_data->scripts_act)
   {
     state_call_entity_init();
-    entity_init_called = true;
   }
 #endif
 
@@ -219,6 +222,9 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
     // template_entity_idxs_arr_len++; 
   }
 
+  // in case adding ent after state_call_entity_init(), aka. during game
+  if (entity_init_called) { ent.init_f(&ent); }
+
   return id;
 }
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
@@ -284,7 +290,7 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line)
   return &world_arr[id];
 }
 
-void state_entity_add_child(int parent, int child)
+void state_entity_add_child(int parent, int child, bool keep_transform)
 {
   if (parent < 0 || child < 0 || parent >= world_arr_len || child >= world_arr_len || child == parent) 
   {
@@ -296,7 +302,7 @@ void state_entity_add_child(int parent, int child)
   entity_t* c = state_get_entity(child);
 
   if (c->parent > -1) 
-  { P_ERR("parenting child which is already parented."); return; } 
+  { P_ERR("parenting child which is already parented.\n  -> parent: %d, child: %d, childs parent: %d\n", parent, child, c->parent); return; } 
 
   // @TODO: doesnt work, maybe gets overwritten or not updated
   // // set offset in phys
@@ -317,8 +323,11 @@ void state_entity_add_child(int parent, int child)
   // }
 
   // offset the child by the parents position to maintain its current global pos
-  vec3 offs; vec3_negate(p->pos, offs);
-  ENTITY_MOVE(c, offs);
+  if (keep_transform)
+  {
+    vec3 offs; vec3_negate(p->pos, offs);
+    ENTITY_MOVE(c, offs);
+  }
 
   arrput(p->children, child);
   p->children_len++;
@@ -356,12 +365,17 @@ void state_entity_add_child_remove_parent(int parent, int child)
   entity_t* c = state_get_entity(child);
   if (c->parent >= 0 && c->parent != parent)
   { state_entity_remove_child(parent, child); }
-  state_entity_add_child(parent, child);
+  state_entity_add_child(parent, child, true);
 }
 
-u32 state_get_entity_local_data_id()
+void state_get_entity_total_children_len(int id, u32* len)
 {
-  return entity_local_data_id_cur++;
+  entity_t* e = state_get_entity(id);
+  *len += e->children_len;
+  for (u32 i = 0; i < e->children_len; ++i)
+  {
+    state_get_entity_total_children_len(e->children[i], len);
+  }
 }
 
 void state_entity_local_model(int id, mat4 out)
@@ -519,29 +533,6 @@ void state_entity_global_scale(int id, vec3 out)
   
   state_entity_global_scale(e->parent, out);
   vec3_mul(out, e->scl, out);
-}
-
-// -- structures --
-
-structure_t state_make_structure_from_entity(int id)
-{
-  entity_t* e = state_get_entity(id);
-  
-  structure_t s = STRUCTURE_T_INIT();
-  state_structure_add_entity_recursive(&s, e);
-  
-  return s;
-}
-void state_structure_add_entity_recursive(structure_t* s, entity_t* e)
-{
-  if (e->parent >= 0) 
-  { 
-    arrput(s->entities, e->parent); 
-
-    entity_t* p = state_get_entity(e->parent);
-
-    state_structure_add_entity_recursive(s, p);
-  }
 }
 
 // -- lights --

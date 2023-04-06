@@ -422,24 +422,30 @@ void framebuffer_create_gbuffer_multisampled(u32* pos_buffer, u32* norm_buffer, 
 	_glGenTextures(1, col_buffer);
 	_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *col_buffer);
 	_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F, w, h, GL_TRUE);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, *col_buffer, 0);
  
   // - material buffer
 	_glGenTextures(1, mat_buffer);
 	_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *mat_buffer);
 	_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F, w, h, GL_TRUE);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D_MULTISAMPLE, *mat_buffer, 0);
  
   // - normal color buffer
   _glGenTextures(1, norm_buffer);
 	_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *norm_buffer);
 	_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F, w, h, GL_TRUE);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D_MULTISAMPLE, *norm_buffer, 0);
  
 
@@ -447,8 +453,10 @@ void framebuffer_create_gbuffer_multisampled(u32* pos_buffer, u32* norm_buffer, 
   _glGenTextures(1, pos_buffer);
 	_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *pos_buffer);
 	_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F, w, h, GL_TRUE);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	_glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	// _glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D_MULTISAMPLE, *pos_buffer, 0);
   
   // - tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
@@ -466,13 +474,77 @@ void framebuffer_create_gbuffer_multisampled(u32* pos_buffer, u32* norm_buffer, 
 
 	if (_glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		ERR("creating deferred msaa framebuffer");
+    P_INT(samples);
+    P_INT(w);
+    P_INT(h);
+		ERR("creating deferred msaa framebuffer\n");
 	}
 
 	// unbind the framebuffer, opengl now renders to the default buffer again
 	_glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+void framebuffer_create_gbuffer_multisampled_02(u32* pos_buffer, u32* norm_buffer, u32* mat_buffer, u32* col_buffer, u32* fbo, u32* rbo, f32 size_divisor, int* width, int* height, int samples)
+{
+  _glGenFramebuffers(1, fbo);
+  _glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 
+	int w, h; window_get_size(&w, &h);
+	// scale the resolution 
+	w /= size_divisor;
+	h /= size_divisor;
+	*width = w;
+	*height = h;
+
+  // - color buffer
+	_glGenTextures(1, col_buffer);
+	_glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, *col_buffer);
+	_glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, GL_RGB16F, w, h, GL_TRUE);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	_glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, *col_buffer, 0);
+ 
+  // - material buffer
+  _glGenTextures(1, mat_buffer);
+  _glBindTexture(GL_TEXTURE_2D, *mat_buffer);
+  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, *mat_buffer, 0);
+ 
+  // - normal color buffer
+  _glGenTextures(1, norm_buffer);
+  _glBindTexture(GL_TEXTURE_2D, *norm_buffer);
+  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, *norm_buffer, 0);
+
+  // - position color buffer
+  _glGenTextures(1, pos_buffer);
+  _glBindTexture(GL_TEXTURE_2D, *pos_buffer);
+  _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  _glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, *pos_buffer, 0);
+  
+  // - tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+  unsigned int attachments[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+  _glDrawBuffers(4, attachments);
+
+	// create render buffer object
+	_glGenRenderbuffers(1, rbo);
+	_glBindRenderbuffer(GL_RENDERBUFFER, *rbo);  // &rbo
+	// glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+	_glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, w, h);
+	_glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	// attach render buffer object to the depth and stencil buffer
+	_glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, *rbo);  // &rbo
+
+  FRAMEBUFFER_ERR_CHECK("creating deferred msaa framebuffer");
+
+	// unbind the framebuffer, opengl now renders to the default buffer again
+	_glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 bool framebuffer_create(framebuffer_t* fb)
 {
 	fb->size_divisor = fb->size_divisor <= 0 ? 1 : fb->size_divisor;
@@ -493,6 +565,7 @@ bool framebuffer_create(framebuffer_t* fb)
 		}
     else if (fb->type == FRAMEBUFFER_DEFERRED)
     {
+      P_INFO("gbuffer msaa");
       framebuffer_create_gbuffer_multisampled(&fb->buffer04, &fb->buffer03, &fb->buffer02, &fb->buffer, &fb->fbo, &fb->rbo, fb->size_divisor, &fb->width, &fb->height, fb->samples);
       return true;
     }
@@ -664,6 +737,9 @@ void framebuffer_blit_multisampled_fbo(u32 fbo_msaa, u32 fbo)
 }
 void framebuffer_blit_gbuffer_multisampled(framebuffer_t* fb_msaa, framebuffer_t* fb)
 {
+  framebuffer_blit_multisampled(fb_msaa, fb);
+
+  return;
 	int w, h;
 	// window_get_size(&w, &h);
 	w = fb->width;

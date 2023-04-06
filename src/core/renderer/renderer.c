@@ -233,6 +233,7 @@ void renderer_update()
 	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
   framebuffer_bind(&core_data->fb_deferred);
+  // framebuffer_bind(&core_data->fb_deferred_msaa);
   {
     _glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -321,6 +322,8 @@ void renderer_update()
     core_data->draw_calls_total++;
     // ------------------------------------------------------------------------
   }
+  // framebuffer_bind(&core_data->fb_deferred);
+  // framebuffer_blit_gbuffer_multisampled(&core_data->fb_deferred_msaa, &core_data->fb_deferred);
   framebuffer_unbind();
   TIMER_STOP();
 

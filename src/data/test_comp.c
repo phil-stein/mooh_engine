@@ -15,16 +15,13 @@ static core_data_t* core_data = NULL;
 
 typedef struct
 {
-  int  var0;
-  bool act;
-  f32  var1;
-  vec3 vector;
-
+  f32 time_alive;
 }local_data_test_t;
 
 local_data_test_t* local_data_arr = NULL;
 u32 local_data_arr_len            = 0;
-int local_data_id                 = -1;
+struct {u32 key; u32 value; }* local_data_id_hm = NULL;
+u32 local_data_id_hm_len = 0;
 
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
@@ -36,35 +33,9 @@ void player_init(entity_t* this)
   vec3_copy(this->pos, start_pos);
   input_center_cursor_pos(0, 0);
   input_set_cursor_visible(false);
-
-  // continue here
-  // local_data_id = state_get_entity_local_data_id();
-
-  // P("player_init() called");
-  // local_data_test_t data = { .var0 = 0, .act = false, .var1 = 0.5f, .vector = { 0, 0, 0} };
-  // arrput(local_data_arr, data);
-  // entity_local_data_key_t data_key =  { .arr_idx = local_data_arr_len, .type_id = local_data_id };
-  // this->local_data[0] =  data_key; // .ptr = (void*)&local_data_arr[local_data_arr_len] };
-  // local_data_arr_len++;
-  // P_INT(this->id);
-  // P_U32(this->local_data[0].arr_idx);
-  // P_INT(this->local_data[0].type_id);
 }
 void player_update(entity_t* this, f32 dt)
 {
-  // // how we can store local data for entities
-  // // local_data_test_t* data = (local_data_test_t*)this->local_data;
-  // P_INT(this->id);
-  // P_U32(this->local_data[0].arr_idx);
-  // P_INT(this->local_data[0].type_id);
-  // ASSERT(local_data_id >= 0);
-  // ASSERT(this->local_data[0].type_id == local_data_id);
-  // local_data_test_t* data = &local_data_arr[this->local_data[0].arr_idx];
-  // P_INT(data->var0);
-  // P_VEC3(data->vector);
-  // vec3_add(data->vector, VEC3_X(0.1f), data->vector);
-  // data->var0++;
-
   //  @NOTE: moving object with physics
   f32 speed      = 500.0f * dt;
   f32 jump_force = 600.0f * 80.0f * dt;
@@ -91,7 +62,7 @@ void player_update(entity_t* this, f32 dt)
     vec3_mul_f(front, 2.0f, projectile_pos);
     vec3_add(this->pos, projectile_pos, projectile_pos);
     projectile_pos[1] += 2.0f;
-    int projectile_id = state_add_entity_from_template(projectile_pos, VEC3(0), VEC3(0.2f), ENTITY_TEMPLATE_SPHERE_DYN);
+    int projectile_id = state_add_entity_from_template(projectile_pos, VEC3(0), VEC3(0.2f), ENTITY_TEMPLATE_PROJECTILE);
     
     entity_t* projectile = state_get_entity(projectile_id);
     vec3_mul_f(front, 2000.0f, projectile_force);
@@ -196,7 +167,6 @@ void player_update(entity_t* this, f32 dt)
   camera_set_pos(cam_pos);
 
 }
-
 void player_on_collision(entity_t* this, entity_t* col)
 {
   // PF("player_on_collision: %d\n", col->id);
@@ -212,55 +182,50 @@ void player_on_trigger(entity_t* this, entity_t* trig)
   }
 }
 
-
-void player_camera(entity_t* this, f32 dt)
+const f32 time_alive_max = 2.0f;
+const f32 start_scl      = 1.0f; 
+void projectile_init(entity_t* this)
 {
-  // // @NOTE: rotates the camera accoding to the mouse-movement
-	// static bool init = false;
-	// static f32 pitch, yaw;
+  local_data_test_t data = { .time_alive = 0.0f };
+  hmput(local_data_id_hm, this->id, local_data_arr_len);
+  arrput(local_data_arr, data);
+  local_data_arr_len++; 
+  P_U32(local_data_arr_len);
 
-	// f32 x_offset = input_get_mouse_delta_x();
-	// f32 y_offset = input_get_mouse_delta_y();
+  vec3_copy_f(start_scl, this->scl);
+}
+void projectile_update(entity_t* this, f32 dt)
+{
+  u32 idx = hmget(local_data_id_hm, this->id);
+  local_data_test_t* data = &local_data_arr[idx];
+  
+  data->time_alive = dt;
+  P_F32(data->time_alive);
+  if (data->time_alive >= time_alive_max)
+  {
+    state_remove_entity(this->id);
+    return;
+  }
 
-  // f32 mouse_sensitivity = 0.5f;
-	// x_offset *= mouse_sensitivity;
-	// y_offset *= mouse_sensitivity;
+  her too
 
-	// yaw += x_offset;
-	// pitch += y_offset;
-
-	// // printf("pitch: %f, yaw: %f\n", pitch, yaw);
-
-	// if (pitch > 89.0f)
-	// { pitch = 89.0f; }
-	// if (pitch < -89.0f)
-	// { pitch = -89.0f; }
-
-	// if (!init)
-	// {
-  //   vec3 front;
-  //   camera_get_front(front);
-	// 	pitch = front[1] * 90; // -30.375f;
-	// 	yaw	  =	front[2] * 90; // -90.875;
-	// 	init = true;
-	// }
-
-	// vec3 dir;
-	// f32 yaw_rad = yaw;     m_deg_to_rad(&yaw_rad);
-	// f32 pitch_rad = pitch; m_deg_to_rad(&pitch_rad);
-
-	// dir[0] = (f32)cos(yaw_rad) * (f32)cos(pitch_rad);
-  // dir[1] = (f32)sin(pitch_rad);
-	// dir[2] = (f32)sin(yaw_rad) * (f32)cos(pitch_rad);
-	// camera_set_front(dir);
+  // lerp size to 0
+  f32 size = m_lerp(1.0f, 0.0f, data->time_alive / time_alive_max);
+  vec3_copy_f(size, this->scl);
+}
+void projectile_cleanup(entity_t* this)
+{
+  P("-- proj cleanup --");
+  
+  // @TODO: cleanup local data
+  
+  
 }
 
 void entity_init(entity_t* this)
 {
-  P("-- entity init --");
+  // P("-- entity init --");
 }
-
-
 void entity_update(entity_t* this, f32 dt)
 {
   const f32 speed = 10.0f * dt;

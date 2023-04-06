@@ -178,6 +178,7 @@ typedef enum pf_bg
 
 // -- print variables --
 
+
 // @DOC: print the different types, e.g. P_INT(variable), highlights variable name cyan
 #define P_SIGNED(v) 	PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %d\n", (v)); PF_IF_LOC()
 #define P_INT(v) 	    P_SIGNED(v)
@@ -195,6 +196,21 @@ typedef enum pf_bg
 #define P_CHAR(v) 	  PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": '%c'\n", (char)(v)); PF_IF_LOC()
 #define P_STR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": \"%s\"\n", (v)); PF_IF_LOC() 
 #define P_TXT(v)      PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(":\n%s\n", (v)); PF_IF_LOC()    
+
+// always print location
+
+#define P_LOC_INT(v)  P_INT(v);  P_LOCATION()
+#define P_LOC_S32(v) 	P_S32(v);  P_LOCATION() 
+#define P_LOC_S16(v) 	P_S16(v);  P_LOCATION() 
+#define P_LOC_S8(v) 	P_S8(v);   P_LOCATION()
+#define P_LOC_U8(v)   P_U8(v);   P_LOCATION()
+#define P_LOC_U32(v)  P_U32(v);  P_LOCATION()
+#define P_LOC_U16(v)  P_U16(v);  P_LOCATION() 
+#define P_LOC_F32(v) 	P_F32(v);  P_LOCATION()
+#define P_LOC_BOOL(v) P_BOOL(v); P_LOCATION()
+#define P_LOC_CHAR(v) P_CHAR(v); P_LOCATION()
+#define P_LOC_STR(v) 	P_STR(v);  P_LOCATION() 
+#define P_LOC_TXT(v)  P_TXT(v);  P_LOCATION()    
 
 // -- debug --
 

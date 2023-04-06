@@ -24,6 +24,32 @@
 // @DOC: initialize, call this before any other calls to save_sys
 void save_sys_init();
 
+#ifdef EDITOR
+// @DOC: writes a file with the given root entity and all its children to file
+//       name:           name given to the file
+//       root_entity_id: id of entity which will be serialized with its children
+void save_sys_write_structure_to_file(const char* name, int root_entity_id);
+// @DOC: recursively goes through a structure given the root entity and puts all
+//       idxs of the entities into the array arr, recursively
+//       sets root entity pos to { 0, 0, 0 }
+//       arr:     preallocated array, will be filled with the entitiy idxs
+//       arr_pos: pointer to u32 0, used to track position in array
+//       e:       current entity, starts at root and then gets used recursively
+void save_sys_get_structure_idxs(u32* arr, u32* arr_pos, entity_t* e);
+// @DOC: recursively goes through root entity and its children and their children etc.
+//       and then serializes them to a file 
+//       buffer:   pointer to stb_ds u8 array
+//       idxs:     array of idxs of all entities in structure, made by save_sys_get_structure_idxs()
+//       idxs_len: length of idxs array
+//       e:        current entity, starts at root and then gets used recursively
+void save_sys_serialize_structure(u8** buffer, u32* idxs, u32 idxs_len, entity_t* e);
+// @DOC: load a previously serialized .struct file from disk
+//       automatically adds the entites to current scene
+//       name: name of file to be read
+//       returns root entities id
+int save_sys_load_structure_from_file(const char* name);
+#endif
+
 // @DOC: serialize whole scene and write to a .scene file
 //       name: name of file to be written to
 void save_sys_write_scene_to_file(const char* name);
@@ -65,7 +91,8 @@ void save_sys_deserialize_scene(u8* buffer, u32* offset);
 // @DOC: deserialize an entity from byte buffer
 //       buffer: stb_ds u8 array with the data
 //       offset: current offset into buffer 
-void save_sys_deserialize_entity(u8* buffer, u32* offset);
+//       returns entity id
+int  save_sys_deserialize_entity(u8* buffer, u32* offset);
 // @DOC: deserialize a dir light from byte buffer
 //       buffer: stb_ds u8 array with the data
 //       offset: current offset into buffer 

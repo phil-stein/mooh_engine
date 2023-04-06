@@ -519,7 +519,7 @@ material_t* assetm_get_material(material_template_type type)
 void assetm_create_material(material_template_type type)
 {
   const material_template_t* m = material_template_get(type);
-  material_t mat = material_load_from_template(m);
+  material_t mat = material_load_from_template(m, type);
 
   // ---------------------------------------------------------
 

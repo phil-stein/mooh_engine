@@ -138,6 +138,21 @@ const entity_template_t entity_template_table[] =
     .friction = 0.05f, 
     .radius    = 1.0f,
   },
+  {
+    ENTITY_TEMPLATE_T_SET_DEFAULTS(),
+    .name = "projectile01",
+    .mesh = "sphere",
+    .mat  = MATERIAL_TEMPLATE_DEFAULT,
+    here aswell
+    // @TODO: .scl  = { 0.5f, 0.5f, 0.5f },
+    .init_f   = projectile_init,
+    .update_f = projectile_update,
+    // @TODO: cleanup
+    .phys_flag = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_SPHERE,
+    .mass = 2.0f,
+    .friction = 0.05f, 
+    .radius    = 1.0f,
+  },
 };
 
 const entity_template_t* entity_template_get(int idx)

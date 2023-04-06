@@ -64,7 +64,7 @@ typedef enum entity_phys_flag
 
 }entity_phys_flag;
 
-#define ENTITY_LOCAL_DATA_MAX 4
+#define ENTITY_LOCAL_DATA_MAX 1
 typedef struct 
 { 
   u32 arr_idx; 
@@ -169,7 +169,7 @@ typedef struct entity_t
   u8 byte_08;
   u8 byte_09;
   u8 byte_10;
-  u8 byte_11;
+  // u8 byte_11;
   // u8 byte_12; // breaks here, at 13 bytes 
   // int tmp0;
   // int tmp1;
@@ -228,15 +228,6 @@ typedef struct entity_t
 
 // @TODO: ENTITY_HAS_COLLIDER() / ENTITY_HAS_RIGIDBODY() / etc. macros
 
-
-// @TODO:
-typedef struct structure_t
-{
-  // entity_t* entities;
-  int* entities;          // id's for state_get_entity(id)
-  int len;
-}structure_t;
-#define STRUCTURE_T_INIT()  { .entities = NULL, .len = 0 }
 
 typedef struct dir_light_t
 {

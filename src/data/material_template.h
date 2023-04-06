@@ -31,17 +31,17 @@ typedef enum material_template_type
 //       specifies all data needed to make material
 typedef struct material_template_t
 {
-  const char* albedo;
-  const char* normal;
-  const char* roughn;
-  const char* metall;
-  const rgbf  tint;
-  const float metall_f;
-  const float roughn_f;
+  char* albedo;
+  char* normal;
+  char* roughn;
+  char* metall;
+  rgbf  tint;
+  float metall_f;
+  float roughn_f;
 
-  const f32   tile_scl;    // getts mul with tile
-  const bool  tile_by_scl; // scale uv by ent scl
-  const vec2  tile;        // tile/scale uv coords
+  f32   tile_scl;    // getts mul with tile
+  bool  tile_by_scl; // scale uv by ent scl
+  vec2  tile;        // tile/scale uv coords
   
   shader_template_type shader_template;  // SHADER_TEMPLATE_NONE for default
 
@@ -68,5 +68,9 @@ const material_template_t* material_template_get(int idx);
 // @DOC: get all templates in arr
 //       len: gets set to arr's length
 const material_template_t* material_template_get_all(int* len);
+
+// #ifdef EDITOR
+const char* material_template_generate_string(material_template_t* m); 
+// #endif
 
 #endif

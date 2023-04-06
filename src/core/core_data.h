@@ -69,6 +69,7 @@ typedef struct core_data_t
   u32 brdf_lut;
 
   // created in core_data_init_renderer()
+  framebuffer_t fb_deferred_msaa;
   framebuffer_t fb_deferred;
   framebuffer_t fb_lighting;
   framebuffer_t fb_shadow_pass;

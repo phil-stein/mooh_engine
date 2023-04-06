@@ -23,7 +23,7 @@
 //                      err == GL_INVALID_INDEX // ? not in learnopengl list of debug defines
 
 // @DOC: print a opengl error
-#define P_GL_ERR(err)   PF("[GL_ERROR] %s: %d\n  -> file: \"%s\"\n  -> line: %d\n", STR_GL_ERR((err)), (err), __FILE__, __LINE__)
+#define P_GL_ERR(err)   PF_COLOR(PF_RED); PF("[GL_ERROR]"); PF_COLOR(PF_WHITE); PF(" %s: %d\n  -> file: \"%s\"\n  -> line: %d\n", STR_GL_ERR((err)), (err), __FILE__, __LINE__)
 
 // @DOC: print all errors, before this call
 #define GL_GET_ERR()    {                                                                                                         \
@@ -32,7 +32,7 @@
                         }
 
 // @DOC: print all errors, before this call, also add message
-#define P_GL_ERR_INFO(err, msg)    PF("[GL_ERROR] %s: %d\n  -> \"%s\"\n  -> file: \"%s\"\n  -> line: %d\n", STR_GL_ERR((err)), (err), msg,__FILE__, __LINE__)
+#define P_GL_ERR_INFO(err, msg)    PF_COLOR(PF_RED); PF("[GL_ERROR]"); PF_COLOR(PF_WHITE); PF(" %s: %d\n  -> \"%s\"\n  -> file: \"%s\"\n  -> line: %d\n", STR_GL_ERR((err)), (err), msg,__FILE__, __LINE__)
 
 #define GL_GET_ERR_INFO(msg)      {                                                                                                        \
                                     u32 err = GL_NO_ERROR; u32 count = 0; while ((err = glGetError()) != GL_NO_ERROR) { P_GL_ERR_INFO(err, msg); count++; }  \
@@ -42,14 +42,53 @@
 // @DOC: wrap function and print all error including the wrapped func call
 #define GL_ERR_FUNC(func) { (func); GL_GET_ERR_INFO((#func)); }
 
-// #define FRAMEBUFFER_ERR() 
-// GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT 0x8CD6
-// GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT 0x8CD7
-// GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER 0x8CDB
-// GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER 0x8CDC
-// GL_FRAMEBUFFER_UNSUPPORTED 0x8CDD
-
-
+#define FRAMEBUFFER_ERR_CHECK(msg)  FRAMEBUFFER_ERR_CHECK_dbg((msg), __FILE__, __LINE__)
+INLINE void FRAMEBUFFER_ERR_CHECK_dbg(const char* msg, const char* _file, const int _line)
+{
+  u32 _status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (_status != GL_FRAMEBUFFER_COMPLETE)
+  {
+    char _status_str[45]; // GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT, longest at 44
+    char _help_str[1];
+    switch (_status)
+    {
+      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT :              
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT :
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER :            
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER :                 
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE :                  
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+        break;
+      case GL_FRAMEBUFFER_UNSUPPORTED :                       
+        strcpy(_status_str, "GL_FRAMEBUFFER_UNSUPPORTED");
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS :                
+        strcpy(_status_str, "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+        break;
+      case GL_INVALID_ENUM :
+        strcpy(_status_str, "GL_INVALID_ENUM");
+        break;
+      default:
+        strcpy(_status_str, "unknonwn");
+        break;
+    }
+    PF_COLOR(PF_RED); PF("[FRAMEBUFFER ERROR] ");PF_COLOR(PF_WHITE);
+    PF("\"%s\", %d\n", _status_str, _status);
+    PF("  %s\n", msg);
+    PF("  %s\n", _help_str);
+    PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE);
+    PF("  -> file: \"%s\", line: %d\n", _file, _line);
+    PF_STYLE(PF_NORMAL, PF_WHITE);
+  }
+}
 
 #else
 
@@ -59,6 +98,7 @@
 #define P_GL_ERR_INFO(err, msg)
 #define GL_GET_ERR_INFO(msg)
 #define GL_ERR_FUNC(func)       (func)
+#define FRAMEBUFFER_ERR_CHECK(msg)  
 
 #endif  // DEBUG_OPENGL
 

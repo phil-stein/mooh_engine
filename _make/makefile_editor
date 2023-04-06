@@ -23,16 +23,18 @@ APPS_DIR  	 = ../apps
 GLOBL_DIR 	 = $(SRC_DIR)/global
 DATA_DIR  	 = $(SRC_DIR)/data
 APP_DIR   	 = $(APPS_DIR)/editor
+GUI_DIR   	 = $(APP_DIR)/gui
 
 OBJ_DIR = $(BUILD_DIR)\bin_editor
 LIB_DIR = ..\_libs\win64
 
 
 # app
-_OBJS = 				 			\
-	app.o					 			\
-	gui.o					 			\
-	gizmo.o							\
+_OBJS = 				 				\
+	app.o					 				\
+	gui.o					 				\
+	gui_struct_browser.o	\
+	gizmo.o								\
 	terrain_edit.o
 
 # put the OBJ_DIR in front of the obj names
@@ -86,6 +88,10 @@ $(NAME): $(OBJS)
 
 # compile all .c files to .o files
 $(OBJ_DIR)/%.o: $(APP_DIR)/%.c
+	@echo $< -> $@	
+	$(CC) -c $< -o $@ $(INC)
+
+$(OBJ_DIR)/%.o: $(GUI_DIR)/%.c
 	@echo $< -> $@	
 	$(CC) -c $< -o $@ $(INC)
 

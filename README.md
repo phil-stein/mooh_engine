@@ -128,6 +128,9 @@ main resources:
     - [ ] editor
   - [ ] make global submodule again, check if phys, serialization are still submodules
   - [ ] remove pos  maybe also cast_shadow, etc. from dir light
+  - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/) ?
+  - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
+  - [ ] add CORE_ infront of all .h _H macro ifdef checks
   - [ ] make most funcs _dbg error checked ? 
     - [ ] use _dbg funcs for materials in assetm ?
     - [x] make _dbg check a macro to set easy and compile out ?
@@ -179,23 +182,7 @@ main resources:
       ((data_player)entity_t.data).member
     - [ ] f.e. use it to set speed/orientation/target/color/.etc on projecticle
           from the players code, aka. spawn projecticle, set its data
-  - [ ] structures (prefabs)
-    ```c
-      // this way structures can be added regardless of world id's
-      // also entities need a reference to which structure they are a part of 
-      struct structure_def_t
-      {
-        int entity_id;  // idx for state_get_entity()
-        int parent_idx; // idx into structure_t, not world
-      };
-      struct structure_t
-      {
-        structure_def_t* arr;
-        int len;
-      };
-    ```
-    - [ ] create / load
-    - [ ] store ?
+  - [ ] make seperate editor map file so f.e. structures can be stored special and edited all at once ? 
   - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
     - [ ] reset all dynamic objects ? 
       - this way we don't have to reload the entire thing 
@@ -241,7 +228,8 @@ main resources:
   - [ ] ssao
   - [ ] bloom
   - [ ] custom anti aliasing
-    - maybe try built in again 
+    - [x] try built in again 
+      - dont work, white around objs
   - [ ] water 
 
 ## entity system
@@ -249,8 +237,11 @@ main resources:
 
 ## level editor
   - [ ] pause mid game
-  - [ ] structure editor
-    - seperate ?
+  - [ ] generate struct literal for 
+    - [x] materials
+    - [ ] entities
+    - [ ] shaders
+  - [x] structure browser
   - [ ] particle system editor
     - seperate ?
   - [ ] make gui less sh*t

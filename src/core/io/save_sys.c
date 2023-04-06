@@ -31,8 +31,164 @@ void save_sys_init()
 
 int cur_version = 0;
 
+// ---- structures ----
+
+#ifdef EDITOR
+void save_sys_write_structure_to_file(const char* name, int root_entity_id)
+{
+  u8* buffer = NULL;
+   
+  entity_t* root = state_get_entity(root_entity_id);
+  
+  u32 len = 0;
+  state_get_entity_total_children_len(root_entity_id, &len);
+  len++; // for root entity
+  serialization_serialize_u32(&buffer, len); // structure length, amount of entities
+  // P_U32(len);
+  
+  u32* entity_idxs = NULL; 
+  u32  entity_idxs_pos = 0;
+  MALLOC(entity_idxs, len * sizeof(u32));
+  
+  save_sys_get_structure_idxs(entity_idxs, &entity_idxs_pos, root);
+
+  entity_t _root = *root;
+  vec3_copy(VEC3(0), _root.pos);
+  save_sys_serialize_structure(&buffer, entity_idxs, len, &_root);
+
+  FREE(entity_idxs);
+
+  SERIALIZATION_P("[serialization] serialized structure");
+
+  char path[ASSET_PATH_MAX +64];
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s%s%s", core_data->asset_path, "/structures/", name, ".struct");
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
+
+  ARRFREE(buffer);
+}
+void save_sys_get_structure_idxs(u32* arr, u32* arr_pos, entity_t* e)
+{
+  // PF("-> structure[%d] id: %d\n", (*arr_pos), root->id);
+  arr[(*arr_pos)++] = e->id;
+
+  for (u32 i = 0; i < e->children_len; ++i)
+  {
+    entity_t* c = state_get_entity(e->children[i]);
+    save_sys_get_structure_idxs(arr, arr_pos, c);
+  }
+}
+void save_sys_serialize_structure(u8** buffer, u32* idxs, u32 idxs_len, entity_t* e)
+{
+  // serialize children len
+  //  - each child as index into the structure
+  // serialize entity
+  // -> recursion
+
+  serialization_serialize_u32(buffer, e->children_len); // structure length, amount of entities
+  for (u32 j = 0; j < e->children_len; ++j)
+  {
+    for (u32 k = 0; k < idxs_len; ++k)
+    {
+      if (idxs[k] == e->children[j])
+      { 
+        // PF(" -> entity: %d -> child: %d\n", root->id, idxs[k]);
+        serialization_serialize_u32(buffer, k); 
+      }  // serialize index of child into structure 
+    }
+  }
+  entity_t _e = *e;     // copy entity, to not modify original
+  _e.children_len =  0;
+  _e.parent       = -1;
+  save_sys_serialize_entity(buffer, &_e);
+
+  for (u32 i = 0; i < e->children_len; ++i)
+  {
+    entity_t* c = state_get_entity(e->children[i]);  
+    save_sys_serialize_structure(buffer, idxs, idxs_len, c); // use recursion
+  }
+}
+int save_sys_load_structure_from_file(const char* name)
+{
+  char path[ASSET_PATH_MAX +64];
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s%s%s", core_data->asset_path, "/structures/", name, ".struct");
+  int file_len = 0;
+  u8* buffer = (u8*)file_io_read_bytes(path, &file_len);
+  u32 offset = 0;
+
+  u32 len = serialization_deserialize_u32(buffer, &offset); // structure length, amount of entities
+  
+  // child_idxs[i / entity idxs in structure][0] = length of [][X] array
+  // child_idxs[i / entity idxs in structure][X] = e.children[X-1] of entity
+  const int CHILD_IDXS_MAX_ENTITIES     = 64; ASSERT(len < CHILD_IDXS_MAX_ENTITIES);
+  const int CHILD_IDXS_MAX_IDXS_INC_LEN = 64;
+  const int CHILD_IDXS_MAX_IDXS         = CHILD_IDXS_MAX_IDXS_INC_LEN -1;
+  u32 child_idxs[CHILD_IDXS_MAX_ENTITIES][CHILD_IDXS_MAX_IDXS_INC_LEN];
+  u32 entity_ids[CHILD_IDXS_MAX_ENTITIES]; 
+
+  int rtn_id = -1;
+    
+  // deserealize entities
+  for (u32 i = 0; i < len; ++i)
+  {
+    u32 c_len = serialization_deserialize_u32(buffer, &offset); // amount of child idxs
+    ASSERT(c_len < CHILD_IDXS_MAX_IDXS);
+    child_idxs[i][0] = c_len;
+  
+    for (u32 j = 1; j < c_len +1; ++j) // 0 is len, tsart at 1
+    {
+      child_idxs[i][j] = serialization_deserialize_u32(buffer, &offset);
+    }
+
+    entity_ids[i] = save_sys_deserialize_entity(buffer, &offset);
+    if (rtn_id < 0) { rtn_id = entity_ids[i]; }
+    // P_U32(entity_ids[i]);
+  }
+  // parent entities
+  for (u32 i = 0; i < len; ++i)
+  {
+    u32 c_len = child_idxs[i][0];
+
+    for (u32 j = 1; j < c_len +1; ++j) // 0 is len, tsart at 1
+    {
+      // PF("-> parented: parent: %d, child: %d\n", entity_ids[i], entity_ids[child_idxs[i][j]]);
+      state_entity_add_child(entity_ids[i], entity_ids[child_idxs[i][j]], false);
+    }
+
+  }
+
+  FREE(buffer);
+
+  return rtn_id;
+}
+#endif
 
 // ---- scene ----
+
+#ifdef EDITOR
+void save_sys_write_empty_scene_to_file()
+{
+  u8* buffer = NULL;
+
+  serialization_serialize_u32(&buffer, SAVE_SYS_VERSION);
+   
+  // -- cubemap --
+  serialization_serialize_f32(&buffer, 1.0f);  // cube_map.intensity
+  serialization_serialize_str(&buffer, "#cubemaps/gothic_manor_01_2k.hdr"); // cubemap.name
+  
+  // serialization_serialize_scene(&buffer);
+  serialization_serialize_u32(&buffer, 0); // world_len
+  serialization_serialize_u32(&buffer, 0); // dir_lights_len
+  serialization_serialize_u32(&buffer, 0); // point_lights_len
+  
+  SERIALIZATION_P("[serialization] serialized empty scene");
+
+  char path[ASSET_PATH_MAX +64];
+  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, SAVE_SYS_EMPTY_SCENE_NAME);
+  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
+
+  ARRFREE(buffer);
+}
+#endif
 
 void save_sys_write_scene_to_file(const char* name)
 {
@@ -43,7 +199,6 @@ void save_sys_write_scene_to_file(const char* name)
   char path[ASSET_PATH_MAX +64];
   SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, name);
   file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
-
 
   ARRFREE(buffer);
 }
@@ -100,32 +255,6 @@ void save_sys_load_scene_from_state_buffer()
   camera_set_pos(state_cam_pos);
   camera_set_front(state_cam_orientation);
 }
-
-#ifdef EDITOR
-void save_sys_write_empty_scene_to_file()
-{
-  u8* buffer = NULL;
-
-  serialization_serialize_u32(&buffer, SAVE_SYS_VERSION);
-   
-  // -- cubemap --
-  serialization_serialize_f32(&buffer, 1.0f);  // cube_map.intensity
-  serialization_serialize_str(&buffer, "#cubemaps/gothic_manor_01_2k.hdr"); // cubemap.name
-  
-  // serialization_serialize_scene(&buffer);
-  serialization_serialize_u32(&buffer, 0); // world_len
-  serialization_serialize_u32(&buffer, 0); // dir_lights_len
-  serialization_serialize_u32(&buffer, 0); // point_lights_len
-  
-  SERIALIZATION_P("[serialization] serialized empty scene");
-
-  char path[ASSET_PATH_MAX +64];
-  SPRINTF(ASSET_PATH_MAX + 64, path, "%s%s", core_data->asset_path, SAVE_SYS_EMPTY_SCENE_NAME);
-  file_io_write(path, (const char*)buffer, (int)arrlen(buffer));
-
-  ARRFREE(buffer);
-}
-#endif
 
 void save_sys_serialize_scene(u8** buffer)
 {
@@ -344,7 +473,7 @@ void save_sys_serialize_entity(u8** buffer, entity_t* e)
     serialization_serialize_s32(buffer, e->children[i]);
   }
 }
-void save_sys_deserialize_entity(u8* buffer, u32* offset)
+int save_sys_deserialize_entity(u8* buffer, u32* offset)
 {
   int template_idx = serialization_deserialize_s32(buffer, offset);
 
@@ -370,6 +499,8 @@ void save_sys_deserialize_entity(u8* buffer, u32* offset)
     arrput(e->children, serialization_deserialize_s32(buffer, offset));
   }
   // PF("id: %d, parent: %d, children_len: %d\n", e->id, e->parent, e->children_len);
+
+  return id;
 }
 
 void save_sys_serialize_dir_light(u8** buffer, dir_light_t* l)
