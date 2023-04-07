@@ -16,11 +16,12 @@ static core_data_t* core_data = NULL;
 typedef struct
 {
   f32 time_alive;
+  int target_id;
 }local_data_test_t;
 
 local_data_test_t* local_data_arr = NULL;
 u32 local_data_arr_len            = 0;
-struct {u32 key; u32 value; }* local_data_id_hm = NULL;
+struct {u32 key; u32 value; }* local_data_id_hm = NULL; // key: entity.id, value idx for local_data_arr
 u32 local_data_id_hm_len = 0;
 
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
@@ -182,43 +183,65 @@ void player_on_trigger(entity_t* this, entity_t* trig)
   }
 }
 
-const f32 time_alive_max = 2.0f;
-const f32 start_scl      = 1.0f; 
+const f32 time_alive_max = 1.0f;
+const f32 start_scl      = 0.5f; 
 void projectile_init(entity_t* this)
 {
-  local_data_test_t data = { .time_alive = 0.0f };
+  local_data_test_t _data = { .time_alive = 0.0f, .target_id = -1 };
   hmput(local_data_id_hm, this->id, local_data_arr_len);
-  arrput(local_data_arr, data);
+  arrput(local_data_arr, _data);
+  local_data_test_t* data = &local_data_arr[local_data_arr_len];
   local_data_arr_len++; 
   P_U32(local_data_arr_len);
 
   vec3_copy_f(start_scl, this->scl);
+
+  // pick random target
+  int world_len, world_dead_len;
+  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+  data->target_id = -1;
+  for (u32 i = 0; i < 10; ++i)  // 10 tries to find alive target
+  {
+    int idx = rand_int_range(0, world_len);
+    if (!world[idx].is_dead) { data->target_id = world[idx].id; break; } 
+  }
+  P_INT(data->target_id);
 }
 void projectile_update(entity_t* this, f32 dt)
 {
   u32 idx = hmget(local_data_id_hm, this->id);
   local_data_test_t* data = &local_data_arr[idx];
   
-  data->time_alive = dt;
-  P_F32(data->time_alive);
+  data->time_alive += dt;
   if (data->time_alive >= time_alive_max)
   {
     state_remove_entity(this->id);
     return;
   }
 
-  her too
+  if (data->target_id >= 0)
+  {
+    bool err = false;
+    entity_t* e = state_get_entity_err(data->target_id, &err);
+    if (!err)
+    {
+      vec3 pos;
+      vec3_lerp(this->pos, e->pos, data->time_alive / time_alive_max, pos);
+      ENTITY_SET_POS(this, pos);
+    }
+  }
 
   // lerp size to 0
-  f32 size = m_lerp(1.0f, 0.0f, data->time_alive / time_alive_max);
-  vec3_copy_f(size, this->scl);
+  vec3 scl;
+  vec3_lerp_f(start_scl, 0.0f, data->time_alive / time_alive_max, scl);
+  ENTITY_SET_SCL(this, scl);
 }
 void projectile_cleanup(entity_t* this)
 {
   P("-- proj cleanup --");
   
   // @TODO: cleanup local data
-  
+  do it  
   
 }
 

@@ -129,13 +129,16 @@
     <ClCompile Include="apps\editor\gizmo.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="apps\editor\gui.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="apps\editor\terrain_edit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="_external\GLAD\glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\gui\gui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\gui\gui_struct_browser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -293,13 +296,16 @@
     <ClInclude Include="apps\editor\gizmo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="apps\editor\gui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="apps\editor\stylesheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="apps\editor\terrain_edit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\gui\gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\gui\gui_style.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

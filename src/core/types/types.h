@@ -187,6 +187,7 @@ typedef struct entity_t
 
 // @DOC: these set the 'is_moved' flag, these should always be used as otherwise the 'model' wont get updated, in 'state_entity_update_global_model()'
 #define ENTITY_SET_POS(e, vec)      { vec3_sub((vec), (e)->pos, (e)->delta_pos); vec3_copy((vec), (e)->pos); (e)->is_moved = true; }  
+#define ENTITY_SET_POS_F(e, f)      ENTITY_SET_POS(e, VEC3(f))  
 #define ENTITY_SET_POS_X(e, x)      { (e)->delta_pos[0] += (x) - (e)->pos[0]; (e)->pos[0] = (x);    (e)->is_moved = true; }
 #define ENTITY_SET_POS_Y(e, y)      { (e)->delta_pos[1] += (y) - (e)->pos[1]; (e)->pos[1] = (y);    (e)->is_moved = true; }
 #define ENTITY_SET_POS_Z(e, z)      { (e)->delta_pos[2] += (z) - (e)->pos[2]; (e)->pos[2] = (z);    (e)->is_moved = true; }
@@ -197,6 +198,7 @@ typedef struct entity_t
 #define ENTITY_MOVE_AXIS(e, a, v)   { (e)->delta_pos[(a)] += (v); (e)->pos[(a)] += (v); (e)->is_moved = true; } // move on axis ' a '  from 0 -> 1
 
 #define ENTITY_SET_ROT(e, vec)      { vec3_copy((vec),      (e)->rot); (e)->is_moved = true; }
+#define ENTITY_SET_ROT_F(e, f)      ENTITY_SET_ROT(e, VEC3(f))
 #define ENTITY_SET_ROT_X(e, x)      { (e)->rot[0] = (x);    (e)->is_moved = true; }
 #define ENTITY_SET_ROT_Y(e, y)      { (e)->rot[1] = (y);    (e)->is_moved = true; }
 #define ENTITY_SET_ROT_Z(e, z)      { (e)->rot[2] = (z);    (e)->is_moved = true; }
@@ -207,6 +209,7 @@ typedef struct entity_t
 #define ENTITY_ROTATE_AXIS(e, a, v) { (e)->rot[(a)] += (v); (e)->is_moved = true; } // rotate on axis ' a '  from 0 -> 1
 
 #define ENTITY_SET_SCL(e, vec)      { vec3 dif; vec3_sub((e)->scl, vec, dif), vec3_add(dif, (e)->delta_scl, (e)->delta_scl); vec3_copy((vec), (e)->scl); (e)->is_moved = true; }
+#define ENTITY_SET_SCL_F(e, f)      ENTITY_SET_SCL(e, VEC3(f)) 
 #define ENTITY_SET_SCL_X(e, x)      { (e)->delta_scl[0] += (x) - (e)->scl[0]; (e)->scl[0] = (x);    (e)->is_moved = true; }
 #define ENTITY_SET_SCL_Y(e, y)      { (e)->delta_scl[1] += (y) - (e)->scl[1]; (e)->scl[1] = (y);    (e)->is_moved = true; }
 #define ENTITY_SET_SCL_Z(e, z)      { (e)->delta_scl[2] += (z) - (e)->scl[2]; (e)->scl[2] = (z);    (e)->is_moved = true; }

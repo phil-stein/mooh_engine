@@ -591,7 +591,11 @@ void gui_properties_material(material_t* mat, int idx)
   if (nk_button_label(ctx, "print template"))
   {
     ASSERT(mat->template_idx > 0);
+#ifndef _MSC_VER
     material_template_t m = (material_template_t)( *material_template_get(mat->template_idx) );
+#else
+    material_template_t m = *material_template_get(mat->template_idx);
+#endif
     vec3_copy(mat->tint, m.tint);
     m.roughn_f    = mat->roughness_f;
     m.metall_f    = mat->metallic_f;

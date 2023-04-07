@@ -155,7 +155,8 @@
   <ItemGroup>
     <ClCompile Include="apps\editor\app.c" />
     <ClCompile Include="apps\editor\gizmo.c" />
-    <ClCompile Include="apps\editor\gui.c" />
+    <ClCompile Include="apps\editor\gui\gui.c" />
+    <ClCompile Include="apps\editor\gui\gui_struct_browser.c" />
     <ClCompile Include="apps\editor\terrain_edit.c" />
     <ClCompile Include="src\core\camera.c" />
     <ClCompile Include="src\core\core_data.c" />
@@ -198,7 +199,8 @@
   <ItemGroup>
     <ClInclude Include="apps\editor\app.h" />
     <ClInclude Include="apps\editor\gizmo.h" />
-    <ClInclude Include="apps\editor\gui.h" />
+    <ClInclude Include="apps\editor\gui\gui.h" />
+    <ClInclude Include="apps\editor\gui\gui_style.h" />
     <ClInclude Include="apps\editor\stylesheet.h" />
     <ClInclude Include="apps\editor\terrain_edit.h" />
     <ClInclude Include="external\zip\miniz.h" />

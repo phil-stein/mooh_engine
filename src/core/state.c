@@ -223,7 +223,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
   }
 
   // in case adding ent after state_call_entity_init(), aka. during game
-  if (entity_init_called) { ent.init_f(&ent); }
+  if (entity_init_called && ent.init_f != NULL) { ent.init_f(&ent); }
 
   return id;
 }
@@ -268,9 +268,10 @@ void state_remove_entity(int id)
   {
     state_entity_remove_child(world_arr[id].parent, id);
   }
-  for (int i = 0; i < world_arr[id].children_len; ++i)
+  // for (int i = 0; i < world_arr[id].children_len; ++i)
+  while (world_arr[id].children_len > 0)  
   {
-    state_entity_remove_child(world_arr[id].id, world_arr[id].children[i]);
+    state_entity_remove_child(id, world_arr[id].children[0]);
   }
 
   world_arr[id].is_dead = true;
@@ -286,8 +287,11 @@ entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line)
   // ERR_CHECK(id >= 0 && id < world_arr_len, "invalid entity id: %d, [file: %s, line: %d]", id, file, line);
   // ERR_CHECK(!world_arr[id].is_dead, "requested dead entity: %d, [file: %s, line: %d]", id, file, line);
   *error = id < 0 || id >= world_arr_len || world_arr[id].is_dead;
-  if (*error) { PF("[ERROR] state_get_entity error\n  -> id: %d, world_arr_len: %d | is_dead: %s\n", id, world_arr_len, STR_BOOL(world_arr[id].is_dead)); }
-  return &world_arr[id];
+  entity_t* rtn = NULL;
+  if (*error) 
+  { P_ERR("state_get_entity error\n  -> id: %d, world_arr_len: %d | is_dead: %s\n", id, world_arr_len, STR_BOOL(world_arr[id].is_dead)); }
+  else { rtn = &world_arr[id]; }
+  return rtn;
 }
 
 void state_entity_add_child(int parent, int child, bool keep_transform)
@@ -353,9 +357,13 @@ void state_entity_remove_child(int parent, int child)
     {
       arrdel(p->children, i);
       p->children_len--;
+      // PF("%d->child[%d]: %d removed\n", parent, i, child);
+      break;
     }
   }
+
   c->parent = -1;
+  // PF("in remove_child(): ");P_INT(c->parent);
 
   event_sys_trigger_entity_parent_removed(parent, child);
 }

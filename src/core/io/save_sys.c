@@ -119,9 +119,16 @@ int save_sys_load_structure_from_file(const char* name)
   
   // child_idxs[i / entity idxs in structure][0] = length of [][X] array
   // child_idxs[i / entity idxs in structure][X] = e.children[X-1] of entity
+#ifndef _MSC_VER
   const int CHILD_IDXS_MAX_ENTITIES     = 64; ASSERT(len < CHILD_IDXS_MAX_ENTITIES);
   const int CHILD_IDXS_MAX_IDXS_INC_LEN = 64;
   const int CHILD_IDXS_MAX_IDXS         = CHILD_IDXS_MAX_IDXS_INC_LEN -1;
+#else
+  #define CHILD_IDXS_MAX_ENTITIES 64 
+  ASSERT(len < CHILD_IDXS_MAX_ENTITIES);
+  #define CHILD_IDXS_MAX_IDXS_INC_LEN 64
+  #define CHILD_IDXS_MAX_IDXS CHILD_IDXS_MAX_IDXS_INC_LEN - 1
+#endif
   u32 child_idxs[CHILD_IDXS_MAX_ENTITIES][CHILD_IDXS_MAX_IDXS_INC_LEN];
   u32 entity_ids[CHILD_IDXS_MAX_ENTITIES]; 
 
