@@ -1,5 +1,5 @@
-#ifndef ASSETM_H
-#define ASSETM_H
+#ifndef CORE_ASSETM_H
+#define CORE_ASSETM_H
 
 #include "global/global.h"
 #include "core/types/types.h"

@@ -1,7 +1,7 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef CORE_TEXTURE_H
+#define CORE_TEXTURE_H
 
-#include "../../global/global.h"
+#include "global/global.h"
 
 
 typedef struct texture_t

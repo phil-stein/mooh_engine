@@ -1,5 +1,5 @@
-#ifndef ENTITY_TAGS_H
-#define ENTITY_TAGS_H
+#ifndef DATA_ENTITY_TAGS_H
+#define DATA_ENTITY_TAGS_H
 
 #include "global/global.h"
 

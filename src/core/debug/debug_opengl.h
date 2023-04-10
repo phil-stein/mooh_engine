@@ -1,5 +1,5 @@
-#ifndef DEBUG_OPENGL_H
-#define DEBUG_OPENGL_H
+#ifndef CORE_DEBUG_OPENGL_H
+#define CORE_DEBUG_OPENGL_H
 
 #include "global/global.h"
 #include "GLAD/glad.h"

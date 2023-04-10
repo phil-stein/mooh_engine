@@ -1,7 +1,7 @@
-#ifndef CUBEMAP_H
-#define CUBEMAP_H
+#ifndef CORE_CUBEMAP_H
+#define CORE_CUBEMAP_H
 
-#include "../../core/types/types.h"
+#include "core/types/types.h"
 
 void cubemap_free();
 cubemap_t cubemap_load_dbg(const char* path, const char* _file, const int _line); 

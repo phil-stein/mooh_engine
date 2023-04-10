@@ -1,5 +1,5 @@
-#ifndef RENDERER_DIRECT_H
-#define RENDERER_DIRECT_H
+#ifndef CORE_RENDERER_DIRECT_H
+#define CORE_RENDERER_DIRECT_H
 
 #include "global/global.h"
 #include "core/types/types.h"

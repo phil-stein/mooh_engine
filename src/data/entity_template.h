@@ -1,9 +1,9 @@
-#ifndef ENTITY_DEF_H
-#define ENTITY_DEF_H
+#ifndef DATA_ENTITY_TEMPLATE_H
+#define DATA_ENTITY_TEMPLATE_H
 
-#include "../global/global.h"
-#include "../core/types/types.h"
-#include "../math/math_inc.h"
+#include "global/global.h"
+#include "core/types/types.h"
+#include "math/math_inc.h"
 
 
 // @DOC: act as index for entity_template_get()

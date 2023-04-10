@@ -1,5 +1,5 @@
-#ifndef SAVE_SYS_H
-#define SAVE_SYS_H
+#ifndef CORE_SAVE_SYS_H
+#define CORE_SAVE_SYS_H
 
 #include "global/global.h"
 #include "core/terrain.h"

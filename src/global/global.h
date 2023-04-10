@@ -1,5 +1,5 @@
-#ifndef GLOBAL_H
-#define GLOBAL_H
+#ifndef GLOABL_GLOBAL_H
+#define GLOABL_GLOBAL_H
 
 
 // include all files like this once and the only use global.h
@@ -186,11 +186,14 @@ typedef enum pf_bg
 #define P_S16(v) 	    P_SIGNED(v) 
 #define P_S8(v) 	    P_SIGNED(v) 
 #define P_UNSIGNED(v) PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %u\n", (v)); PF_IF_LOC()
+#define P_U64(u)      printf("|%s| %"PRId64"\n", #u, u)
 #define P_U32(v)      P_UNSIGNED(v)
 #define P_U16(v)      P_UNSIGNED(v)
 #define P_U8(v)       P_UNSIGNED(v)
 
 #define P_F32(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %f\n", (v)); PF_IF_LOC()
+// #define P_U64(u)   printf("|%s| %llu\n", #u, u)
+
 #define P_BOOL(v) 	  PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %s\n", STR_BOOL(v)); PF_IF_LOC()
 
 #define P_CHAR(v) 	  PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": '%c'\n", (char)(v)); PF_IF_LOC()

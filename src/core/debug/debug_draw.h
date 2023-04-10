@@ -1,5 +1,5 @@
-#ifndef DEBUG_DRAW_H 
-#define DEBUG_DRAW_H 
+#ifndef CORE_DEBUG_DRAW_H 
+#define CORE_DEBUG_DRAW_H 
 
 // @NOTE: if not defined all this gets stripped out
 #ifdef DEBUG_DRAW

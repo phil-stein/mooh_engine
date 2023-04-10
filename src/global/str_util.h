@@ -1,5 +1,5 @@
-#ifndef STR_UTIL_H
-#define STR_UTIL_H
+#ifndef GLOBAL_STR_UTIL_H
+#define GLOBAL_STR_UTIL_H
 
 // @NOTE: need to define STR_UTIL_IMPLEMENTATION once before including 
 //        #define STR_UTIL_IMPLEMENTATION

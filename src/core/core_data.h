@@ -1,5 +1,5 @@
-#ifndef CORE_DATA_H
-#define CORE_DATA_H
+#ifndef CORE_CORE_DATA_H
+#define CORE_CORE_DATA_H
 
 #include "global/global.h"
 #include "core/input.h"

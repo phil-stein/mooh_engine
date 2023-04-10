@@ -1,5 +1,5 @@
-#ifndef TEST_COMP_H
-#define TEST_COMP_H
+#ifndef DATA_TEST_COMP_H
+#define DATA_TEST_COMP_H
 
 #include "global/global.h"
 #include "core/types/types.h"

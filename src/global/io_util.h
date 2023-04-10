@@ -1,5 +1,5 @@
-#ifndef IO_UTIL_H
-#define IO_UTIL_H
+#ifndef GLOBAL_IO_UTIL_H
+#define GLOBAL_IO_UTIL_H
 
 // @NOTE: need to define IO_UTIL_IMPLEMENTATION once before including 
 //        #define IO_UTIL_IMPLEMENTATION

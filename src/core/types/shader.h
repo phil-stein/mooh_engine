@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef CORE_SHADER_H
+#define CORE_SHADER_H
 
 #include "global/global.h"
 #include "math/math_inc.h"

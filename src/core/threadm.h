@@ -1,5 +1,5 @@
-#ifndef THREADM_H
-#define THREADM_H
+#ifndef CORE_THREADM_H
+#define CORE_THREADM_H
 
 #include "global/global.h"
 #include "core/io/assetm.h"

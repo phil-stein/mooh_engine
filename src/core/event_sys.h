@@ -1,5 +1,5 @@
-#ifndef EVENT_SYS_H
-#define EVENT_SYS_H
+#ifndef CORE_EVENT_SYS_H
+#define CORE_EVENT_SYS_H
 
 #include "global/global.h"
 

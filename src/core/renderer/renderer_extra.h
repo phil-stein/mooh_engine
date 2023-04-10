@@ -1,5 +1,5 @@
-#ifndef REDERER_EXTRA_H
-#define REDERER_EXTRA_H
+#ifndef CORE_REDERER_EXTRA_H
+#define CORE_REDERER_EXTRA_H
 
 #include "global/global.h"
 #include "core/types/types.h"

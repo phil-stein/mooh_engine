@@ -1,5 +1,5 @@
-#ifndef FILE_IO_H
-#define FILE_IO_H
+#ifndef CORE_FILE_IO_H
+#define CORE_FILE_IO_H
 
 #include "global/global.h"
 #include "core/types/mesh.h"

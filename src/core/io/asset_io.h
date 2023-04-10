@@ -1,5 +1,5 @@
-#ifndef ASSET_IO_H
-#define ASSET_IO_H
+#ifndef CORE_ASSET_IO_H
+#define CORE_ASSET_IO_H
 
 #include "global/global.h"
 #include "core/types/types.h"

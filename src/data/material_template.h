@@ -1,5 +1,5 @@
-#ifndef MATERIAL_TEMPLATE_H 
-#define MATERIAL_TEMPLATE_H 
+#ifndef DATA_MATERIAL_TEMPLATE_H 
+#define DATA_MATERIAL_TEMPLATE_H 
 
 #include "global/global.h"
 #include "data/shader_template.h"

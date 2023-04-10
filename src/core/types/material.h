@@ -1,5 +1,5 @@
-#ifndef MATERIAL_H
-#define MATERIAL_H
+#ifndef CORE_MATERIAL_H
+#define CORE_MATERIAL_H
 
 #include "global/global.h"
 #include "math/math_inc.h"

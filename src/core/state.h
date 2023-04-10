@@ -1,5 +1,5 @@
-#ifndef STATE_H
-#define STATE_H
+#ifndef CORE_STATE_H
+#define CORE_STATE_H
 
 #include "global/global.h"
 #include "core/types/types.h"

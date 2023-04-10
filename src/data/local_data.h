@@ -1,5 +1,5 @@
-#ifndef LOCAL_DATA_H
-#define LOCAL_DATA_H
+#ifndef DATA_LOCAL_DATA_H
+#define DATA_LOCAL_DATA_H
 
 // @UNSURE: make 'this' a variable to allow different names
 

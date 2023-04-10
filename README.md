@@ -132,7 +132,7 @@ main resources:
   - [ ] remove pos  maybe also cast_shadow, etc. from dir light
   - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/) ?
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
-  - [ ] add CORE_ infront of all .h _H macro ifdef checks
+  - [x] add CORE_ infront of all .h _H macro ifdef checks
   - [ ] make most funcs _dbg error checked ? 
     - [ ] use _dbg funcs for materials in assetm ?
     - [x] make _dbg check a macro to set easy and compile out ?

@@ -1,5 +1,5 @@
-#ifndef SHADER_TEMPLATE_H 
-#define SHADER_TEMPLATE_H 
+#ifndef DATA_SHADER_TEMPLATE_H 
+#define DATA_SHADER_TEMPLATE_H 
 
 #include "global/global.h"
 #include "core/types/shader.h"

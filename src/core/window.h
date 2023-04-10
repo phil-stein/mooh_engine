@@ -1,5 +1,5 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef CORE_WINDOW_H
+#define CORE_WINDOW_H
 
 #include "global/global.h"
 #include "core/core_data.h"
