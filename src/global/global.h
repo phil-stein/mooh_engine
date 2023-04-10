@@ -197,6 +197,8 @@ typedef enum pf_bg
 #define P_STR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": \"%s\"\n", (v)); PF_IF_LOC() 
 #define P_TXT(v)      PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(":\n%s\n", (v)); PF_IF_LOC()    
 
+#define P_PTR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %p\n", (v)); PF_IF_LOC()
+
 // always print location
 
 #define P_LOC_INT(v)  P_INT(v);  P_LOCATION()
@@ -211,6 +213,7 @@ typedef enum pf_bg
 #define P_LOC_CHAR(v) P_CHAR(v); P_LOCATION()
 #define P_LOC_STR(v) 	P_STR(v);  P_LOCATION() 
 #define P_LOC_TXT(v)  P_TXT(v);  P_LOCATION()    
+#define P_LOC_PTR(v)  P_PTR(v);  P_LOCATION()
 
 // -- debug --
 

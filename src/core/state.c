@@ -131,7 +131,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   if (def->mat > -1)    // isnt -1 as thats no mat
   { mat = assetm_get_material_idx(def->mat); }
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->tags_flag, def->phys_flag, def->init_f, def->update_f, def->collision_f, def->trigger_f, template_idx);
+  int id = state_add_entity(pos, rot, scl, mesh, mat, def->tags_flag, def->phys_flag, def->init_f, def->update_f, def->cleanup_f, def->collision_f, def->trigger_f, template_idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -171,7 +171,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flags, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
+int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flags, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, cleanup_callback* cleanup_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
 {
   entity_t ent;
   ent.is_dead = false;
@@ -190,6 +190,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
   ent.is_grounded     = false; 
   ent.init_f          = init_f;
   ent.update_f        = update_f;
+  ent.cleanup_f       = cleanup_f;
   ent.collision_f     = collision_f;
   ent.trigger_f       = trigger_f;
   ent.children        = NULL;
@@ -229,7 +230,7 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
 }
 int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
 {
-  return state_add_entity(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, -1);
+  return state_add_entity(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, NULL, -1);
 }
 
 int state_duplicate_entity(int id, vec3 offset)
@@ -255,6 +256,10 @@ void state_remove_entity(int id)
   ERR_CHECK(id >= 0 && id < world_arr_len, "removing invalid entity id");
   ERR_CHECK(!world_arr[id].is_dead, "removing already 'dead' entity");
  
+  
+  if (world_arr[id].cleanup_f != NULL)
+  { world_arr[id].cleanup_f(&world_arr[id]); }
+
   if (world_arr[id].phys_flag != 0)
   { phys_remove_obj(id); }
 

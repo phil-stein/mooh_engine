@@ -44,6 +44,7 @@ typedef struct entity_template_t
 
   init_callback*      init_f;
   update_callback*    update_f;
+  cleanup_callback*   cleanup_f;
   collision_callback* collision_f;
   trigger_callback*   trigger_f;
 
@@ -68,6 +69,7 @@ typedef struct entity_template_t
   .mat  = MATERIAL_TEMPLATE_DEFAULT,      \
   .init_f      = NULL,                    \
   .update_f    = NULL,                    \
+  .cleanup_f   = NULL,                    \
   .collision_f = NULL,                    \
   .trigger_f   = NULL,                    \
   .phys_flag   = 0,                       \
@@ -86,6 +88,7 @@ typedef struct entity_template_t
   .mat  = 0,                              \
   .init_f      = NULL,                    \
   .update_f    = NULL,                    \
+  .cleanup_f   = NULL,                    \
   .collision_f = NULL,                    \
   .trigger_f   = NULL,                    \
   .phys_flag   = 0,                       \

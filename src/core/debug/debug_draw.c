@@ -240,6 +240,34 @@ void debug_draw_box_register_width_func(vec3 points[8], rgbf color, f32 width)
 //   // draw the quarter aain but flip
 // 
 // }
+void circle_test(vec3 pos, vec3 rot,  f32 radius, u32 points, f32* color)
+{
+  // make 'parent' matrix with rot
+  mat4 rot_m;
+  mat4_make_identity(rot_m);
+	f32 x = rot[0];  m_deg_to_rad(&x);
+	f32 y = rot[1];  m_deg_to_rad(&y);
+	f32 z = rot[2];  m_deg_to_rad(&z);
+	mat4_rotate_at(rot_m, pos, x, VEC3_X(1));
+	mat4_rotate_at(rot_m, pos, y, VEC3_Y(1));
+	mat4_rotate_at(rot_m, pos, z, VEC3_Z(1));
+
+  // rotate 360 deg
+  f32 step_rad = 360.0f / (f32)points;
+  m_deg_to_rad(&step_rad);
+  mat4 circle_m;
+  mat4_rotate_make(circle_m, step_rad, VEC3_Y(1));
+
+  vec3 p0, p1;
+  
+  for (u32 i = 1; i < points; ++i)
+  {
+    // @TODO:  
+    // rotate
+    // draw line
+    // switch pointers
+  }
+}
 void debug_draw_draw_circle_func(vec3 plane, vec3 pos,  f32 radius, f32* color)
 {
   // circle_test(plane, pos,  radius, color);

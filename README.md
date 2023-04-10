@@ -66,6 +66,8 @@ main resources:
   - [x] mesh loading blender coord sys to mine, gizmo is fcked [also mentioned](#base)
   - [ ] getting entity_t to 256bytes makes physics no longer work
     - le what mate
+  - [ ] if sizeof(entity_t) > 255 physics break
+  - [ ] vs19 project no longer works 
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -160,6 +162,7 @@ main resources:
   - [x] texture viewer for .tex files
 
 ## base
+  - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
   - [x] load mesh
     - [ ] triangularize mesh ? (not really necessary as blender does it)
     - [ ] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
@@ -173,15 +176,16 @@ main resources:
     - [ ] load cubemaps from zip
     - [ ] handle missing assets
   - [ ] hot-reload shaders
-  - [ ] make entities have 'local variables'
+  - [x] make entities have 'local variables'
     - ents have init_f and update_f, but no local data
       if i set speed in on init_f, it affects all entities with that init_f
       i also cant set it from anywhere else, unless i make a function specific to that
     - maybe make void struct with X size and cast it to ones with actual members, all ents have more data though
     - struct { int[5] }data; struc{ u32 bool vec3 }data_player, 
       ((data_player)entity_t.data).member
-    - [ ] f.e. use it to set speed/orientation/target/color/.etc on projecticle
+    - [x] f.e. use it to set speed/orientation/target/color/.etc on projecticle
           from the players code, aka. spawn projecticle, set its data
+    - [x] easy with macros      
   - [ ] make seperate editor map file so f.e. structures can be stored special and edited all at once ? 
   - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
     - [ ] reset all dynamic objects ? 

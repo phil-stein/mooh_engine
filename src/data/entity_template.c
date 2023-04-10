@@ -144,9 +144,9 @@ const entity_template_t entity_template_table[] =
     .mesh = "sphere",
     .mat  = MATERIAL_TEMPLATE_DEFAULT,
     // @TODO: .scl  = { 0.5f, 0.5f, 0.5f },
-    .init_f   = projectile_init,
-    .update_f = projectile_update,
-    // @TODO: cleanup
+    .init_f    = projectile_init,
+    .update_f  = projectile_update,
+    .cleanup_f = projectile_cleanup,
     .phys_flag = ENTITY_HAS_RIGIDBODY | ENTITY_HAS_SPHERE,
     .mass = 2.0f,
     .friction = 0.05f, 

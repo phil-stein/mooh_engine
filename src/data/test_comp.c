@@ -1,4 +1,5 @@
 #include "data/test_comp.h"
+#include "data/local_data.h"
 #include "data/entity_tags.h"
 #include "data/entity_template.h"
 #include "core/core_data.h"
@@ -13,16 +14,6 @@
 
 static core_data_t* core_data = NULL;
 
-typedef struct
-{
-  f32 time_alive;
-  int target_id;
-}local_data_test_t;
-
-local_data_test_t* local_data_arr = NULL;
-u32 local_data_arr_len            = 0;
-struct {u32 key; u32 value; }* local_data_id_hm = NULL; // key: entity.id, value idx for local_data_arr
-u32 local_data_id_hm_len = 0;
 
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
@@ -183,16 +174,24 @@ void player_on_trigger(entity_t* this, entity_t* trig)
   }
 }
 
+// --- projectile ---
+typedef struct {u32 key; u32 value; } hm_entry_t;
+typedef struct
+{
+  f32 time_alive;
+  int target_id;
+}local_data_test_t;
+local_data_test_t data_default = { .time_alive = 0.0f, .target_id = -1 };
+
+LOCAL_DATA_DECL(local_data_test_t, local_data);
+
 const f32 time_alive_max = 1.0f;
 const f32 start_scl      = 0.5f; 
+
 void projectile_init(entity_t* this)
 {
-  local_data_test_t _data = { .time_alive = 0.0f, .target_id = -1 };
-  hmput(local_data_id_hm, this->id, local_data_arr_len);
-  arrput(local_data_arr, _data);
-  local_data_test_t* data = &local_data_arr[local_data_arr_len];
-  local_data_arr_len++; 
-  P_U32(local_data_arr_len);
+  LOCAL_DATA_INIT(local_data_test_t, local_data, data_default, data);
+
 
   vec3_copy_f(start_scl, this->scl);
 
@@ -209,9 +208,8 @@ void projectile_init(entity_t* this)
 }
 void projectile_update(entity_t* this, f32 dt)
 {
-  u32 idx = hmget(local_data_id_hm, this->id);
-  local_data_test_t* data = &local_data_arr[idx];
-  
+  LOCAL_DATA_GET(local_data_test_t, local_data, data);
+
   data->time_alive += dt;
   if (data->time_alive >= time_alive_max)
   {
@@ -238,11 +236,7 @@ void projectile_update(entity_t* this, f32 dt)
 }
 void projectile_cleanup(entity_t* this)
 {
-  P("-- proj cleanup --");
-  
-  // @TODO: cleanup local data
-  do it  
-  
+  LOCAL_DATA_DEL(local_data);
 }
 
 void entity_init(entity_t* this)

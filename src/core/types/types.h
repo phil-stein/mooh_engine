@@ -41,6 +41,7 @@ typedef struct cubemap_t
 struct entity_t;
 typedef void (init_callback)(struct entity_t* this);
 typedef void (update_callback)(struct entity_t* this, float dt);
+typedef void (cleanup_callback)(struct entity_t* this);
 typedef void (collision_callback)(struct entity_t* this, struct entity_t* ent);
 typedef void (trigger_callback)(struct entity_t* this, struct entity_t* ent);
 
@@ -115,60 +116,22 @@ typedef struct entity_t
   // -> null or gets called at apropriate time
   init_callback*      init_f;
   update_callback*    update_f;
+  cleanup_callback*   cleanup_f;
   collision_callback* collision_f;
   trigger_callback*   trigger_f;
 
-  // @TODO: find way to check type before assiging
-  // @DOC: this is NULL, or points to a struct of local entity data, aka. data unique to this entity,
-  //       otherwise every entity with the same init_f/update_f function would use the same variables/data
-  //       in that .c file / function
-  //       
-  //       ! this whole thing breaks appart when u cast to the wrong struct type, which c will let u do
-  //       ! what if an entity needs local data in to .c files for different init_f/update_f
-  //       
-  //       other idea:
-  //       entity_t { struct { u32 arr_idx, int type_id } local_data[X] }; 
-  //       in .c file 
-  //       #define SOME_DATA_ID 11
-  //       first of use idx for arr, is safer that way, i think
-  //       when assigning make data[X].type_id = SOME_DATA_ID
-  //       if data[X].type_id < 0 && data[X].type_idx != SOME_DATA_ID // already assigned but not this
-  //       use data[X +1] etc.
-  //       when getting make sure it is == SOME_DATA_ID
-  //       then in some file/function check all the id's, or distribute them like assetm ids through a function
-  //
-  //       usage: 
-  //       in .c file
-  //       struct some_data_t { int var0, vec3 var1, etc. };
-  //       some_data_t* data_arr = NULL;  // stb_ds arr, doesnt have to be stb_ds, but dyn arr is safer
-  //       u32 data_arr_len      = 0;
-  //       void some_init(entity_t* this)
-  //       {
-  //          some_data_t data = { .var0 = 0, .var1 = { 0, 0, 0 } };
-  //          arrput(data_arr, data);
-  //          this->local_data = (void*)&data_arr[data_arr_len];
-  //          data_arr_len++;
-  //       }
-  //       void some_update(entity_t* this)
-  //       {
-  //          local_data_test_t* data = (local_data_test_t*)this->local_data;
-  //          data->var0 = 10;
-  //       }
-  // void* local_data;  
-  // entity_local_data_key_t local_data[ENTITY_LOCAL_DATA_MAX];
-
   // continue here
-  u8 byte_00;
-  u8 byte_01;
-  u8 byte_02;
-  u8 byte_03;
-  u8 byte_04;
-  u8 byte_05;
-  u8 byte_06;
-  u8 byte_07;
-  u8 byte_08;
-  u8 byte_09;
-  u8 byte_10;
+  // u8 byte_00;
+  // u8 byte_01;
+  // u8 byte_02;
+  // u8 byte_03;
+  // u8 byte_04;
+  // u8 byte_05;
+  // u8 byte_06;
+  // u8 byte_07;
+  // u8 byte_08;
+  // u8 byte_09;
+  // u8 byte_10;
   // u8 byte_11;
   // u8 byte_12; // breaks here, at 13 bytes 
   // int tmp0;
