@@ -5,8 +5,10 @@
 #include "core/input.h"
 #include "core/types/types.h"
 
+// @DOC: the different gizmo types / modes
 typedef enum gizmo_type_t { GIZMO_NONE, GIZMO_TRANSLATE, GIZMO_SCALE, GIZMO_ROTATE } gizmo_type_t;
 
+// @DOC: the different types / modes for the terrain edit tool
 typedef enum terrain_edit_type_t 
 { 
   TERRAIN_EDIT_NONE, 
@@ -17,32 +19,34 @@ typedef enum terrain_edit_type_t
 
 } terrain_edit_type_t;
 
+// @DOC: houses all publicly accessible data for app (editor)
+//       instance of app_data_t is in app.c and accesible via app_data_get()
 typedef struct app_data_t
 {
-  int selected_id;
+  int selected_id;                        // id of current selected entity, -1 is none 
   
-  gizmo_type_t gizmo_type;
-  bool  switch_gizmos_act;     // if false hotkeys wont switch gizmo
-  float gizmo_translate_speed;
-  float gizmo_rotate_speed;
-  float gizmo_scale_speed;
-  bool  gizmo_snapping;
-  float gizmo_translate_snap;
-  float gizmo_rotate_snap;
-  float gizmo_scale_snap;
+  gizmo_type_t gizmo_type;                // current active gizmo type / mode
+  bool  switch_gizmos_act;                // if false hotkeys wont switch gizmo
+  float gizmo_translate_speed;            // speed at which GIZMO_TRANSLATE moves ents
+  float gizmo_rotate_speed;               // speed at which GIZMO_ROTATE rotates ents
+  float gizmo_scale_speed;                // speed at which GIZMO_SCALE scales ents
+  bool  gizmo_snapping;                   // if true gizmo movec, rotates, scales in set intervals
+  float gizmo_translate_snap;             // interval at which entities are moved if gizmo_snapping is true
+  float gizmo_rotate_snap;                // interval at which entities are rotatet if gizmo_snapping is true
+  float gizmo_scale_snap;                 // interval at which entities are scaled if gizmo_snapping is true
 
-  float mouse_sensitivity;
-  bool wireframe_act;
-  bool mouse_over_ui;
+  float mouse_sensitivity;                // speed at which the mouse moves
+  bool wireframe_act;                     // if the wireframe is shown instead of full meshes
+  bool mouse_over_ui;                     // if true mouse is currently over a ui window
 
-  terrain_edit_type_t terrain_edit_type;
-  f32  terrain_edit_radius;
-  f32  terrain_edit_strength;
-  const f32  terrain_edit_scalar;
-  const f32  terrain_edit_smooth_scalar;
-  int terrain_edit_paint_material;
-  const f32  terrain_edit_paint_scalar;
-
+  terrain_edit_type_t terrain_edit_type;  // current active terrain edit tool type / mode 
+  f32  terrain_edit_radius;               // radius in which the terrain edit tool has effect
+  f32  terrain_edit_strength;             // effect the current terrain edit tool has
+  const f32  terrain_edit_scalar;         // multiplier for terrain_edit_strengh
+  const f32  terrain_edit_smooth_scalar;  // multiplier for terrain_edit_strengh
+  int terrain_edit_paint_material;        // multiplier for terrain_edit_strengh 
+  const f32  terrain_edit_paint_scalar;   // multiplier for terrain_edit_strengh 
+    
 }app_data_t;
 
 #define APP_DATA_INIT()                                \
@@ -99,9 +103,12 @@ typedef struct app_data_t
 #define SCENE_FILE_NAME   "test.scene"
 #define TERRAIN_FILE_NAME "test.terrain"
 
+// @DOC: initalize, call before any other calls to app
 void app_init();
+// @DOC: upate logic called once a frame
 void app_update();
 
+// @DOC: returns a pointer to app_data_t var in app.c
 app_data_t* app_data_get();
 
 

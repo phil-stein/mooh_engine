@@ -130,7 +130,7 @@ main resources:
     - [ ] editor
   - [ ] make global submodule again, check if phys, serialization are still submodules
   - [ ] remove pos  maybe also cast_shadow, etc. from dir light
-  - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/) ?
+  - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/)
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
   - [x] add CORE_ infront of all .h _H macro ifdef checks
   - [ ] make most funcs _dbg error checked ? 
@@ -145,11 +145,11 @@ main resources:
     - [ ] math
       - [ ] math_mat4.h
       - [ ] math_space.h
-    - [ ] editor
-      - [ ] app.h
+    - [x] editor
+      - [x] app.h
       - [x] gizmo.h
       - [x] gui.h
-      - [ ] terrain_edit.h
+      - [x] terrain_edit.h
 
 ## tools
   - [ ] binary dump
@@ -165,7 +165,7 @@ main resources:
   - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
   - [x] load mesh
     - [ ] triangularize mesh ? (not really necessary as blender does it)
-    - [ ] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
+    - [x] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
   - [ ] asset manager
     - [ ] free assets
       - [x] textures
