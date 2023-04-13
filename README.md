@@ -118,7 +118,7 @@ main resources:
     - [ ] set asset_path to cwd/assets
     - [ ] maybe check if folder build_01 exist and name build_02, etc.
     - [ ] put date in folder / exe name or .txt file or some
-  - [ ] rename state_remove_entity() & state_duplicate_entity() to
+  - [x] rename state_remove_entity() & state_duplicate_entity() to
         state_entity_remove() & state_duplicate_entity()
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
@@ -144,12 +144,7 @@ main resources:
   - [ ] comment all .h files
     - [ ] math
       - [ ] math_mat4.h
-      - [ ] math_space.h
-    - [x] editor
-      - [x] app.h
-      - [x] gizmo.h
-      - [x] gui.h
-      - [x] terrain_edit.h
+      - [x] math_space.h
 
 ## tools
   - [ ] binary dump
@@ -162,7 +157,6 @@ main resources:
   - [x] texture viewer for .tex files
 
 ## base
-  - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
   - [x] load mesh
     - [ ] triangularize mesh ? (not really necessary as blender does it)
     - [x] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
@@ -197,14 +191,9 @@ main resources:
       - single map file, never changed
       - multiple variants of that with changes
         - i.e. 'save01.scene', 'mygame.scene', etc.
-  - [ ] event system
+  - [x] event system
     - [x] entity add, remove, parented
     - [x] collision / trigger
-    - [ ] etc.
-    - [ ] custom game events (day to night, etc.)
-      - prob. need to be done in game
-      - unless arbitrary func pointer, like void* for funcs
-    - [ ] pooling
   - [ ] billboards
   - [ ] particle system
     - cpu / gpu side or mix ?
@@ -220,6 +209,7 @@ main resources:
   - [ ] trail renderer
   - [ ] debug tools
     - [ ] debug_draw_circle() with resolution
+    - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
     - [ ] add profiler
   - [ ] controller support ?
 

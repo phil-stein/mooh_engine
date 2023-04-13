@@ -138,12 +138,12 @@ void renderer_update()
   // @TODO: get this in advance
   int world_len = 0;
   int world_dead_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+  entity_t* world = state_entity_get_arr(&world_len, &world_dead_len);
   int dir_lights_len = 0;
-  dir_light_t* dir_lights = state_get_dir_light_arr(&dir_lights_len);
+  dir_light_t* dir_lights = state_dir_light_get_arr(&dir_lights_len);
   int point_lights_len = 0;
   int point_lights_dead_len = 0;
-  point_light_t* point_lights = state_get_point_light_arr(&point_lights_len, &point_lights_dead_len);
+  point_light_t* point_lights = state_point_light_get_arr(&point_lights_len, &point_lights_dead_len);
   
 
   TIMER_START("shadow maps");
@@ -464,7 +464,7 @@ void renderer_update()
     {
       point_light_t* light = &point_lights[i];
       if (light->is_dead) { point_lights_disabled++; continue; }
-      entity_t* e = state_get_entity(light->entity_id);
+      entity_t* e = state_entity_get(light->entity_id);
       vec3 l_pos; vec3_add(e->pos, light->offset, l_pos);
 
       int idx = i - point_lights_disabled;

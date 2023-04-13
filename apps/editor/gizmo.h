@@ -11,7 +11,7 @@
 #define GIZMO_MODEL_POS(_app_data, model, pos)                                                \
     if ((_app_data)->selected_id >= 0)                                                        \
     {                                                                                         \
-      entity_t* e = state_get_entity((_app_data)->selected_id);                               \
+      entity_t* e = state_entity_get((_app_data)->selected_id);                               \
       mat4_get_pos(e->model, (pos));                                                          \
       if ((_app_data)->gizmo_type == GIZMO_TRANSLATE)                                         \
       { state_entity_model_no_scale_rotation((_app_data)->selected_id, (model)); }            \

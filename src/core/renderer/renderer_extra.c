@@ -46,7 +46,7 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
   // cycle all objects
   int entities_len = 0;
   int entities_dead_len = 0;
-  entity_t* entities = state_get_entity_arr(&entities_len, &entities_dead_len);
+  entity_t* entities = state_entity_get_arr(&entities_len, &entities_dead_len);
   shader_use(&core_data->mouse_pick_shader);
   for (int i = 0; i < entities_len; ++i)
   {
@@ -172,7 +172,7 @@ void renderer_extra_draw_scene_outline()
 	if (core_data->wireframe_mode_enabled == true)
 	{ _glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
   
-	entity_t* e = state_get_entity(core_data->outline_id);
+	entity_t* e = state_entity_get(core_data->outline_id);
   
   mesh_t* mesh = NULL;
   texture_t* tex = assetm_get_texture("#internal/blank.png", true);

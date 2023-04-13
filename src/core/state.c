@@ -36,8 +36,8 @@ bool entity_init_called = false;
 
 static core_data_t* core_data = NULL;
 
-// shared variable dont use this just for error detection in state_get_entity(), extern def in state.h
-bool __state_get_entity_error_shared = false;
+// shared variable dont use this just for error detection in state_entity_get(), extern def in state.h
+bool __state_entity_get_error_shared = false;
 
 void state_init()
 {
@@ -109,19 +109,19 @@ void state_clear_scene()
   point_lights_arr_len = 0;
 }
 
-entity_t* state_get_entity_arr(int* len, int* dead_len)
+entity_t* state_entity_get_arr(int* len, int* dead_len)
 {
   *len = world_arr_len;
   *dead_len = world_dead_arr_len;
   return world_arr;
 }
-int** state_get_template_entity_idxs_arr(int* len)
+int** state_entity_get_template_idxs_arr(int* len)
 {
   *len = template_entity_idxs_arr_len;
   return template_entity_idxs_arr;
 }
 
-int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_idx)
+int state_entity_add_from_template(vec3 pos, vec3 rot, vec3 scl, int template_idx)
 {
   const entity_template_t* def = entity_template_get(template_idx);
   int mesh = -1;
@@ -131,7 +131,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   if (def->mat > -1)    // isnt -1 as thats no mat
   { mat = assetm_get_material_idx(def->mat); }
 
-  int id = state_add_entity(pos, rot, scl, mesh, mat, def->tags_flag, def->phys_flag, def->init_f, def->update_f, def->cleanup_f, def->collision_f, def->trigger_f, template_idx);
+  int id = state_entity_add(pos, rot, scl, mesh, mat, def->tags_flag, def->phys_flag, def->init_f, def->update_f, def->cleanup_f, def->collision_f, def->trigger_f, template_idx);
 
   if (HAS_FLAG(def->phys_flag, ENTITY_HAS_BOX) && HAS_FLAG(def->phys_flag, ENTITY_HAS_RIGIDBODY))
   {
@@ -171,7 +171,7 @@ int state_add_entity_from_template(vec3 pos, vec3 rot, vec3 scl, int template_id
   return id; 
 }
 
-int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flags, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, cleanup_callback* cleanup_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
+int state_entity_add(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_flags, entity_phys_flag phys_flag, init_callback* init_f, update_callback* update_f, cleanup_callback* cleanup_f, collision_callback* collision_f, trigger_callback* trigger_f, int template_idx)
 {
   entity_t ent;
   ent.is_dead = false;
@@ -228,30 +228,30 @@ int state_add_entity(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
 
   return id;
 }
-int state_add_empty_entity(vec3 pos, vec3 rot, vec3 scl)
+int state_entity_add_empty(vec3 pos, vec3 rot, vec3 scl)
 {
-  return state_add_entity(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, NULL, -1);
+  return state_entity_add(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, NULL, -1);
 }
 
-int state_duplicate_entity(int id, vec3 offset)
+int state_entity_duplicate(int id, vec3 offset)
 {
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
   vec3 pos;
   vec3_add(e->pos, offset, pos);
-  int dupe = state_add_entity_from_template(pos, e->rot, e->scl, e->template_idx);
+  int dupe = state_entity_add_from_template(pos, e->rot, e->scl, e->template_idx);
 
   // attached point light
   if (e->point_light_idx >= 0)
   {
     bool error = false;
-    point_light_t* p = state_get_point_light(e->point_light_idx, &error); ASSERT(!error);
-    state_add_point_light(p->offset, p->color, p->intensity, dupe);
+    point_light_t* p = state_point_light_get(e->point_light_idx, &error); ASSERT(!error);
+    state_point_light_add(p->offset, p->color, p->intensity, dupe);
   }
 
   return dupe;
-  // return state_add_entity(pos, e->rot, e->scl, e->mesh, e->mat, e->init_f, e->update_f, e->table_idx);
+  // return state_entity_add(pos, e->rot, e->scl, e->mesh, e->mat, e->init_f, e->update_f, e->table_idx);
 }
-void state_remove_entity(int id)
+void state_entity_remove(int id)
 {
   ERR_CHECK(id >= 0 && id < world_arr_len, "removing invalid entity id");
   ERR_CHECK(!world_arr[id].is_dead, "removing already 'dead' entity");
@@ -265,7 +265,7 @@ void state_remove_entity(int id)
 
   if (world_arr[id].point_light_idx >= 0)
   {
-    state_remove_point_light(world_arr[id].point_light_idx);
+    state_point_light_remove(world_arr[id].point_light_idx);
     // world_arr[id].point_light_idx = -1;
   }
 
@@ -287,14 +287,14 @@ void state_remove_entity(int id)
 
   event_sys_trigger_entity_removed(id);
 }
-entity_t* state_get_entity_dbg(int id, bool* error, char* _file, int _line)
+entity_t* state_entity_get_dbg(int id, bool* error, char* _file, int _line)
 {
   // ERR_CHECK(id >= 0 && id < world_arr_len, "invalid entity id: %d, [file: %s, line: %d]", id, file, line);
   // ERR_CHECK(!world_arr[id].is_dead, "requested dead entity: %d, [file: %s, line: %d]", id, file, line);
   *error = id < 0 || id >= world_arr_len || world_arr[id].is_dead;
   entity_t* rtn = NULL;
   if (*error) 
-  { P_ERR("state_get_entity error\n  -> id: %d, world_arr_len: %d | is_dead: %s\n", id, world_arr_len, STR_BOOL(world_arr[id].is_dead)); }
+  { P_ERR("state_entity_get() error\n  -> id: %d, world_arr_len: %d | is_dead: %s\n", id, world_arr_len, STR_BOOL(world_arr[id].is_dead)); }
   else { rtn = &world_arr[id]; }
   return rtn;
 }
@@ -307,8 +307,8 @@ void state_entity_add_child(int parent, int child, bool keep_transform)
     return;
   }
   
-  entity_t* p = state_get_entity(parent);
-  entity_t* c = state_get_entity(child);
+  entity_t* p = state_entity_get(parent);
+  entity_t* c = state_entity_get(child);
 
   if (c->parent > -1) 
   { P_ERR("parenting child which is already parented.\n  -> parent: %d, child: %d, childs parent: %d\n", parent, child, c->parent); return; } 
@@ -353,8 +353,8 @@ void state_entity_remove_child(int parent, int child)
     return;
   }
   
-  entity_t* p = state_get_entity(parent);
-  entity_t* c = state_get_entity(child);
+  entity_t* p = state_entity_get(parent);
+  entity_t* c = state_entity_get(child);
 
   for (int i = 0; i < p->children_len; ++i)
   {
@@ -375,19 +375,19 @@ void state_entity_remove_child(int parent, int child)
 
 void state_entity_add_child_remove_parent(int parent, int child)
 {
-  entity_t* c = state_get_entity(child);
+  entity_t* c = state_entity_get(child);
   if (c->parent >= 0 && c->parent != parent)
   { state_entity_remove_child(parent, child); }
   state_entity_add_child(parent, child, true);
 }
 
-void state_get_entity_total_children_len(int id, u32* len)
+void state_entity_get_total_children_len(int id, u32* len)
 {
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
   *len += e->children_len;
   for (u32 i = 0; i < e->children_len; ++i)
   {
-    state_get_entity_total_children_len(e->children[i], len);
+    state_entity_get_total_children_len(e->children[i], len);
   }
 }
 
@@ -399,7 +399,7 @@ void state_entity_local_model(int id, mat4 out)
     return;
   }
   
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
   mat4_make_model(e->pos, e->rot, e->scl, out);
 }
 void state_entity_update_global_model_dbg(int id, char* _file, int _line)
@@ -411,7 +411,7 @@ void state_entity_update_global_model_dbg(int id, char* _file, int _line)
     return;
   }
   
-  entity_t* e = state_get_entity(id); // &error); ERR_CHECK(!error, "state_get_entity() failed called from: '%s' line: %d\n", file, line);
+  entity_t* e = state_entity_get(id); 
   
   if (!e->is_moved) { return; }
 
@@ -423,7 +423,7 @@ void state_entity_update_global_model_dbg(int id, char* _file, int _line)
     mat4_get_pos(e->model, pre_pos);  // model from last frame
     
     mat4_make_model(e->pos, e->rot, e->scl, e->model);  // parent indipendent
-    entity_t* p = state_get_entity(e->parent);
+    entity_t* p = state_entity_get(e->parent);
     mat4_mul(p->model, e->model, e->model);
     
     mat4_get_pos(e->model, post_pos); // model after parent-transform
@@ -455,7 +455,7 @@ void state_entity_update_global_model_dbg(int id, char* _file, int _line)
     // @NOTE: setting 'is_moved' updates children next 'state_update()'
     //        just updating doesn't work
     // state_entity_update_global_model(e->children[i]);
-    entity_t* c = state_get_entity(e->children[i]);
+    entity_t* c = state_entity_get(e->children[i]);
     c->is_moved = true;
   }
   // phys objs get reset in program.c program_sync_phys() 
@@ -469,13 +469,13 @@ void state_entity_global_model_no_rotation(int id, mat4 out)
     return;
   }
   
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     mat4_make_model(e->pos, VEC3(0), e->scl, out);
-    entity_t* p = state_get_entity(e->parent);
+    entity_t* p = state_entity_get(e->parent);
     mat4_mul(p->model, e->model, out);
   }
   else
@@ -492,14 +492,14 @@ void state_entity_model_no_scale(int id, mat4 out)
     return;
   }
   
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     // mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
     mat4_make_model(e->pos, e->rot, VEC3(1), out);
-    entity_t* p = state_get_entity(e->parent);
+    entity_t* p = state_entity_get(e->parent);
     mat4_mul(p->model, out, out);
   }
   else
@@ -517,13 +517,13 @@ void state_entity_model_no_scale_rotation(int id, mat4 out)
     return;
   }
   
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
 
   if (e->parent >= 0)
   {
     // same as state_entity_local_model()
     mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
-    entity_t* p = state_get_entity(e->parent);
+    entity_t* p = state_entity_get(e->parent);
     mat4_mul(p->model, out, out);
   }
   else
@@ -540,7 +540,7 @@ void state_entity_global_scale(int id, vec3 out)
     return;
   }
   
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
 
   if (e->parent <= -1) { vec3_copy(e->scl, out); return; }
   
@@ -550,13 +550,13 @@ void state_entity_global_scale(int id, vec3 out)
 
 // -- lights --
 
-dir_light_t* state_get_dir_light_arr(int* len)
+dir_light_t* state_dir_light_get_arr(int* len)
 {
   *len = dir_lights_arr_len;
   return dir_lights_arr;
 }
 
-bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool cast_shadow, int shadow_map_x, int shadow_map_y)
+bool state_dir_light_add(vec3 pos, vec3 dir, rgbf color, float intensity, bool cast_shadow, int shadow_map_x, int shadow_map_y)
 {
   if (dir_lights_arr_len >= DIR_LIGHTS_MAX -1) { return false; }
   
@@ -577,9 +577,9 @@ bool state_add_dir_light(vec3 pos, vec3 dir, rgbf color, float intensity, bool c
   return true;
 }
 
-void state_remove_dir_light(int idx)
+void state_dir_light_remove(int idx)
 {
-  ERR_CHECK(idx >= 0 && idx < dir_lights_arr_len, "'idx' passed to 'state_remove_dir_light()' invalid: '%d', max: '%d'", idx, dir_lights_arr_len);
+  ERR_CHECK(idx >= 0 && idx < dir_lights_arr_len, "'idx' passed to 'state_dir_light_remove()' invalid: '%d', max: '%d'", idx, dir_lights_arr_len);
  
   // move all lights down one to replace the given light
   for (int i = idx; i < dir_lights_arr_len +1; ++i)
@@ -591,14 +591,14 @@ void state_remove_dir_light(int idx)
 
 // --- point lights ---
 
-point_light_t* state_get_point_light_arr(int* len, int* dead_len)
+point_light_t* state_point_light_get_arr(int* len, int* dead_len)
 {
   *len      = point_lights_arr_len;
   *dead_len = point_lights_dead_arr_len;
   return point_lights_arr;
 }
 
-point_light_t* state_get_point_light_dbg(int id, bool* error, const char* _file, const int _line)
+point_light_t* state_point_light_get_dbg(int id, bool* error, const char* _file, const int _line)
 {
   if (id < 0 || id >= point_lights_arr_len) 
   { ERR("id: %d, point_lights_arr_len: %d \ncalled from: \"%s\", line: %d\n", id, point_lights_arr_len, _file, _line); *error = true; return NULL; }
@@ -606,14 +606,14 @@ point_light_t* state_get_point_light_dbg(int id, bool* error, const char* _file,
   return &point_lights_arr[id];
 }
 
-int state_add_point_light_empty(vec3 pos, rgbf color, float intensity)
+int state_point_light_add_empty(vec3 pos, rgbf color, float intensity)
 {
-  int id = state_add_empty_entity(pos, VEC3(0), VEC3(1));
-  return state_add_point_light(VEC3(0), color, intensity, id);
+  int id = state_entity_add_empty(pos, VEC3(0), VEC3(1));
+  return state_point_light_add(VEC3(0), color, intensity, id);
 }
 
 
-int state_add_point_light(vec3 offset, rgbf color, float intensity, int entity_id)
+int state_point_light_add(vec3 offset, rgbf color, float intensity, int entity_id)
 {
   if (point_lights_arr_len - point_lights_dead_arr_len >= POINT_LIGHTS_MAX -1) 
   { return -1; P_ERR("tried adding point light but already max amount of point lights"); }
@@ -644,7 +644,7 @@ int state_add_point_light(vec3 offset, rgbf color, float intensity, int entity_i
     point_lights_arr_len++;
   }
  
-  entity_t* e = state_get_entity(entity_id);
+  entity_t* e = state_entity_get(entity_id);
   if (e->point_light_idx < 0)
   {
     e->point_light_idx = id;
@@ -659,15 +659,15 @@ int state_add_point_light(vec3 offset, rgbf color, float intensity, int entity_i
   return id;
 }
 
-void state_remove_point_light(int id)
+void state_point_light_remove(int id)
 {
-  ERR_CHECK(id >= 0 && id < point_lights_arr_len, "'id' passed to 'state_remove_point_light()' invalid: '%d', max: '%d'", id, point_lights_arr_len);
+  ERR_CHECK(id >= 0 && id < point_lights_arr_len, "'id' passed to 'state_point_light_remove()' invalid: '%d', max: '%d'", id, point_lights_arr_len);
   ERR_CHECK(!point_lights_arr[id].is_dead, "removing already 'dead' point_light");
 
   // remove from attached entity
   if (point_lights_arr[id].entity_id >= 0)
   {
-    entity_t* e = state_get_entity(point_lights_arr[id].entity_id);
+    entity_t* e = state_entity_get(point_lights_arr[id].entity_id);
     e->point_light_idx = -1;
   }
   

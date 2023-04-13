@@ -49,14 +49,14 @@ void player_update(entity_t* this, f32 dt)
   if (input_get_key_pressed(KEY_ENTER))
   {
     // static int projectile_id = -1;
-    // if (projectile_id >= 0) { state_remove_entity(projectile_id); }
+    // if (projectile_id >= 0) { state_entity_remove(projectile_id); }
     vec3 projectile_pos, projectile_force;
     vec3_mul_f(front, 2.0f, projectile_pos);
     vec3_add(this->pos, projectile_pos, projectile_pos);
     projectile_pos[1] += 2.0f;
-    int projectile_id = state_add_entity_from_template(projectile_pos, VEC3(0), VEC3(0.2f), ENTITY_TEMPLATE_PROJECTILE);
+    int projectile_id = state_entity_add_from_template(projectile_pos, VEC3(0), VEC3(0.2f), ENTITY_TEMPLATE_PROJECTILE);
     
-    entity_t* projectile = state_get_entity(projectile_id);
+    entity_t* projectile = state_entity_get(projectile_id);
     vec3_mul_f(front, 2000.0f, projectile_force);
     ENTITY_SET_FORCE(projectile, projectile_force);
   }
@@ -197,7 +197,7 @@ void projectile_init(entity_t* this)
 
   // pick random target
   int world_len, world_dead_len;
-  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+  entity_t* world = state_entity_get_arr(&world_len, &world_dead_len);
   data->target_id = -1;
   for (u32 i = 0; i < 10; ++i)  // 10 tries to find alive target
   {
@@ -213,14 +213,14 @@ void projectile_update(entity_t* this, f32 dt)
   data->time_alive += dt;
   if (data->time_alive >= time_alive_max)
   {
-    state_remove_entity(this->id);
+    state_entity_remove(this->id);
     return;
   }
 
   if (data->target_id >= 0)
   {
     bool err = false;
-    entity_t* e = state_get_entity_err(data->target_id, &err);
+    entity_t* e = state_entity_get_err(data->target_id, &err);
     if (!err)
     {
       vec3 pos;

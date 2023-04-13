@@ -38,10 +38,10 @@ void save_sys_write_structure_to_file(const char* name, int root_entity_id)
 {
   u8* buffer = NULL;
    
-  entity_t* root = state_get_entity(root_entity_id);
+  entity_t* root = state_entity_get(root_entity_id);
   
   u32 len = 0;
-  state_get_entity_total_children_len(root_entity_id, &len);
+  state_entity_get_total_children_len(root_entity_id, &len);
   len++; // for root entity
   serialization_serialize_u32(&buffer, len); // structure length, amount of entities
   // P_U32(len);
@@ -73,7 +73,7 @@ void save_sys_get_structure_idxs(u32* arr, u32* arr_pos, entity_t* e)
 
   for (u32 i = 0; i < e->children_len; ++i)
   {
-    entity_t* c = state_get_entity(e->children[i]);
+    entity_t* c = state_entity_get(e->children[i]);
     save_sys_get_structure_idxs(arr, arr_pos, c);
   }
 }
@@ -103,7 +103,7 @@ void save_sys_serialize_structure(u8** buffer, u32* idxs, u32 idxs_len, entity_t
 
   for (u32 i = 0; i < e->children_len; ++i)
   {
-    entity_t* c = state_get_entity(e->children[i]);  
+    entity_t* c = state_entity_get(e->children[i]);  
     save_sys_serialize_structure(buffer, idxs, idxs_len, c); // use recursion
   }
 }
@@ -277,7 +277,7 @@ void save_sys_serialize_scene(u8** buffer)
 
   int world_len = 0;
   int world_dead_len = 0;
-  entity_t* world = state_get_entity_arr(&world_len, &world_dead_len);
+  entity_t* world = state_entity_get_arr(&world_len, &world_dead_len);
 
   serialization_serialize_u32(buffer, world_len - world_dead_len);
 
@@ -290,7 +290,7 @@ void save_sys_serialize_scene(u8** buffer)
   // -- dir lights --
   
   int dir_lights_len = 0;
-  dir_light_t* dir_lights = state_get_dir_light_arr(&dir_lights_len);
+  dir_light_t* dir_lights = state_dir_light_get_arr(&dir_lights_len);
    
   serialization_serialize_u32(buffer, dir_lights_len);
 
@@ -303,7 +303,7 @@ void save_sys_serialize_scene(u8** buffer)
   // -- point lights --
 
   // int point_lights_len = 0;
-  // point_light_t* point_lights = state_get_point_light_arr(&point_lights_len);
+  // point_light_t* point_lights = state_point_light_get_arr(&point_lights_len);
   //  
   // serialization_serialize_u32(buffer, point_lights_len);
 
@@ -469,7 +469,7 @@ void save_sys_serialize_entity(u8** buffer, entity_t* e)
   if (e->point_light_idx >= 0)
   {
     bool error = false;
-    point_light_t* l = state_get_point_light(e->point_light_idx, &error); ASSERT(!error);
+    point_light_t* l = state_point_light_get(e->point_light_idx, &error); ASSERT(!error);
     save_sys_serialize_point_light(buffer, l);
   }
 
@@ -489,9 +489,9 @@ int save_sys_deserialize_entity(u8* buffer, u32* offset)
   serialization_deserialize_vec3(buffer, offset, rot); 
   serialization_deserialize_vec3(buffer, offset, scl); 
 
-  int id = state_add_entity_from_template(pos, rot, scl, template_idx);
+  int id = state_entity_add_from_template(pos, rot, scl, template_idx);
  
-  entity_t* e = state_get_entity(id);
+  entity_t* e = state_entity_get(id);
    
   u8 has_point_light = serialization_deserialize_u8(buffer, offset);  // if has point light
   if (has_point_light)
@@ -535,7 +535,7 @@ void save_sys_deserialize_dir_light(u8* buffer, u32* offset)
   int shadow_map_x = serialization_deserialize_s32(buffer, offset);
   int shadow_map_y = serialization_deserialize_s32(buffer, offset);
 
-  state_add_dir_light(pos, dir, color, intensity, cast_shadow, shadow_map_x, shadow_map_y);
+  state_dir_light_add(pos, dir, color, intensity, cast_shadow, shadow_map_x, shadow_map_y);
 }
 
 void save_sys_serialize_point_light(u8** buffer, point_light_t* l)
@@ -552,7 +552,7 @@ int save_sys_deserialize_point_light(u8* buffer, u32* offset, int entity_id)
   serialization_deserialize_vec3(buffer, offset, color);
   f32 intensity = serialization_deserialize_f32(buffer, offset);
 
-  return state_add_point_light(_offset, color, intensity, entity_id);
+  return state_point_light_add(_offset, color, intensity, entity_id);
 }
 
 

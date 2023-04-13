@@ -347,9 +347,9 @@ void gui_properties_win()
     int id = app_data->selected_id;
     if (id >= 0)  // entities
     {
-      entity_t* e     = state_get_entity(id);
+      entity_t* e     = state_entity_get(id);
       int world_len = 0; int dead_len = 0;
-      state_get_entity_arr(&world_len, &dead_len);
+      state_entity_get_arr(&world_len, &dead_len);
       
       nk_layout_row_dynamic(ctx, 25, 1);
       nk_labelf(ctx, NK_TEXT_LEFT, "id: %d, table_idx: %d", id, e->template_idx);
@@ -360,7 +360,7 @@ void gui_properties_win()
       if (nk_button_label(ctx, "set parent") && parent_id >= 0 && parent_id < world_len)
       {
         bool error = false;
-        state_get_entity_err(parent_id, &error);  // just checking if exists // @TODO: isnt there a state func for that
+        state_entity_get_err(parent_id, &error);  // just checking if exists // @TODO: isnt there a state func for that
         if (!error)
         {
           state_entity_add_child_remove_parent(parent_id, id);
@@ -386,12 +386,12 @@ void gui_properties_win()
       nk_layout_row_dynamic(ctx, 30, 2);
       if (nk_button_label(ctx, "remove"))
       {
-        state_remove_entity(app_data->selected_id);
+        state_entity_remove(app_data->selected_id);
         app_data->selected_id = -1;
       }
       if (nk_button_label(ctx, "duplicate"))
       {
-        int id = state_duplicate_entity(app_data->selected_id, VEC3_XYZ(2, 0, 0));
+        int id = state_entity_duplicate(app_data->selected_id, VEC3_XYZ(2, 0, 0));
         app_data->selected_id = id;
       }
       nk_layout_row_dynamic(ctx, 30, 1);
@@ -434,7 +434,7 @@ void gui_properties_win()
       if (e->point_light_idx >= 0 && nk_tree_push(ctx, NK_TREE_TAB, "point light", NK_MINIMIZED))
       {
         bool error = false;
-        point_light_t* p = state_get_point_light(e->point_light_idx, &error);
+        point_light_t* p = state_point_light_get(e->point_light_idx, &error);
         // gui_properties_point_light(e->pos, VEC3(1), 1);
         gui_properties_point_light(p, e->point_light_idx);
         nk_tree_pop(ctx);
@@ -442,7 +442,7 @@ void gui_properties_win()
       else 
       {
         if (nk_button_label(ctx, "add pointlight"))
-        { state_add_point_light(VEC3(0), VEC3(1), 1.0f, e->id); }
+        { state_point_light_add(VEC3(0), VEC3(1), 1.0f, e->id); }
       }
 
       const entity_template_t* def = entity_template_get(e->template_idx);
@@ -746,7 +746,7 @@ void gui_template_browser_win()
               vec3_copy(core_data->cam.pos,   pos);   // camera_get_pos(pos);
               vec3_mul_f(front, 8.0f, front);
               vec3_add(front, pos, pos);
-              int id = state_add_entity_from_template(pos, VEC3(0), VEC3(1), i);
+              int id = state_entity_add_from_template(pos, VEC3(0), VEC3(1), i);
               app_data->selected_id = id;
             }
 
@@ -831,7 +831,7 @@ void gui_hierarchy_win()
     nk_layout_row_dynamic(ctx, 30, 1);
     int e_len = 0;
     int e_dead_len = 0;
-    entity_t* e = state_get_entity_arr(&e_len, &e_dead_len);
+    entity_t* e = state_entity_get_arr(&e_len, &e_dead_len);
     // int selected_id = app_get_selected_id();
     for (int i = 0; i < e_len; ++i)
     {
@@ -845,7 +845,7 @@ void gui_hierarchy_win()
 void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
 {
   // bool err = false;
-  // entity_t* e = state_get_entity(id, &err);
+  // entity_t* e = state_entity_get(id, &err);
   // assert(err);
   if (!e->is_dead)
   {
@@ -869,7 +869,7 @@ void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs)
     for (int i = 0; i < e->children_len; ++i)
     {
       ERR_CHECK(e->id != e->children[i], "id: %d, children_len: %d, child[%d]: %d\n", e->id, e->children_len, i, e->children[i]);
-      entity_t* c = state_get_entity(e->children[i]);
+      entity_t* c = state_entity_get(e->children[i]);
       gui_hierarchy_display_entity_and_children(c, offs); 
     }
   }   
@@ -892,10 +892,10 @@ void gui_light_hierarchy_win()
   {
     nk_layout_row_dynamic(ctx, 30, 1);
     int dl_len = 0;
-    dir_light_t* dl   = state_get_dir_light_arr(&dl_len);
+    dir_light_t* dl   = state_dir_light_get_arr(&dl_len);
     int pl_len = 0;
     int pl_dead_len = 0;
-    point_light_t* pl = state_get_point_light_arr(&pl_len, &pl_dead_len);
+    point_light_t* pl = state_point_light_get_arr(&pl_len, &pl_dead_len);
 
     const int SEL_LIGHT_NONE  = 0;
     const int SEL_LIGHT_DIR   = 1;
@@ -909,7 +909,7 @@ void gui_light_hierarchy_win()
 
     if (nk_button_label(ctx, "add dir light")) 
     {
-      state_add_dir_light(VEC3(0), VEC3_Y(-1), RGB_F(1, 1, 1), 1, false, 0, 0);
+      state_dir_light_add(VEC3(0), VEC3_Y(-1), RGB_F(1, 1, 1), 1, false, 0, 0);
     } 
     if (nk_button_label(ctx, "add point light"))
     {
@@ -918,7 +918,7 @@ void gui_light_hierarchy_win()
       vec3_copy(core_data->cam.pos,   pos);   // camera_get_pos(pos);
       vec3_mul_f(front, 8.0f, front);
       vec3_add(front, pos, pos);
-      state_add_point_light_empty(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);
+      state_point_light_add_empty(pos, RGB_F(1.0f, 0.0f, 1.0f), 1.0f);
     }
 
     if (nk_tree_push(ctx, NK_TREE_TAB, "hierarchy", NK_MAXIMIZED))
@@ -954,7 +954,7 @@ void gui_light_hierarchy_win()
 
       if (nk_button_label(ctx, "remove")) 
       {
-        state_remove_dir_light(selected);
+        state_dir_light_remove(selected);
         selected = -1;
       }
       
@@ -986,7 +986,7 @@ void gui_light_hierarchy_win()
 
       if (nk_button_label(ctx, "remove")) 
       {
-        state_remove_point_light(selected);
+        state_point_light_remove(selected);
         selected = -1;
       }
 
@@ -1089,7 +1089,7 @@ void gui_debug_win()
 
     
     int idxs_len = 0;
-    int** idxs = state_get_template_entity_idxs_arr(&idxs_len);
+    int** idxs = state_entity_get_template_idxs_arr(&idxs_len);
     for (u32 t = 0; t < idxs_len; ++t)
     {
       nk_labelf(ctx, NK_TEXT_LEFT, "template: %d", t);
