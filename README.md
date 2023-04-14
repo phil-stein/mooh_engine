@@ -131,6 +131,8 @@ main resources:
   - [ ] make global submodule again, check if phys, serialization are still submodules
   - [ ] remove pos  maybe also cast_shadow, etc. from dir light
   - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/)
+    - either figure out a way to decode function pointer to names in app, print on ERR()
+    - or do it in a file like the tutorial
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
   - [x] add CORE_ infront of all .h _H macro ifdef checks
   - [ ] make most funcs _dbg error checked ? 
