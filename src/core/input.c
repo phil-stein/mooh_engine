@@ -9,6 +9,13 @@
 
 // ---- vars ----
  
+// [0]: qwerty, [1]: qwertz
+#define LOCALE_QWERTY 0
+#define LOCALE_QWERTZ 1
+#define LOCALE_MAX 2
+key_type key_locale[LOCALE_MAX][KEY_MAX];
+int cur_locale = LOCALE_QWERTZ;
+
 // key state last frame 
 bool
 Space_st, Apostrophe_st, Comma_st, Minus_st, Period_st, Slash_st,
@@ -57,7 +64,19 @@ void input_init()
     core_data->scroll_y = 0.0;
     core_data->scroll_delta_x = 0.0;
     core_data->scroll_delta_y = 0.0;
+    
+    // @TODO: get keyboard locale
 
+    // fill locale so key_locale[0][KEY_CODE] = KEY_CODE
+    for (u32 i = 0; i < KEY_MAX; ++i)
+    { 
+      for (u32 j = 0; j < LOCALE_MAX; ++j)
+      { key_locale[j][i] = i; }
+    }
+
+    // switch  y, z for qwertz
+    key_locale[LOCALE_QWERTZ][KEY_Z] = KEY_Y;
+    key_locale[LOCALE_QWERTZ][KEY_Y] = KEY_Z;
 }
 void input_update()
 {
@@ -99,9 +118,11 @@ void input_update()
 
 input_state input_get_key_state(key_type _key)
 {
-	// "key" & "keystate" map directly to glfws key definitions
-  core_data_t* core_data = core_data_get();  
-	return glfwGetKey(core_data->window, _key);
+  // convert qwerty to cur locale
+  key_type key = key_locale[cur_locale][_key];
+
+  // key_type & keystate map directly to glfws key definitions
+	return glfwGetKey(core_data->window, key);
 }
 bool input_get_key_down(key_type _key)
 {
@@ -114,7 +135,7 @@ bool is_key_released(key_type _key)
 }
 bool input_get_key_pressed(key_type _key)
 {
-    return input_get_key_down(_key) && input_get_last_key_state(_key);
+  return input_get_key_down(_key) && input_get_last_key_state(_key);
 }
 
 // @NOTE: neat idea, but kinda unnecessary
@@ -135,129 +156,132 @@ bool input_get_key_pressed(key_type _key)
 //   return result;
 // }
 
-bool input_get_last_key_state(key_type _key)
+bool input_get_last_key_state(key_type key)
 {
-    if (_key == KEY_UNKNOWN) { return false; }
-    else if (_key == KEY_SPACE) { return Space_st; }
-    else if (_key == KEY_APOSTROPHE) { return Apostrophe_st; }
-    else if (_key == KEY_COMMA) { return Comma_st; }
-    else if (_key == KEY_MINUS) { return Minus_st; }
-    else if (_key == KEY_PERIOD) { return Period_st; }
-    else if (_key == KEY_SLASH) { return Slash_st; }
-    else if (_key == KEY_ALPHA0) { return Alpha0_st; }
-    else if (_key == KEY_ALPHA1) { return Alpha1_st; }
-    else if (_key == KEY_ALPHA2) { return Alpha2_st; }
-    else if (_key == KEY_ALPHA3) { return Alpha3_st; }
-    else if (_key == KEY_ALPHA4) { return Alpha4_st; }
-    else if (_key == KEY_ALPHA5) { return Alpha5_st; }
-    else if (_key == KEY_ALPHA6) { return Alpha6_st; }
-    else if (_key == KEY_ALPHA7) { return Alpha7_st; }
-    else if (_key == KEY_ALPHA8) { return Alpha8_st; }
-    else if (_key == KEY_ALPHA9) { return Alpha9_st; }
-    else if (_key == KEY_SEMICOLON) { return SemiColon_st; }
-    else if (_key == KEY_EQUAL) { return Equal_st; }
-    else if (_key == KEY_A) { return A_st; }
-    else if (_key == KEY_B) { return B_st; }
-    else if (_key == KEY_C) { return C_st; }
-    else if (_key == KEY_D) { return D_st; }
-    else if (_key == KEY_E) { return E_st; }
-    else if (_key == KEY_F) { return F_st; }
-    else if (_key == KEY_G) { return G_st; }
-    else if (_key == KEY_H) { return H_st; }
-    else if (_key == KEY_I) { return I_st; }
-    else if (_key == KEY_J) { return J_st; }
-    else if (_key == KEY_K) { return K_st; }
-    else if (_key == KEY_L) { return L_st; }
-    else if (_key == KEY_M) { return M_st; }
-    else if (_key == KEY_N) { return N_st; }
-    else if (_key == KEY_O) { return O_st; }
-    else if (_key == KEY_P) { return P_st; }
-    else if (_key == KEY_Q) { return Q_st; }
-    else if (_key == KEY_R) { return R_st; }
-    else if (_key == KEY_S) { return S_st; }
-    else if (_key == KEY_T) { return T_st; }
-    else if (_key == KEY_U) { return U_st; }
-    else if (_key == KEY_V) { return V_st; }
-    else if (_key == KEY_W) { return W_st; }
-    else if (_key == KEY_X) { return X_st; }
-    else if (_key == KEY_Y) { return Y_st; }
-    else if (_key == KEY_Z) { return Z_st; }
-    else if (_key == KEY_LEFT_BRACKET) { return LeftBracket_st; }
-    else if (_key == KEY_BACKSLASH) { return Backslash_st; }
-    else if (_key == KEY_RIGHT_BRACKET) { return RightBracket_st; }
-    else if (_key == KEY_GRAVE_ACCENT) { return GraveAccent_st; }
-    else if (_key == KEY_WORLD1) { return World1_st; }
-    else if (_key == KEY_WORLD2) { return World1_st; }
-    else if (_key == KEY_ESCAPE) { return Escape_st; }
-    else if (_key == KEY_ENTER) { return Enter_st; }
-    else if (_key == KEY_TAB) { return Tab_st; }
-    else if (_key == KEY_BACKSPACE) { return Backspace_st; }
-    else if (_key == KEY_INSERT) { return Insert_st; }
-    else if (_key == KEY_DELETE) { return Delete_st; }
-    else if (_key == KEY_RIGHT_ARROW) { return RightArrow_st; }
-    else if (_key == KEY_LEFT_ARROW) { return LeftArrow_st; }
-    else if (_key == KEY_DOWN_ARROW) { return DownArrow_st; }
-    else if (_key == KEY_UP_ARROW) { return UpArrow_st; }
-    else if (_key == KEY_PAGE_UP) { return PageUp_st; }
-    else if (_key == KEY_PAGE_DOWN) { return PageDown_st; }
-    else if (_key == KEY_HOME) { return Home_st; }
-    else if (_key == KEY_END) { return End_st; }
-    else if (_key == KEY_CAPS_LOCK) { return CapsLock_st; }
-    else if (_key == KEY_SCROLL_LOCK) { return ScrollLock_st; }
-    else if (_key == KEY_NUM_LOCK) { return NumLock_st; }
-    else if (_key == KEY_PRINT) { return PrintScreen_st; }
-    else if (_key == KEY_PAUSE) { return Pause_st; }
-    else if (_key == KEY_F1) { return F1_st; }
-    else if (_key == KEY_F2) { return F2_st; }
-    else if (_key == KEY_F3) { return F3_st; }
-    else if (_key == KEY_F4) { return F4_st; }
-    else if (_key == KEY_F5) { return F5_st; }
-    else if (_key == KEY_F6) { return F6_st; }
-    else if (_key == KEY_F7) { return F7_st; }
-    else if (_key == KEY_F8) { return F8_st; }
-    else if (_key == KEY_F9) { return F9_st; }
-    else if (_key == KEY_F10) { return F10_st; }
-    else if (_key == KEY_F11) { return F11_st; }
-    else if (_key == KEY_F12) { return F12_st; }
-    else if (_key == KEY_F13) { return F13_st; }
-    else if (_key == KEY_F14) { return F14_st; }
-    else if (_key == KEY_F15) { return F15_st; }
-    else if (_key == KEY_F16) { return F16_st; }
-    else if (_key == KEY_F17) { return F17_st; }
-    else if (_key == KEY_F18) { return F18_st; }
-    else if (_key == KEY_F19) { return F19_st; }
-    else if (_key == KEY_F20) { return F20_st; }
-    else if (_key == KEY_F21) { return F21_st; }
-    else if (_key == KEY_F22) { return F22_st; }
-    else if (_key == KEY_F23) { return F23_st; }
-    else if (_key == KEY_F24) { return F24_st; }
-    else if (_key == KEY_F25) { return F25_st; }
-    else if (_key == KEY_NUMPAD0) { return Numpad0_st; }
-    else if (_key == KEY_NUMPAD1) { return Numpad1_st; }
-    else if (_key == KEY_NUMPAD2) { return Numpad2_st; }
-    else if (_key == KEY_NUMPAD3) { return Numpad3_st; }
-    else if (_key == KEY_NUMPAD4) { return Numpad4_st; }
-    else if (_key == KEY_NUMPAD5) { return Numpad5_st; }
-    else if (_key == KEY_NUMPAD6) { return Numpad6_st; }
-    else if (_key == KEY_NUMPAD7) { return Numpad7_st; }
-    else if (_key == KEY_NUMPAD8) { return Numpad8_st; }
-    else if (_key == KEY_NUMPAD9) { return Numpad9_st; }
-    else if (_key == KEY_NUMPAD_DECIMAL) { return NumpadDecimal_st; }
-    else if (_key == KEY_NUMPAD_DIVIDE) { return NumpadDivide_st; }
-    else if (_key == KEY_NUMPAD_MULTIPLY) { return NumpadMultiply_st; }
-    else if (_key == KEY_NUMPAD_SUBTRACT) { return NumpadSubtract_st; }
-    else if (_key == KEY_NUMPAD_ADD) { return NumpadAdd_st; }
-    else if (_key == KEY_NUMPAD_ENTER) { return NumpadEnter_st; }
-    else if (_key == KEY_NUMPAD_EQUAL) { return NumpadEqual_st; }
-    else if (_key == KEY_LEFT_SHIFT) { return LeftShift_st; }
-    else if (_key == KEY_LEFT_CONTROL) { return LeftControl_st; }
-    else if (_key == KEY_LEFT_ALT) { return LeftAlt_st; }
-    else if (_key == KEY_LEFT_SUPER) { return LeftSuper_st; } //same as returning LeftWinMacSymbol_st
-    else if (_key == KEY_RIGHT_SUPER) { return RightSuper_st; } //same as returning RightWinMacSymbol_st
-    else if (_key == KEY_RIGHT_SHIFT) { return RightShift_st; }
-    else if (_key == KEY_RIGHT_CONTROL) { return RightControl_st; }
-    else if (_key == KEY_RIGHT_ALT) { return RightAlt_st; }
-    else if (_key == KEY_MENU) { return Menu_st; }
+  // convert cur locale to qwerty
+  key_type _key = key_locale[cur_locale][key];
+  
+  if (_key == KEY_UNKNOWN) { return false; }
+  else if (_key == KEY_SPACE) { return Space_st; }
+  else if (_key == KEY_APOSTROPHE) { return Apostrophe_st; }
+  else if (_key == KEY_COMMA) { return Comma_st; }
+  else if (_key == KEY_MINUS) { return Minus_st; }
+  else if (_key == KEY_PERIOD) { return Period_st; }
+  else if (_key == KEY_SLASH) { return Slash_st; }
+  else if (_key == KEY_ALPHA0) { return Alpha0_st; }
+  else if (_key == KEY_ALPHA1) { return Alpha1_st; }
+  else if (_key == KEY_ALPHA2) { return Alpha2_st; }
+  else if (_key == KEY_ALPHA3) { return Alpha3_st; }
+  else if (_key == KEY_ALPHA4) { return Alpha4_st; }
+  else if (_key == KEY_ALPHA5) { return Alpha5_st; }
+  else if (_key == KEY_ALPHA6) { return Alpha6_st; }
+  else if (_key == KEY_ALPHA7) { return Alpha7_st; }
+  else if (_key == KEY_ALPHA8) { return Alpha8_st; }
+  else if (_key == KEY_ALPHA9) { return Alpha9_st; }
+  else if (_key == KEY_SEMICOLON) { return SemiColon_st; }
+  else if (_key == KEY_EQUAL) { return Equal_st; }
+  else if (_key == KEY_A) { return A_st; }
+  else if (_key == KEY_B) { return B_st; }
+  else if (_key == KEY_C) { return C_st; }
+  else if (_key == KEY_D) { return D_st; }
+  else if (_key == KEY_E) { return E_st; }
+  else if (_key == KEY_F) { return F_st; }
+  else if (_key == KEY_G) { return G_st; }
+  else if (_key == KEY_H) { return H_st; }
+  else if (_key == KEY_I) { return I_st; }
+  else if (_key == KEY_J) { return J_st; }
+  else if (_key == KEY_K) { return K_st; }
+  else if (_key == KEY_L) { return L_st; }
+  else if (_key == KEY_M) { return M_st; }
+  else if (_key == KEY_N) { return N_st; }
+  else if (_key == KEY_O) { return O_st; }
+  else if (_key == KEY_P) { return P_st; }
+  else if (_key == KEY_Q) { return Q_st; }
+  else if (_key == KEY_R) { return R_st; }
+  else if (_key == KEY_S) { return S_st; }
+  else if (_key == KEY_T) { return T_st; }
+  else if (_key == KEY_U) { return U_st; }
+  else if (_key == KEY_V) { return V_st; }
+  else if (_key == KEY_W) { return W_st; }
+  else if (_key == KEY_X) { return X_st; }
+  else if (_key == KEY_Y) { return Y_st; }
+  else if (_key == KEY_Z) { return Z_st; }
+  else if (_key == KEY_LEFT_BRACKET) { return LeftBracket_st; }
+  else if (_key == KEY_BACKSLASH) { return Backslash_st; }
+  else if (_key == KEY_RIGHT_BRACKET) { return RightBracket_st; }
+  else if (_key == KEY_GRAVE_ACCENT) { return GraveAccent_st; }
+  else if (_key == KEY_WORLD1) { return World1_st; }
+  else if (_key == KEY_WORLD2) { return World1_st; }
+  else if (_key == KEY_ESCAPE) { return Escape_st; }
+  else if (_key == KEY_ENTER) { return Enter_st; }
+  else if (_key == KEY_TAB) { return Tab_st; }
+  else if (_key == KEY_BACKSPACE) { return Backspace_st; }
+  else if (_key == KEY_INSERT) { return Insert_st; }
+  else if (_key == KEY_DELETE) { return Delete_st; }
+  else if (_key == KEY_RIGHT_ARROW) { return RightArrow_st; }
+  else if (_key == KEY_LEFT_ARROW) { return LeftArrow_st; }
+  else if (_key == KEY_DOWN_ARROW) { return DownArrow_st; }
+  else if (_key == KEY_UP_ARROW) { return UpArrow_st; }
+  else if (_key == KEY_PAGE_UP) { return PageUp_st; }
+  else if (_key == KEY_PAGE_DOWN) { return PageDown_st; }
+  else if (_key == KEY_HOME) { return Home_st; }
+  else if (_key == KEY_END) { return End_st; }
+  else if (_key == KEY_CAPS_LOCK) { return CapsLock_st; }
+  else if (_key == KEY_SCROLL_LOCK) { return ScrollLock_st; }
+  else if (_key == KEY_NUM_LOCK) { return NumLock_st; }
+  else if (_key == KEY_PRINT) { return PrintScreen_st; }
+  else if (_key == KEY_PAUSE) { return Pause_st; }
+  else if (_key == KEY_F1) { return F1_st; }
+  else if (_key == KEY_F2) { return F2_st; }
+  else if (_key == KEY_F3) { return F3_st; }
+  else if (_key == KEY_F4) { return F4_st; }
+  else if (_key == KEY_F5) { return F5_st; }
+  else if (_key == KEY_F6) { return F6_st; }
+  else if (_key == KEY_F7) { return F7_st; }
+  else if (_key == KEY_F8) { return F8_st; }
+  else if (_key == KEY_F9) { return F9_st; }
+  else if (_key == KEY_F10) { return F10_st; }
+  else if (_key == KEY_F11) { return F11_st; }
+  else if (_key == KEY_F12) { return F12_st; }
+  else if (_key == KEY_F13) { return F13_st; }
+  else if (_key == KEY_F14) { return F14_st; }
+  else if (_key == KEY_F15) { return F15_st; }
+  else if (_key == KEY_F16) { return F16_st; }
+  else if (_key == KEY_F17) { return F17_st; }
+  else if (_key == KEY_F18) { return F18_st; }
+  else if (_key == KEY_F19) { return F19_st; }
+  else if (_key == KEY_F20) { return F20_st; }
+  else if (_key == KEY_F21) { return F21_st; }
+  else if (_key == KEY_F22) { return F22_st; }
+  else if (_key == KEY_F23) { return F23_st; }
+  else if (_key == KEY_F24) { return F24_st; }
+  else if (_key == KEY_F25) { return F25_st; }
+  else if (_key == KEY_NUMPAD0) { return Numpad0_st; }
+  else if (_key == KEY_NUMPAD1) { return Numpad1_st; }
+  else if (_key == KEY_NUMPAD2) { return Numpad2_st; }
+  else if (_key == KEY_NUMPAD3) { return Numpad3_st; }
+  else if (_key == KEY_NUMPAD4) { return Numpad4_st; }
+  else if (_key == KEY_NUMPAD5) { return Numpad5_st; }
+  else if (_key == KEY_NUMPAD6) { return Numpad6_st; }
+  else if (_key == KEY_NUMPAD7) { return Numpad7_st; }
+  else if (_key == KEY_NUMPAD8) { return Numpad8_st; }
+  else if (_key == KEY_NUMPAD9) { return Numpad9_st; }
+  else if (_key == KEY_NUMPAD_DECIMAL) { return NumpadDecimal_st; }
+  else if (_key == KEY_NUMPAD_DIVIDE) { return NumpadDivide_st; }
+  else if (_key == KEY_NUMPAD_MULTIPLY) { return NumpadMultiply_st; }
+  else if (_key == KEY_NUMPAD_SUBTRACT) { return NumpadSubtract_st; }
+  else if (_key == KEY_NUMPAD_ADD) { return NumpadAdd_st; }
+  else if (_key == KEY_NUMPAD_ENTER) { return NumpadEnter_st; }
+  else if (_key == KEY_NUMPAD_EQUAL) { return NumpadEqual_st; }
+  else if (_key == KEY_LEFT_SHIFT) { return LeftShift_st; }
+  else if (_key == KEY_LEFT_CONTROL) { return LeftControl_st; }
+  else if (_key == KEY_LEFT_ALT) { return LeftAlt_st; }
+  else if (_key == KEY_LEFT_SUPER) { return LeftSuper_st; } //same as returning LeftWinMacSymbol_st
+  else if (_key == KEY_RIGHT_SUPER) { return RightSuper_st; } //same as returning RightWinMacSymbol_st
+  else if (_key == KEY_RIGHT_SHIFT) { return RightShift_st; }
+  else if (_key == KEY_RIGHT_CONTROL) { return RightControl_st; }
+  else if (_key == KEY_RIGHT_ALT) { return RightAlt_st; }
+  else if (_key == KEY_MENU) { return Menu_st; }
 
     return false;
 }

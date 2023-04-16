@@ -2,6 +2,7 @@
 #include "editor/gui/gui_style.h"
 #include "editor/app.h"
 #include "editor/gizmo.h"
+#include "editor/operation.h"
 #include "editor/stylesheet.h"
 #include "core/core_data.h"
 #include "core/window.h"
@@ -386,6 +387,9 @@ void gui_properties_win()
       nk_layout_row_dynamic(ctx, 30, 2);
       if (nk_button_label(ctx, "remove"))
       {
+        operation_t op = OPERATION_T_ENTITY_REMOVE(app_data->selected_id);
+        operation_register(&op);
+
         state_entity_remove(app_data->selected_id);
         app_data->selected_id = -1;
       }
@@ -748,6 +752,9 @@ void gui_template_browser_win()
               vec3_add(front, pos, pos);
               int id = state_entity_add_from_template(pos, VEC3(0), VEC3(1), i);
               app_data->selected_id = id;
+              
+              operation_t op = OPERATION_T_ENTITY_ADD(id);
+              operation_register(&op);
             }
 
             bool check = i == selected;

@@ -3,6 +3,7 @@
 #include "editor/gizmo.h"
 #include "editor/terrain_edit.h"
 #include "editor/stylesheet.h"
+#include "editor/operation.h"
 #include "core/program.h"
 #include "core/core_data.h"
 #include "core/input.h"
@@ -36,12 +37,6 @@ static core_data_t* core_data = NULL;
 void move_cam_by_keys();
 void rotate_cam_by_mouse();
 
-// @TMP: testing event_sys
-void added(int id)           { PF("! added entity: %d\n", id); }
-void removed(int id)         { PF("! removed entity: %d\n", id); }
-void parented(int p, int c)  { PF("! parented entity: %d, %d\n", p, c); }
-void parent_rm(int p, int c) { PF("! parent removed entity: %d, %d\n", p, c); }
-
 
 int main(void)
 {
@@ -53,12 +48,7 @@ int main(void)
 void app_init()
 {
   core_data = core_data_get();
-  
-  // // @TMP: testing event sys 
-  // event_sys_register_entity_added(added);
-  // event_sys_register_entity_removed(removed);
-  // event_sys_register_entity_parented(parented);
-  // event_sys_register_entity_parent_removed(parent_rm);
+
 
   // -- scene --
   const char scene_name[] =  "test.scene";
@@ -70,85 +60,14 @@ void app_init()
   camera_set_pos(VEC3_XYZ(0.0f,   6.0f,  10.0f));
   camera_set_front(VEC3_XYZ(0.0f,  -0.15f, -1.0f));
   
+  event_sys_register_entity_removed(app_entity_removed_callback);
 
+  TIMER_FUNC_STATIC(gui_init());
+  
   // -- terrain --
   // TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
   // TIMER_FUNC_STATIC(terrain_create(25));
 
-  TIMER_FUNC_STATIC(gui_init());
-
-  // @TMP: testing asset_io
-  // // asset_io_convert_mesh("demon02.fbx", "demon02.mesh");
-  // TIMER_START("mesh loading .mesh");
-  // mesh_t m = asset_io_load_mesh("demon02.mesh");
-  // TIMER_STOP_PRINT();
-  // int mat  = assetm_get_material_idx(MATERIAL_TEMPLATE_DEFAULT);
-  // int mesh = assetm_add_mesh(&m, "demon02.mesh");
-  // int id   = state_add_entity(VEC3_XYZ(0, 4, 0), VEC3(0), VEC3(1), mesh, mat, 0, NULL, NULL, NULL, NULL, -1);
-  // P_INT(id);
-  // 2.5x faster :)
-
-  // @TMP: testing asset_io
-  // #define IMG_NAME "tmp.png" // "preview_bg.png" 
-  // asset_io_convert_texture("#internal/"IMG_NAME);
-  // TIMER_START("loading .tex"" -> "IMG_NAME);
-  // texture_t t = asset_io_load_texture("#internal/"IMG_NAME, true);
-  // TIMER_STOP_PRINT();
-  // int t_idx = assetm_add_texture(&t, "#internal/"IMG_NAME);
-  // int mat_idx = assetm_get_material_idx(MATERIAL_TEMPLATE_BRICK);
-  // P_INT(mat_idx);
-  // material_t* mat = assetm_get_material(MATERIAL_TEMPLATE_BRICK);
-  // P_INT(mat->albedo);
-  // mat->albedo = t_idx;
-  // P_INT(mat->albedo);
-  // mat = assetm_get_material(MATERIAL_TEMPLATE_BRICK);
-  // P_INT(mat->albedo);
-
-
-  // // -- add entities --
-  // // int quad_id     = 
-  // // TIMER_FUNC_STATIC(state_add_entity_from_template(VEC3_XYZ(0, 0, 0), VEC3_XYZ(-90, 0, 0), VEC3(10), 0));
-
-  // int sphere01_id = state_add_entity_from_template(VEC3_XYZ(0, 4, 0), VEC3_XYZ(0, 0, 0), VEC3(1), 1);
-
-  // int sphere02_id = state_add_entity_from_template(VEC3_XYZ(-2, 4, 0), VEC3_XYZ(0, 0, 0), VEC3(1), 2);
-
-  // // int demon01_id  = 
-  // TIMER_FUNC_STATIC(state_add_entity_from_template(VEC3_XYZ(2, 0, 0), VEC3_XYZ(-90, 0, 0), VEC3(1), 3));
-
-  // // int shotgun_id  = 
-  // state_add_entity_from_template(VEC3_XYZ(5.5f, 4, 0), VEC3_XYZ(-90, 0, 90), VEC3(1), 4);
-
-  // int demon02_id = state_add_entity_from_template(VEC3_XYZ(-4, -0.2f, 0), VEC3_XYZ(-90, 0, 0), VEC3(1), 5);
-  // 
-  // state_add_entity_from_template(VEC3_XYZ(0, 0, -4), VEC3_XYZ(-90, 0, 0), VEC3(2), ENTITY_TEMPLATE_STONE01);
-  // 
-  // int stone02_id = state_add_entity_from_template(VEC3_XYZ(0, 10, -4), VEC3_XYZ(-90, 0, 0), VEC3(2), ENTITY_TEMPLATE_STONE01);
-  // phys_add_obj_rb(stone02_id, VEC3_XYZ(0, 10, -4), 1.0f);
-  // 
-  // state_add_entity_from_template(VEC3_XYZ(3, 0.5f, -4), VEC3_XYZ(-90, 0, 0), VEC3(1), ENTITY_TEMPLATE_TREE01);
- 
-  // // state_entity_add_child(shotgun_id, demon01_id);
-  // 
-  // state_entity_add_child(demon02_id, sphere02_id);    
-  // state_entity_add_child(sphere02_id, sphere01_id);
-  // // state_entity_add_child(sphere01_id, quad_id);
-  // 
-  // // state_entity_remove_child(sphere02_id, sphere01_id);
-  // // state_add_entity_from_template(VEC3_XYZ(2, 0, -2), VEC3_XYZ(-90, 0, 0), VEC3(1), 3);
-
-  // // -- add lights --
-  // state_add_dir_light(VEC3_XYZ(0, 10, 0), VEC3_XYZ(0.2f, 1.0f, 0.2f), RGB_F(1.0f, 0.6f, 0.6f), 8.5f, true, 2048, 2048);
-  // // state_add_dir_light(VEC3_XYZ(0, 10, 0), VEC3_XYZ(-0.2f, 1.0f, -0.2f), RGB_F_RGB(1.0f), 0.5f, false, 0, 0);
-  // 
-  // state_add_point_light(VEC3_XYZ(-10,  10, 10), RGB_F_RGB(300), 1.0f);
-  // // state_add_point_light(VEC3_XYZ( 10,  10, 10), RGB_F_RGB(300), 1.0f);
-  // // state_add_point_light(VEC3_XYZ(-10, -10, 10), RGB_F_RGB(300), 1.0f);
-  // // state_add_point_light(VEC3_XYZ( 10, -10, 10), RGB_F_RGB(300), 1.0f);
-
-  // 
-  // state_add_dir_light(VEC3_XYZ(0, 10, 0), VEC3_XYZ(0.2f, 1.0f, 0.2f), RGB_F(1.0f, 0.6f, 0.6f), 8.5f, true, 2048, 2048);
-  // state_add_point_light(VEC3_XYZ(-10,  10, 10), RGB_F_RGB(300), 1.0f);
 
 
   // -- terrain --
@@ -175,9 +94,8 @@ void app_init()
   // P_INT(core_data->terrain_layout_len);
   // TIMER_FUNC_STATIC(terrain_create(25));
   // core_data->terrain_scl = 100;
+  
 }
-
-
 
 void app_update()
 {
@@ -215,30 +133,6 @@ void app_update()
   core_data->outline_id = app_data.selected_id;
 
 
-  // -- input --
-  //  if (input_get_key_pressed(KEY_SPACE))
-  // { save_sys_load_structure_from_file("paladin"); } 
-  // // @TMP: print all entites and their children
-  // if (input_get_key_pressed(KEY_SPACE))
-  // {
-  //   P("|entities start|");
-  //   int dead_len, world_len = 0;
-  //   entity_t* world = state_get_entity_arr(&world_len, &dead_len);
-  //   entity_t* e = NULL;
-  //   for (int i_0 = 0; i_0 < world_len; ++i_0)
-  //   {
-  //     e = &world[i_0];
-  //     if (e->is_dead) { continue; }
-  //     PF(" -> id: %d, children_len: %d", e->id, e->children_len);
-  //     for (int i_1 = 0; i_1 < e->children_len; ++i_1)
-  //     {
-  //       PF(" | [%d]: %d", i_1, e->children[i_1]);
-  //     }
-  //     P("");
-  //   }
-  //   P("|entities end|");
-  // }
-
   // save map & terrain
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S) && !core_data_is_play())
   { 
@@ -254,6 +148,10 @@ void app_update()
   if (input_get_key_pressed(KEY_SPACE))
   { core_data->show_shadows = !core_data->show_shadows; }
 
+  // undo operation
+  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_Z) && !core_data_is_play())
+  { operation_reverse(); }
+  
   // @TODO: flickers first frame
   static bool start = true;
   if (!app_data.mouse_over_ui && input_get_mouse_down(KEY_MOUSE_MOVE_START))
@@ -322,6 +220,13 @@ void app_update()
 app_data_t* app_data_get()
 { return &app_data; }
 
+void app_entity_removed_callback(int id)
+{
+  if (id == app_data.selected_id)
+  {
+    app_data.selected_id = -1;
+  }
+}
 
 void move_cam_by_keys()
 {

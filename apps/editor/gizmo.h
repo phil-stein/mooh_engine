@@ -25,6 +25,10 @@
 // @DOC: update the gizmo logic, call once a frame
 void gizmo_update();
 
+// @DOC: ends current operation, sets up for next operation
+//       also commits an operation to operation.c
+void gizmo_end_operation();
+
 // @DOC: calcuate 3d distance between 2 screen-space points projected into and entity's model space
 //       p0 & p1: screen-space, in pixel, coordinates
 //       pos:     position of gizmo

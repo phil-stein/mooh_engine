@@ -1,6 +1,7 @@
 #include "editor/gizmo.h"
 #include "editor/app.h"
 #include "editor/stylesheet.h"
+#include "editor/operation.h"
 #include "core/window.h"
 #include "core/program.h"
 #include "core/camera.h"
@@ -13,11 +14,14 @@
 #include "core/core_data.h"
 
 
-// TODO: get static pointer
-// static app_data_t* app_data= NULL; 
+// @TODO: get static pointer in init()
+static app_data_t* app_data= NULL; 
 
-static bool start_value_set = false;
-static vec3 start_pos = { 0, 0, 0 };
+int  gizmo_entity_id = -1;            // remains set until operation is ended in gizmo_end_operation()
+bool start_value_set = false;
+vec3 gizmo_start_val = { 0, 0, 0 };
+vec3 gizmo_end_val   = { 0, 0, 0 };
+
 vec3 delta_pos = { 0, 0, 0 };
 vec3 delta_rot = { 0, 0, 0 };
 vec3 delta_scl = { 0, 0, 0 };
@@ -25,7 +29,7 @@ vec3 delta_scl = { 0, 0, 0 };
 
 void gizmo_update()
 {
-  app_data_t*  app_data  = app_data_get();
+  app_data  = app_data_get();
   // core_data_t* core_data = core_data_get();
   
   // -- draw gizmo --
@@ -95,35 +99,25 @@ void gizmo_update()
     
     if (app_data->selected_id >= 0 && input_get_mouse_down(MOUSE_LEFT))
     {
-      bool err = false;
+      // bool err = false;
       // entity_t* e = state_get_entity(app_data->selected_id, &err);
-      assert(!err);
-
+      // assert(!err);
+      
+      if (!start_value_set)
+      {
+        vec3_copy(pos, gizmo_start_val);
+        vec3_copy(pos, gizmo_end_val);    // gets delta_pos added 
+        start_value_set = true;
+        gizmo_entity_id = app_data->selected_id;
+      }
+      
       if (app_data->gizmo_type == GIZMO_TRANSLATE)
       {
-        if (!start_value_set)
-        {
-          vec3_copy(pos, start_pos);
-          start_value_set = true;
-        }
-        debug_draw_line_register_width(start_pos, pos, GIZMO_TRANSLATE_LINE_COLOR, GIZMO_TRANSLATE_LINE_WIDTH);
-        debug_draw_sphere_register(start_pos, 0.1f, GIZMO_TRANSLATE_LINE_SPHERES_COLOR);
+
+        debug_draw_line_register_width(gizmo_start_val, pos, GIZMO_TRANSLATE_LINE_COLOR, GIZMO_TRANSLATE_LINE_WIDTH);
+        debug_draw_sphere_register(gizmo_start_val, 0.1f, GIZMO_TRANSLATE_LINE_SPHERES_COLOR);
         debug_draw_sphere_register(pos,    0.1f, GIZMO_TRANSLATE_LINE_SPHERES_COLOR);       
       }
-      // else if (app_data->gizmo_type == GIZMO_ROTATE)
-      // {
-      //   if (!start_value_set)
-      //   {
-      //     vec3_copy(e->rot, start_rot);
-      //     start_value_set = true;
-      //   }
-
-      //   // @TODO: figure out math for rot position
-
-
-      //   debug_draw_sphere_register(, 0.1f, RGB_F_RGB(0.95f));
-      //   debug_draw_sphere_register(,    0.1f, RGB_F_RGB(0.95f));
-      // }
     }
   }
 
@@ -303,70 +297,117 @@ void gizmo_update()
         if (fabsf(delta_pos[0]) >= app_data->gizmo_translate_snap)
         {
           ENTITY_MOVE_X(e, delta_pos[0]);
+          gizmo_end_val[0] += delta_pos[0];
           delta_pos[0] = 0;
         }
         if (fabsf(delta_pos[1]) >= app_data->gizmo_translate_snap)
         {
           ENTITY_MOVE_Y(e, delta_pos[1]);
+          gizmo_end_val[1] += delta_pos[1];
           delta_pos[1] = 0;
         }
         if (fabsf(delta_pos[2]) >= app_data->gizmo_translate_snap)
         {
           ENTITY_MOVE_Z(e, delta_pos[2]);
+          gizmo_end_val[2] += delta_pos[2];
           delta_pos[2] = 0;
         }
         // -- rotation --
         if (fabsf(delta_rot[0]) >= app_data->gizmo_rotate_snap)
         {
           ENTITY_ROTATE_X(e, delta_rot[0]);
+          gizmo_end_val[0] += delta_rot[0];
           delta_rot[0] = 0;
         }
         if (fabsf(delta_rot[1]) >= app_data->gizmo_rotate_snap)
         {
           ENTITY_ROTATE_Y(e, delta_rot[1]);
+          gizmo_end_val[1] += delta_rot[1];
           delta_rot[1] = 0;
         }
         if (fabsf(delta_rot[2]) >= app_data->gizmo_rotate_snap)
         {
           ENTITY_ROTATE_Z(e, delta_rot[2]);
+          gizmo_end_val[2] += delta_rot[2];
           delta_rot[2] = 0;
         }
         // -- scale --
         if (fabsf(delta_scl[0]) >= app_data->gizmo_scale_snap)
         {
           ENTITY_SCALE_X(e, delta_scl[0]);
+          gizmo_end_val[0] += delta_scl[0];
           delta_scl[0] = 0;
         }
         if (fabsf(delta_scl[1]) >= app_data->gizmo_scale_snap)
         {
           ENTITY_SCALE_Y(e, delta_scl[1]);
+          gizmo_end_val[1] += delta_scl[1];
           delta_scl[1] = 0;
         }
         if (fabsf(delta_scl[2]) >= app_data->gizmo_scale_snap)
         {
           ENTITY_SCALE_Z(e, delta_scl[2]);
+          gizmo_end_val[2] += delta_scl[2];
           delta_scl[2] = 0;
         }
-      }
-      else 
+      }  
+      else
       {
         ENTITY_MOVE(e,   delta_pos);
         ENTITY_ROTATE(e, delta_rot);
         ENTITY_SCALE(e,  delta_scl);
+       
+        // keep track of start & end for operation.c
+        if (app_data->gizmo_type == GIZMO_TRANSLATE)
+        { vec3_add(delta_pos, gizmo_end_val, gizmo_end_val); }
+        if (app_data->gizmo_type == GIZMO_ROTATE)
+        { vec3_add(delta_rot, gizmo_end_val, gizmo_end_val); }
+        if (app_data->gizmo_type == GIZMO_SCALE)
+        { vec3_add(delta_scl, gizmo_end_val, gizmo_end_val); }
+
         vec3_copy(VEC3(0), delta_pos);
         vec3_copy(VEC3(0), delta_rot);
         vec3_copy(VEC3(0), delta_scl);
       }
+
+        // @TODO: snapping
+        
+
+
+
+      // }
       // to sync collider debug displays when editing entity with gizmo
       #ifdef EDITOR
       program_sync_phys();
       #endif
 
     }
-    else { start_value_set = false; } // reset if no entity selected 
+    else { gizmo_end_operation(); }  // reset if no entity selected
   }
-  else { start_value_set = false; }   // reset if mouse isn't pressed
+  else { gizmo_end_operation(); }   // reset if mouse isn't pressed
 
+}
+
+void gizmo_end_operation()
+{
+  if (start_value_set && !vec3_equal(gizmo_start_val, gizmo_end_val))
+  {
+    operation_t op;
+    
+    op.type = app_data->gizmo_type == GIZMO_TRANSLATE ? OP_ENTITY_MOVE   : 
+              app_data->gizmo_type == GIZMO_ROTATE    ? OP_ENTITY_ROTATE : 
+              app_data->gizmo_type == GIZMO_SCALE     ? OP_ENTITY_SCALE  : -1;
+    
+    op.entity_id = gizmo_entity_id;
+    vec3 diff;
+    vec3_sub(gizmo_end_val, gizmo_start_val, diff);
+    vec3_copy(diff, op.pos);
+    operation_register(&op);
+  }
+  start_value_set = false;
+  gizmo_entity_id = -1;
+  vec3_copy(VEC3(0), gizmo_start_val);
+  vec3_copy(VEC3(0), gizmo_end_val);
 }
 
 // }

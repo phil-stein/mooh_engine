@@ -65,7 +65,7 @@ typedef enum
     KEY_W = 87,
     KEY_X = 88,
     KEY_Y = 89,
-    KEY_Z = 90,
+    KEY_Z = 90,    
     KEY_LEFT_BRACKET = 91,
     KEY_BACKSLASH = 92,
     KEY_RIGHT_BRACKET = 93, KEY_ADD = 93,
@@ -157,8 +157,11 @@ typedef enum
     /// </summary>
     KEY_RIGHT_WIN_MAC_SYMBOL = KEY_RIGHT_SUPER,
 
-    KEY_MENU = 348
+    KEY_MENU = 348,
+
+    KEY_MAX,
 }key_type;
+
 
 // @DOC: maps directly to glfws key definitions
 typedef enum

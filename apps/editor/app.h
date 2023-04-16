@@ -111,5 +111,7 @@ void app_update();
 // @DOC: returns a pointer to app_data_t var in app.c
 app_data_t* app_data_get();
 
+void app_entity_removed_callback(int id);
+
 
 #endif

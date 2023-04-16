@@ -25,7 +25,6 @@ main resources:
 
 ## next steps
   - *organization*
-    - [comment all .h files](#organization) `WIP` 
     - [release system](#organization)
     - [rest of organization](#organization) `WIP`
   - *buggs*
@@ -35,8 +34,6 @@ main resources:
     - [multithreading](#multithreading) `WIP` 
     - [batch renderer](#optimizations) `WIP`
   - *base*
-    - [structures](#base) `WIP`
-    - [local entity data](#base)
   - *editor*
     - [undo/redo](#level editor)
   - *graphics*
@@ -67,7 +64,10 @@ main resources:
   - [ ] getting entity_t to 256bytes makes physics no longer work
     - le what mate
   - [ ] if sizeof(entity_t) > 255 physics break
-  - [ ] vs19 project no longer works 
+  - [ ] vs19 project no longer works
+  - [x] glfw uses qwerty, no matter the actual keyboard locale, i.e. qwertz in my case
+    - i remapped z to y as a hotfix
+    - maybe make key_locale array that mapps qwertz, etc. to qwerty
 
 ## optimizations
   - [ ] [multithreading](#multithreading) 
@@ -118,8 +118,6 @@ main resources:
     - [ ] set asset_path to cwd/assets
     - [ ] maybe check if folder build_01 exist and name build_02, etc.
     - [ ] put date in folder / exe name or .txt file or some
-  - [x] rename state_remove_entity() & state_duplicate_entity() to
-        state_entity_remove() & state_duplicate_entity()
   - [ ] seperate save_sys.c into terrain & entities
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
@@ -134,7 +132,6 @@ main resources:
     - either figure out a way to decode function pointer to names in app, print on ERR()
     - or do it in a file like the tutorial
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
-  - [x] add CORE_ infront of all .h _H macro ifdef checks
   - [ ] make most funcs _dbg error checked ? 
     - [ ] use _dbg funcs for materials in assetm ?
     - [x] make _dbg check a macro to set easy and compile out ?
@@ -143,25 +140,14 @@ main resources:
     - [ ] state
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
-  - [ ] comment all .h files
-    - [ ] math
-      - [ ] math_mat4.h
-      - [x] math_space.h
 
 ## tools
   - [ ] binary dump
     - [x] empty scene
     - [ ] empty terrain
   - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
-  - [x] precompute brdf / cubemap in software to load in game, [also mentioned](#optimizations)
-    - [x] save framebuffer as tetxure, for brdf
-    - [x] load instead of generate
-  - [x] texture viewer for .tex files
 
 ## base
-  - [x] load mesh
-    - [ ] triangularize mesh ? (not really necessary as blender does it)
-    - [x] blender coord sys to mine, gizmo is fcked [also mentioned](#buggs)
   - [ ] asset manager
     - [ ] free assets
       - [x] textures
@@ -172,16 +158,6 @@ main resources:
     - [ ] load cubemaps from zip
     - [ ] handle missing assets
   - [ ] hot-reload shaders
-  - [x] make entities have 'local variables'
-    - ents have init_f and update_f, but no local data
-      if i set speed in on init_f, it affects all entities with that init_f
-      i also cant set it from anywhere else, unless i make a function specific to that
-    - maybe make void struct with X size and cast it to ones with actual members, all ents have more data though
-    - struct { int[5] }data; struc{ u32 bool vec3 }data_player, 
-      ((data_player)entity_t.data).member
-    - [x] f.e. use it to set speed/orientation/target/color/.etc on projecticle
-          from the players code, aka. spawn projecticle, set its data
-    - [x] easy with macros      
   - [ ] make seperate editor map file so f.e. structures can be stored special and edited all at once ? 
   - [ ] setup 32bit (-m32) : [tdm docs](https://github.com/jmeubank/tdm-distrib/blob/master/tdm64/core/README-gcc-tdm64.md)
     - [ ] reset all dynamic objects ? 
@@ -193,9 +169,6 @@ main resources:
       - single map file, never changed
       - multiple variants of that with changes
         - i.e. 'save01.scene', 'mygame.scene', etc.
-  - [x] event system
-    - [x] entity add, remove, parented
-    - [x] collision / trigger
   - [ ] billboards
   - [ ] particle system
     - cpu / gpu side or mix ?
@@ -212,7 +185,8 @@ main resources:
   - [ ] debug tools
     - [ ] debug_draw_circle() with resolution
     - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
-    - [ ] add profiler
+      - precompute x, y, z circles for axis aligned, like sphere collider
+    - [ ] add profiler [also mentioned](#organization)
   - [ ] controller support ?
 
 ## renderer
@@ -229,7 +203,6 @@ main resources:
   - [ ] water 
 
 ## entity system
-  - [ ] structures ? (prefabs), [also mentioned](#base)
 
 ## level editor
   - [ ] pause mid game
@@ -237,11 +210,12 @@ main resources:
     - [x] materials
     - [ ] entities
     - [ ] shaders
-  - [x] structure browser
   - [ ] particle system editor
     - seperate ?
   - [ ] make gui less sh*t
   - [ ] ask to save if unsaved changes
+    - use operation.c
+  - [ ] seperate windows into their own .c files
   - [ ] undo
     - [ ] keep track of changes
     - [ ] john jackman or some on yt pixeleditor
@@ -271,7 +245,6 @@ main resources:
     - worker (asset-loading, terrain, etc.)
     - renderer
     - physics
-  - [x] make example program
   - [ ] asset loading
     - [x] textures
       - [ ] changing THREAD_MAX in threadm.c doesnt affect its speed [also mentioned](#buggs)

@@ -35,7 +35,8 @@ _OBJS = 				 				\
 	gui.o					 				\
 	gui_struct_browser.o	\
 	gizmo.o								\
-	terrain_edit.o
+	terrain_edit.o				\
+	operation.o
 
 # put the OBJ_DIR in front of the obj names
 OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
