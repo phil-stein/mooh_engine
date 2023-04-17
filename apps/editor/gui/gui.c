@@ -314,6 +314,14 @@ void gui_top_bar_win()
         
         nk_menu_end(ctx);
       }
+      
+      if (app_data->gui_info_t >= 0.0f)
+      {
+        nk_layout_row_push(ctx, 250);
+        nk_labelf(ctx, NK_TEXT_LEFT, " | %s", app_data->gui_info_str);
+        
+        app_data->gui_info_t -= core_data->delta_t;
+      }
     }
     nk_menubar_end(ctx);
   }
@@ -364,7 +372,11 @@ void gui_properties_win()
         state_entity_get_err(parent_id, &error);  // just checking if exists // @TODO: isnt there a state func for that
         if (!error)
         {
-          state_entity_add_child_remove_parent(parent_id, id);
+          state_entity_add_child_remove_parent(parent_id, id, true);
+          operation_t op = OPERATION_T_ENTITY_CHILD_ADD(parent_id, id, e->parent);
+          operation_register(&op);
+          
+          GUI_INFO_STR_SET(app_data, "parented: %d -> %d", e->id, e->parent);
         }
         else { ERR("parent id not valid: %d", parent_id); }
       }
@@ -372,7 +384,8 @@ void gui_properties_win()
       nk_layout_row_dynamic(ctx, 25, 1);
       if (nk_button_label(ctx, "remove parent") && e->parent >= 0)
       {
-        state_entity_remove_child(e->parent, e->id);
+        GUI_INFO_STR_SET(app_data, "unparented: %d -> %d", e->id, e->parent);
+        state_entity_remove_child(e->parent, e->id, true);
       }
 
       // @TODO: @UNSURE: display children
@@ -417,7 +430,7 @@ void gui_properties_win()
 
       if (nk_tree_push(ctx, NK_TREE_TAB, "transform", NK_MINIMIZED))
       {
-        gui_properties_transform(e->pos, e->rot, e->scl, &e->is_moved);
+        gui_properties_transform(e, e->pos, e->rot, e->scl, &e->is_moved);
         nk_tree_pop(ctx);
       }
       
@@ -534,7 +547,7 @@ void gui_properties_win()
   if (is_selected)
   { nk_end(ctx); }
 }
-void gui_properties_transform(vec3 pos, vec3 rot, vec3 scl, bool* has_moved)
+void gui_properties_transform(entity_t* e, vec3 pos, vec3 rot, vec3 scl, bool* has_moved)
 {
 
   nk_layout_row_dynamic(ctx, 30, 1);
@@ -545,6 +558,10 @@ void gui_properties_transform(vec3 pos, vec3 rot, vec3 scl, bool* has_moved)
   nk_property_float(ctx, "p.y", -2048.0f, &pos[1], 2048.0f, 0.1f, 0.01f);
   nk_property_float(ctx, "p.z", -2048.0f, &pos[2], 2048.0f, 0.1f, 0.01f);
   if (!vec3_equal(pos_old, pos)) { *has_moved = true; }
+  vec3 g_pos;
+  mat4_get_pos(e->model, g_pos);
+  nk_layout_row_dynamic(ctx, 30, 1);
+  nk_labelf(ctx, NK_TEXT_LEFT, "global pos: x: %.2f, y: %.2f, z: %.2f", g_pos[0], g_pos[1], g_pos[2]);
 
   nk_layout_row_dynamic(ctx, 30, 1);
   nk_label(ctx, "rotation", NK_TEXT_LEFT);

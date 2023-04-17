@@ -7,6 +7,7 @@
 operation_t* op_arr = NULL;
 u32          op_arr_len = 0;
 
+static app_data_t* app_data = NULL;
 
 void operation_register(operation_t* op)
 {
@@ -19,7 +20,7 @@ void operation_register(operation_t* op)
         vec3_copy(e->pos, op->pos);
         vec3_copy(e->rot, op->rot);
         vec3_copy(e->scl, op->scl);
-        op->entity_parent = e->parent;
+        op->entity_parent_id = e->parent;
         op->entity_template_idx = e->template_idx;
       }
       // make entity_t arr and store in their for all info ?
@@ -63,10 +64,18 @@ void operation_reverse()
     case OP_ENTITY_REMOVE:
       operation_reverse_entity_remove(&op);
       break;
+    case OP_ENTITY_CHILD_ADD:
+      operation_reverse_entity_child_add(&op);
+      break;
 
     default:
       ERR("unknown operation_type in operation_reverse(): %d\n", op.type);
   }
+   
+  app_data = app_data_get(); 
+  // char info_str[GUI_INFO_STR_MAX];
+  // SPRINTF(GUI_INFO_STR_MAX, info_str, "undo: %s", operation_type_to_str(op.type));
+  GUI_INFO_STR_SET(app_data, "undo: %s", operation_type_to_str(op.type));
 }
 
 void operation_reverse_entity_move(operation_t* op)
@@ -133,8 +142,20 @@ void operation_reverse_entity_remove(operation_t* op)
   int id = state_entity_add_from_template(op->pos, op->rot, op->scl, op->entity_template_idx);
   // parent, children, etc.
 
-  app_data_t* app_data = app_data_get();
+  app_data = app_data_get();
   app_data->selected_id = id;
+
+  PF("OPERATION REVERSE:\n");
+  P_OPERATION_T(op);
+}
+void operation_reverse_entity_child_add(operation_t* op)
+{
+  state_entity_remove_child(op->entity_id, op->child_id, true);
+
+  if (op->child_parent_id >= 0)
+  {
+    state_entity_add_child(op->child_parent_id, op->child_id, true);
+  }
 
   PF("OPERATION REVERSE:\n");
   P_OPERATION_T(op);

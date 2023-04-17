@@ -8,7 +8,20 @@
 // @DOC: get the model matrix, and position for the gizmo
 //       used in gizmo.c for drawing the gizmo
 //       used in renderer.c for drawing the mouse-pick hitbox
-#define GIZMO_MODEL_POS(_app_data, model, pos)                                                \
+//       model is for calc, display_model for rendering
+#define GIZMO_MODEL_POS(_app_data, model, display_model, pos)                                 \
+    if ((_app_data)->selected_id >= 0)                                                        \
+    {                                                                                         \
+      entity_t* e = state_entity_get((_app_data)->selected_id);                               \
+      mat4_get_pos(e->model, (pos));                                                          \
+      mat4_make_model((pos), VEC3(0), VEC3(1), display_model);                                \
+      mat4_copy(display_model, model);                                                        \
+    }                                                                                         \
+    else                                                                                      \
+    { mat4_make_identity(model); mat4_make_identity(display_model); vec3_copy(VEC3(0), pos); }
+
+// @NOTE: old, not in use
+#define GIZMO_MODEL_POS_OLD(_app_data, model, display_model, pos)                             \
     if ((_app_data)->selected_id >= 0)                                                        \
     {                                                                                         \
       entity_t* e = state_entity_get((_app_data)->selected_id);                               \
@@ -19,8 +32,11 @@
       { state_entity_model_no_scale((_app_data)->selected_id, (model)); }                     \
       if ((_app_data)->gizmo_type == GIZMO_SCALE)                                             \
       { state_entity_model_no_scale((_app_data)->selected_id, (model)); }                     \
+      mat4_make_model((pos), VEC3(0), VEC3(1), display_model);                                \
+      mat4_copy(display_model, model);                                                        \
     }                                                                                         \
-    else { mat4_make_identity(model); vec3_copy(VEC3(0), pos); }                                
+    else                                                                                      \
+    { mat4_make_identity(model); mat4_make_identity(display_model); vec3_copy(VEC3(0), pos); }                                
 
 // @DOC: update the gizmo logic, call once a frame
 void gizmo_update();

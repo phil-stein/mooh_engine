@@ -256,7 +256,8 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 
 // @DOC: wrappers around standard functions to make the safer, can be compiled out
 
-#define SPRINTF(max, ...)        ASSERT(sprintf(__VA_ARGS__) < (max))                    
+#define SPRINTF(max, ...)        ASSERT(sprintf(__VA_ARGS__) < (max))                   
+#define STRCPY(dest, source)     ASSERT(strcpy(dest, source) != NULL)
 
 #define MALLOC(ptr, size)        (ptr) = malloc(size);        ASSERT((ptr) != NULL)     
 #define CALLOC(ptr, items, size) (ptr) = calloc(items, size); ASSERT((ptr) != NULL)     

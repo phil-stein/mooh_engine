@@ -144,6 +144,12 @@ void debug_draw_mesh_register_model_func(mat4 model, rgbf tint, int mesh)
   queue_arr_len++;
 }
 
+void debug_draw_mesh_textured_register_func(vec3 pos, vec3 rot, vec3 scl, rgbf tint, int mesh, int tex)
+{
+  mat4 model;
+  mat4_make_model(pos, rot, scl, model);
+  debug_draw_mesh_textured_register_model(model, tint, mesh, tex);
+}
 
 void debug_draw_mesh_textured_register_model_func(mat4 model, rgbf tint, int mesh, int tex)
 {

@@ -102,6 +102,7 @@ main resources:
     - [ ] randy memory pool ?
   - [x] figure out why core_data_init() is taking so long: shaders
     - [ ] shader spir-v ?
+  - [ ] undo/redo -> john jackman or some on yt pixeleditor
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -139,13 +140,17 @@ main resources:
       - are _file & _line impacting performance ?
     - [ ] state
     - [ ] etc.
-  - [ ] go through all files check for unecessary header includes, to lower compile time / remove clutter
+  - [ ] go through all files check for unecessary header includes, to remove clutter
+  - [ ] make functions with entity->id as arg have entity_t* version also, i.e. state_entity_remove(entity_t* e)
+    - state_entity_remove(entity_t* e);
+      INLINE state_entity_remove_id(int id) { state_entity_get(id); remove }
 
 ## tools
   - [ ] binary dump
     - [x] empty scene
     - [ ] empty terrain
   - [ ] "model-viewer/-editor" for shaders / materials / anim / particles
+  - [ ] tracing / profiling ?
 
 ## base
   - [ ] asset manager
@@ -218,7 +223,7 @@ main resources:
   - [ ] seperate windows into their own .c files
   - [ ] undo
     - [ ] keep track of changes
-    - [ ] john jackman or some on yt pixeleditor
+  - [ ] redo
 
 ## physics engine
   - [x] sphere

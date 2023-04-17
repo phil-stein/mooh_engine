@@ -271,12 +271,12 @@ void state_entity_remove(int id)
 
   if (world_arr[id].parent > -1)
   {
-    state_entity_remove_child(world_arr[id].parent, id);
+    state_entity_remove_child(world_arr[id].parent, id, true);
   }
   // for (int i = 0; i < world_arr[id].children_len; ++i)
   while (world_arr[id].children_len > 0)  
   {
-    state_entity_remove_child(id, world_arr[id].children[0]);
+    state_entity_remove_child(id, world_arr[id].children[0], true);
   }
 
   world_arr[id].is_dead = true;
@@ -313,29 +313,21 @@ void state_entity_add_child(int parent, int child, bool keep_transform)
   if (c->parent > -1) 
   { P_ERR("parenting child which is already parented.\n  -> parent: %d, child: %d, childs parent: %d\n", parent, child, c->parent); return; } 
 
-  // @TODO: doesnt work, maybe gets overwritten or not updated
-  // // set offset in phys
-  // if (HAS_FLAG(c->phys_flag, ENTITY_HAS_BOX))
-  // {
-  //   u32 phys_objs_len = 0;
-  //   phys_obj_t* phys_objs = phys_get_obj_arr(&phys_objs_len);
-  //   for (u32 i = 0; i < phys_objs_len; ++i)
-  //   {
-  //     phys_obj_t* obj = &phys_objs[i];
-  //     if (obj->entity_idx == c->id)
-  //     {
-  //       P("peepee");
-  //       vec3_add(obj->pos, c->pos, obj->pos);
-  //       vec3_mul(obj->scl, c->scl, obj->scl);
-  //     }
-  //   }
-  // }
-
-  // offset the child by the parents position to maintain its current global pos
+  // @TODO: @BUGG: keep_transform doesnt work
+  // offset the child by the parents position to maintain its current global pos 
   if (keep_transform)
   {
-    vec3 offs; vec3_negate(p->pos, offs);
+    vec3 offs = VEC3_INIT(0.5f); 
+    vec3_div(c->pos, p->scl, offs);
+    ENTITY_SET_POS(c, offs);
+    vec3_negate(p->pos, offs);
     ENTITY_MOVE(c, offs);
+
+    // @BUGG: fucks with gizmo
+
+    // @TODO: rotation
+
+    vec3_div(c->scl, p->scl, c->scl);
   }
 
   arrput(p->children, child);
@@ -345,7 +337,7 @@ void state_entity_add_child(int parent, int child, bool keep_transform)
   
   event_sys_trigger_entity_parented(parent, child);
 }
-void state_entity_remove_child(int parent, int child)
+void state_entity_remove_child(int parent, int child, bool keep_transform)
 {
   if (parent < 0 || child < 0 || parent >= world_arr_len || child >= world_arr_len || child == parent) 
   { 
@@ -355,6 +347,14 @@ void state_entity_remove_child(int parent, int child)
   
   entity_t* p = state_entity_get(parent);
   entity_t* c = state_entity_get(child);
+
+  // offset the child by the parents position to maintain its current global pos 
+  if (keep_transform)
+  {
+    ENTITY_MOVE(c, p->pos);
+    // @TODO: rotation
+    vec3_mul(c->scl, p->scl, c->scl);
+  }
 
   for (int i = 0; i < p->children_len; ++i)
   {
@@ -373,12 +373,12 @@ void state_entity_remove_child(int parent, int child)
   event_sys_trigger_entity_parent_removed(parent, child);
 }
 
-void state_entity_add_child_remove_parent(int parent, int child)
+void state_entity_add_child_remove_parent(int parent, int child, bool keep_transform)
 {
   entity_t* c = state_entity_get(child);
   if (c->parent >= 0 && c->parent != parent)
-  { state_entity_remove_child(parent, child); }
-  state_entity_add_child(parent, child, true);
+  { state_entity_remove_child(parent, child, true); }
+  state_entity_add_child(parent, child, keep_transform);
 }
 
 void state_entity_get_total_children_len(int id, u32* len)
@@ -419,31 +419,33 @@ void state_entity_update_global_model_dbg(int id, char* _file, int _line)
   {
     // apply parent model-matrix, parent_model * child_model = child_model
     // also track the transform delta this causes
-    vec3 pre_pos, post_pos, delta_pos;
-    mat4_get_pos(e->model, pre_pos);  // model from last frame
+    
+    // vec3 pre_pos, post_pos, delta_pos;
+    // mat4_get_pos(e->model, pre_pos);  // model from last frame
     
     mat4_make_model(e->pos, e->rot, e->scl, e->model);  // parent indipendent
     entity_t* p = state_entity_get(e->parent);
     mat4_mul(p->model, e->model, e->model);
     
-    mat4_get_pos(e->model, post_pos); // model after parent-transform
-    vec3_sub(post_pos, pre_pos, delta_pos); 
+    // mat4_get_pos(e->model, post_pos); // model after parent-transform
+    // vec3_sub(post_pos, pre_pos, delta_pos); 
     // vec3_add(e->delta_pos, delta_pos, e->delta_pos); // @NOTE: acting fucky wucky
-    
-    if (core_data_is_play())
-    {
-      // P_VEC3(pre_pos);
-      // P_VEC3(post_pos);
-      // P_VEC3(delta_pos);
-      debug_draw_sphere_register(pre_pos, 0.2f,  RGB_F(1, 0, 0));
-      debug_draw_sphere_register(post_pos, 0.2f, RGB_F(0, 1, 0));
-      vec3 start, end;
-      vec3_mul_f(delta_pos, 1.0f, end);
-      debug_draw_line_register(start, end, RGB_F_RGB(0.5f));
-      vec3_add(delta_pos, post_pos, start);
-      vec3_add(end, post_pos, end);
-      debug_draw_line_register(start, end, RGB_F_RGB(1.0f));
-    }
+   
+    // @UNSURE: fuck's this
+    // if (core_data_is_play())
+    // {
+    //   // P_VEC3(pre_pos);
+    //   // P_VEC3(post_pos);
+    //   // P_VEC3(delta_pos);
+    //   debug_draw_sphere_register(pre_pos, 0.2f,  RGB_F(1, 0, 0));
+    //   debug_draw_sphere_register(post_pos, 0.2f, RGB_F(0, 1, 0));
+    //   vec3 start, end;
+    //   vec3_mul_f(delta_pos, 1.0f, end);
+    //   debug_draw_line_register(start, end, RGB_F_RGB(0.5f));
+    //   vec3_add(delta_pos, post_pos, start);
+    //   vec3_add(end, post_pos, end);
+    //   debug_draw_line_register(start, end, RGB_F_RGB(1.0f));
+    // }
   }
   else
   {
@@ -521,9 +523,14 @@ void state_entity_model_no_scale_rotation(int id, mat4 out)
 
   if (e->parent >= 0)
   {
-    // same as state_entity_local_model()
-    mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
     entity_t* p = state_entity_get(e->parent);
+    // vec3 p_pos;
+    // mat4_get_pos(p->model, p_pos);
+    // vec3 pos;
+    // mat4_get_pos(e->model, pos);
+    // same as state_entity_local_model()
+    // mat4_make_model(VEC3_ADD(p_pos, e->pos), VEC3(0), VEC3(1), out);
+    mat4_make_model(e->pos, VEC3(0), VEC3(1), out);
     mat4_mul(p->model, out, out);
   }
   else

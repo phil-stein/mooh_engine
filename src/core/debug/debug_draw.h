@@ -90,6 +90,14 @@ void debug_draw_mesh_register_func(vec3 pos, vec3 rot, vec3 scl, rgbf tint, int 
 //       tint:  tint/color of mesh
 //       mesh:  idx of mesh in assetm
 void debug_draw_mesh_register_model_func(mat4 model, rgbf tint, int mesh);
+// @DOC: register a mesh to be rendered in debug_draw_update, also uses a texture
+//       pos:  position of mesh
+//       rot:  rotation of mesh
+//       scl:  scale of mesh
+//       tint:  tint for texture of mesh
+//       mesh:  idx of mesh in assetm
+//       tex:   idx of texture in assetm
+void debug_draw_mesh_textured_register_func(vec3 pos, vec3 rot, vec3 scl, rgbf tint, int mesh, int tex);
 // @DOC: register a mesh to be rendered in debug_draw_update, using mat4 model instead transform vec3, also uses a texture
 //       model: mat4 model of mesh
 //       tint:  tint for texture of mesh
@@ -122,6 +130,7 @@ void debug_draw_box_register_width_func(vec3 points[8], rgbf color, f32 width);
 
 #define debug_draw_mesh_register(pos, rot, scl, tint, mesh)              debug_draw_mesh_register_func(pos, rot, scl, tint, mesh) 
 #define debug_draw_mesh_register_model(model, tint, mesh)                debug_draw_mesh_register_model_func(model, tint, mesh) 
+#define debug_draw_mesh_textured_register(pos, rot, scl, tint, mesh, tex)        debug_draw_mesh_textured_register_func(pos, rot, scl, tint, mesh, tex)       
 #define debug_draw_mesh_textured_register_model(model, tint, mesh, tex)  debug_draw_mesh_textured_register_model_func(model, tint, mesh, tex)       
 
 #define debug_draw_box_register(points, color)                           debug_draw_box_register_func(points, color)
@@ -144,6 +153,7 @@ void debug_draw_box_register_width_func(vec3 points[8], rgbf color, f32 width);
 #define debug_draw_mesh_register(pos, rot, scl, tint, mesh)               
 #define debug_draw_mesh_register(pos, rot, scl, tint, mesh)              
 #define debug_draw_mesh_register_model(model, tint, mesh)                
+#define debug_draw_mesh_textured_register(pos, rot, scl, tint, mesh, tex)          
 #define debug_draw_mesh_textured_register_model(model, tint, mesh, tex)  
 #define debug_draw_box_register(points, color)                           
 #define debug_draw_box_register_width(points, color, width)              

@@ -32,7 +32,7 @@ void gui_top_bar_win();
 // @DOC: window displaying all properties of an entity_t
 void gui_properties_win();
 // @DOC: not window, for use in one, displays transform
-void gui_properties_transform(vec3 pos, vec3 rot, vec3 scl, bool* has_moved);
+void gui_properties_transform(entity_t* e, vec3 pos, vec3 rot, vec3 scl, bool* has_moved);
 // @DOC: not window, for use in one, displays material
 void gui_properties_material(material_t* mat, int idx);
 // @DOC: not window, for use in one, displays mesh

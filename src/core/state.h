@@ -89,11 +89,11 @@ void state_entity_add_child(int parent, int child, bool keep_transform);
 // @DOC: remove a child from an entity
 //       parent: id of parent entity 
 //       child:  id of child entity 
-void state_entity_remove_child(int parent, int child);
+void state_entity_remove_child(int parent, int child, bool keep_transform);
 // @DOC: removes old parent if present and sets new parent
 //       parent: new parent entity id
 //       child:  new child entity id
-void state_entity_add_child_remove_parent(int parent, int child);
+void state_entity_add_child_remove_parent(int parent, int child, bool keep_transform);
 
 // @TODO: @DOC: recursively count all childrens children_len
 //      len: need to be 0

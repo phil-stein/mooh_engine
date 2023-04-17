@@ -36,9 +36,9 @@ void gizmo_update()
   
   if (app_data->selected_id >= 0 || app_data->selected_id == -2) // entity or terrain
   {
-    mat4 model;
+    mat4 model, display_model;
     vec3 pos;
-    GIZMO_MODEL_POS(app_data, model, pos);
+    GIZMO_MODEL_POS(app_data, model, display_model, pos);
     
     // draw line to parent
     entity_t* e = state_entity_get(app_data->selected_id);
@@ -84,15 +84,16 @@ void gizmo_update()
     }
     else if (app_data->gizmo_type == GIZMO_TRANSLATE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/translate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(display_model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/translate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      // debug_draw_mesh_textured_register(pos, VEC3(0), VEC3(1), RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/translate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }
     else if (app_data->gizmo_type == GIZMO_SCALE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/scale/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(display_model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/scale/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }    
     else if (app_data->gizmo_type == GIZMO_ROTATE)
     {
-      debug_draw_mesh_textured_register_model(model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/rotate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
+      debug_draw_mesh_textured_register_model(display_model, RGB_F_RGB(1.0f), assetm_get_mesh_idx("gizmos/rotate/gizmo"), assetm_get_texture_idx("#internal/gizmo_atlas.png", true));
     }
     
     // -- draw line --
@@ -211,9 +212,9 @@ void gizmo_update()
     vec2 p0 = { x + dx, y - dy };
     vec2 p1 = { x, y };
 
-    mat4 model;
+    mat4 model, display_model;
     vec3 pos;
-    GIZMO_MODEL_POS(app_data, model, pos);
+    GIZMO_MODEL_POS(app_data, model, display_model, pos);
     // if (app_data->selected_id >= 0)
     // {
     //   bool error = false;

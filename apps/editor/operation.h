@@ -114,8 +114,14 @@ typedef struct
   union
   {
     int int_val_1;
-    int entity_parent; 
     int entity_template_idx;
+    int child_id; 
+  };
+  union
+  {
+    int int_val_2;
+    int entity_parent_id; 
+    int child_parent_id; 
   };
 
   // several names for vec var for clarity
@@ -137,19 +143,17 @@ typedef struct
 
 }operation_t;
 
-#define P_OPERATION_T(_op)  { PF(" -> type: %s, int_0: %d, int_1: %d\n",                                \
-                              operation_type_to_str((_op)->type), (_op)->int_val_0, (_op)->int_val_1);  \
-                              PF(" -> "); P_VEC3((_op)->vec_val_0);                                     \
-                              PF(" -> "); P_VEC3((_op)->vec_val_1);                                     \
+#define P_OPERATION_T(_op)  { PF(" -> type: %s, int_0: %d, int_1: %d, int_2: %d\n",       \
+                              operation_type_to_str((_op)->type), (_op)->int_val_0,       \
+                                                    (_op)->int_val_1, (_op)->int_val_2);  \
+                              PF(" -> "); P_VEC3((_op)->vec_val_0);                       \
+                              PF(" -> "); P_VEC3((_op)->vec_val_1);                       \
                               PF(" -> "); P_VEC3((_op)->vec_val_2); }                                     
 
-#define OPERATION_T_ENTITY_ADD(id)     { .type = OP_ENTITY_ADD,    .entity_id = (id) }
-#define OPERATION_T_ENTITY_REMOVE(id)  { .type = OP_ENTITY_REMOVE, .entity_id = (id)  }
-// #define OPERATION_T_ENTITY_REMOVE(id, pos, rot, scl)                                                  \/
-//                                        { .type = OP_ENTITY_REMOVE, .entity_id = (id),                 \/
-//                                          .pos[0] = (pos)[0], .pos[1] = (pos)[1], .pos[2] = (pos)[2],  \/
-//                                          .rot[0] = (rot)[0], .rot[1] = (rot)[1], .rot[2] = (rot)[2],  \/
-//                                          .scl[0] = (scl)[0], .scl[1] = (scl)[1], .scl[2] = (scl)[2] }
+#define OPERATION_T_ENTITY_ADD(id)      { .type = OP_ENTITY_ADD,       .entity_id = (id) }
+#define OPERATION_T_ENTITY_REMOVE(id)   { .type = OP_ENTITY_REMOVE,    .entity_id = (id) }
+#define OPERATION_T_ENTITY_CHILD_ADD(_id, _child_id, _child_parent) \
+                                        { .type = OP_ENTITY_CHILD_ADD, .entity_id = (_id), .child_id = (_child_id), .child_parent_id = (_child_parent) }
 
 void operation_register(operation_t* op);
 void operation_reverse();
@@ -159,5 +163,6 @@ void operation_reverse_entity_rotate(operation_t* op);
 void operation_reverse_entity_scale(operation_t* op);
 void operation_reverse_entity_add(operation_t* op);
 void operation_reverse_entity_remove(operation_t* op);
+void operation_reverse_entity_child_add(operation_t* op);
 
 #endif // OPERATION_H

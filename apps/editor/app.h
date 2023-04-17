@@ -19,6 +19,8 @@ typedef enum terrain_edit_type_t
 
 } terrain_edit_type_t;
 
+#define GUI_INFO_STR_MAX 64
+
 // @DOC: houses all publicly accessible data for app (editor)
 //       instance of app_data_t is in app.c and accesible via app_data_get()
 typedef struct app_data_t
@@ -34,6 +36,9 @@ typedef struct app_data_t
   float gizmo_translate_snap;             // interval at which entities are moved if gizmo_snapping is true
   float gizmo_rotate_snap;                // interval at which entities are rotatet if gizmo_snapping is true
   float gizmo_scale_snap;                 // interval at which entities are scaled if gizmo_snapping is true
+
+  char gui_info_str[GUI_INFO_STR_MAX];    // info text in top bar
+  f32  gui_info_t;                        // time remaining for info text in top bar to be displayed
 
   float mouse_sensitivity;                // speed at which the mouse moves
   bool wireframe_act;                     // if the wireframe is shown instead of full meshes
@@ -63,6 +68,9 @@ typedef struct app_data_t
   .gizmo_rotate_snap            = 15.0f,               \
   .gizmo_scale_snap             = 0.5f,                \
                                                        \
+  .gui_info_str                 = "",                  \
+  .gui_info_t                   = 0.0f,                \
+                                                       \
   .mouse_sensitivity            = 0.125f,              \
   .wireframe_act                = false,               \
   .mouse_over_ui                = false,               \
@@ -76,6 +84,10 @@ typedef struct app_data_t
   .terrain_edit_paint_scalar    = 0.75f,               \
 }
 
+#define GUI_INFO_DEFAULT_T  2.0f
+#define GUI_INFO_STR_SET_T(_app_data, t, ...)   SPRINTF(GUI_INFO_STR_MAX, (_app_data)->gui_info_str, __VA_ARGS__); \
+                                                (_app_data)->gui_info_t = t
+#define GUI_INFO_STR_SET(_app_data, ...)        GUI_INFO_STR_SET_T(_app_data, GUI_INFO_DEFAULT_T, __VA_ARGS__)
 
 // -- keymappings --
 
