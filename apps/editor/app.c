@@ -40,81 +40,11 @@ void rotate_cam_by_mouse();
 
 int main(void)
 {
-  // @TMP: testing math
+  
+  // @TODO: @UNSURE: these results are sus
   vec3 a = VEC3_INIT(1);
   vec3 b = VEC3_INIT(2);
   vec3 c; 
-  vec3_add(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_ADD(a, b));
-  vec3_add_f(a, 10, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_ADD_F(a, 10));
-  
-  vec3_sub(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_SUB(a, b));
-  vec3_sub_f(a, 10, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_SUB_F(a, 10));
-
-  vec3_mul(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MUL(a, b));
-  vec3_mul_f(a, 10, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MUL_F(a, 10));
-
-  vec3_div(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_DIV(a, b));
-  vec3_div_f(a, 10, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_DIV_F(a, 10));
-  
-  vec3_cross(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_CROSS(a, b));
-  
-  vec3_negate(a, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_NEGATE(a));
-  
-  vec3_normalize(a, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_NORMALIZE(a));
-  vec3_normalize(VEC3(0), c);
-  P_VEC3(c);
-  P_VEC3( VEC3_NORMALIZE( VEC3(0) ) );
-  
-  vec3_min(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MIN(a, b));
-  vec3_min_f(a, 1.0f, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MIN_F(a, 1.0f));
-  
-  vec3_max(a, b, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MAX(a, b));
-  vec3_max_f(a, 1.0f, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_MAX_F(a, 1.0f));
-  
-  vec3_clamp(a, VEC3(0), VEC3(1), c);
-  P_VEC3(c);
-  P_VEC3(VEC3_CLAMP(a, VEC3(0), VEC3(1)));
-  vec3_clamp_f(a, 0, 1, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_CLAMP_F(a, 0, 1));
-
-  P_LINE();
-  
-  vec3_abs(a, c);
-  P_VEC3(c);
-  P_VEC3(VEC3_ABS(a));
-
-  // @TODO: @UNSURE: these results are sus
   vec3_lerp(a, b, 0.5f, c);
   P_VEC3(c);
   P_VEC3(VEC3_LERP(a, b, 0.5f));
@@ -122,6 +52,8 @@ int main(void)
   vec3_lerp_f(0, 1, 0.5f, c);
   P_VEC3(c);
   P_VEC3(VEC3_LERP_F(0, 1, 0.5f));
+  
+  P_LINE();
   
   program_start(1600, 900, "editor", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   

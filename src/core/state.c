@@ -36,12 +36,20 @@ bool entity_init_called = false;
 
 static core_data_t* core_data = NULL;
 
+
+// -- shared variables --
 // shared variable dont use this just for error detection in state_entity_get(), extern def in state.h
 bool __state_entity_get_error_shared = false;
+int* __state_world_arr_len_ptr_shared = NULL;
 
 void state_init()
 {
   core_data = core_data_get();
+
+  __state_world_arr_len_ptr_shared = &world_arr_len;
+  
+    core_data->world_arr_len_ptr      = &world_arr_len;
+  core_data->world_dead_arr_len_ptr = &world_dead_arr_len;
 
   int templates_len = 0;
   entity_template_get_all(&templates_len);
@@ -271,12 +279,12 @@ void state_entity_remove(int id)
 
   if (world_arr[id].parent > -1)
   {
-    state_entity_remove_child(world_arr[id].parent, id, true);
+    state_entity_remove_child_id(world_arr[id].parent, id, true);
   }
   // for (int i = 0; i < world_arr[id].children_len; ++i)
   while (world_arr[id].children_len > 0)  
   {
-    state_entity_remove_child(id, world_arr[id].children[0], true);
+    state_entity_remove_child_id(id, world_arr[id].children[0], true);
   }
 
   world_arr[id].is_dead = true;
@@ -299,77 +307,64 @@ entity_t* state_entity_get_dbg(int id, bool* error, char* _file, int _line)
   return rtn;
 }
 
-void state_entity_add_child(int parent, int child, bool keep_transform)
+void state_entity_add_child(entity_t* p, entity_t* c, bool keep_transform)
 {
-  if (parent < 0 || child < 0 || parent >= world_arr_len || child >= world_arr_len || child == parent) 
-  {
-    P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); 
-    return;
-  }
-  
-  entity_t* p = state_entity_get(parent);
-  entity_t* c = state_entity_get(child);
-
   if (c->parent > -1) 
-  { P_ERR("parenting child which is already parented.\n  -> parent: %d, child: %d, childs parent: %d\n", parent, child, c->parent); return; } 
+  { P_ERR("parenting child which is already parented.\n  -> parent: %d, child: %d, childs parent: %d\n", p->id, c->id, c->parent); return; } 
 
   // @TODO: @BUGG: keep_transform doesnt work
   // offset the child by the parents position to maintain its current global pos 
   if (keep_transform)
   {
-    vec3 offs = VEC3_INIT(0.5f); 
-    vec3_div(c->pos, p->scl, offs);
-    ENTITY_SET_POS(c, offs);
-    vec3_negate(p->pos, offs);
-    ENTITY_MOVE(c, offs);
+    // vec3 offs; 
+    // vec3_div(c->pos, p->scl, offs);
+    // ENTITY_SET_POS(c, offs);
 
-    // @BUGG: fucks with gizmo
+    // ENTITY_MOVE(c, VEC3_NEGATE(p->pos));
+    
+    // ENTITY_SET_POS(c, VEC3_DIV(c->pos, p->scl));
+    // ENTITY_MOVE(c, VEC3_NEGATE(p->pos));
+    
 
     // @TODO: rotation
 
     vec3_div(c->scl, p->scl, c->scl);
   }
 
-  arrput(p->children, child);
+  arrput(p->children, c->id);
   p->children_len++;
-  c->parent = parent;
+  c->parent = p->id;
   // PF("-> parent: %d, child: %d\n", p->id, c->id);
   
-  event_sys_trigger_entity_parented(parent, child);
+  event_sys_trigger_entity_parented(p->id, c->id);
 }
-void state_entity_remove_child(int parent, int child, bool keep_transform)
-{
-  if (parent < 0 || child < 0 || parent >= world_arr_len || child >= world_arr_len || child == parent) 
-  { 
-    P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); 
-    return;
-  }
-  
-  entity_t* p = state_entity_get(parent);
-  entity_t* c = state_entity_get(child);
 
+void state_entity_remove_child(entity_t* p, entity_t* c, bool keep_transform)
+{
   // offset the child by the parents position to maintain its current global pos 
   if (keep_transform)
   {
-    ENTITY_MOVE(c, p->pos);
-    // @TODO: rotation
-    vec3_mul(c->scl, p->scl, c->scl);
-    // vec3 offs = VEC3_INIT(0.5f); 
+    // ENTITY_MOVE(c, p->pos);
+    
+    // vec3 offs; 
     // vec3_div(c->pos, p->scl, offs);
     // ENTITY_SET_POS(c, offs);
+    
+    // ENTITY_MOVE(c, VEC3_MUL(c->pos, p->scl));
+    ENTITY_SET_POS(c, VEC3_MUL(c->pos, p->scl));
+    
     // vec3_negate(p->pos, offs);
     // ENTITY_MOVE(c, offs);
-
-    // // @BUGG: fucks with gizmo
+    ENTITY_MOVE(c, p->pos);
 
     // // @TODO: rotation
+    vec3_mul(c->scl, p->scl, c->scl);
 
-    // vec3_div(c->scl, p->scl, c->scl);
   }
 
   for (int i = 0; i < p->children_len; ++i)
   {
-    if (p->children[i] == child)
+    if (p->children[i] == c->id)
     {
       arrdel(p->children, i);
       p->children_len--;
@@ -381,16 +376,9 @@ void state_entity_remove_child(int parent, int child, bool keep_transform)
   c->parent = -1;
   // PF("in remove_child(): ");P_INT(c->parent);
 
-  event_sys_trigger_entity_parent_removed(parent, child);
+  event_sys_trigger_entity_parent_removed(p->id, c->id);
 }
 
-void state_entity_add_child_remove_parent(int parent, int child, bool keep_transform)
-{
-  entity_t* c = state_entity_get(child);
-  if (c->parent >= 0 && c->parent != parent)
-  { state_entity_remove_child(parent, child, true); }
-  state_entity_add_child(parent, child, keep_transform);
-}
 
 void state_entity_get_total_children_len(int id, u32* len)
 {

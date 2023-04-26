@@ -10,6 +10,20 @@
 
 // shared variable dont use this just for error detection in state_entity_get()
 extern bool __state_entity_get_error_shared;
+// shared variable used to allow inlining funcs that need world_arr_len
+extern int* __state_world_arr_len_ptr_shared;
+
+// @DOC: get two entities, meant for usage inside state_...() functions
+//       id0, id1:     id's of the two entites
+//       name0, name1: name given to the entity_t* var belonging to id0, id1
+//       err:          line of code run on failure, i.e. 'ERR("failed")'
+#define GET_ENTITY_ERR_CHECK_2(id0, id1, name0, name1, err)                       \
+  if ((id0) < 0 || (id1) < 0 || (id0) >= (*__state_world_arr_len_ptr_shared) ||   \
+      (id1) >= (*__state_world_arr_len_ptr_shared) || (id0) == (id1))             \
+  { err; return; }                                                                \
+  entity_t* (name0) = state_entity_get((id0));                                    \
+  entity_t* (name1) = state_entity_get((id1));                                   
+
 
 // func decls --------------------------------------------------- 
 
@@ -78,22 +92,57 @@ void state_entity_remove(int id);
 entity_t* state_entity_get_dbg(int id, bool* error, char* _file, int _line);
 #define state_entity_get_err(id, error) state_entity_get_dbg(id, error, __FILE__, __LINE__)
 #define state_entity_get(id)            state_entity_get_dbg(id, &__state_entity_get_error_shared, __FILE__, __LINE__);   \
-                                        ERR_CHECK(!__state_entity_get_error_shared, "get_entity failed\n") 
+                                        ERR_CHECK(!__state_entity_get_error_shared, "get_entity [%d] failed\n", (id)) 
+
+
+// @DOC: remove a child from an entity
+//       p:      parent entity
+//       parent: id of parent entity 
+//       c:      child entity
+//       child:  id of child entity 
+void state_entity_remove_child(entity_t* p, entity_t* c, bool keep_transform);
+INLINE void state_entity_remove_child_id(int parent, int child, bool keep_transform)
+{
+  // GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
+  bool err = false;
+  entity_t* p = state_entity_get_err(parent, &err);
+  entity_t* c = state_entity_get_err(child,  &err);
+  if (err) { P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); return; }
+  state_entity_remove_child(p, c, keep_transform);
+}
 
 // @DOC: add a child to an entity
+//       p:              entity to be the parent
 //       parent:         id of entity to be the parent
+//       c:              entity to be the child
 //       child:          id of entity to be the child
 //       keep_transform: offset the child by the parents transform 
 //                       to maintain global pos 
-void state_entity_add_child(int parent, int child, bool keep_transform);
-// @DOC: remove a child from an entity
-//       parent: id of parent entity 
-//       child:  id of child entity 
-void state_entity_remove_child(int parent, int child, bool keep_transform);
+void state_entity_add_child(entity_t* p, entity_t* c, bool keep_transform);
+INLINE void state_entity_add_child_id(int parent, int child, bool keep_transform)
+{
+  P_INT(*__state_world_arr_len_ptr_shared);
+  GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
+  state_entity_add_child(p, c, keep_transform);
+}
+
 // @DOC: removes old parent if present and sets new parent
+//       p:      entity to be parent
 //       parent: new parent entity id
+//       c:      entity to be child
 //       child:  new child entity id
-void state_entity_add_child_remove_parent(int parent, int child, bool keep_transform);
+INLINE void state_entity_add_child_remove_parent(entity_t* p, entity_t* c, bool keep_transform)
+{
+  if (c->parent >= 0 && c->parent != p->id)
+  { state_entity_remove_child(p, c, true); }
+  state_entity_add_child(p, c, keep_transform);
+}
+INLINE void state_entity_add_child_remove_parent_id(int parent, int child, bool keep_transform)
+{
+  P_INT(*__state_world_arr_len_ptr_shared);
+  GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
+  state_entity_add_child_remove_parent(p, c, keep_transform);
+}
 
 // @TODO: @DOC: recursively count all childrens children_len
 //      len: need to be 0

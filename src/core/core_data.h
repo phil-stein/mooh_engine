@@ -33,6 +33,11 @@ typedef struct core_data_t
   f32 delta_t;       // how much time has passed since last frame
   f32 cur_fps;       // frames per second
 
+  // -- state --
+
+  int* world_arr_len_ptr;        // pointer to length of world_arr_len in state.c
+  int* world_dead_arr_len_ptr;   // pointer to length of world_dead_arr_len in state.c
+
   // -- assetm --
   
   bool use_async_asset_arrs;    // use assetm_register_...() and threadm_load_..._arr(), or load direct
@@ -158,6 +163,9 @@ typedef struct core_data_t
   .t_last_frame = 0.0f,                       \
   .delta_t = 0.0f,                            \
   .cur_fps = 0.0f,                            \
+                                              \
+  .world_arr_len_ptr = NULL,                  \
+  .world_dead_arr_len_ptr = NULL,             \
                                               \
   .use_async_asset_arrs = false,              \
   .asset_path   = "\0",                       \

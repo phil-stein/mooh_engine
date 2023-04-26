@@ -150,11 +150,11 @@ void operation_reverse_entity_remove(operation_t* op)
 }
 void operation_reverse_entity_child_add(operation_t* op)
 {
-  state_entity_remove_child(op->entity_id, op->child_id, true);
+  state_entity_remove_child_id(op->entity_id, op->child_id, true);
 
   if (op->child_parent_id >= 0)
   {
-    state_entity_add_child(op->child_parent_id, op->child_id, true);
+    state_entity_add_child_id(op->child_parent_id, op->child_id, true);
   }
 
   PF("OPERATION REVERSE:\n");

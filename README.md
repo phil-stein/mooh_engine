@@ -103,6 +103,7 @@ main resources:
   - [x] figure out why core_data_init() is taking so long: shaders
     - [ ] shader spir-v ?
   - [ ] undo/redo -> john jackman or some on yt pixeleditor
+  - [ ] m_lerp(), vec3_lerp() arent working correct see program.c
 
 ## sus amogus
   - when parenting broke and i fixed it by setting 'is_moved' in 'state_update_global_model()'
@@ -144,6 +145,8 @@ main resources:
   - [ ] make functions with entity->id as arg have entity_t* version also, i.e. state_entity_remove(entity_t* e)
     - state_entity_remove(entity_t* e);
       INLINE state_entity_remove_id(int id) { state_entity_get(id); remove }
+  - [ ] finish math_test.h `WIP`
+  - [ ] make state.c world_arr & world_arr_len available in core_data as pointer
 
 ## tools
   - [ ] binary dump
@@ -188,11 +191,11 @@ main resources:
     - [ ] integrate trail renderer
   - [ ] trail renderer
   - [ ] debug tools
-    - [ ] debug_draw_circle() with resolution
-    - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag
+    - [ ] make debug_draw_circle() func use mat4 and vec3 instead of pythag `WIP`
       - precompute x, y, z circles for axis aligned, like sphere collider
     - [ ] add profiler [also mentioned](#organization)
   - [ ] controller support ?
+  - [ ] keep_transform when parenting / un-parenting `WIP`
 
 ## renderer
   - [ ] blending
@@ -221,7 +224,7 @@ main resources:
   - [ ] ask to save if unsaved changes
     - use operation.c
   - [ ] seperate windows into their own .c files
-  - [ ] undo
+  - [ ] undo `WIP`
     - [ ] keep track of changes
   - [ ] redo
 

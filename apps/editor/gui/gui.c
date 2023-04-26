@@ -372,7 +372,7 @@ void gui_properties_win()
         state_entity_get_err(parent_id, &error);  // just checking if exists // @TODO: isnt there a state func for that
         if (!error)
         {
-          state_entity_add_child_remove_parent(parent_id, id, true);
+          state_entity_add_child_remove_parent_id(parent_id, id, true);
           operation_t op = OPERATION_T_ENTITY_CHILD_ADD(parent_id, id, e->parent);
           operation_register(&op);
           
@@ -385,7 +385,7 @@ void gui_properties_win()
       if (nk_button_label(ctx, "remove parent") && e->parent >= 0)
       {
         GUI_INFO_STR_SET(app_data, "unparented: %d -> %d", e->id, e->parent);
-        state_entity_remove_child(e->parent, e->id, true);
+        state_entity_remove_child_id(e->parent, e->id, true);
       }
 
       // @TODO: @UNSURE: display children

@@ -158,7 +158,7 @@ int save_sys_load_structure_from_file(const char* name)
     for (u32 j = 1; j < c_len +1; ++j) // 0 is len, tsart at 1
     {
       // PF("-> parented: parent: %d, child: %d\n", entity_ids[i], entity_ids[child_idxs[i][j]]);
-      state_entity_add_child(entity_ids[i], entity_ids[child_idxs[i][j]], false);
+      state_entity_add_child_id(entity_ids[i], entity_ids[child_idxs[i][j]], false);
     }
 
   }
