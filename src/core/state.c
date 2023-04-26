@@ -354,6 +354,17 @@ void state_entity_remove_child(int parent, int child, bool keep_transform)
     ENTITY_MOVE(c, p->pos);
     // @TODO: rotation
     vec3_mul(c->scl, p->scl, c->scl);
+    // vec3 offs = VEC3_INIT(0.5f); 
+    // vec3_div(c->pos, p->scl, offs);
+    // ENTITY_SET_POS(c, offs);
+    // vec3_negate(p->pos, offs);
+    // ENTITY_MOVE(c, offs);
+
+    // // @BUGG: fucks with gizmo
+
+    // // @TODO: rotation
+
+    // vec3_div(c->scl, p->scl, c->scl);
   }
 
   for (int i = 0; i < p->children_len; ++i)
