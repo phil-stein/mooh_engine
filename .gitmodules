@@ -11,3 +11,6 @@
 [submodule "src/phys"]
 	path = src/phys
 	url = https://github.com/phil-stein/phys
+[submodule "src/global"]
+	path = src/global
+	url = https://github.com/phil-stein/global
