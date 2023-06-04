@@ -41,8 +41,7 @@ typedef struct app_data_t
   f32  gui_info_t;                        // time remaining for info text in top bar to be displayed
 
   float mouse_sensitivity;                // speed at which the mouse moves
-  bool wireframe_act;                     // if the wireframe is shown instead of full meshes
-  bool mouse_over_ui;                     // if true mouse is currently over a ui window
+  bool  mouse_over_ui;                     // if true mouse is currently over a ui window
 
   terrain_edit_type_t terrain_edit_type;  // current active terrain edit tool type / mode 
   f32  terrain_edit_radius;               // radius in which the terrain edit tool has effect
@@ -72,7 +71,6 @@ typedef struct app_data_t
   .gui_info_t                   = 0.0f,                \
                                                        \
   .mouse_sensitivity            = 0.125f,              \
-  .wireframe_act                = false,               \
   .mouse_over_ui                = false,               \
                                                        \
   .terrain_edit_type            = TERRAIN_EDIT_NONE,   \
@@ -83,6 +81,7 @@ typedef struct app_data_t
   .terrain_edit_paint_material  = 0,                   \
   .terrain_edit_paint_scalar    = 0.75f,               \
 }
+  // .wireframe_act                = false,               \x
 
 #define GUI_INFO_DEFAULT_T  2.0f
 #define GUI_INFO_STR_SET_T(_app_data, t, ...)   SPRINTF(GUI_INFO_STR_MAX, (_app_data)->gui_info_str, __VA_ARGS__); \
@@ -90,10 +89,7 @@ typedef struct app_data_t
 #define GUI_INFO_STR_SET(_app_data, ...)        GUI_INFO_STR_SET_T(_app_data, GUI_INFO_DEFAULT_T, __VA_ARGS__)
 
 // -- keymappings --
-
-#define KEY_EXIT              KEY_ESCAPE
-#define KEY_WIREFRAME_TOGGLE  KEY_TAB
-#define KEY_TOGGLE_FULLSCREEN KEY_F11
+// some are in program.h
 
 #define KEY_GIZMO_TRANSLATE   KEY_G
 #define KEY_GIZMO_SCALE       KEY_S

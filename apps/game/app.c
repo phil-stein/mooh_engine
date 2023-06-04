@@ -1,6 +1,4 @@
-#include "editor/app.h"
-#include "editor/gui.h"
-#include "editor/gizmo.h"
+#include "game/app.h"
 #include "editor/terrain_edit.h"
 #include "core/program.h"
 #include "core/core_data.h"
@@ -54,7 +52,7 @@ void app_init()
   #endif
 
   core_data = core_data_get();
-
+  
   const char scene_name[] = "test.scene";
   TIMER_FUNC_STATIC(save_sys_load_scene_from_file(scene_name));
   // TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
@@ -70,41 +68,11 @@ void app_init()
 
 void app_update()
 {
+  programm_app_default_logic(core_data);
 
   // -- input --
+  // ...
   
-  if (input_get_key_pressed(KEY_EXIT))
-  {
-    program_quit();
-  }
-  
-  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S))
-  { 
-    save_sys_write_scene_to_file(SCENE_FILE_NAME); 
-    save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
-  }
-  
-  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE))
-	{
-		app_data.wireframe_act = !app_data.wireframe_act;
-		core_data->wireframe_mode_enabled = app_data.wireframe_act;
-	}
-
-  if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
-  {
-    window_type type = window_get_mode();
-    
-    P_WINDOW_TYPE(type); 
-    
-    // @NOTE: min -> max -> full
-    type = type == WINDOW_MIN ? WINDOW_MAX : type == WINDOW_MAX ? WINDOW_FULL : WINDOW_MAX;
-    
-    P_WINDOW_TYPE(type); 
-    P("------------");
-
-    window_set_mode(type);
-  }
-
 }
 
 app_data_t* app_data_get()

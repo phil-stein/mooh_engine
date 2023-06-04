@@ -35,7 +35,7 @@ main resources:
     - [batch renderer](#optimizations) `WIP`
   - *base*
   - *editor*
-    - [undo/redo](#level editor)
+    - [undo/redo](#level editor) `WIP`
   - *graphics*
     - [blending](#renderer)
     - [cascaded shadows](#renderer)
@@ -134,7 +134,7 @@ main resources:
     - either figure out a way to decode function pointer to names in app, print on ERR()
     - or do it in a file like the tutorial
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
-  - [ ] make most funcs _dbg error checked ? 
+  - [ ] make most funcs _dbg error checked ? (tracing would make this redundant) 
     - [ ] use _dbg funcs for materials in assetm ?
     - [x] make _dbg check a macro to set easy and compile out ?
       - when compiled out _file & _line cause errors
@@ -200,6 +200,8 @@ main resources:
 ## renderer
   - [ ] blending
     - learnopengl weighted blending 'OIT'
+    - [[file:C:/Users/phili/Documents/#04_LearnOpenGL/#guest_01_OIT/learnopengl-com-Guest-Articles-2020-OIT-Introduction.pdf|introduction]]
+    - [[file:C:/Users/phili/Documents/#04_LearnOpenGL/#guest_01_OIT/learnopengl-com-Guest-Articles-2020-OIT-Weighted-Blended.pdf|tutorial]]
   - [ ] cascaded shadows
     - from cherno video 
     - also on learnopengl

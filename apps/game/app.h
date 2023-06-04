@@ -32,7 +32,6 @@ typedef struct app_data_t
   float gizmo_scale_snap;
 
   float mouse_sensitivity;
-  bool wireframe_act;
   bool mouse_over_ui;
 
   terrain_edit_type_t terrain_edit_type;
@@ -60,7 +59,6 @@ typedef struct app_data_t
   .gizmo_scale_snap             = 0.5f,                \
                                                        \
   .mouse_sensitivity            = 0.125f,              \
-  .wireframe_act                = false,               \
   .mouse_over_ui                = false,               \
                                                        \
   .terrain_edit_type            = TERRAIN_EDIT_NONE,   \
@@ -74,10 +72,7 @@ typedef struct app_data_t
 
 
 // -- keymappings --
-
-#define KEY_EXIT              KEY_ESCAPE
-#define KEY_WIREFRAME_TOGGLE  KEY_TAB
-#define KEY_TOGGLE_FULLSCREEN KEY_F11
+// some in program.h
 
 #define KEY_GIZMO_TRANSLATE   KEY_G
 #define KEY_GIZMO_SCALE       KEY_S

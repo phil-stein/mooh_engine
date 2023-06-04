@@ -76,15 +76,13 @@ int state_entity_add(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
 //       rot: rotation
 //       scl: scale
 int state_entity_add_empty(vec3 pos, vec3 rot, vec3 scl);
-// @DOC: duplicate existing entity
-//       returns added entities id
-//       id:     id of entity to be duplicated
-//       offset: position offset given to new entity
-int state_entity_duplicate(int id, vec3 offset);
 
 // @DOC: remove an entity, aka. mark it dead
 //       id: id of entity to be removed
-void state_entity_remove(int id);
+//       e:  entity to be removed
+void state_entity_remove_id(int id);
+INLINE void state_entity_remove(entity_t* e)
+{ state_entity_remove_id(e->id); }
 
 // @DOC: get pointer to entity via its id
 //       id:    id of entity 
@@ -94,6 +92,16 @@ entity_t* state_entity_get_dbg(int id, bool* error, char* _file, int _line);
 #define state_entity_get(id)            state_entity_get_dbg(id, &__state_entity_get_error_shared, __FILE__, __LINE__);   \
                                         ERR_CHECK(!__state_entity_get_error_shared, "get_entity [%d] failed\n", (id)) 
 
+// @DOC: duplicate existing entity
+//       returns added entities id
+//       id:     id of entity to be duplicated
+//       offset: position offset given to new entity
+int state_entity_duplicate(entity_t* e, vec3 offset);
+INLINE int state_entity_duplicate_id(int id, vec3 offset)
+{
+  entity_t* e = state_entity_get(id);
+  return state_entity_duplicate(e, offset);
+}
 
 // @DOC: remove a child from an entity
 //       p:      parent entity
@@ -103,7 +111,6 @@ entity_t* state_entity_get_dbg(int id, bool* error, char* _file, int _line);
 void state_entity_remove_child(entity_t* p, entity_t* c, bool keep_transform);
 INLINE void state_entity_remove_child_id(int parent, int child, bool keep_transform)
 {
-  // GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
   bool err = false;
   entity_t* p = state_entity_get_err(parent, &err);
   entity_t* c = state_entity_get_err(child,  &err);
@@ -121,8 +128,10 @@ INLINE void state_entity_remove_child_id(int parent, int child, bool keep_transf
 void state_entity_add_child(entity_t* p, entity_t* c, bool keep_transform);
 INLINE void state_entity_add_child_id(int parent, int child, bool keep_transform)
 {
-  P_INT(*__state_world_arr_len_ptr_shared);
-  GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
+  bool err = false;
+  entity_t* p = state_entity_get_err(parent, &err);
+  entity_t* c = state_entity_get_err(child,  &err);
+  if (err) { P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); return; }
   state_entity_add_child(p, c, keep_transform);
 }
 
@@ -139,23 +148,47 @@ INLINE void state_entity_add_child_remove_parent(entity_t* p, entity_t* c, bool 
 }
 INLINE void state_entity_add_child_remove_parent_id(int parent, int child, bool keep_transform)
 {
-  P_INT(*__state_world_arr_len_ptr_shared);
-  GET_ENTITY_ERR_CHECK_2(parent, child, p, c, P_ERR("parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child));
+  bool err = false;
+  entity_t* p = state_entity_get_err(parent, &err);
+  entity_t* c = state_entity_get_err(child,  &err);
+  if (err) { P_ERR("un-parenting invalid entity indices. parent'%d' <-> child'%d'", parent, child); return; }
   state_entity_add_child_remove_parent(p, c, keep_transform);
 }
 
-// @TODO: @DOC: recursively count all childrens children_len
+// @DOC: recursively count all childrens children_len
+//      e:   entity
+//      id:  id of entity
 //      len: need to be 0
-void state_entity_get_total_children_len(int id, u32* len);
+void state_entity_get_total_children_len(entity_t* e, u32* len);
+INLINE void state_entity_get_total_children_len_id(int id, u32* len)
+{
+  entity_t* e = state_entity_get(id);
+  state_entity_get_total_children_len(e, len);
+}
 
 // @DOC: entity model matrix without parent entities influence
 //       id:  id of entity
 //       out: get filled with model matrix
-void state_entity_local_model(int id, mat4 out);
+INLINE void state_entity_local_model(entity_t* e, mat4 out)
+{
+  mat4_make_model(e->pos, e->rot, e->scl, out);
+}
+INLINE void state_entity_local_model_id(int id, mat4 out)
+{
+  entity_t* e = state_entity_get(id);
+  state_entity_local_model(e, out);
+}
 // @DOC: recalculate entities model matrix including parent incluence
 //       id:  id of entity
-void state_entity_update_global_model_dbg(int id, char* _file, int _line);
-#define state_entity_update_global_model(id)  state_entity_update_global_model_dbg(id, __FILE__, __LINE__) 
+// void state_entity_update_global_model_dbg(int id, char* _file, int _line);
+void state_entity_update_global_model_dbg(entity_t* e, char* _file, int _line);
+#define state_entity_update_global_model(e)  state_entity_update_global_model_dbg(e, __FILE__, __LINE__) 
+INLINE void state_entity_update_global_model_id(int id)
+{
+  entity_t* e = state_entity_get(id);
+  state_entity_update_global_model(e);
+}
+
 // @DOC: entity model matrix with parent entities influence, but no rotations
 //       id:  id of entity
 //       out: get filled with model matrix

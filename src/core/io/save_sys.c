@@ -41,7 +41,7 @@ void save_sys_write_structure_to_file(const char* name, int root_entity_id)
   entity_t* root = state_entity_get(root_entity_id);
   
   u32 len = 0;
-  state_entity_get_total_children_len(root_entity_id, &len);
+  state_entity_get_total_children_len(root, &len);
   len++; // for root entity
   serialization_serialize_u32(&buffer, len); // structure length, amount of entities
   // P_U32(len);

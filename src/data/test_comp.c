@@ -213,7 +213,7 @@ void projectile_update(entity_t* this, f32 dt)
   data->time_alive += dt;
   if (data->time_alive >= time_alive_max)
   {
-    state_entity_remove(this->id);
+    state_entity_remove(this);
     return;
   }
 

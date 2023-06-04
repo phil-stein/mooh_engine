@@ -88,7 +88,7 @@ void state_update()
   {
     if (world_arr[i].is_dead) { continue; }
 
-    state_entity_update_global_model(i);
+    state_entity_update_global_model(&world_arr[i]);
     
     // call entity update func
     if (core_data->scripts_act && world_arr[i].update_f != NULL)
@@ -241,9 +241,8 @@ int state_entity_add_empty(vec3 pos, vec3 rot, vec3 scl)
   return state_entity_add(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, NULL, -1);
 }
 
-int state_entity_duplicate(int id, vec3 offset)
+int state_entity_duplicate(entity_t* e, vec3 offset)
 {
-  entity_t* e = state_entity_get(id);
   vec3 pos;
   vec3_add(e->pos, offset, pos);
   int dupe = state_entity_add_from_template(pos, e->rot, e->scl, e->template_idx);
@@ -259,7 +258,7 @@ int state_entity_duplicate(int id, vec3 offset)
   return dupe;
   // return state_entity_add(pos, e->rot, e->scl, e->mesh, e->mat, e->init_f, e->update_f, e->table_idx);
 }
-void state_entity_remove(int id)
+void state_entity_remove_id(int id)
 {
   ERR_CHECK(id >= 0 && id < world_arr_len, "removing invalid entity id");
   ERR_CHECK(!world_arr[id].is_dead, "removing already 'dead' entity");
@@ -380,38 +379,31 @@ void state_entity_remove_child(entity_t* p, entity_t* c, bool keep_transform)
 }
 
 
-void state_entity_get_total_children_len(int id, u32* len)
+void state_entity_get_total_children_len(entity_t* e, u32* len)
 {
-  entity_t* e = state_entity_get(id);
+  // entity_t* e = state_entity_get(id);
   *len += e->children_len;
   for (u32 i = 0; i < e->children_len; ++i)
   {
-    state_entity_get_total_children_len(e->children[i], len);
+    state_entity_get_total_children_len_id(e->children[i], len);
   }
 }
 
-void state_entity_local_model(int id, mat4 out)
-{  
-  if (id < 0 || id >= world_arr_len) 
-  { 
-    P_ERR("local model with invalid id. id'%d'", id); 
-    return;
-  }
-  
-  entity_t* e = state_entity_get(id);
-  mat4_make_model(e->pos, e->rot, e->scl, out);
-}
-void state_entity_update_global_model_dbg(int id, char* _file, int _line)
+// @NOTE: now inlined in state.h
+// void state_entity_local_model(int id, mat4 out)
+// void state_entity_local_model(entity_t* e, mat4 out)
+// {  
+//   if (id < 0 || id >= world_arr_len) 
+//   { 
+//     P_ERR("local model with invalid id. id'%d'", id); 
+//     return;
+//   }
+//   
+//   entity_t* e = state_entity_get(id);
+//   mat4_make_model(e->pos, e->rot, e->scl, out);
+// }
+void state_entity_update_global_model_dbg(entity_t* e, char* _file, int _line)
 {
-  // if (id == 0 || id == 1) { P("brrrrrr"); }
-  if (id < 0 || id >= world_arr_len) 
-  { 
-    ERR("local model with invalid id. id'%d'", id); 
-    return;
-  }
-  
-  entity_t* e = state_entity_get(id); 
-  
   if (!e->is_moved) { return; }
 
   if (e->parent >= 0)

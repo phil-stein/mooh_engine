@@ -131,7 +131,7 @@ void operation_reverse_entity_scale(operation_t* op)
 }
 void operation_reverse_entity_add(operation_t* op)
 {
-  state_entity_remove(op->entity_id);
+  state_entity_remove_id(op->entity_id);
   
   PF("OPERATION REVERSE:\n");
   P_OPERATION_T(op);

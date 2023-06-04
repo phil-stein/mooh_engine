@@ -403,12 +403,12 @@ void gui_properties_win()
         operation_t op = OPERATION_T_ENTITY_REMOVE(app_data->selected_id);
         operation_register(&op);
 
-        state_entity_remove(app_data->selected_id);
+        state_entity_remove_id(app_data->selected_id);
         app_data->selected_id = -1;
       }
       if (nk_button_label(ctx, "duplicate"))
       {
-        int id = state_entity_duplicate(app_data->selected_id, VEC3_XYZ(2, 0, 0));
+        int id = state_entity_duplicate_id(app_data->selected_id, VEC3_XYZ(2, 0, 0));
         app_data->selected_id = id;
       }
       nk_layout_row_dynamic(ctx, 30, 1);

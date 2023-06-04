@@ -114,6 +114,8 @@ void app_init()
 
 void app_update()
 {
+  // toggle wireframe, esc to quit, etc.
+  programm_app_default_logic(core_data);
 
   // @TODO: this shows infront of gizmos
   //        also move to gizmo.c
@@ -147,23 +149,6 @@ void app_update()
   // @NOTE: sync selected with outline
   core_data->outline_id = app_data.selected_id;
 
-
-  // save map & terrain
-  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_S) && !core_data_is_play())
-  { 
-    save_sys_write_scene_to_file(SCENE_FILE_NAME); 
-    save_sys_write_terrain_to_file(TERRAIN_FILE_NAME); 
-    
-    GUI_INFO_STR_SET(&app_data, "saved");
-  }
- 
-  // toggle phys debug display, only works in play_mode as it happens in program_phys_sync
-  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_TAB) && core_data_is_play())
-  { core_data->phys_debug_act = !core_data->phys_debug_act; }
-
-  // toggle shadows
-  if (input_get_key_pressed(KEY_SPACE))
-  { core_data->show_shadows = !core_data->show_shadows; }
 
   // undo operation
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_Z) && !core_data_is_play())
@@ -199,37 +184,8 @@ void app_update()
     // duplicate with 'ctrl + d'
   if (app_data.selected_id >= 0 && input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_D))
   {
-    int id = state_entity_duplicate(app_data.selected_id, VEC3_XYZ(2, 0, 0));
+    int id = state_entity_duplicate_id(app_data.selected_id, VEC3_XYZ(2, 0, 0));
     app_data.selected_id = id;
-  }
- 
-  // toggle wireframe, ctrl+tab is toggle phys display
-  if (input_get_key_pressed(KEY_WIREFRAME_TOGGLE) && !input_get_key_down(KEY_LEFT_CONTROL))
-	{
-		app_data.wireframe_act = !app_data.wireframe_act;
-		core_data->wireframe_mode_enabled = app_data.wireframe_act;
-	}
-
-  if (input_get_key_pressed(KEY_TOGGLE_FULLSCREEN))
-  {
-    window_type type = window_get_mode();
-    
-    P_WINDOW_TYPE(type); 
-    
-    // @NOTE: min -> max -> full
-    type = type == WINDOW_MIN ? WINDOW_MAX : type == WINDOW_MAX ? WINDOW_FULL : WINDOW_MAX;
-    
-    P_WINDOW_TYPE(type); 
-    P("------------");
-
-    window_set_mode(type);
-  }
-
-  if (input_get_key_pressed(KEY_EXIT))
-  {
-    if (core_data->scripts_act || core_data->phys_act)
-    { core_data_pause(); } // { core_data->scripts_act = false;  core_data->phys_act = false; }
-    else { program_quit(); }
   }
 
 }
