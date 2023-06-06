@@ -133,9 +133,12 @@ void gui_update()
   
   // windows ------------------------------------------------------------------------------------------
 
-  gui_top_bar_win();
+  if (!core_data_is_play())
+  {
+    gui_top_bar_win();
+    gui_template_browser_win();
+  }
   gui_properties_win();
-  gui_template_browser_win();
  
   // --- external ---
   
@@ -148,7 +151,8 @@ void gui_update()
                                     (struct_browser_win_ratio.y * h) + top_bar_win_rect.h, 
                                     (struct_browser_win_ratio.w * w), 
                                     (struct_browser_win_ratio.h * h) - h_correct);
-  gui_struct_browser_win(ctx, struct_browser_win_rect, window_min_flags);
+  if (!core_data_is_play())
+  { gui_struct_browser_win(ctx, struct_browser_win_rect, window_min_flags); }
 
   // --- optional ---
 

@@ -8,6 +8,9 @@
 // empty_callback** custom_arr = NULL;
 // int              custom_arr_len = 0;
 
+play_state_callback**     play_state_arr = NULL;
+int                       play_state_arr_len = 0;
+
 phys_collision_callback** phys_collision_arr = NULL;
 int                       phys_collision_arr_len = 0;
 phys_trigger_callback**   phys_trigger_arr = NULL;
@@ -22,12 +25,22 @@ int                      ent_parented_arr_len = 0;
 ent_parent_rm_callback** ent_parent_rm_arr = NULL;
 int                      ent_parent_rm_arr_len = 0;
 
+
+
 // // void event_sys_trigger_started_frame();          // @UNSURE: before each new frame 
 // 
 // void event_sys_trigger_finished_asset_loading();  // after all assets have been loaded
 // void event_sys_trigger_finished_setup();          // after the ´program starts outputing to the window
 // // void event_sys_trigger_finished_frame();         // @UNSURE: after each new frame 
-// 
+
+void event_sys_trigger_play_state(bool state)                     // on entity added to world
+{
+  for (int i = 0; i < play_state_arr_len; ++i)
+  {
+    play_state_arr[i](state);
+  }
+}
+
 void event_sys_trigger_entity_added(int id)                     // on entity added to world
 {
   for (int i = 0; i < ent_added_arr_len; ++i)
@@ -94,6 +107,12 @@ void event_sys_trigger_phys_trigger(int id_01, int id_02)       // on two entiti
 // void event_sys_register_finished_setup(empty_callback callback);
 // // void event_sys_register_finished_frame(empty_callback callback);        
 // 
+
+void event_sys_register_play_state(play_state_callback callback)
+{
+  arrput(play_state_arr, callback);
+  play_state_arr_len++;
+}
 
 void event_sys_register_entity_added(ent_added_callback callback)
 {

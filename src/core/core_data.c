@@ -1,5 +1,6 @@
 #include "core/core_data.h"
 #include "core/window.h"
+#include "core/event_sys.h"
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
 #include "core/debug/debug_opengl.h"
@@ -59,6 +60,8 @@ void core_data_play()
 #if EDITOR
   save_sys_write_scene_to_state_buffer();
 #endif
+
+  event_sys_trigger_play_state(true);
 }
 
 void core_data_play_scripts()
@@ -71,6 +74,8 @@ void core_data_play_scripts()
 #if EDITOR
   save_sys_write_scene_to_state_buffer();
 #endif
+  
+  event_sys_trigger_play_state(true);
 }
 
 void core_data_play_phys()
@@ -83,6 +88,8 @@ void core_data_play_phys()
 #if EDITOR
   save_sys_write_scene_to_state_buffer();
 #endif
+
+  event_sys_trigger_play_state(true);
 }
 
 void core_data_pause()
@@ -95,6 +102,8 @@ void core_data_pause()
 #if EDITOR
   save_sys_load_scene_from_state_buffer();
 #endif
+
+  event_sys_trigger_play_state(false);
 }
 
 bool core_data_is_play_func() { return core_data.phys_act || core_data.scripts_act; }

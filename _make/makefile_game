@@ -7,7 +7,8 @@
 #  -DEDITOR: compile with editor
 #  -fcommon: ignore duplicate variable definitions
 #  -DDEBUG_TIMER -DDEBUG_DRAW -DPHYS_DEBUG -DINCLUDE_PLAY_MODE
-CC         = @gcc -g -Wall -DASSETM_NO_ZIP -DASSET_PATH=\"$(ASSET_PATH)\"
+# CC         = @gcc -g -Wall -DASSETM_NO_ZIP -DASSET_PATH=\"$(ASSET_PATH)\" -DDEBUG_TIMER -DDEBUG_TIMER_PRINT -DDEBUG_DRAW -DPHYS_DEBUG
+CC         = @gcc -g -Wall -DASSETM_NO_ZIP -DASSET_PATH=\"$(ASSET_PATH)\" -DDEBUG_DRAW -DPHYS_DEBUG
 CC_NO_WARN = @gcc
 
 BUILD_DIR = ..\_build

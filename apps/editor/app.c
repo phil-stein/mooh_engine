@@ -4,6 +4,7 @@
 #include "editor/terrain_edit.h"
 #include "editor/stylesheet.h"
 #include "editor/operation.h"
+#include "editor/editor_save.h"
 #include "core/program.h"
 #include "core/core_data.h"
 #include "core/input.h"
@@ -63,8 +64,7 @@ int main(void)
 void app_init()
 {
   core_data = core_data_get();
-
-
+  
   // -- scene --
   const char scene_name[] =  "test.scene";
   // const char scene_name[] =  "empty.scene";
@@ -78,6 +78,7 @@ void app_init()
   event_sys_register_entity_removed(app_entity_removed_callback);
 
   TIMER_FUNC_STATIC(gui_init());
+  editor_save_init();
   
   // -- terrain --
   // TIMER_FUNC_STATIC(save_sys_load_terrain_from_file("test.terrain"));
@@ -143,7 +144,7 @@ void app_update()
   GIZMO_MODEL_POS(&app_data, model, display_model, pos);
   TIMER_FUNC(renderer_extra_draw_scene_mouse_pick(display_model)); 
   TIMER_FUNC(gui_update());
-  TIMER_FUNC(gizmo_update());
+  if(!core_data_is_play()) { TIMER_FUNC(gizmo_update()); }
   TIMER_FUNC(terrain_edit_update());
 
   // @NOTE: sync selected with outline

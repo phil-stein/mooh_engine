@@ -39,11 +39,11 @@ main resources:
   - *graphics*
     - [blending](#renderer)
     - [cascaded shadows](#renderer)
-    - [particle system](#base)
-    - [trail renderer](#base)
     - [ssao](#renderer)
     - [aa](#renderer)
     - [bloom](#renderer)
+    - [particle system](#base)
+    - [trail renderer](#base)
   - *advanced*
     - [physics engine](#physics engine)
     - [chunking for ents/phys_objs](#optimizations) 
@@ -121,6 +121,8 @@ main resources:
     - [ ] maybe check if folder build_01 exist and name build_02, etc.
     - [ ] put date in folder / exe name or .txt file or some
   - [ ] seperate save_sys.c into terrain & entities
+  - [ ] program_app_default_logic() -> cant do debug stuff in game
+    - setting defines in makefile gives error
   - [ ] implement glfw opengl debug context, learnopengl page 439 ?
   - [ ] check shaders via reference compiler, page 444, debug_opengl.h
   - [ ] framebuffer debug, page 444, debug_opengl.h
@@ -147,6 +149,7 @@ main resources:
       INLINE state_entity_remove_id(int id) { state_entity_get(id); remove }
   - [ ] finish math_test.h `WIP`
   - [ ] make state.c world_arr & world_arr_len available in core_data as pointer
+  - [ ] move structure save/load from save_sys.c to editor_save.c ?
 
 ## tools
   - [ ] binary dump
@@ -207,7 +210,7 @@ main resources:
     - also on learnopengl
   - [ ] ssao
   - [ ] bloom
-  - [ ] custom anti aliasing
+  - [ ] custom anti aliasing, i.e. fxaa
     - [x] try built in again 
       - dont work, white around objs
   - [ ] water 
@@ -229,6 +232,8 @@ main resources:
   - [ ] undo `WIP`
     - [ ] keep track of changes
   - [ ] redo
+  - [x] deselect on play, reselect after
+    - save custom editor info to file 
 
 ## physics engine
   - [x] sphere

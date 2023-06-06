@@ -5,6 +5,7 @@
 
 
 // empty_callback in global.h
+typedef void (play_state_callback)(bool state);
 typedef void (ent_added_callback)(int id);
 typedef void (ent_removed_callback)(int id);
 typedef void (ent_parented_callback)(int parent, int child);
@@ -23,6 +24,11 @@ typedef void (phys_trigger_callback)(int id_01, int id_02);
 // void event_sys_trigger_finished_asset_loading();  // after all assets have been loaded
 // void event_sys_trigger_finished_setup();          // after the ´program starts outputing to the window
 // void event_sys_trigger_finished_frame();         // @UNSURE: after each new frame 
+
+// @DOC: calls all functions registered under event_sys_register_play_state
+//       ! used internally
+//       state: true -> play, false -> pause
+void event_sys_trigger_play_state(bool state);
 
 // @DOC: calls all functions registered under event_sys_register_entity_added
 //       ! used internally
@@ -65,7 +71,11 @@ void event_sys_trigger_phys_trigger(int id_01, int id_02);       // on two entit
 // void event_sys_register_finished_setup(empty_callback callback);
 // // void event_sys_register_finished_frame(empty_callback callback); // @UNSURE: 
 
-// @DOC: register a function to be called when an entity is added 
+// @DOC: register a function to be called when the play state is changed, play / pause 
+//       callback: function pointer to the func
+void event_sys_register_play_state(play_state_callback callback);
+
+  // @DOC: register a function to be called when an entity is added 
 //       callback: function pointer to the func
 void event_sys_register_entity_added(ent_added_callback callback);
 // @DOC: register a function to be called when an entity is removed
