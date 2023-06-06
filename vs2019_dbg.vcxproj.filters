@@ -141,6 +141,12 @@
     <ClCompile Include="apps\editor\gui\gui_struct_browser.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="apps\editor\editor_save.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="apps\editor\operation.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\debug\debug_draw.h">
@@ -306,6 +312,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="apps\editor\gui\gui_style.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\editor_save.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="apps\editor\operation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
