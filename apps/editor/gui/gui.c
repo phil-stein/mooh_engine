@@ -121,7 +121,6 @@ void gui_init()
   // P_NK_COLOR(ctx->style.button.text_active);
   // P_NK_COLOR(ctx->style.button.text_hover); 
   // P_NK_COLOR(ctx->style.button.text_normal);
-
 }
 
 void gui_update()
