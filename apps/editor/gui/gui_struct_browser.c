@@ -51,7 +51,7 @@ void gui_struct_browser_win(ui_context* _ctx, ui_rect win_rect, const u32 win_fl
   }
   nk_end(ctx);
 
-  
+  // collapse / minimize by default  
   static bool first_frame = true;
   if (first_frame)
   {

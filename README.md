@@ -34,6 +34,7 @@ main resources:
     - [multithreading](#multithreading) `WIP` 
     - [batch renderer](#optimizations) `WIP`
   - *base*
+  - [ui (mui)](#in-game ui)
   - *editor*
     - [undo/redo](#level editor) `WIP`
   - *graphics*

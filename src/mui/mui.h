@@ -1,0 +1,24 @@
+#ifndef MUI_MUI_H
+#define MUI_MUI_H
+
+#include "global/global.h"
+
+typedef struct
+{
+  rgb color_text;
+  rgb color_bg;   // idk some like dis
+
+}mui_data;
+
+void mui_quad(ivec2 pos, vec2 size, rgb color);
+void mui_quad_textured(ivec2 pos, vec2 size, texture_t* tex);
+void mui_quad_textured_tint(ivec2 pos, vec2 size, texture_t* tex, rgb tint);
+
+void mui_text(ivec2 pos, ... txt);
+void mui_text(ivec2 pos, ... txt, rgb color);
+
+
+void mui_space();
+void mui_group();
+
+#endif  // MUI_MUI_H
