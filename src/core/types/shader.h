@@ -62,6 +62,7 @@ shader_t shader_create_from_file_tesselation(const char* vert_path, const char* 
 // @DOC: activate / use the shader 
 //       s: shader to be activated
 void shader_use(shader_t* s);
+void shader_use_handle(u32 handle);
 
 // @DOC: "free's" the shader program
 //       !!! only deletes the opngl handle not the name, etc.
@@ -79,6 +80,7 @@ void shader_set_bool(shader_t* s, const char* name, int value);
 //       name:  name of uniform variable
 //       value: value to be set
 void shader_set_int(shader_t* s, const char* name, int value);
+void shader_set_int_handle(u32 handle, const char* name, int value);
 // @DOC: set a float in the shader
 //       s:     shader 
 //       name:  name of uniform variable
@@ -95,6 +97,7 @@ void shader_set_vec2_f(shader_t* s, const char* name, f32 x, f32 y);
 //       name:  name of uniform variable
 //       v:     vec2
 void shader_set_vec2(shader_t* s, const char* name, vec2 v);
+void shader_set_vec2_handle(u32 handle, const char* name, vec2 v);
 // @DOC: set a vec3 in the shader, via floats
 //       s:     shader 
 //       name:  name of uniform variable
@@ -107,6 +110,7 @@ void shader_set_vec3_f(shader_t* s, const char* name, f32 x, f32 y, f32 z);
 //       name:  name of uniform variable
 //       v:     vec3
 void shader_set_vec3(shader_t* s, const char* name, vec3 v);
+void shader_set_vec3_handle(u32 handle, const char* name, vec3 v);
 // @DOC: set a matrix 4x4 in the shader, via mat4 float[][] array
 //       s:     shader 
 //       name:  name of uniform variable

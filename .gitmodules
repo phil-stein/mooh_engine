@@ -14,3 +14,6 @@
 [submodule "src/global"]
 	path = src/global
 	url = https://github.com/phil-stein/global
+[submodule "src/text"]
+	path = src/text
+	url = https://github.com/phil-stein/text.git

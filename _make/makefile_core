@@ -29,6 +29,8 @@ CORE_IO_DIR 			= $(SRC_DIR)/core/io
 DATA_DIR  		 		= $(SRC_DIR)/data
 PHYS_DIR  		 		= $(SRC_DIR)/phys
 SERIALIZATION_DIR = $(SRC_DIR)/serialization
+TEXT_DIR  		 		= $(SRC_DIR)/text
+MUI_DIR  		 			= $(SRC_DIR)/mui
 
 EXTERNAL_DIR = ../_external
 
@@ -75,6 +77,13 @@ _OBJS += 							\
 # serialization
 _OBJS += 							\
 	serialization.o
+# text
+_OBJS += 							\
+	text.o							\
+	text_draw.o					
+# mui
+_OBJS += 							\
+	mui.o
 
 
 # put the OBJ_DIR in front of the obj names
@@ -82,8 +91,9 @@ OBJS = $(patsubst %,$(OBJ_DIR)/%,$(_OBJS))
 OBJS_WIN = $(patsubst %,$(OBJ_DIR)\\%,$(_OBJS))
 
 
-_LIBS = 						\
-	_mooh_data
+_LIBS = 			\
+	_mooh_data	\
+	freetype
 
 #glfw3dll 					
 
@@ -92,10 +102,14 @@ LIBS     = $(patsubst %,-l %,$(_LIBS))
 
 _INC = 							  				\
 		$(EXTERNAL_DIR)	  				\
+		$(EXTERNAL_DIR)/FREETYPE 	\
  		$(SRC_DIR)								\
 		$(DATA_DIR)								\
 		$(PHYS_DIR)								\
-		$(APPS_DIR)
+		$(APPS_DIR)								\
+		$(TEXT_DIR)								\
+		$(MUI_DIR)
+
 INC = $(patsubst %,-I %,$(_INC))
 
 LIB_LINK = $(INC) -L $(LIB_DIR) $(LIBS) 
@@ -142,6 +156,14 @@ $(OBJ_DIR)/%.o: $(PHYS_DIR)/%.c
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 
 $(OBJ_DIR)/%.o: $(SERIALIZATION_DIR)/%.c
+	@echo $< -> $@	
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
+
+$(OBJ_DIR)/%.o: $(TEXT_DIR)/%.c
+	@echo $< -> $@	
+	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
+
+$(OBJ_DIR)/%.o: $(MUI_DIR)/%.c
 	@echo $< -> $@	
 	$(CC) $(CC_ARGS) -c $< -o $@ $(INC)
 

@@ -484,6 +484,10 @@ void shader_use(shader_t* s)
 {
   _glUseProgram(s->handle);
 }
+void shader_use_handle(u32 handle)
+{
+  _glUseProgram(handle);
+}
 void shader_delete(shader_t* s)
 {
 	_glDeleteProgram(s->handle);
@@ -500,6 +504,10 @@ void shader_set_int(shader_t* s, const char* name, int value)
 {
 	_glUniform1i(glGetUniformLocation(s->handle, name), value);
 }
+void shader_set_int_handle(u32 handle, const char* name, int value)
+{
+	_glUniform1i(glGetUniformLocation(handle, name), value);
+}
 // set a float in the shader
 void shader_set_float(shader_t* s, const char* name, f32 value)
 {
@@ -515,6 +523,10 @@ void shader_set_vec2(shader_t* s, const char* name, vec2 v)
 {
 	_glUniform2f(glGetUniformLocation(s->handle, name), v[0], v[1]);
 }
+void shader_set_vec2_handle(u32 handle, const char* name, vec2 v)
+{
+	_glUniform2f(glGetUniformLocation(handle, name), v[0], v[1]);
+}
 // set a vec3 in the shader
 void shader_set_vec3_f(shader_t* s, const char* name, f32 x, f32 y, f32 z)
 {
@@ -524,6 +536,10 @@ void shader_set_vec3_f(shader_t* s, const char* name, f32 x, f32 y, f32 z)
 void shader_set_vec3(shader_t* s, const char* name, vec3 v)
 {
 	_glUniform3f(glGetUniformLocation(s->handle, name), v[0], v[1], v[2]);
+}
+void shader_set_vec3_handle(u32 handle, const char* name, vec3 v)
+{
+	_glUniform3f(glGetUniformLocation(handle, name), v[0], v[1], v[2]);
 }
 // set a matrix 4x4 in the shader
 void shader_set_mat4(shader_t* s, const char* name, mat4 value)

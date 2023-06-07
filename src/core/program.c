@@ -18,6 +18,7 @@
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
 #include "phys/phys_debug_draw.h"
+#include "mui/mui.h"
 
 // order is important, io_util & str_util before global
 #define IO_UTIL_IMPLEMENTATION  // only define once
@@ -83,7 +84,10 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());
+  TIMER_FUNC_STATIC(mui_init());
+
 	TIMER_FUNC_STATIC(init_f());     // init callback
+  
   TIMER_FUNC_STATIC(debug_draw_init());
   
   TIMER_FUNC_STATIC(phys_init(event_sys_trigger_phys_collision, event_sys_trigger_phys_trigger)); 
