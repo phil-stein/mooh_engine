@@ -38,8 +38,8 @@ void mui_init()
  
   char* path_relative = "fonts/JetBrainsMonoNL-Regular.ttf";
   // char* path = "JetBrains Mono NL Regular Nerd Font Complete Mono Windows Compatible.ttf"; // dont work
-  // char* path = "_assets/fonts/Raleway-Bold.ttf"; // dont work
-  // char* path = "_assets/fonts/Roboto-Bold.ttf"; // dont work
+  // char* path = "fonts/Raleway-Bold.ttf"; // dont work
+  // char* path = "fonts/Roboto-Bold.ttf"; // dont work
   char path_0[256];
   SPRINTF(256, path_0, "%s%s", core_data->asset_path, path_relative);
   P_STR(path_0);
@@ -93,5 +93,29 @@ void mui_init()
   P_F32(dpi_y);
 }
 
+void mui_update()
+{
+  int w, h;
+  window_get_size(&w, &h);
+
+  #define STATUS_MAX 512
+  int status[STATUS_MAX] = { ':', ')' };
+  int _status[STATUS_MAX];
+  static int status_pos = 0;
+  int _status_pos = status_pos;
+  for (int i = 0; i < status_pos; ++i) { _status[i] = status[i]; }
+  { 
+    _status[_status_pos++] = ' '; _status[_status_pos++] = '[';
+    _status[_status_pos++] = 'c'; _status[_status_pos++] = 'm';
+    _status[_status_pos++] = 'd'; _status[_status_pos++] = ']';
+  }
+  vec2 status_pos_v = { (2*w) - font_main->gw * (_status_pos +4), -h * 2 + font_main->gh * 2 };
+  status_pos_v[0] -= font_main->gw * 1;
+  status_pos_v[1] -= font_main->gh * 0.55f;
+  // text_draw_quad(status_pos, VEC2_XY(font_main->gw * (_status_pos +4), font_main->gh * 2), RGB_F(0.2f, 0.2f, 0.25f));
+  status_pos_v[0] += font_main->gw * 1;
+  status_pos_v[1] += font_main->gh * 0.55f;
+  text_draw_line(status_pos_v, _status, _status_pos, font_main);
+}
 
 

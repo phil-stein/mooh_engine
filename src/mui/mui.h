@@ -18,6 +18,7 @@ typedef struct
 
 // void mui_init(mui_quad_callback quad_f, mui_quad_textured_f quad_tex_f, 
 void mui_init();
+void mui_update();
 
 void mui_quad(ivec2 pos, vec2 size, rgb color);
 void mui_quad_textured(ivec2 pos, vec2 size, texture_t* tex);

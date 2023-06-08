@@ -143,6 +143,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
 #ifdef EDITOR
     }
 #endif
+		TIMER_FUNC(mui_update());
     
     TIMER_FUNC(debug_draw_update());
 		TIMER_FUNC(input_update());
