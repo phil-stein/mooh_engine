@@ -163,7 +163,14 @@ void app_update()
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_Z) && !core_data_is_play())
   { operation_reverse(); }
   
-  // @TODO: flickers first frame
+  // stop / pause pla-mode
+  if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_SPACE))
+  {
+    if (core_data_is_play()) { core_data_pause(); }
+    else                     { core_data_play();  }
+  }
+  
+    // @TODO: flickers first frame
   static bool start = true;
   if (!app_data.mouse_over_ui && input_get_mouse_down(KEY_MOUSE_MOVE_START))
   {

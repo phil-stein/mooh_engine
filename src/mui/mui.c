@@ -99,23 +99,36 @@ void mui_update()
   window_get_size(&w, &h);
 
   #define STATUS_MAX 512
-  int status[STATUS_MAX] = { ':', ')' };
-  int _status[STATUS_MAX];
-  static int status_pos = 0;
-  int _status_pos = status_pos;
-  for (int i = 0; i < status_pos; ++i) { _status[i] = status[i]; }
-  { 
-    _status[_status_pos++] = ' '; _status[_status_pos++] = '[';
-    _status[_status_pos++] = 'c'; _status[_status_pos++] = 'm';
-    _status[_status_pos++] = 'd'; _status[_status_pos++] = ']';
-  }
-  vec2 status_pos_v = { (2*w) - font_main->gw * (_status_pos +4), -h * 2 + font_main->gh * 2 };
+  int status[STATUS_MAX] = { 'h', 'e', 'l', 'l', 'o', ' ', ':', ')'};
+  int pos = 8;
+  vec2 status_pos_v = { (2*w) - font_main->gw * (pos +4), -h * 2 + font_main->gh * 2 };
   status_pos_v[0] -= font_main->gw * 1;
   status_pos_v[1] -= font_main->gh * 0.55f;
   // text_draw_quad(status_pos, VEC2_XY(font_main->gw * (_status_pos +4), font_main->gh * 2), RGB_F(0.2f, 0.2f, 0.25f));
   status_pos_v[0] += font_main->gw * 1;
   status_pos_v[1] += font_main->gh * 0.55f;
-  text_draw_line(status_pos_v, _status, _status_pos, font_main);
+  text_draw_line(status_pos_v, status, pos, font_main);
+  P_VEC2(status_pos_v);
 }
 
+#define TEXT_BUFFER_MAX 512
+int text_buffer[TEXT_BUFFER_MAX];
+int text_buffer_pos = 0;
+
+void mui_text(vec2 pos, char* text)
+{
+  int len = strlen(text);
+  ERR_CHECK(len < TEXT_BUFFER_MAX, "text too long for buffer size");
+  
+  // convert to int array
+  text_buffer_pos = 0;
+  for (u32 i = 0; i < len; ++i)
+  { text_buffer[text_buffer_pos++] = (int)text[i]; }
+
+  // adjust height and width
+  pos[1] *= -1.0f;
+  pos[1] -= font_main->gh;  // * 0.55f;
+
+  text_draw_line(pos, text_buffer, len, font_main);
+}
 

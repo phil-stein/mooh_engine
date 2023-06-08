@@ -9,6 +9,7 @@
 #include "core/io/save_sys.h"
 #include "core/debug/debug_draw.h"
 #include "math/math_inc.h"
+#include "mui/mui.h"
 
 #include "stb/stb_ds.h"
 
@@ -28,6 +29,16 @@ void player_init(entity_t* this)
 }
 void player_update(entity_t* this, f32 dt)
 {
+  // - mui test -
+  
+  mui_text(VEC2_XY(0, 0), "(0, 0)");
+  mui_text(VEC2_XY(10, 10), "(10, 10)");
+  mui_text(VEC2_XY(100, 100), "(100, 100)");
+  mui_text(VEC2_XY(1000, 1000), "(1000, 1000)");
+  mui_text(VEC2_XY(2000, 2000), "(2000, 2000)");
+
+  // - physics test -
+
   //  @NOTE: moving object with physics
   f32 speed      = 500.0f * dt;
   f32 jump_force = 600.0f * 80.0f * dt;
