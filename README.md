@@ -44,7 +44,7 @@ main resources:
     - [aa](#renderer)
     - [bloom](#renderer)
     - [particle system](#base)
-    - [trail renderer](#base)
+    - [trail renderer](#base) `WIP`
   - *advanced*
     - [physics engine](#physics engine)
     - [chunking for ents/phys_objs](#optimizations) 
@@ -319,7 +319,7 @@ main resources:
     - [ ] centered
     - [ ] left / right
     - [ ] up / down
-  - [ ] text (already wrote lib)
+  - [x] text (already wrote lib)
 
 ## game design
   - [ ] game design doc

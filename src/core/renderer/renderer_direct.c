@@ -17,6 +17,7 @@ void renderer_direct_init()
 
 void renderer_direct_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color)
 {
+  // glDisable(GL_DEPTH_TEST);
 	// ---- mvp ----
 	
 	mat4 model;

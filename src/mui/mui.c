@@ -107,13 +107,13 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   ERR_CHECK(len < TEXT_BUFFER_MAX, "text too long for buffer size");
  
   // P_TEXT_ORIENTATION(orientation);
-  ERR_CHECK(!(HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_MIDDLE) ||
-              HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_DOWN)   ||
-              HAS_FLAG(orientation, TEXT_MIDDLE) && HAS_FLAG(orientation, TEXT_DOWN)),
+  ERR_CHECK(!((HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_MIDDLE)) ||
+              (HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_DOWN))   ||
+              (HAS_FLAG(orientation, TEXT_MIDDLE) && HAS_FLAG(orientation, TEXT_DOWN))),
               "can only have one of TEXT_UP, TEXT_MIDDLE or TEXT_DOWN");
-  ERR_CHECK(!(HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_CENTER) ||
-              HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_RIGHT)  ||
-              HAS_FLAG(orientation, TEXT_CENTER) && HAS_FLAG(orientation, TEXT_RIGHT)),
+  ERR_CHECK(!((HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_CENTER)) ||
+              (HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_RIGHT))  ||
+              (HAS_FLAG(orientation, TEXT_CENTER) && HAS_FLAG(orientation, TEXT_RIGHT))),
               "can only have one of TEXT_LEFT, TEXT_CENTER or TEXT_RIGHT");
 
   // convert to int array
@@ -130,33 +130,41 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   pos[1] *= -1.0f;
   pos[1] -= font_main->gh;
   
-  if (HAS_FLAG(orientation, TEXT_LEFT))
-  {
-    // pos[1] *= -1.0f;
-    // pos[1] -= font_main->gh;  // * 0.55f;
-  }
-  else if (HAS_FLAG(orientation, TEXT_RIGHT))
+  // if (HAS_FLAG(orientation, TEXT_LEFT))
+  // {
+  // }
+  // else 
+  if (HAS_FLAG(orientation, TEXT_RIGHT))
   {
     pos[0] -= font_main->gw * len;
   }
   else if (HAS_FLAG(orientation, TEXT_CENTER)) 
   { pos[0] -= font_main->gw * len * 0.5f; }
 
-  if(!HAS_FLAG(orientation, TEXT_UP) && !HAS_FLAG(orientation, TEXT_DOWN))
+  // if no flag
+  if(!HAS_FLAG(orientation, TEXT_UP) && !HAS_FLAG(orientation, TEXT_MIDDLE) && 
+     !HAS_FLAG(orientation, TEXT_DOWN))
   { orientation |= TEXT_UP; }
 
-  if (HAS_FLAG(orientation, TEXT_UP))
+  // if (HAS_FLAG(orientation, TEXT_UP))
+  // {
+  // }
+  if (HAS_FLAG(orientation, TEXT_DOWN))
   {
     pos[1] -= font_main->gh;  // * 0.55f;
   }
-  if (HAS_FLAG(orientation, TEXT_DOWN))
-  {
-  }
-  if (HAS_FLAG(orientation, TEXT_MIDDLE))
+  else if (HAS_FLAG(orientation, TEXT_MIDDLE))
   {
     pos[1] -= font_main->gh * 0.5f;  
   }
 
   text_draw_line(pos, text_buffer, len, font_main);
 }
+
+void mui_img(vec2 pos, vec2 size, u32 tex, rgbf tint)
+{ text_draw_img(pos, size, tex, tint); }
+void mui_quad(vec2 pos, vec2 size, rgbf color)
+// { text_draw_quad(pos, size, color); }
+{ renderer_direct_draw_quad(VEC3_XYZ(0, 0, 10), pos,  size, color); }
+
 
