@@ -2,7 +2,8 @@
 #include "core/window.h"
 #include "core/io/assetm.h"
 #include "core/types/shader.h"
-#include "text/text_inc.h""
+#include "core/core_data.h"
+#include "text/text_inc.h"
 
 // #include <ctype.h>
 // #include <direct.h>
@@ -23,36 +24,50 @@ font_t font_l = FONT_INIT();
 
 font_t* font_main;
 
+static core_data_t* core_data = NULL;
+
 void mui_init()
 {
+  core_data = core_data_get();
   // char* _cwd = _getcwd(NULL, 0);
   // ASSERT(_cwd != NULL);
   // strcpy(cwd, _cwd);
   // P_STR(cwd);
   
   // ---- text init ---
-  
-  char* path = "assets/fonts/JetBrainsMonoNL-Regular.ttf";
+ 
+  char* path_relative = "fonts/JetBrainsMonoNL-Regular.ttf";
   // char* path = "JetBrains Mono NL Regular Nerd Font Complete Mono Windows Compatible.ttf"; // dont work
-  // char* path = "assets/fonts/Raleway-Bold.ttf"; // dont work
-  // char* path = "assets/fonts/Roboto-Bold.ttf"; // dont work
-  
-  text_load_font(path, font_size + FONT_X_SIZE_DIF, &font_x);
-  text_load_font(path, font_size + FONT_S_SIZE_DIF, &font_s);
-  text_load_font(path, font_size + FONT_M_SIZE_DIF, &font_m);
-  text_load_font(path, font_size + FONT_L_SIZE_DIF, &font_l);
+  // char* path = "_assets/fonts/Raleway-Bold.ttf"; // dont work
+  // char* path = "_assets/fonts/Roboto-Bold.ttf"; // dont work
+  char path_0[256];
+  SPRINTF(256, path_0, "%s%s", core_data->asset_path, path_relative);
+  P_STR(path_0);
+
+  text_load_font(path_0, font_size + FONT_X_SIZE_DIF, &font_x);
+  text_load_font(path_0, font_size + FONT_S_SIZE_DIF, &font_s);
+  text_load_font(path_0, font_size + FONT_M_SIZE_DIF, &font_m);
+  text_load_font(path_0, font_size + FONT_L_SIZE_DIF, &font_l);
 
   font_main     = &font_m;
     
+  char path_1[256];
+  SPRINTF(256, path_0, "%s%s", core_data->asset_path, "shaders/text/text.vert");
+  SPRINTF(256, path_1, "%s%s", core_data->asset_path, "shaders/text/text.frag");
+  P_STR(path_0);
+  P_STR(path_1);
   bool err = false;
-  u32 text_shader = shader_create("_assets/shaders/text.vert", 
-					                        "_assets/shaders/text.frag", 
-					                        "text_shader", &err);
+  // u32 text_shader = shader_create(path_0, path_1, "text_shader", &err);
+  shader_t _text_shader = shader_create_from_file(path_0, path_1, NULL, "text_shader");
+  u32       text_shader = _text_shader.handle;
+  // u32 text_shader = shader_create("_assets/shaders/text.vert", 
+	// 				                        "_assets/shaders/text.frag", 
+	// 				                        "text_shader", &err);
   ASSERT(!err);
   // u32 img_shader  = shader_create(ASSET_PATH"shaders/text.vert", 
 	// 				                        ASSET_PATH"shaders/text.frag", 
 	// 				                        "text_shader", &err);
-  u32 blank_tex   = assetm_get_texture("blank.png", true)->handle;
+  u32 blank_tex   = assetm_get_texture("#internal/blank.png", true)->handle;
     
   text_draw_init(font_main, 
                  text_shader, text_shader, 

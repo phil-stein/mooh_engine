@@ -51,7 +51,8 @@ _LIBS = 						\
 	gdi32							\
 	user32						\
 	kernel32					\
-	opengl32					
+	opengl32					\
+	freetype
 
 LIBS     = $(patsubst %,-l %,$(_LIBS))
 
