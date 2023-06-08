@@ -24,6 +24,10 @@ font_t font_l = FONT_INIT();
 
 font_t* font_main;
 
+#define TEXT_BUFFER_MAX 512
+int text_buffer[TEXT_BUFFER_MAX];
+int text_buffer_pos = 0;
+
 static core_data_t* core_data = NULL;
 
 void mui_init()
@@ -95,39 +99,63 @@ void mui_init()
 
 void mui_update()
 {
-  int w, h;
-  window_get_size(&w, &h);
-
-  #define STATUS_MAX 512
-  int status[STATUS_MAX] = { 'h', 'e', 'l', 'l', 'o', ' ', ':', ')'};
-  int pos = 8;
-  vec2 status_pos_v = { (2*w) - font_main->gw * (pos +4), -h * 2 + font_main->gh * 2 };
-  status_pos_v[0] -= font_main->gw * 1;
-  status_pos_v[1] -= font_main->gh * 0.55f;
-  // text_draw_quad(status_pos, VEC2_XY(font_main->gw * (_status_pos +4), font_main->gh * 2), RGB_F(0.2f, 0.2f, 0.25f));
-  status_pos_v[0] += font_main->gw * 1;
-  status_pos_v[1] += font_main->gh * 0.55f;
-  text_draw_line(status_pos_v, status, pos, font_main);
-  P_VEC2(status_pos_v);
 }
 
-#define TEXT_BUFFER_MAX 512
-int text_buffer[TEXT_BUFFER_MAX];
-int text_buffer_pos = 0;
-
-void mui_text(vec2 pos, char* text)
+void mui_text(vec2 pos, char* text, text_orientation orientation)
 {
   int len = strlen(text);
   ERR_CHECK(len < TEXT_BUFFER_MAX, "text too long for buffer size");
-  
+ 
+  // P_TEXT_ORIENTATION(orientation);
+  ERR_CHECK(!(HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_MIDDLE) ||
+              HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_DOWN)   ||
+              HAS_FLAG(orientation, TEXT_MIDDLE) && HAS_FLAG(orientation, TEXT_DOWN)),
+              "can only have one of TEXT_UP, TEXT_MIDDLE or TEXT_DOWN");
+  ERR_CHECK(!(HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_CENTER) ||
+              HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_RIGHT)  ||
+              HAS_FLAG(orientation, TEXT_CENTER) && HAS_FLAG(orientation, TEXT_RIGHT)),
+              "can only have one of TEXT_LEFT, TEXT_CENTER or TEXT_RIGHT");
+
   // convert to int array
   text_buffer_pos = 0;
   for (u32 i = 0; i < len; ++i)
   { text_buffer[text_buffer_pos++] = (int)text[i]; }
 
   // adjust height and width
+  int w, h;
+  window_get_size(&w, &h);
+  vec2_mul_f(pos, 2, pos);
+  
+  // flip y 
   pos[1] *= -1.0f;
-  pos[1] -= font_main->gh;  // * 0.55f;
+  pos[1] -= font_main->gh;
+  
+  if (HAS_FLAG(orientation, TEXT_LEFT))
+  {
+    // pos[1] *= -1.0f;
+    // pos[1] -= font_main->gh;  // * 0.55f;
+  }
+  else if (HAS_FLAG(orientation, TEXT_RIGHT))
+  {
+    pos[0] -= font_main->gw * len;
+  }
+  else if (HAS_FLAG(orientation, TEXT_CENTER)) 
+  { pos[0] -= font_main->gw * len * 0.5f; }
+
+  if(!HAS_FLAG(orientation, TEXT_UP) && !HAS_FLAG(orientation, TEXT_DOWN))
+  { orientation |= TEXT_UP; }
+
+  if (HAS_FLAG(orientation, TEXT_UP))
+  {
+    pos[1] -= font_main->gh;  // * 0.55f;
+  }
+  if (HAS_FLAG(orientation, TEXT_DOWN))
+  {
+  }
+  if (HAS_FLAG(orientation, TEXT_MIDDLE))
+  {
+    pos[1] -= font_main->gh * 0.5f;  
+  }
 
   text_draw_line(pos, text_buffer, len, font_main);
 }
