@@ -27,6 +27,10 @@ void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, 
 	
 	mat4 model;
 	mat4_make_model_2d(pos, size, 0.0f, model);
+	// mat4_make_model(VEC3_XYZ(pos[0], pos[1], 0), 
+  //                 VEC3_X(90),
+  //                 VEC3_XYZ(size[0], size[1], 0), 
+  //                 model);
 
 	mat4 view;
 	// mat4_lookat_2d(cam_pos, 10.0f, view);
@@ -46,7 +50,9 @@ void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, 
 	shader_set_mat4(&core_data->basic_shader, "view", view);
 	shader_set_mat4(&core_data->basic_shader, "proj", proj);
 
-	_glBindVertexArray(core_data->quad_vao);
+	// _glBindVertexArray(core_data->quad_vao);
+  mesh_t* mesh = assetm_get_mesh_by_idx(core_data->quad_mesh);
+	_glBindVertexArray(mesh->vao);
 	_glDrawArrays(GL_TRIANGLES, 0, 6);
 
 }

@@ -144,6 +144,7 @@ INLINE void core_data_init_renderer()
 
   // quad
   core_data.quad_mesh = assetm_get_mesh_idx("quad");
+  // core_data.quad_mesh = assetm_get_mesh_idx("quad_rotated");
  
   // line
   const f32 verts[] = 

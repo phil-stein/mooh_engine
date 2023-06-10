@@ -120,7 +120,7 @@ void app_update()
   int w, h;
   window_get_size(&w, &h);
   
-  // mui_text_l(VEC2_XY(0, 0), "(0, 0)");
+  // mui_text_l(VEC3_XY(0, 0), "(0, 0)");
   // mui_text_l(VEC2_XY(10, 10), "(10, 10)");
   // mui_text_l(VEC2_XY(100, 100), "(100, 100)");
   // mui_text_l(VEC2_XY(1000, 1000), "(1000, 1000)");
