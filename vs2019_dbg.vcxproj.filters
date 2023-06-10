@@ -147,6 +147,15 @@
     <ClCompile Include="apps\editor\operation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\text\text.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\text\text_draw.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mui\mui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\debug\debug_draw.h">
@@ -318,6 +327,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="apps\editor\operation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text\text.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text\text_codes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text\text_draw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text\text_edit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\text\text_inc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\mui\mui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

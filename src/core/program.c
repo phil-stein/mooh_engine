@@ -131,9 +131,10 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
     TIMER_FUNC(terrain_update());
     
     TIMER_FUNC(renderer_update());
-    
     TIMER_FUNC(update_f());   // update callback
+    
     TIMER_FUNC(state_update());
+		TIMER_FUNC(mui_update());
 #ifdef EDITOR
     if (core_data->phys_act)
     {
@@ -143,7 +144,6 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
 #ifdef EDITOR
     }
 #endif
-		TIMER_FUNC(mui_update());
     
     TIMER_FUNC(debug_draw_update());
 		TIMER_FUNC(input_update());

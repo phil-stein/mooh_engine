@@ -34,7 +34,7 @@ main resources:
     - [multithreading](#multithreading) `WIP` 
     - [batch renderer](#optimizations) `WIP`
   - *base*
-  - [ui (mui)](#in-game ui) `WIP`
+  - [ui (mui)](#in-game ui - mui) `WIP`
   - *editor*
     - [undo/redo](#level editor) `WIP`
   - *graphics*
@@ -310,7 +310,9 @@ main resources:
   - [ ] normals & tangents on edges
     - button in gui to calc for all chunks
 
-## in-game ui
+## in-game ui - mui
+  - [x] text (already wrote lib)
+  - mui_text_f(0.5f, 0.75f) funcs
   - hook rendering into core
   - [ ] draw quads 
     - [ ] scale with screen
@@ -319,7 +321,6 @@ main resources:
     - [ ] centered
     - [ ] left / right
     - [ ] up / down
-  - [x] text (already wrote lib)
 
 ## game design
   - [ ] game design doc

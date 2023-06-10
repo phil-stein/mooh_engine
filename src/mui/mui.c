@@ -40,13 +40,8 @@ void mui_init()
   
   // ---- text init ---
  
-  char* path_relative = "fonts/JetBrainsMonoNL-Regular.ttf";
-  // char* path = "JetBrains Mono NL Regular Nerd Font Complete Mono Windows Compatible.ttf"; // dont work
-  // char* path = "fonts/Raleway-Bold.ttf"; // dont work
-  // char* path = "fonts/Roboto-Bold.ttf"; // dont work
   char path_0[256];
-  SPRINTF(256, path_0, "%s%s", core_data->asset_path, path_relative);
-  P_STR(path_0);
+  SPRINTF(256, path_0, "%s%s", core_data->asset_path, "fonts/JetBrainsMonoNL-Regular.ttf");
 
   text_load_font(path_0, font_size + FONT_X_SIZE_DIF, &font_x);
   text_load_font(path_0, font_size + FONT_S_SIZE_DIF, &font_s);
@@ -58,8 +53,6 @@ void mui_init()
   char path_1[256];
   SPRINTF(256, path_0, "%s%s", core_data->asset_path, "shaders/text/text.vert");
   SPRINTF(256, path_1, "%s%s", core_data->asset_path, "shaders/text/text.frag");
-  P_STR(path_0);
-  P_STR(path_1);
   bool err = false;
   // u32 text_shader = shader_create(path_0, path_1, "text_shader", &err);
   shader_t _text_shader = shader_create_from_file(path_0, path_1, NULL, "text_shader");
@@ -87,14 +80,14 @@ void mui_init()
   // input_register_key_callback(app_key_callback);
   // input_register_utf8_callback(app_utf8_callback);
 
-  int w, h;
-  window_get_size(&w, &h);
-  P_INT(w);
-  P_INT(h);
-  float dpi_x, dpi_y;
-  window_get_monitor_dpi(&dpi_x, &dpi_y);
-  P_F32(dpi_x);
-  P_F32(dpi_y);
+  // int w, h;
+  // window_get_size(&w, &h);
+  // P_INT(w);
+  // P_INT(h);
+  // float dpi_x, dpi_y;
+  // window_get_monitor_dpi(&dpi_x, &dpi_y);
+  // P_F32(dpi_x);
+  // P_F32(dpi_y);
 }
 
 void mui_update()
@@ -130,14 +123,9 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   pos[1] *= -1.0f;
   pos[1] -= font_main->gh;
   
-  // if (HAS_FLAG(orientation, TEXT_LEFT))
-  // {
-  // }
-  // else 
+  // if (HAS_FLAG(orientation, TEXT_LEFT)) { }
   if (HAS_FLAG(orientation, TEXT_RIGHT))
-  {
-    pos[0] -= font_main->gw * len;
-  }
+  { pos[0] -= font_main->gw * len; }
   else if (HAS_FLAG(orientation, TEXT_CENTER)) 
   { pos[0] -= font_main->gw * len * 0.5f; }
 
@@ -146,25 +134,23 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
      !HAS_FLAG(orientation, TEXT_DOWN))
   { orientation |= TEXT_UP; }
 
-  // if (HAS_FLAG(orientation, TEXT_UP))
-  // {
-  // }
+  // if (HAS_FLAG(orientation, TEXT_UP)) {}
   if (HAS_FLAG(orientation, TEXT_DOWN))
-  {
-    pos[1] -= font_main->gh;  // * 0.55f;
-  }
+  { pos[1] -= font_main->gh; }
   else if (HAS_FLAG(orientation, TEXT_MIDDLE))
-  {
-    pos[1] -= font_main->gh * 0.5f;  
-  }
+  { pos[1] -= font_main->gh * 0.5f; }
 
   text_draw_line(pos, text_buffer, len, font_main);
 }
 
-void mui_img(vec2 pos, vec2 size, u32 tex, rgbf tint)
-{ text_draw_img(pos, size, tex, tint); }
+void mui_img(vec2 pos, vec2 size, texture_t* tex, rgbf tint)
+// { text_draw_img(pos, size, tex, tint); }
+{
+  // crashes here
+  // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, pos,  size, tex); 
+}
 void mui_quad(vec2 pos, vec2 size, rgbf color)
 // { text_draw_quad(pos, size, color); }
-{ renderer_direct_draw_quad(VEC3_XYZ(0, 0, 10), pos,  size, color); }
+{ renderer_direct_draw_quad(VEC2(0), 10.0f, pos,  size, color); }
 
 

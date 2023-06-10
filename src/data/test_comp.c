@@ -7,6 +7,7 @@
 #include "core/camera.h"
 #include "core/state.h"
 #include "core/window.h"
+#include "core/io/assetm.h"
 #include "core/io/save_sys.h"
 #include "core/debug/debug_draw.h"
 #include "math/math_inc.h"
@@ -30,27 +31,9 @@ void player_init(entity_t* this)
 }
 void player_update(entity_t* this, f32 dt)
 {
-  // - mui test -
-  int w, h;
-  window_get_size(&w, &h);
   
-  // mui_text_l(VEC2_XY(0, 0), "(0, 0)");
-  // mui_text_l(VEC2_XY(10, 10), "(10, 10)");
-  // mui_text_l(VEC2_XY(100, 100), "(100, 100)");
-  // mui_text_l(VEC2_XY(1000, 1000), "(1000, 1000)");
-  // mui_text_l(VEC2_XY(w / 2, h / 2), "(x, x)");
-  mui_text(VEC2_XY(w -10, h -50), "(x, x)", TEXT_RIGHT | TEXT_UP);
-  {
-    mui_text(VEC2_XY(w/2, h/2), "(right|up)",     TEXT_RIGHT | TEXT_UP);
-    mui_text(VEC2_XY(w/2, h/2), "(right|middle)", TEXT_RIGHT | TEXT_MIDDLE);
-    mui_text(VEC2_XY(w/2, h/2), "(right|down)",   TEXT_RIGHT | TEXT_DOWN);
-    h += 150;
-    mui_text(VEC2_XY(w/2, h/2), "(left|up)",     TEXT_LEFT | TEXT_UP);
-    mui_text(VEC2_XY(w/2, h/2), "(left|middle)", TEXT_LEFT | TEXT_MIDDLE);
-    mui_text(VEC2_XY(w/2, h/2), "(left|down)",   TEXT_LEFT | TEXT_DOWN);
-  }
-  // text_draw_img( VEC2_XY(w/2, h/2), VEC2(10), u32 tex, rgbf tint);
-  mui_quad(VEC2_XY(w/2, h/2), VEC2(100000), RGB_F(1, 0, 1));
+  // u32 tex = assetm_get_texture("shotgun/shotgun_albedo.png", true)->handle;
+  // mui_img(VEC2_XY(0, 0), VEC2(100), tex, RGB_F(1, 0, 1));
 
   // - physics test -
 

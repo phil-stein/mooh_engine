@@ -15,16 +15,22 @@ void renderer_direct_init()
   core_data = core_data_get();
 }
 
-void renderer_direct_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color)
+// @TODO: doesnt work, used in mui.c
+void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, vec3 color)
 {
-  // glDisable(GL_DEPTH_TEST);
+  _glClear(GL_DEPTH_BUFFER_BIT);
+  _glDisable(GL_DEPTH_TEST); 
+  _glDisable(GL_CULL_FACE);
+  _glDisable(GL_BLEND); 
+
 	// ---- mvp ----
 	
 	mat4 model;
 	mat4_make_model_2d(pos, size, 0.0f, model);
 
 	mat4 view;
-	mat4_lookat_2d(cam_pos, 10.0f, view);
+	// mat4_lookat_2d(cam_pos, 10.0f, view);
+	mat4_lookat_2d(cam_pos, cam_zoom, view);
 
 	int w, h;
 	window_get_size(&w, &h);

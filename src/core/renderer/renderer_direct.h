@@ -14,7 +14,8 @@ void renderer_direct_init();
 //       pos:     position of quad
 //       size:    size of quad
 //       color:   color of quad
-void renderer_direct_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color);
+// void renderer_direct_draw_quad(vec3 cam_pos, vec2 pos, vec2 size, vec3 color);
+void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, vec3 color);
 
 // @DOC: draw a textured quad
 //       cam_pos: position of camera

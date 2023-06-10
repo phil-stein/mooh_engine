@@ -127,12 +127,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;ASSET_PATH="_assets/";EDITOR;ASSETM_NO_ZIP;GLOBAL_DEBUG;DEBUG_TIMER;DEBUG_DRAW;DEBUG_OPENGL;PHYS_DEBUG;INCLUDE_PLAY_MODE;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)_external;$(ProjectDir)src;$(ProjectDir)apps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)_external;$(ProjectDir)_external/FREETYPE;$(ProjectDir)src;$(ProjectDir)apps;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)_libs\win32;$(ProjectDir)_libs\win64</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -188,12 +188,15 @@
     <ClCompile Include="src\data\material_template.c" />
     <ClCompile Include="src\data\shader_template.c" />
     <ClCompile Include="src\data\test_comp.c" />
+    <ClCompile Include="src\mui\mui.c" />
     <ClCompile Include="src\phys\phys_collision.c" />
     <ClCompile Include="src\phys\phys_debug_draw.c" />
     <ClCompile Include="src\phys\phys_dynamics.c" />
     <ClCompile Include="src\phys\phys_resolution.c" />
     <ClCompile Include="src\phys\phys_world.c" />
     <ClCompile Include="src\serialization\serialization.c" />
+    <ClCompile Include="src\text\text.c" />
+    <ClCompile Include="src\text\text_draw.c" />
     <ClCompile Include="_external\GLAD\glad.c" />
     <ClCompile Include="_external\ufbx\ufbx.c" />
     <ClCompile Include="_external\zip\zip.c" />
@@ -249,6 +252,7 @@
     <ClInclude Include="src\math\math_vec2.h" />
     <ClInclude Include="src\math\math_vec3.h" />
     <ClInclude Include="src\math\math_vec4.h" />
+    <ClInclude Include="src\mui\mui.h" />
     <ClInclude Include="src\phys\phys_collision.h" />
     <ClInclude Include="src\phys\phys_debug_draw.h" />
     <ClInclude Include="src\phys\phys_dynamics.h" />
@@ -256,6 +260,11 @@
     <ClInclude Include="src\phys\phys_types.h" />
     <ClInclude Include="src\phys\phys_world.h" />
     <ClInclude Include="src\serialization\serialization.h" />
+    <ClInclude Include="src\text\text.h" />
+    <ClInclude Include="src\text\text_codes.h" />
+    <ClInclude Include="src\text\text_draw.h" />
+    <ClInclude Include="src\text\text_edit.h" />
+    <ClInclude Include="src\text\text_inc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\terrain_old.zip" />
