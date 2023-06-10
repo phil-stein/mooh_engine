@@ -224,9 +224,9 @@ INLINE void core_data_init_renderer()
 
   TIMER_FUNC_STATIC(core_data.post_fx_shader     = assetm_create_shader_from_template(SHADER_TEMPLATE_POST_FX));
 
-  // @TODO: macro this
-  // @NOTE: takes very long
-  // core_data.brdf_lut_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_BRDF_LUT));
+  // @NOTE: not needed unless calling renderer_extra_gen_brdf_lut()
+  //        takes very long
+  // TIMER_FUNC_STATIC(core_data.brdf_lut_shader    = assetm_create_shader_from_template(SHADER_TEMPLATE_BRDF_LUT));
 
   TIMER_FUNC_STATIC(core_data.mouse_pick_shader  = assetm_create_shader_from_template(SHADER_TEMPLATE_MOUSE_PICK));
 

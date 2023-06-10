@@ -22,7 +22,8 @@ void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, 
 //       pos:     position of quad
 //       size:    size of quad
 //       tex:     texture to be drawn on quad
-void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, texture_t* tex);
+// void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, texture_t* tex);
+void renderer_direct_draw_quad_textured(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, texture_t* tex, rgbf tint);
 
 // @DOC: draw a textured mesh
 //       pos:   position

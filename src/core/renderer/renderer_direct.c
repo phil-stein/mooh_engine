@@ -18,46 +18,10 @@ void renderer_direct_init()
 // @TODO: doesnt work, used in mui.c
 void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, vec3 color)
 {
-  _glClear(GL_DEPTH_BUFFER_BIT);
-  _glDisable(GL_DEPTH_TEST); 
-  _glDisable(GL_CULL_FACE);
-  _glDisable(GL_BLEND); 
-
-	// ---- mvp ----
-	
-	mat4 model;
-	mat4_make_model_2d(pos, size, 0.0f, model);
-	// mat4_make_model(VEC3_XYZ(pos[0], pos[1], 0), 
-  //                 VEC3_X(90),
-  //                 VEC3_XYZ(size[0], size[1], 0), 
-  //                 model);
-
-	mat4 view;
-	// mat4_lookat_2d(cam_pos, 10.0f, view);
-	mat4_lookat_2d(cam_pos, cam_zoom, view);
-
-	int w, h;
-	window_get_size(&w, &h);
-	mat4 proj;
-  camera_get_proj_mat(w, h, proj);
-
-	// ---- shader & draw call ----
-
-	shader_use(&core_data->basic_shader);
-	shader_set_int(&core_data->basic_shader, "use_color", 1);
-	shader_set_vec3(&core_data->basic_shader, "color", color);
-	shader_set_mat4(&core_data->basic_shader, "model", model);
-	shader_set_mat4(&core_data->basic_shader, "view", view);
-	shader_set_mat4(&core_data->basic_shader, "proj", proj);
-
-	// _glBindVertexArray(core_data->quad_vao);
-  mesh_t* mesh = assetm_get_mesh_by_idx(core_data->quad_mesh);
-	_glBindVertexArray(mesh->vao);
-	_glDrawArrays(GL_TRIANGLES, 0, 6);
-
+  renderer_direct_draw_quad_textured(cam_pos, cam_zoom, pos, size, assetm_get_texture("#internal/blank.png", true), color);
 }
 
-void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, texture_t* tex)
+void renderer_direct_draw_quad_textured(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, texture_t* tex, rgbf tint)
 {
   // ---- mvp ----
 	
@@ -65,7 +29,7 @@ void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, textu
 	mat4_make_model_2d(pos, size, 0.0f, model);
 
 	mat4 view;
-	mat4_lookat_2d(cam_pos, 10.0f, view);
+	mat4_lookat_2d(cam_pos, cam_zoom, view);
 
 	int w, h;
 	window_get_size(&w, &h);
@@ -75,7 +39,7 @@ void renderer_direct_draw_quad_textured(vec3 cam_pos, vec2 pos, vec2 size, textu
 	// ---- shader & draw call -----	
 
 	shader_use(&core_data->basic_shader);
-	shader_set_vec3(&core_data->basic_shader, "tint", VEC3(1));
+	shader_set_vec3(&core_data->basic_shader, "tint", tint);
 	_glActiveTexture(GL_TEXTURE0);
 	_glBindTexture(GL_TEXTURE_2D, tex->handle); 
 	shader_set_int(&core_data->basic_shader, "tex", 0);

@@ -261,7 +261,6 @@ u32 renderer_extra_gen_brdf_lut(const char* path)
   
 	_glBindVertexArray(core_data->quad_vao);
 	_glDrawArrays(GL_TRIANGLES, 0, 6);
-  
   _glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   _glDeleteFramebuffers(1, &capture_fbo);
@@ -278,6 +277,7 @@ u32 renderer_extra_gen_brdf_lut(const char* path)
   asset_io_texture_write_pixels_to_file(&t,  GL_RG, path);
 
   pixels_len++; // so gcc doesnt complain about unused variable
+
     
   return brdf_lut;
 }

@@ -77,13 +77,13 @@ _OBJS += 							\
 # serialization
 _OBJS += 							\
 	serialization.o
-# text
-_OBJS += 							\
-	text.o							\
-	text_draw.o					
-# mui
-_OBJS += 							\
-	mui.o
+# # text
+# _OBJS += 							\
+# 	text.o							\
+# 	text_draw.o					
+# # mui
+# _OBJS += 							\
+# 	mui.o
 
 
 # put the OBJ_DIR in front of the obj names

@@ -22,7 +22,7 @@
 #include "core/terrain.h"
 #include "data/entity_template.h"
 #include "phys/phys_world.h"
-#include "mui/mui.h"   // @TMP:
+// #include "mui/mui.h"   // @TMP:
 
 #include "stb/stb_ds.h"
 
@@ -143,7 +143,7 @@ void app_update()
   // text_draw_img( VEC2_XY(w/2, h/2), VEC2(10), u32 tex, rgbf tint);
   // mui_quad(VEC2_XY(0, 0),     VEC2(100), RGB_F(1, 1, 1));
   // mui_quad(VEC2_XY(100, 100), VEC2(100), RGB_F(1, 1, 0));
-  mui_quad(VEC2_XY(w/2, h/2), VEC2(100), RGB_F(1, 0, 1));
+  // mui_quad(VEC2_XY(w/2, h/2), VEC2(100), RGB_F(1, 0, 1));
   // mui_quad(VEC2_XY(w,   h),   VEC2(100), RGB_F(1, 0, 1));
   // mui_quad(VEC2_XY(0, 0),     VEC2(4),   RGB_F(1, 1, 1));
   // mui_quad(VEC2_XY(10, 10),   VEC2(4),   RGB_F(1, 1, 1));

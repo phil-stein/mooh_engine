@@ -18,7 +18,7 @@
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
 #include "phys/phys_debug_draw.h"
-#include "mui/mui.h"
+// #include "mui/mui.h"
 
 // order is important, io_util & str_util before global
 #define IO_UTIL_IMPLEMENTATION  // only define once
@@ -68,23 +68,28 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   TIMER_FUNC_STATIC(asset_io_init());
   TIMER_FUNC_STATIC(assetm_init());
   TIMER_FUNC_STATIC(threadm_init());
-  
+
+  // -- brdf_lut -> just take https://learnopengl.com/img/pbr/ibl_brdf_lut.png and convert
+  // -- last two lines do that
+  // // // gen brdf_lut, only needs to be done once, is loaded from textures/#internal/brdf_lut.tex in core_data_init
+  // // char _path[ASSET_PATH_MAX + 256];
+  // // SPRINTF(ASSET_PATH_MAX + 256, _path, "%s/textures/#internal/brdf_lut.tex", core_data->asset_path);
+  // // P("pre render");
+  // // TIMER_FUNC_STATIC(renderer_extra_gen_brdf_lut(_path)); 
+  // asset_io_convert_texture("#internal/brdf_lut.png");
+  // core_data->brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle; 
+
   TIMER_FUNC_STATIC(core_data_init());
   TIMER_FUNC_STATIC(state_init());
   TIMER_FUNC_STATIC(serialization_init());
 	TIMER_FUNC_STATIC(save_sys_init());
   TIMER_FUNC_STATIC(renderer_direct_init());
   TIMER_FUNC_STATIC(renderer_extra_init());
-  // gen brdf_lut, only needs to be done once, is loaded from textures/#internal/brdf_lut.tex in core_data_init
-  // char _path[ASSET_PATH_MAX + 256];
-  // sprintf(_path, "%s/textures/#internal/brdf_lut.tex", core_data->asset_path);
-  // core_data->brdf_lut = 
-  // TIMER_FUNC_STATIC(renderer_extra_gen_brdf_lut(_path)); 
-  // core_data->brdf_lut = assetm_get_texture("#internal/brdf_lut.tex", false)->handle;
+
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());
-  TIMER_FUNC_STATIC(mui_init());
+  // TIMER_FUNC_STATIC(mui_init());
 
 	TIMER_FUNC_STATIC(init_f());     // init callback
   
@@ -134,7 +139,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
     TIMER_FUNC(update_f());   // update callback
     
     TIMER_FUNC(state_update());
-		TIMER_FUNC(mui_update());
+		// TIMER_FUNC(mui_update());
 #ifdef EDITOR
     if (core_data->phys_act)
     {
