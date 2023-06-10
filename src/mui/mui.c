@@ -148,9 +148,9 @@ void mui_img(vec2 pos, vec2 size, texture_t* tex, rgbf tint)
 {
   // crashes here
   // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, pos,  size, tex); 
+  renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
 }
 void mui_quad(vec2 pos, vec2 size, rgbf color)
-// { text_draw_quad(pos, size, color); }
-{ renderer_direct_draw_quad(VEC2(0), 10.0f, pos,  size, color); }
+{ renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); }
 
 

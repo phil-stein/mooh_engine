@@ -515,8 +515,10 @@ void renderer_update()
   core_data->draw_calls_total++;
   core_data->draw_calls_screen_quad++;
 
-  renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1));
   TIMER_STOP();
+  
+  // @TMP: testing for mui_quad();  
+  // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1));
 
 }
 

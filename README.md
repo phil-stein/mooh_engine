@@ -317,7 +317,7 @@ main resources:
   - [ ] draw quads 
     - [ ] scale with screen
     - [ ] textured quads
-  - [ ] aligned hierarchy
+  - [ ] aligned group hierarchy
     - [ ] centered
     - [ ] left / right
     - [ ] up / down
