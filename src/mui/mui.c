@@ -176,7 +176,7 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   text_draw_line(pos, text_buffer, len, font_main);
 }
 
-void mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
+int mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
 {
   // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
   mui_obj_t obj;
@@ -187,9 +187,9 @@ void mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
   obj.tex = tex;
 
   arrput(obj_arr, obj);
-  obj_arr_len++;
+  return obj_arr_len++;
 }
-void mui_quad(vec2 pos, vec2 scl, rgbf color)
+int mui_quad(vec2 pos, vec2 scl, rgbf color)
 { 
   // example: 
   // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
@@ -200,7 +200,17 @@ void mui_quad(vec2 pos, vec2 scl, rgbf color)
   vec3_copy(color, obj.color);
   
   arrput(obj_arr, obj);
-  obj_arr_len++;
+  return obj_arr_len++;
 }
 
+void mui_group(text_orientation orientation, int len, ...)
+{
+  va_list args;
+  va_start(args, len);
+  for (u32 i = 0; i < len; ++i)
+  {
+    int idx = va_arg(args, int); 
+  }
+  va_end(args);
+}
 
