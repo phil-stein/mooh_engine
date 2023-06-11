@@ -3,7 +3,10 @@
 #include "core/io/assetm.h"
 #include "core/types/shader.h"
 #include "core/core_data.h"
+#include "core/renderer/renderer_direct.h"
 #include "text/text_inc.h"
+
+#include "stb/stb_ds.h"
 
 // #include <ctype.h>
 // #include <direct.h>
@@ -30,6 +33,21 @@ int text_buffer_pos = 0;
 
 static core_data_t* core_data = NULL;
 
+typedef enum { MUI_OBJ_QUAD, MUI_OBJ_IMG }mui_obj_type;
+
+typedef struct
+{
+  mui_obj_type type;
+  vec2 pos;
+  vec2 scl;
+  rgbf color;
+  texture_t* tex;
+
+}mui_obj_t;
+
+mui_obj_t* obj_arr = NULL;
+u32        obj_arr_len = 0;
+
 void mui_init()
 {
   core_data = core_data_get();
@@ -40,8 +58,8 @@ void mui_init()
   
   // ---- text init ---
  
-  char path_0[256];
-  SPRINTF(256, path_0, "%s%s", core_data->asset_path, "fonts/JetBrainsMonoNL-Regular.ttf");
+  char path_0[ASSET_PATH_MAX + 64];
+  SPRINTF(ASSET_PATH_MAX + 64, path_0, "%s%s", core_data->asset_path, "fonts/JetBrainsMonoNL-Regular.ttf");
 
   text_load_font(path_0, font_size + FONT_X_SIZE_DIF, &font_x);
   text_load_font(path_0, font_size + FONT_S_SIZE_DIF, &font_s);
@@ -50,9 +68,9 @@ void mui_init()
 
   font_main     = &font_m;
     
-  char path_1[256];
-  SPRINTF(256, path_0, "%s%s", core_data->asset_path, "shaders/text/text.vert");
-  SPRINTF(256, path_1, "%s%s", core_data->asset_path, "shaders/text/text.frag");
+  char path_1[ASSET_PATH_MAX + 64];
+  SPRINTF(ASSET_PATH_MAX + 64, path_0, "%s%s", core_data->asset_path, "shaders/text/text.vert");
+  SPRINTF(ASSET_PATH_MAX + 64, path_1, "%s%s", core_data->asset_path, "shaders/text/text.frag");
   bool err = false;
   // u32 text_shader = shader_create(path_0, path_1, "text_shader", &err);
   shader_t _text_shader = shader_create_from_file(path_0, path_1, NULL, "text_shader");
@@ -92,6 +110,21 @@ void mui_init()
 
 void mui_update()
 {
+  for (u32 i = 0; i < obj_arr_len; ++i)
+  {
+    mui_obj_t* o = &obj_arr[i];
+    // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
+    if (o->type == MUI_OBJ_QUAD)
+    { renderer_direct_draw_quad(VEC2(0), 10.0f, o->pos, o->scl, o->color); } 
+    else
+    { renderer_direct_draw_quad_textured(VEC2(0), 10.0f, o->pos, o->scl, o->tex, o->color); }
+    // P_VEC2(o->pos); P_VEC2(o->scl); P_VEC3(o->color);
+  }
+  if (obj_arr_len > 0)
+  {
+    arrfree(obj_arr);
+    obj_arr_len = 0;
+  }
 }
 
 void mui_text(vec2 pos, char* text, text_orientation orientation)
@@ -143,13 +176,31 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   text_draw_line(pos, text_buffer, len, font_main);
 }
 
-void mui_img(vec2 pos, vec2 size, texture_t* tex, rgbf tint)
+void mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
 {
-  renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
+  // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
+  mui_obj_t obj;
+  obj.type = MUI_OBJ_IMG;
+  vec2_copy(pos, obj.pos);
+  vec2_copy(scl, obj.scl);
+  vec3_copy(tint, obj.color);
+  obj.tex = tex;
+
+  arrput(obj_arr, obj);
+  obj_arr_len++;
 }
-void mui_quad(vec2 pos, vec2 size, rgbf color)
+void mui_quad(vec2 pos, vec2 scl, rgbf color)
 { 
-  renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
+  // example: 
+  // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
+  mui_obj_t obj;
+  obj.type = MUI_OBJ_QUAD;
+  vec2_copy(pos, obj.pos);
+  vec2_copy(scl, obj.scl);
+  vec3_copy(color, obj.color);
+  
+  arrput(obj_arr, obj);
+  obj_arr_len++;
 }
 
 

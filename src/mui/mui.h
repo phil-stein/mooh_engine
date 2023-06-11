@@ -59,8 +59,9 @@ void mui_text(vec2 pos, char* text, text_orientation orientation);
 #define mui_text_r(pos, text) mui_text((pos), (text), TEXT_UP | TEXT_RIGHT)
 // void mui_text(ivec2 pos, ... txt, rgb color);
 
-void mui_img(vec2 pos, vec2 size, texture_t* tex, rgbf tint);
-void mui_quad(vec2 pos, vec2 size, rgbf color);
+#define mui_img(pos, scl, tex) mui_img_tint((pos), (scl), (tex), VEC3(1))
+void mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint);
+void mui_quad(vec2 pos, vec2 scl, rgbf color);
 
 void mui_space();
 void mui_group();

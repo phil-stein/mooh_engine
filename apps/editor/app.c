@@ -121,12 +121,7 @@ void app_update()
   window_get_size(&w, &h);
   
   // mui_text_l(VEC3_XY(0, 0), "(0, 0)");
-  // mui_text_l(VEC2_XY(10, 10), "(10, 10)");
   // mui_text_l(VEC2_XY(100, 100), "(100, 100)");
-  // mui_text_l(VEC2_XY(1000, 1000), "(1000, 1000)");
-  // mui_text_l(VEC2_XY(w / 2, h / 2), "(x, x)");
-  
-  // mui_text(VEC2_XY(w -10, h -50), "(x, x)", TEXT_RIGHT | TEXT_UP);
   {
     mui_text(VEC2_XY(w/2, h/2), "(right|up)",     TEXT_RIGHT | TEXT_UP);
     mui_text(VEC2_XY(w/2, h/2), "(right|middle)", TEXT_RIGHT | TEXT_MIDDLE);
@@ -140,13 +135,11 @@ void app_update()
     mui_text(VEC2_XY(w/2, h/2), "(center|middle)", TEXT_CENTER | TEXT_MIDDLE);
     mui_text(VEC2_XY(w/2, h/2), "(center|down)",   TEXT_CENTER | TEXT_DOWN);
   }
-  // // text_draw_img( VEC2_XY(w/2, h/2), VEC2(10), u32 tex, rgbf tint);
-  // mui_quad(VEC2_XY(0, 0),     VEC2(100), RGB_F(1, 1, 1));
-  // mui_quad(VEC2_XY(100, 100), VEC2(100), RGB_F(1, 1, 0));
-  // mui_quad(VEC2_XY(w/2, h/2), VEC2(100), RGB_F(1, 0, 1));
-  // mui_quad(VEC2_XY(w,   h),   VEC2(100), RGB_F(1, 0, 1));
-  // mui_quad(VEC2_XY(0, 0),     VEC2(4),   RGB_F(1, 1, 1));
-  // mui_quad(VEC2_XY(10, 10),   VEC2(4),   RGB_F(1, 1, 1));
+  mui_quad(VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1));
+  // mui_quad(VEC2_XY(0, 1), VEC2(1), RGB_F(1, 0, 1));
+  texture_t* t = assetm_get_texture("#internal/preview_bg.png", true);
+  mui_img(VEC2_XY(0, 2), VEC2(1), t);
+  mui_img_tint(VEC2_XY(2, 2), VEC2(1), t, RGB_F(0, 1, 1));
 
   // toggle wireframe, esc to quit, etc.
   programm_app_default_logic(core_data);

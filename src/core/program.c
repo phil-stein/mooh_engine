@@ -18,7 +18,7 @@
 #include "math/math_inc.h"
 #include "phys/phys_world.h"
 #include "phys/phys_debug_draw.h"
-// #include "mui/mui.h"
+#include "mui/mui.h"
 
 // order is important, io_util & str_util before global
 #define IO_UTIL_IMPLEMENTATION  // only define once
@@ -89,7 +89,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   TIMER_FUNC_STATIC(camera_init());
   TIMER_FUNC_STATIC(renderer_init());
   TIMER_FUNC_STATIC(terrain_init());
-  // TIMER_FUNC_STATIC(mui_init());
+  TIMER_FUNC_STATIC(mui_init());
 
 	TIMER_FUNC_STATIC(init_f());     // init callback
   
@@ -109,7 +109,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
   texture_load_data_t** tex_arr_ptr = assetm_get_texture_register_arr_ptr(&tex_arr_len_ptr);
   TIMER_FUNC_STATIC(threadm_load_texture_arr(tex_arr_ptr, tex_arr_len_ptr));
   core_data->use_async_asset_arrs = false; // no multithreaded,  just normal asset loading 
-
+ 
   strcpy(_title, window_get_title()); 
   
   TIMER_STOP_STATIC();  // program init timer
@@ -139,7 +139,6 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
     TIMER_FUNC(update_f());   // update callback
     
     TIMER_FUNC(state_update());
-		// TIMER_FUNC(mui_update());
 #ifdef EDITOR
     if (core_data->phys_act)
     {
@@ -151,6 +150,7 @@ void DBG(program_start_dbg, int width, int height, const char* title, window_typ
 #endif
     
     TIMER_FUNC(debug_draw_update());
+		TIMER_FUNC(mui_update());
 		TIMER_FUNC(input_update());
  
     debug_timer_clear_state();
