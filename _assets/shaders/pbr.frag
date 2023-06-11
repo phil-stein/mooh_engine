@@ -128,6 +128,11 @@ void main()
   }
   else
   {
+    // experiment
+    // col *= 20;
+    // col = round(col);
+    // col *= 0.05;
+    
     FragColor = vec4(col, 1.0);
     // FragColor = vec4(albedo, 1.0);
   }

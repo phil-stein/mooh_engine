@@ -8,7 +8,17 @@ uniform sampler2D tex;  	// color buffer
 uniform sampler2D outline;	// outline buffer
 
 uniform float exposure;
-	
+
+
+// @NOTE: doesnt work
+// vec4 quantize(vec4 fragColor, vec2 fragCoord ) 
+// {
+//   float factor = 3.0; // [1(max)..255(min)]
+//   vec2 uv = fragCoord.xy / iResolution.xy;
+//   vec4 src = texture(iChannel0, uv);
+//   return vec4(floor(src.rgb * factor + 0.5) / factor, src.a);
+// }
+
 
 // func declarations
 vec3 aces_tone_mapping(vec3 col);
@@ -78,6 +88,8 @@ void main()
 		col = outline_color;
 	}
 
+  // col = quantize(col, uv_coords); 
+  
   FragColor = vec4(col, 1.0); // col_hdr.a
   // FragColor = col_hdr;
   // FragColor = vec4(texture(tex, uv_coords).r);  // shadowmap
