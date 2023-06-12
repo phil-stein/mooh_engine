@@ -116,18 +116,6 @@ void app_init()
 
 void app_update()
 {
-  // - mui test -
-  {
-    // // -- bg --
-    texture_t* circle_tex = assetm_get_texture("#internal/circle.png", true);
-    mui_img(VEC2_XY(-0.8f, -0.8f), VEC2(0.8f), circle_tex);
-    mui_img_tint(VEC2_XY(-0.72f, -0.72f), VEC2(0.5f), circle_tex, VEC3(0.5f));
-
-    mui_text(VEC2_XY(-0.70f, -0.65f), "12/30", TEXT_CENTER | TEXT_UP);
-    
-
-  }
-
   // toggle wireframe, esc to quit, etc.
   programm_app_default_logic(core_data);
 

@@ -142,7 +142,7 @@ const entity_template_t entity_template_table[] =
     ENTITY_TEMPLATE_T_SET_DEFAULTS(),
     .name = "projectile01",
     .mesh = "sphere",
-    .mat  = MATERIAL_TEMPLATE_DEFAULT,
+    .mat  = MATERIAL_TEMPLATE_METALL,
     // @TODO: .scl  = { 0.5f, 0.5f, 0.5f },
     .init_f    = projectile_init,
     .update_f  = projectile_update,

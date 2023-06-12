@@ -4,6 +4,7 @@
 #include "core/types/shader.h"
 #include "core/core_data.h"
 #include "core/renderer/renderer_direct.h"
+#include "core/debug/debug_opengl.h"
 #include "text/text_inc.h"
 
 #include "stb/stb_ds.h"
@@ -119,7 +120,11 @@ void mui_init()
 
 void mui_update()
 {
-  P_U32(obj_arr_len);
+  // @NOTE: no blendd-type specified because same as renderer.c
+  _glEnable(GL_BLEND);
+  _glDisable(GL_CULL_FACE);
+  _glDisable(GL_DEPTH_TEST);
+  
   for (u32 i = 0; i < obj_arr_len; ++i)
   {
     mui_obj_t* o = &obj_arr[i];
@@ -136,6 +141,9 @@ void mui_update()
     arrfree(obj_arr);
     obj_arr_len = 0;
   }
+
+  _glEnable(GL_CULL_FACE);
+  _glEnable(GL_DEPTH_TEST);
 }
 
 void mui_text(vec2 pos, char* text, text_orientation orientation)
@@ -221,6 +229,9 @@ int mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_
   obj.pos[1] *= 4.0f;
   
   obj.scl[0] *= (scale_by_ratio ? r_wh : 1.0f);
+  
+  r_wh = ((f32)tex->width / tex->height);
+  obj.scl[0] *= r_wh;
   
 
   arrput(obj_arr, obj);

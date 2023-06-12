@@ -23,9 +23,6 @@ void renderer_direct_draw_quad(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, 
 
 void renderer_direct_draw_quad_textured(vec2 cam_pos, f32 cam_zoom, vec2 pos, vec2 size, texture_t* tex, rgbf tint)
 {
-  // @NOTE: no blendd-type specified because same as renderer.c
-  _glEnable(GL_BLEND);
-
   // ---- mvp ----
 	
 	mat4 model;

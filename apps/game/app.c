@@ -34,7 +34,7 @@ int main(void)
 {
   // program_start(1600, 900, "mooh", WINDOW_MIN, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   // @BUGG: having 1x1 causes weird white rect on startup i think, not sure though
-  program_start(1, 1, "moohch nice game boi", WINDOW_FULL, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
+  program_start(1, 1, "moohch nice game boi", WINDOW_MAX, app_init, app_update, ASSET_PATH);  // WINDOW_FULL
   
   return 0;
 }

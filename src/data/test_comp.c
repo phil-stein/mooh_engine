@@ -23,6 +23,9 @@ vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 void player_camera(entity_t* this, f32 dt);
 void player_ui(entity_t* this);
 
+#define AMMO_MAX 30
+int ammo = AMMO_MAX;
+
 void player_init(entity_t* this)
 {
   core_data = core_data_get();
@@ -54,7 +57,7 @@ void player_update(entity_t* this, f32 dt)
 
   // shoot ball
 
-  if (input_get_key_pressed(KEY_ENTER))
+  if (ammo > 0 && input_get_key_pressed(KEY_ENTER))
   {
     // static int projectile_id = -1;
     // if (projectile_id >= 0) { state_entity_remove(projectile_id); }
@@ -67,7 +70,13 @@ void player_update(entity_t* this, f32 dt)
     entity_t* projectile = state_entity_get(projectile_id);
     vec3_mul_f(front, 2000.0f, projectile_force);
     ENTITY_SET_FORCE(projectile, projectile_force);
+
+    ammo = ammo -1 >= 0 ? ammo -1 : 0;
   }
+  // reload
+  if (input_get_key_pressed(KEY_R))
+  { ammo = AMMO_MAX; }
+
   
   vec3_mul_f(front, speed, front);
   vec3_mul_f(back, speed, back);
@@ -184,14 +193,25 @@ void player_on_trigger(entity_t* this, entity_t* trig)
 
 void player_ui(entity_t* this)
 {
-  // // -- bg --
-  // texture_t* circle_tex = assetm_get_texture("#internal/circle.png", true);
-  // mui_quad(VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1));
-  // mui_img(VEC2_XY(0, 0), VEC2(1), circle_tex);
-  // mui_img(VEC2_XY(-2, -2), VEC2(1), circle_tex);
+  // -- bg --
+  {
+    texture_t* circle_tex = assetm_get_texture("#internal/circle.png", false);
+    texture_t* weapon_tex = assetm_get_texture("_icons/kriss_vector_01.png", false);
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.80f), circle_tex, VEC3(0.75f));
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.65f), circle_tex, VEC3(0.55f));
+    
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2(-0.45f), weapon_tex, VEC3(1.00f));
+    
+    mui_img_tint(VEC2_XY(-0.72f, -0.72f), VEC2( 0.50f), circle_tex, VEC3(0.35f));
+
+    char txt[64];
+    SPRINTF(64, txt, "%d|%d", ammo, AMMO_MAX);
+    mui_text(VEC2_XY(-0.70f, -0.65f), txt, TEXT_CENTER | TEXT_UP);
+  } 
 }
 
 // --- projectile ---
+
 typedef struct {u32 key; u32 value; } hm_entry_t;
 typedef struct
 {
@@ -234,21 +254,9 @@ void projectile_update(entity_t* this, f32 dt)
     return;
   }
 
-  if (data->target_id >= 0)
-  {
-    bool err = false;
-    entity_t* e = state_entity_get_err(data->target_id, &err);
-    if (!err)
-    {
-      vec3 pos;
-      vec3_lerp(this->pos, e->pos, data->time_alive / time_alive_max, pos);
-      ENTITY_SET_POS(this, pos);
-    }
-  }
-
   // lerp size to 0
   vec3 scl;
-  vec3_lerp_f(start_scl, 0.0f, data->time_alive / time_alive_max, scl);
+  vec3_lerp_f(start_scl, MIN(start_scl, 0.3f), data->time_alive / time_alive_max, scl);
   ENTITY_SET_SCL(this, scl);
 }
 void projectile_cleanup(entity_t* this)
