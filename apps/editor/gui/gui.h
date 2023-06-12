@@ -27,20 +27,22 @@ void gui_update();
 void gui_cleanup();
 
 // @DOC: bar at the top with scen, window & control menus
-void gui_top_bar_win();
+// void gui_top_bar_win();
+void gui_top_bar_win(ui_context* _ctx, ui_rect win_rect, const u32 win_flags); 
 
 // @DOC: window displaying all properties of an entity_t
-void gui_properties_win();
+// void gui_properties_win();
+void gui_properties_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags, bool is_selected);
 // @DOC: not window, for use in one, displays transform
-void gui_properties_transform(entity_t* e, vec3 pos, vec3 rot, vec3 scl, bool* has_moved);
+void gui_properties_transform(ui_context* ctx, entity_t* e, vec3 pos, vec3 rot, vec3 scl, bool* has_moved);
 // @DOC: not window, for use in one, displays material
-void gui_properties_material(material_t* mat, int idx);
+void gui_properties_material(ui_context* ctx, ui_rect win_rect, material_t* mat, int idx);
 // @DOC: not window, for use in one, displays mesh
-void gui_properties_mesh(mesh_t* m, int idx, int entity_template_idx);
+void gui_properties_mesh(ui_context* ctx, mesh_t* m, int idx, int entity_template_idx);
 // @DOC: not window, for use in one, displays point_light
-void gui_properties_point_light(point_light_t* p, int idx); // (vec3 pos, rgbf col, f32 intensity);
+void gui_properties_point_light(ui_context* ctx, point_light_t* p, int idx); // (vec3 pos, rgbf col, f32 intensity);
 // @DOC: not window, for use in one, displays physics properties
-void gui_properties_physics(const entity_template_t* def, entity_t* e);
+void gui_properties_physics(ui_context* ctx, const entity_template_t* def, entity_t* e);
 
 // @DOC: window at the bottom, to add entities from templates
 void gui_template_browser_win();

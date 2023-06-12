@@ -47,6 +47,7 @@ main resources:
     - [trail renderer](#base) `WIP`
   - *advanced*
     - [physics engine](#physics engine)
+    - [audio](#audio system)
     - [chunking for ents/phys_objs](#optimizations) 
 
 ## buggs
@@ -278,7 +279,7 @@ main resources:
   - [ ] terrain
 
 ## audio system
-  - using miniaudio, soloud, etc.
+  - using miniaudio, soloud, sokol, etc.
   - [ ] clips
   - [ ] loops
   - [ ] sfx ?

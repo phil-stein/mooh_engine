@@ -50,6 +50,18 @@ typedef struct app_data_t
   const f32  terrain_edit_smooth_scalar;  // multiplier for terrain_edit_strengh
   int terrain_edit_paint_material;        // multiplier for terrain_edit_strengh 
   const f32  terrain_edit_paint_scalar;   // multiplier for terrain_edit_strengh 
+
+  // --- gui ---
+
+  bool top_bar_menu_hover;          // mouse over menu in top bar
+  bool template_browser_minimized; 
+  
+  bool show_hierarchy_win;
+  bool show_frameb_win;
+  bool show_debug_win;
+  bool show_light_hierarchy_win;
+  bool show_core_data_win;
+
     
 }app_data_t;
 
@@ -80,6 +92,15 @@ typedef struct app_data_t
   .terrain_edit_strength        = 1.0,                 \
   .terrain_edit_paint_material  = 0,                   \
   .terrain_edit_paint_scalar    = 0.75f,               \
+                                                       \
+  .top_bar_menu_hover         = false,                 \
+  .template_browser_minimized = true,                  \
+                                                       \
+  .show_hierarchy_win         = false,                 \
+  .show_frameb_win            = false,                 \
+  .show_debug_win             = false,                 \
+  .show_light_hierarchy_win   = false,                 \
+  .show_core_data_win         = false,                 \
 }
   // .wireframe_act                = false,               \x
 

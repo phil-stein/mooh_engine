@@ -34,6 +34,8 @@ _OBJS = 				 				\
 	app.o					 				\
 	gui.o					 				\
 	gui_struct_browser.o	\
+	gui_top_bar.o					\
+	gui_properties.o			\
 	gizmo.o								\
 	terrain_edit.o				\
 	operation.o						\
