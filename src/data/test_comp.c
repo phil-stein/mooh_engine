@@ -21,6 +21,7 @@ static core_data_t* core_data = NULL;
 vec3 start_pos = { 0, 0, 0 }; // starting position of player char
 
 void player_camera(entity_t* this, f32 dt);
+void player_ui(entity_t* this);
 
 void player_init(entity_t* this)
 {
@@ -31,9 +32,7 @@ void player_init(entity_t* this)
 }
 void player_update(entity_t* this, f32 dt)
 {
-  
-  // u32 tex = assetm_get_texture("shotgun/shotgun_albedo.png", true)->handle;
-  // mui_img(VEC2_XY(0, 0), VEC2(100), tex, RGB_F(1, 0, 1));
+  player_ui(this);
 
   // - physics test -
 
@@ -181,6 +180,15 @@ void player_on_trigger(entity_t* this, entity_t* trig)
   {
     ENTITY_FORCE_Y(this, 50.0f);
   }
+}
+
+void player_ui(entity_t* this)
+{
+  // // -- bg --
+  // texture_t* circle_tex = assetm_get_texture("#internal/circle.png", true);
+  // mui_quad(VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1));
+  // mui_img(VEC2_XY(0, 0), VEC2(1), circle_tex);
+  // mui_img(VEC2_XY(-2, -2), VEC2(1), circle_tex);
 }
 
 // --- projectile ---

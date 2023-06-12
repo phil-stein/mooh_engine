@@ -61,8 +61,9 @@ void mui_text(vec2 pos, char* text, text_orientation orientation);
 // void mui_text(ivec2 pos, ... txt, rgb color);
 
 // @DOC: register image or colored quad to be drawn in ui
-#define mui_img(pos, scl, tex) mui_img_tint((pos), (scl), (tex), VEC3(1))
-int mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint);
+#define mui_img(pos, scl, tex)            mui_img_tint((pos), (scl), (tex), VEC3(1))
+#define mui_img_tint(pos, scl, tex, tint) mui_img_complx((pos), (scl), (tex), (tint), false)
+int mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_ratio);
 int mui_quad(vec2 pos, vec2 scl, rgbf color);
 
 void mui_space();

@@ -27,18 +27,27 @@ font_t font_l = FONT_INIT();
 
 font_t* font_main;
 
-#define TEXT_BUFFER_MAX 512
-int text_buffer[TEXT_BUFFER_MAX];
-int text_buffer_pos = 0;
-
 static core_data_t* core_data = NULL;
 
-typedef enum { MUI_OBJ_QUAD, MUI_OBJ_IMG }mui_obj_type;
+typedef enum 
+{ 
+  MUI_OBJ_TEXT = 1, 
+  MUI_OBJ_QUAD = 2, 
+  MUI_OBJ_IMG  = 3
 
+}mui_obj_type;
+
+#define MUI_OBJ_TEXT_MAX 32
 typedef struct
 {
   mui_obj_type type;
+
   vec2 pos;
+  int text[MUI_OBJ_TEXT_MAX];
+  int text_len;
+  text_orientation orientation;
+  
+  // vec2 pos;
   vec2 scl;
   rgbf color;
   texture_t* tex;
@@ -110,15 +119,17 @@ void mui_init()
 
 void mui_update()
 {
+  P_U32(obj_arr_len);
   for (u32 i = 0; i < obj_arr_len; ++i)
   {
     mui_obj_t* o = &obj_arr[i];
-    // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
+    
     if (o->type == MUI_OBJ_QUAD)
     { renderer_direct_draw_quad(VEC2(0), 10.0f, o->pos, o->scl, o->color); } 
-    else
+    else if (o->type == MUI_OBJ_IMG)
     { renderer_direct_draw_quad_textured(VEC2(0), 10.0f, o->pos, o->scl, o->tex, o->color); }
-    // P_VEC2(o->pos); P_VEC2(o->scl); P_VEC3(o->color);
+    else if (o->type == MUI_OBJ_TEXT)
+    { text_draw_line(o->pos, o->text, o->text_len, font_main); }
   }
   if (obj_arr_len > 0)
   {
@@ -130,7 +141,7 @@ void mui_update()
 void mui_text(vec2 pos, char* text, text_orientation orientation)
 {
   int len = strlen(text);
-  ERR_CHECK(len < TEXT_BUFFER_MAX, "text too long for buffer size");
+  ERR_CHECK(len < MUI_OBJ_TEXT_MAX, "text too long for buffer size");
  
   // P_TEXT_ORIENTATION(orientation);
   ERR_CHECK(!((HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_MIDDLE)) ||
@@ -142,19 +153,29 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
               (HAS_FLAG(orientation, TEXT_CENTER) && HAS_FLAG(orientation, TEXT_RIGHT))),
               "can only have one of TEXT_LEFT, TEXT_CENTER or TEXT_RIGHT");
 
+  mui_obj_t o;
+  o.type        = MUI_OBJ_TEXT; 
+  o.text_len    = len;
+  o.orientation = orientation;
+  
   // convert to int array
-  text_buffer_pos = 0;
   for (u32 i = 0; i < len; ++i)
-  { text_buffer[text_buffer_pos++] = (int)text[i]; }
+  { o.text[i] = (int)text[i]; }
 
   // adjust height and width
   int w, h;
   window_get_size(&w, &h);
-  vec2_mul_f(pos, 2, pos);
-  
+  pos[1] *= -1.0f ;
+  // vec2_mul_f(pos, 2, pos);
+  // vec2_mul_f(pos, 1.0f, pos);
+  vec2_add_f(pos, 1, pos);
+  pos[0] *= w;
+  pos[1] *= h;
+
   // flip y 
-  pos[1] *= -1.0f;
+  pos[1] *= -1.0f ;
   pos[1] -= font_main->gh;
+  // pos[1] += font_main->gh;
   
   // if (HAS_FLAG(orientation, TEXT_LEFT)) { }
   if (HAS_FLAG(orientation, TEXT_RIGHT))
@@ -173,10 +194,14 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   else if (HAS_FLAG(orientation, TEXT_MIDDLE))
   { pos[1] -= font_main->gh * 0.5f; }
 
-  text_draw_line(pos, text_buffer, len, font_main);
+  vec2_copy(pos, o.pos);
+
+  // text_draw_line(pos, text_buffer, len, font_main);
+  arrput(obj_arr, o);
+  obj_arr_len++;
 }
 
-int mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
+int mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_ratio)
 {
   // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
   mui_obj_t obj;
@@ -186,8 +211,21 @@ int mui_img_tint(vec2 pos, vec2 scl, texture_t* tex, rgbf tint)
   vec3_copy(tint, obj.color);
   obj.tex = tex;
 
+  // orinetation & scaling 
+  int w, h;
+  window_get_size(&w, &h);
+  f32 r_wh = ((f32)w / h);
+  
+  obj.pos[0] *= -1.0f;
+  obj.pos[0] *= r_wh * 4.0f;
+  obj.pos[1] *= 4.0f;
+  
+  obj.scl[0] *= (scale_by_ratio ? r_wh : 1.0f);
+  
+
   arrput(obj_arr, obj);
-  return obj_arr_len++;
+  obj_arr_len++;
+  return obj_arr_len -1;
 }
 int mui_quad(vec2 pos, vec2 scl, rgbf color)
 { 
@@ -200,17 +238,18 @@ int mui_quad(vec2 pos, vec2 scl, rgbf color)
   vec3_copy(color, obj.color);
   
   arrput(obj_arr, obj);
-  return obj_arr_len++;
+  obj_arr_len++;
+  return obj_arr_len -1;
 }
 
-void mui_group(text_orientation orientation, int len, ...)
-{
-  va_list args;
-  va_start(args, len);
-  for (u32 i = 0; i < len; ++i)
-  {
-    int idx = va_arg(args, int); 
-  }
-  va_end(args);
-}
+// void mui_group(text_orientation orientation, int len, ...)
+// {
+//   va_list args;
+//   va_start(args, len);
+//   for (u32 i = 0; i < len; ++i)
+//   {
+//     int idx = va_arg(args, int); 
+//   }
+//   va_end(args);
+// }
 
