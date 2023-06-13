@@ -138,10 +138,12 @@ typedef struct core_data_t
   bool phys_act;
   bool phys_debug_act;
   bool scripts_act;
+  bool is_paused;
 #else 
   bool phys_act;
   bool phys_debug_act;
   bool scripts_act;
+  bool is_paused;
 #endif
 
 }core_data_t;
@@ -219,6 +221,7 @@ typedef struct core_data_t
   .phys_act       = PLAY_ACT_VALUE,           \
   .phys_debug_act = false,                    \
   .scripts_act    = PLAY_ACT_VALUE,           \
+  .is_paused      = false,                    \
 }
 
 
@@ -237,6 +240,7 @@ void core_data_play_func();
 void core_data_play_scripts_func();
 void core_data_play_phys_func();
 void core_data_pause_func();
+void core_data_stop_func();
 
 // returns phys_act || scripts_act
 bool core_data_is_play_func();
@@ -246,6 +250,7 @@ bool core_data_is_play_func();
 #define core_data_play_scripts()   core_data_play_scripts_func()   
 #define core_data_play_phys()      core_data_play_phys_func() 
 #define core_data_pause()          core_data_pause_func()  
+#define core_data_stop()           core_data_stop_func()  
 
 #else
 

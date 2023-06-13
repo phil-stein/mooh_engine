@@ -62,6 +62,8 @@ typedef struct app_data_t
   bool show_light_hierarchy_win;
   bool show_core_data_win;
 
+  framebuffer_t fb_preview;         // for redering template browser previews
+
     
 }app_data_t;
 

@@ -30,15 +30,17 @@ LIB_DIR = ..\_libs\win64
 
 
 # app
-_OBJS = 				 				\
-	app.o					 				\
-	gui.o					 				\
-	gui_struct_browser.o	\
-	gui_top_bar.o					\
-	gui_properties.o			\
-	gizmo.o								\
-	terrain_edit.o				\
-	operation.o						\
+_OBJS = 				 					\
+	app.o					 					\
+	gui.o					 					\
+	gui_struct_browser.o		\
+	gui_top_bar.o						\
+	gui_properties.o				\
+	gui_template_browser.o 	\
+	gui_core_data.o 				\
+	gizmo.o									\
+	terrain_edit.o					\
+	operation.o							\
 	editor_save.o
 
 # put the OBJ_DIR in front of the obj names

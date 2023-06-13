@@ -220,7 +220,7 @@ main resources:
 ## entity system
 
 ## level editor
-  - [ ] pause mid game
+  - [x] pause mid game
   - [ ] generate struct literal for 
     - [x] materials
     - [ ] entities

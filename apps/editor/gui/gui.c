@@ -77,7 +77,6 @@ ui_rect light_hierarchy_win_rect;
 ui_rect light_hierarchy_win_ratio;
 ui_rect core_data_win_rect;
 
-framebuffer_t fb_preview;
 
 static core_data_t* core_data = NULL;
 static app_data_t*  app_data  = NULL;
@@ -102,12 +101,12 @@ void gui_init()
     nk_style_set_font(ctx, &droid->handle);
   }
 
-  fb_preview.type = FRAMEBUFFER_RGB;
-  fb_preview.is_msaa = false;
-  fb_preview.width  = 512;
-  fb_preview.height = 512;
-  fb_preview.size_divisor = 1;
-  framebuffer_create(&fb_preview);
+  app_data->fb_preview.type = FRAMEBUFFER_RGB;
+  app_data->fb_preview.is_msaa = false;
+  app_data->fb_preview.width  = 512;
+  app_data->fb_preview.height = 512;
+  app_data->fb_preview.size_divisor = 1;
+  framebuffer_create(&app_data->fb_preview);
 
   // P_NK_COLOR(ctx->style.button.text_active);
   // P_NK_COLOR(ctx->style.button.text_hover); 
@@ -135,7 +134,15 @@ void gui_update()
                                top_bar_win_ratio.w * w, 35);// top_bar_win_ratio.h * h);
     gui_top_bar_win(ctx, top_bar_win_rect, top_bar_flags);
 
-    gui_template_browser_win();
+    // less height because the window bar on top and below
+    template_win_ratio.w = 1.0f - prop_win_ratio.w; 
+    template_win_ratio.h = 0.2f; 
+    template_win_ratio.x = 0.0f; 
+    template_win_ratio.y = app_data->template_browser_minimized ? 1.0f : 0.8f;
+
+    template_win_rect = nk_rect(template_win_ratio.x * w, template_win_ratio.y * h, 
+                                template_win_ratio.w * w, template_win_ratio.h * h);
+    gui_template_browser_win(ctx, template_win_rect, window_min_flags);
   }
   // less height because the window bar on top and below
   prop_win_ratio.w = 0.25f; 
@@ -153,17 +160,20 @@ void gui_update()
  
   // --- external ---
   
-  struct_browser_win_ratio.h = 1.0f;
-  struct_browser_win_ratio.w = 0.1f;
-  struct_browser_win_ratio.x = 0.0f;
-  struct_browser_win_ratio.y = 0.0f;
-  int h_correct = top_bar_win_rect.h + (template_win_rect.h * !app_data->template_browser_minimized) + (35 * app_data->template_browser_minimized);
-  struct_browser_win_rect = nk_rect((struct_browser_win_ratio.x * w), 
-                                    (struct_browser_win_ratio.y * h) + top_bar_win_rect.h, 
-                                    (struct_browser_win_ratio.w * w), 
-                                    (struct_browser_win_ratio.h * h) - h_correct);
+
   if (!core_data_is_play())
-  { gui_struct_browser_win(ctx, struct_browser_win_rect, window_min_flags); }
+  { 
+    struct_browser_win_ratio.h = 1.0f;
+    struct_browser_win_ratio.w = 0.1f;
+    struct_browser_win_ratio.x = 0.0f;
+    struct_browser_win_ratio.y = 0.0f;
+    int h_correct = top_bar_win_rect.h + (template_win_rect.h * !app_data->template_browser_minimized) + (35 * app_data->template_browser_minimized);
+    struct_browser_win_rect = nk_rect((struct_browser_win_ratio.x * w), 
+                                      (struct_browser_win_ratio.y * h) + top_bar_win_rect.h, 
+                                      (struct_browser_win_ratio.w * w), 
+                                      (struct_browser_win_ratio.h * h) - h_correct);
+    gui_struct_browser_win(ctx, struct_browser_win_rect, window_min_flags); 
+  }
 
   // --- optional ---
 
@@ -180,7 +190,16 @@ void gui_update()
   { gui_debug_win(); } 
 
    if (app_data->show_core_data_win)
-  { gui_core_data_win(); } 
+  {
+    // less height because the window bar on top and below
+    const f32 w_ratio = 400.0f  / 1920.0f;
+    const f32 h_ratio = 1000.0f / 1020.0f;
+    const f32 x_ratio = 0.0f    / 1920.0f;
+    const f32 y_ratio = 10.0f   / 1020.0f + top_bar_win_ratio.h;
+
+    core_data_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
+    gui_core_data_win(ctx, core_data_win_rect, window_float_flags); 
+  } 
  
    // --------------------------------------------------------------------------------------------------
 
@@ -212,124 +231,6 @@ void gui_cleanup()
   nk_clear(ctx);
 }
 
-
-void gui_template_browser_win()
-{
-  int w, h;
-  window_get_size(&w, &h);
-
-  const char* win_name = "template browser";
-  
-  app_data->template_browser_minimized = nk_window_is_collapsed(ctx, win_name) ? 1 : 0;
-  // less height because the window bar on top and below
-  template_win_ratio.w = 1.0f - prop_win_ratio.w; 
-  template_win_ratio.h = 0.2f; 
-  template_win_ratio.x = 0.0f; 
-  template_win_ratio.y = app_data->template_browser_minimized ? 1.0f : 0.8f;
-
-  template_win_rect = nk_rect(template_win_ratio.x * w, template_win_ratio.y * h, template_win_ratio.w * w, template_win_ratio.h * h);
-  if (app_data->template_browser_minimized) { template_win_rect.y -= 35; }
-  if (nk_begin(ctx, win_name, template_win_rect, window_min_flags)) 
-  {
-  
-    int len = 0;
-    const entity_template_t* table = entity_template_get_all(&len);
-    static int selected = -1;
-    static vec3 cam_pos = { 0, 0, 10 };
-
-    nk_layout_row_begin(ctx, NK_STATIC, template_win_rect.h -60, 2);
-    {
-      const float table_names_w =  template_win_rect.w * 0.8f -20;
-      nk_layout_row_push(ctx, table_names_w);
-      if (nk_group_begin(ctx, "entity_table_names", 0))
-      {
-        const int row_w = 110;
-        nk_layout_row_static(ctx, 50, row_w, (int)table_names_w / row_w);
-        char buf[12];
-        for (int i = 0; i < len; ++i)
-        {
-          SPRINTF(12, buf, "ent_grp_%d", i);
-          if (nk_group_begin(ctx, buf, NK_WINDOW_NO_SCROLLBAR))
-          {
-            nk_layout_row_begin(ctx, NK_STATIC, 35, 2);
-            
-            nk_layout_row_push(ctx, 20);
-            if (nk_button_label(ctx, "+"))
-            {
-              vec3 front, pos;
-              vec3_copy(core_data->cam.front, front); // camera_get_front(front);
-              vec3_copy(core_data->cam.pos,   pos);   // camera_get_pos(pos);
-              vec3_mul_f(front, 8.0f, front);
-              vec3_add(front, pos, pos);
-              int id = state_entity_add_from_template(pos, VEC3(0), VEC3(1), i);
-              app_data->selected_id = id;
-              
-              operation_t op = OPERATION_T_ENTITY_ADD(id);
-              operation_register(&op);
-            }
-
-            bool check = i == selected;
-            bool check_old = check;
-            nk_layout_row_push(ctx, 75);
-            ui_rect bounds = nk_widget_bounds(ctx);
-            nk_selectable_label(ctx, table[i].name, NK_TEXT_LEFT, &check);
-            if (!check_old && check) { selected = i;  vec3_copy(VEC3_Z(10), cam_pos); }
-            if (check_old && !check) { selected = -1; vec3_copy(VEC3_Z(10), cam_pos); }
-            if (nk_input_is_mouse_hovering_rect(&ctx->input, bounds))
-            { nk_tooltip(ctx, table[i].name); }
-
-            nk_group_end(ctx);
-          }
-        }
-        nk_group_end(ctx);
-      }
-      nk_layout_row_push(ctx, template_win_rect.w * 0.2f -20);
-      if (nk_group_begin(ctx, "entity_preview", NK_WINDOW_NO_SCROLLBAR))
-      {
-        if (selected > -1)
-        {
-
-          const entity_template_t* def = entity_template_get(selected);
-          mesh_t*    mesh = assetm_get_mesh(def->mesh);
-          texture_t* tex  = assetm_get_texture_by_idx(assetm_get_material(def->mat)->albedo);
-          
-          texture_t* bg   = assetm_get_texture("#internal/preview_bg.png", true);
-          
-          renderer_direct_draw_mesh_preview(cam_pos, VEC3(0), VEC3(0), VEC3(1), mesh, tex, VEC3(1), bg, &fb_preview);
-          // const int size = (template_win_rect.w * 0.2f) - 20;
-          const int size = (template_win_rect.h) - 70;
-          nk_layout_row_static(ctx, size, size, 1);    
-          ui_rect img_bounds = nk_widget_bounds(ctx);
-          nk_image(ctx, nk_image_id(fb_preview.buffer));
-
-          // mouse drag for moving
-          static bool dragging = false;
-          if (input_get_mouse_down(MOUSE_LEFT) && (nk_input_is_mouse_hovering_rect(&ctx->input, img_bounds) || dragging))
-          {
-            dragging = true;
-            double x, y;
-            input_get_mouse_delta(&x, &y);
-            cam_pos[0] += x * -0.002f;
-            cam_pos[1] += y *  0.002f;
-          } 
-          else { dragging = false; }
-          // mouse over scroll for zoom
-          if (ctx->input.mouse.scroll_delta.y != 0 && nk_input_is_mouse_hovering_rect(&ctx->input, img_bounds))
-          { cam_pos[2] += ctx->input.mouse.scroll_delta.y * 0.2f; }
-
-        }
-        nk_group_end(ctx);
-      }
-    }nk_layout_row_end(ctx);
-      
-  }
-  nk_end(ctx);
- 
-  // minimize on startup
-  static bool minimize = true;
-  if (minimize)
-  {  nk_window_collapse(ctx, win_name, NK_MINIMIZED); minimize = false; }
-}
 
 void gui_hierarchy_win()
 {
@@ -686,89 +587,6 @@ void gui_debug_win()
     #endif
   }
   nk_end(ctx);
-}
-
-void gui_core_data_win()
-{
-  int w, h;
-  window_get_size(&w, &h);
-
-  // less height because the window bar on top and below
-  const f32 w_ratio = 400.0f  / 1920.0f;
-  const f32 h_ratio = 1000.0f / 1020.0f;
-  const f32 x_ratio = 0.0f    / 1920.0f;
-  const f32 y_ratio = 10.0f   / 1020.0f + top_bar_win_ratio.h;
-
-  core_data_win_rect = nk_rect(x_ratio * w, y_ratio * h, w_ratio * w, h_ratio * h);
-  if (nk_begin(ctx, "core_data", core_data_win_rect, window_float_flags)) 
-  {
-    nk_layout_row_dynamic(ctx, 20, 1);
-    nk_labelf(ctx, NK_TEXT_LEFT, "t_last_frame: %f", core_data->t_last_frame);   
-    nk_labelf(ctx, NK_TEXT_LEFT, "delta_t: %f", core_data->delta_t);   
-    nk_labelf(ctx, NK_TEXT_LEFT, "cur_fps: %f", core_data->cur_fps);
-        
-    nk_spacing(ctx, 1);
-    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_total:       %u", core_data->draw_calls_total);
-    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_shadow:      %u", core_data->draw_calls_shadow);
-    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_deferred:    %u", core_data->draw_calls_deferred);
-    nk_labelf(ctx, NK_TEXT_LEFT, "draw_calls_screen_quad: %u", core_data->draw_calls_screen_quad);
-    nk_spacing(ctx, 1);
-    nk_checkbox_label(ctx, "wireframe_mode_enabled", &core_data->wireframe_mode_enabled);
-    nk_checkbox_label(ctx, "show_shadows", &core_data->show_shadows);
-   
-    // framebuffers, shaders & cubemap
-    nk_spacing(ctx, 1);
-    gui_shader_properties(&core_data->basic_shader, "basic_shader");
-    gui_shader_properties(&core_data->shadow_shader, "shadow_shader");
-    gui_shader_properties(&core_data->deferred_shader, "deferred_shader");
-    gui_shader_properties(&core_data->lighting_shader, "lighting_shader");
-    gui_shader_properties(&core_data->shadow_pass_shader, "shadow_pass_shader");
-    gui_shader_properties(&core_data->skybox_shader, "skybox_shader");
-    gui_shader_properties(&core_data->post_fx_shader, "post_fx_shader");
-    gui_shader_properties(&core_data->brdf_lut_shader, "brdf_lut_shader");
-    gui_shader_properties(&core_data->mouse_pick_shader, "mouse_pick_shader");
-
-
-    nk_spacing(ctx, 1);
-    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_x: %f", core_data->mouse_x);
-    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_y: %f", core_data->mouse_y);
-    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_delta_x: %f", core_data->mouse_delta_x);
-    nk_labelf(ctx, NK_TEXT_LEFT, "mouse_delta_y: %f", core_data->mouse_delta_y);
-    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_x: %f", core_data->scroll_x);
-    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_y: %f", core_data->scroll_y);
-    nk_labelf(ctx, NK_TEXT_LEFT, "scroll_delta_x: %f", core_data->scroll_delta_x);
-
-    // more shaders
-    nk_spacing(ctx, 1);
-    gui_shader_properties(&core_data->equirect_shader, "equirect_shader");
-    gui_shader_properties(&core_data->irradiance_map_shader, "irrandiance_map_shader");
-    gui_shader_properties(&core_data->prefilter_shader, "prefilter_shader");
-    
-    nk_spacing(ctx, 1);
-    gui_shader_properties(&core_data->terrain_shader, "terrain_shader");
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_materials_len: %d", core_data->terrain_materials_len);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_chunks_len: %d", core_data->terrain_chunks_len);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_scl: %f", core_data->terrain_scl);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_y_scl: %f", core_data->terrain_y_scl);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_x_len: %d", core_data->terrain_x_len);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_z_len: %d", core_data->terrain_z_len);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_layout_len: %d", core_data->terrain_layout_len);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_draw_dist: %d", core_data->terrain_draw_dist);
-    nk_labelf(ctx, NK_TEXT_LEFT, "terrain_cull_dist: %d", core_data->terrain_cull_dist);
-    
-    nk_spacing(ctx, 1);
-    nk_checkbox_label(ctx, "phys_act", &core_data->phys_act);
-    nk_checkbox_label(ctx, "scripts_act", &core_data->scripts_act);
-
-  }
-  nk_end(ctx);
-}
-
-void gui_shader_properties(shader_t* s, char* name)
-{
-  nk_labelf(ctx, NK_TEXT_LEFT, "%s:", name);
-  nk_labelf(ctx, NK_TEXT_LEFT, "has_error: %s", STR_BOOL(s->has_error));
-  nk_labelf(ctx, NK_TEXT_LEFT, "handle: %d", s->handle);
 }
 
 

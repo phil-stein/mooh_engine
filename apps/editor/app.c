@@ -167,8 +167,9 @@ void app_update()
   // stop / pause pla-mode
   if (input_get_key_down(KEY_LEFT_CONTROL) && input_get_key_pressed(KEY_SPACE))
   {
-    if (core_data_is_play()) { core_data_pause(); }
-    else                     { core_data_play();  }
+    if      (core_data_is_play())   { core_data_pause(); }
+    else if (core_data->is_paused)  { core_data_stop();  }
+    else                            { core_data_play();  }
   }
   
     // @TODO: flickers first frame

@@ -72,7 +72,7 @@ INLINE void programm_app_default_logic(core_data_t* core_data)
   {
 #ifdef EDITOR
     if (core_data->scripts_act || core_data->phys_act)
-    { core_data_pause(); } // { core_data->scripts_act = false;  core_data->phys_act = false; }
+    { core_data_stop(); } // { core_data->scripts_act = false;  core_data->phys_act = false; }
     else { program_quit(); }
 #else
     program_quit();

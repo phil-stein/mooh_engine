@@ -50,12 +50,13 @@ void core_data_init()
 
 #ifdef INCLUDE_PLAY_MODE
 
-void core_data_play()
+void core_data_play_func()
 {
   if (core_data_is_play()) { return; }
   
   core_data.scripts_act = true;
   core_data.phys_act    = true;
+  core_data.is_paused   = false;
 
 #if EDITOR
   save_sys_write_scene_to_state_buffer();
@@ -64,7 +65,7 @@ void core_data_play()
   event_sys_trigger_play_state(true);
 }
 
-void core_data_play_scripts()
+void core_data_play_scripts_func()
 {
   if (core_data_is_play()) { return; }
 
@@ -78,7 +79,7 @@ void core_data_play_scripts()
   event_sys_trigger_play_state(true);
 }
 
-void core_data_play_phys()
+void core_data_play_phys_func()
 {
   if (core_data_is_play()) { return; }
   
@@ -92,12 +93,26 @@ void core_data_play_phys()
   event_sys_trigger_play_state(true);
 }
 
-void core_data_pause()
+void core_data_pause_func()
 {
-  if (!core_data_is_play()) { return; }
+  if (core_data.is_paused || !core_data_is_play()) 
+  { return; }
+  
+  core_data.scripts_act = false;
+  core_data.phys_act    = false;
+  core_data.is_paused   = true;
+  
+  // @TODO: 
+  // event_sys_trigger_play_state(true);
+}
+
+void core_data_stop_func()
+{
+  if ( !(core_data_is_play() || core_data.is_paused) ) { return; }
 
   core_data.scripts_act = false;
   core_data.phys_act    = false;
+  core_data.is_paused   = false;
 
 #if EDITOR
   save_sys_load_scene_from_state_buffer();
@@ -106,7 +121,7 @@ void core_data_pause()
   event_sys_trigger_play_state(false);
 }
 
-bool core_data_is_play_func() { return core_data.phys_act || core_data.scripts_act; }
+bool core_data_is_play_func() { return !core_data.is_paused && (core_data.phys_act || core_data.scripts_act); }
 
 #endif  // #ifdef INCLUDE_PLAY_MODE
 

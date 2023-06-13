@@ -116,6 +116,11 @@ void gui_top_bar_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags)
         app_data->top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : app_data->top_bar_menu_hover;
         
         bounds = nk_widget_bounds(ctx);
+        if (nk_menu_item_label(ctx, "stop", NK_TEXT_LEFT))
+        { core_data_stop(); } // { core_data->phys_act = false; core_data->scripts_act = false; }
+        app_data->top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : app_data->top_bar_menu_hover;
+        
+        bounds = nk_widget_bounds(ctx);
         if (nk_menu_item_label(ctx, "phys play", NK_TEXT_LEFT)) { core_data_play_phys(); } // { core_data->phys_act = true; }
         app_data->top_bar_menu_hover = nk_input_is_mouse_hovering_rect(&ctx->input, bounds) ? true : app_data->top_bar_menu_hover;
         
@@ -134,10 +139,16 @@ void gui_top_bar_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags)
       
       }
         nk_layout_row_push(ctx, 30);
-        if (nk_button_symbol(ctx, !core_data_is_play() ? NK_SYMBOL_TRIANGLE_RIGHT : NK_SYMBOL_X))
+        if (nk_button_symbol(ctx, !core_data_is_play() ? NK_SYMBOL_TRIANGLE_RIGHT : NK_SYMBOL_RECT_SOLID))
         {
           if (!core_data_is_play()) { core_data_play(); }
-          else { core_data_pause(); }
+          else                      { core_data_pause(); }
+        }
+        if (core_data->is_paused || core_data_is_play())
+        {
+          nk_layout_row_push(ctx, 30);
+          if (nk_button_symbol(ctx, NK_SYMBOL_CIRCLE_SOLID))
+          { core_data_stop(); }
         }
       
       if (app_data->gui_info_t >= 0.0f)

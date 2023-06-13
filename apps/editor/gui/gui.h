@@ -26,9 +26,32 @@ void gui_update();
 // @DOC: free allocated resources, call before exiting program
 void gui_cleanup();
 
+// @DOC: window showing a hierarchy of all entities
+void gui_hierarchy_win();
+// @DOC: used by gui_hierarchy_win(), displays entity and its children
+void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs);
+
+// @DOC: shows all dir/point_lights and lets you control the cubemap intensity
+void gui_light_hierarchy_win();
+
+// @DOC: shows all active framebuffers
+void gui_framebuffer_win();
+
+// @DOC: displays debug info, like all timers
+void gui_debug_win();
+
+// @DOC: not window, for use in one, color selector
+void gui_color_selector(rgbf color);
+
+
+// --- gui_top_bar.c ---
+
 // @DOC: bar at the top with scen, window & control menus
 // void gui_top_bar_win();
 void gui_top_bar_win(ui_context* _ctx, ui_rect win_rect, const u32 win_flags); 
+
+
+// --- gui_properties.c ---
 
 // @DOC: window displaying all properties of an entity_t
 // void gui_properties_win();
@@ -44,35 +67,24 @@ void gui_properties_point_light(ui_context* ctx, point_light_t* p, int idx); // 
 // @DOC: not window, for use in one, displays physics properties
 void gui_properties_physics(ui_context* ctx, const entity_template_t* def, entity_t* e);
 
+
+// --- gui_template_browser.c ---
+
 // @DOC: window at the bottom, to add entities from templates
-void gui_template_browser_win();
+// void gui_template_browser_win();
+void gui_template_browser_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags);
 
-// @DOC: window showing a hierarchy of all entities
-void gui_hierarchy_win();
-// @DOC: used by gui_hierarchy_win(), displays entity and its children
-void gui_hierarchy_display_entity_and_children(entity_t* e, int* offs);
 
-// @DOC: shows all dir/point_lights and lets you control the cubemap intensity
-void gui_light_hierarchy_win();
-
-// @DOC: shows all active framebuffers
-void gui_framebuffer_win();
-
-// @DOC: displays debug info, like all timers
-void gui_debug_win();
-
-// @DOC: not window, for use in one, displays a shader's properties
-void gui_shader_properties(shader_t* s, char* name);
+// --- gui_core_data.c ---
 
 // @DOC: window displaying all variables in core_data_t
-void gui_core_data_win();
+// void gui_core_data_win();
+void gui_core_data_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags);
+// @DOC: not window, for use in one, displays a shader's properties
+void gui_shader_properties(ui_context* ctx, shader_t* s, char* name);
 
-// @DOC: not window, for use in one, color selector
-void gui_color_selector(rgbf color);
 
-
-// ---external---
-
+// --- gui_struct_browser.c ---
 void gui_struct_browser_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags);
 
 #endif
