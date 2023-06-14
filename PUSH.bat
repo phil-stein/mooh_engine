@@ -1,4 +1,4 @@
-:: @echo off 
+@echo off 
 
 :: not working
 
@@ -87,6 +87,8 @@ echo -- text --
 git add .
 git commit -m %1
 git push origin main
+
+goto jmp_exit
 
 :: :push
 :: git add .

@@ -152,6 +152,7 @@ main resources:
   - [ ] finish math_test.h `WIP`
   - [ ] make state.c world_arr & world_arr_len available in core_data as pointer
   - [ ] move structure save/load from save_sys.c to editor_save.c ?
+  - [ ] track memory allcations through MALLOC(), FREE(), etc. and stb_ds.h
 
 ## tools
   - [ ] binary dump
@@ -167,8 +168,8 @@ main resources:
       - [ ] meshes
       - [ ] cubemaps [doesnt work](#buggs) `WIP`
       - [ ] shaders
-    - [ ] load shaders from zip
-    - [ ] load cubemaps from zip
+    - [ ] load shaders from zip  ?
+    - [ ] load cubemaps from zip ?
     - [ ] handle missing assets
   - [ ] hot-reload shaders
   - [ ] make seperate editor map file so f.e. structures can be stored special and edited all at once ? 
