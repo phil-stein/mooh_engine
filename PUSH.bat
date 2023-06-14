@@ -1,4 +1,4 @@
-@echo off 
+:: @echo off 
 
 :: not working
 
@@ -6,6 +6,19 @@ IF "%~1"=="" (
   echo "no commit message given" 
   goto jmp_exit
 )
+
+
+git add .
+git commit -m %1
+git push origin maingoto jmp_exit
+
+git submodule foreach git add .
+git submodule foreach git commit -m %1
+git submodule foreach git push origin main
+  
+goto jmp_exit
+
+
 :: ELSE (
   :: git submodule foreach git add .
   :: git submodule foreach git commit -m %1
@@ -41,25 +54,17 @@ IF "%~1"=="" (
 ::   goto push
 :: )
 
-goto push
+:: :push
+:: git add .
+:: git commit -m %1
+:: git push origin main
 
-git submodule foreach git add .
-git submodule foreach git commit -m %1
-git submodule foreach git push origin main
-
-goto jmp_exit
-
-:push
-git add .
-git commit -m %1
-git push origin main
-
-:submodule_push
-git checkout main
-git add .
-git commit -m %1
-git push origin main
-cd ..\..
-git add .
+:: :submodule_push
+:: git checkout main
+:: git add .
+:: git commit -m %1
+:: git push origin main
+:: cd ..\..
+:: git add .
 
 :jmp_exit
