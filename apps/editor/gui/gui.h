@@ -82,6 +82,8 @@ void gui_template_browser_win(ui_context* ctx, ui_rect win_rect, const u32 win_f
 void gui_core_data_win(ui_context* ctx, ui_rect win_rect, const u32 win_flags);
 // @DOC: not window, for use in one, displays a shader's properties
 void gui_shader_properties(ui_context* ctx, shader_t* s, char* name);
+// @DOC: not window, displays all members of camera_t struct
+void gui_camera_properties(ui_context* ctx, camera_t* cam, char* name);
 
 
 // --- gui_struct_browser.c ---

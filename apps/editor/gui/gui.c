@@ -93,7 +93,7 @@ void gui_init()
   {struct nk_font_atlas* atlas;
     nk_glfw3_font_stash_begin(&glfw, &atlas);
 
-    struct nk_font *droid = nk_font_atlas_add_from_file(atlas, ASSET_PATH"fonts/DroidSans.ttf", 18/*16*//*14*/, 0);
+    struct nk_font *droid = nk_font_atlas_add_from_file(atlas, ASSET_PATH"fonts/DroidSans.ttf", 20/*18*//*16*//*14*/, 0);
 
     nk_glfw3_font_stash_end(&glfw);
     /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
@@ -131,7 +131,7 @@ void gui_update()
     top_bar_win_ratio.y = 0.0f; 
 
     top_bar_win_rect = nk_rect(top_bar_win_ratio.x * w, top_bar_win_ratio.y * h, 
-                               top_bar_win_ratio.w * w, 35);// top_bar_win_ratio.h * h);
+                               top_bar_win_ratio.w * w, 45);// top_bar_win_ratio.h * h);
     gui_top_bar_win(ctx, top_bar_win_rect, top_bar_flags);
 
     // less height because the window bar on top and below
