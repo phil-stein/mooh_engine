@@ -10,7 +10,7 @@ IF "%~1"=="" (
 
 git add .
 git commit -m %1
-git push origin maingoto jmp_exit
+git push origin main
 
 git submodule foreach git add .
 git submodule foreach git commit -m %1
