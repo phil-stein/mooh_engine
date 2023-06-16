@@ -174,46 +174,6 @@ void program_sync_phys()
   u32 phys_objs_len = 0;
   phys_obj_t* phys_objs = phys_get_obj_arr(&phys_objs_len);
 
-  // @TMP: -------------------
-  
-  vec3 sum_aabb[2];
-  vec3 b0[2]; bool b0_found = false; 
-  vec3 b1[2]; bool b1_found = false;
-  
-  for (u32 i = 0; i < phys_objs_len; ++i)
-  {
-    phys_obj_t* obj = &phys_objs[i]; 
-    if (obj->entity_idx == 0)
-    { 
-      // vec3_copy(obj->collider.box.aabb[0], b0[1]);
-      // vec3_copy(obj->collider.box.aabb[1], b0[1]);
-      phys_get_final_aabb(obj, b0);
-
-      b0_found = true;
-    }
-    if (obj->entity_idx == 1)
-    { 
-      // vec3_copy(obj->collider.box.aabb[0], b1[1]);
-      // vec3_copy(obj->collider.box.aabb[1], b1[1]);
-      phys_get_final_aabb(obj, b1);
-      b1_found = true;
-    }
-  }
-  if (b0_found && b1_found)
-  {
-    phys_aabb_add(b0, b1, sum_aabb);
-    
-    phys_obj_t obj = PHYS_OBJ_T_INIT();
-    obj.entity_idx = -1;
-    vec3_copy(VEC3(0), obj.pos);
-    vec3_copy(VEC3(1), obj.scl);
-    phys_obj_make_box(sum_aabb, VEC3(0), false, &obj);
-    
-    phys_debug_draw_box_collider_func(&obj, VEC3(1));
-  }
-
-  // -------------------------
-
   for (u32 i = 0; i < phys_objs_len; ++i)
   {
     phys_obj_t* obj = &phys_objs[i];

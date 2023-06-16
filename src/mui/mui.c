@@ -30,31 +30,6 @@ font_t* font_main;
 
 static core_data_t* core_data = NULL;
 
-typedef enum 
-{ 
-  MUI_OBJ_TEXT = 1, 
-  MUI_OBJ_QUAD = 2, 
-  MUI_OBJ_IMG  = 3
-
-}mui_obj_type;
-
-#define MUI_OBJ_TEXT_MAX 32
-typedef struct
-{
-  mui_obj_type type;
-
-  vec2 pos;
-  int text[MUI_OBJ_TEXT_MAX];
-  int text_len;
-  text_orientation orientation;
-  
-  // vec2 pos;
-  vec2 scl;
-  rgbf color;
-  texture_t* tex;
-
-}mui_obj_t;
-
 mui_obj_t* obj_arr = NULL;
 u32        obj_arr_len = 0;
 
@@ -146,20 +121,20 @@ void mui_update()
   _glEnable(GL_DEPTH_TEST);
 }
 
-void mui_text(vec2 pos, char* text, text_orientation orientation)
+void mui_text(vec2 pos, char* text, mui_orientation_type orientation)
 {
   int len = strlen(text);
   ERR_CHECK(len < MUI_OBJ_TEXT_MAX, "text too long for buffer size");
  
   // P_TEXT_ORIENTATION(orientation);
-  ERR_CHECK(!((HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_MIDDLE)) ||
-              (HAS_FLAG(orientation, TEXT_UP)     && HAS_FLAG(orientation, TEXT_DOWN))   ||
-              (HAS_FLAG(orientation, TEXT_MIDDLE) && HAS_FLAG(orientation, TEXT_DOWN))),
-              "can only have one of TEXT_UP, TEXT_MIDDLE or TEXT_DOWN");
-  ERR_CHECK(!((HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_CENTER)) ||
-              (HAS_FLAG(orientation, TEXT_LEFT)   && HAS_FLAG(orientation, TEXT_RIGHT))  ||
-              (HAS_FLAG(orientation, TEXT_CENTER) && HAS_FLAG(orientation, TEXT_RIGHT))),
-              "can only have one of TEXT_LEFT, TEXT_CENTER or TEXT_RIGHT");
+  ERR_CHECK(!((HAS_FLAG(orientation, MUI_UP)     && HAS_FLAG(orientation, MUI_MIDDLE)) ||
+              (HAS_FLAG(orientation, MUI_UP)     && HAS_FLAG(orientation, MUI_DOWN))   ||
+              (HAS_FLAG(orientation, MUI_MIDDLE) && HAS_FLAG(orientation, MUI_DOWN))),
+              "can only have one of MUI_UP, MUI_MIDDLE or MUI_DOWN");
+  ERR_CHECK(!((HAS_FLAG(orientation, MUI_LEFT)   && HAS_FLAG(orientation, MUI_CENTER)) ||
+              (HAS_FLAG(orientation, MUI_LEFT)   && HAS_FLAG(orientation, MUI_RIGHT))  ||
+              (HAS_FLAG(orientation, MUI_CENTER) && HAS_FLAG(orientation, MUI_RIGHT))),
+              "can only have one of MUI_LEFT, MUI_CENTER or MUI_RIGHT");
 
   mui_obj_t o;
   o.type        = MUI_OBJ_TEXT; 
@@ -186,20 +161,20 @@ void mui_text(vec2 pos, char* text, text_orientation orientation)
   // pos[1] += font_main->gh;
   
   // if (HAS_FLAG(orientation, TEXT_LEFT)) { }
-  if (HAS_FLAG(orientation, TEXT_RIGHT))
+  if (HAS_FLAG(orientation, MUI_RIGHT))
   { pos[0] -= font_main->gw * len; }
-  else if (HAS_FLAG(orientation, TEXT_CENTER)) 
+  else if (HAS_FLAG(orientation, MUI_CENTER)) 
   { pos[0] -= font_main->gw * len * 0.5f; }
 
   // if no flag
-  if(!HAS_FLAG(orientation, TEXT_UP) && !HAS_FLAG(orientation, TEXT_MIDDLE) && 
-     !HAS_FLAG(orientation, TEXT_DOWN))
-  { orientation |= TEXT_UP; }
+  if(!HAS_FLAG(orientation, MUI_UP) && !HAS_FLAG(orientation, MUI_MIDDLE) && 
+     !HAS_FLAG(orientation, MUI_DOWN))
+  { orientation |= MUI_UP; }
 
   // if (HAS_FLAG(orientation, TEXT_UP)) {}
-  if (HAS_FLAG(orientation, TEXT_DOWN))
+  if (HAS_FLAG(orientation, MUI_DOWN))
   { pos[1] -= font_main->gh; }
-  else if (HAS_FLAG(orientation, TEXT_MIDDLE))
+  else if (HAS_FLAG(orientation, MUI_MIDDLE))
   { pos[1] -= font_main->gh * 0.5f; }
 
   vec2_copy(pos, o.pos);
@@ -247,20 +222,40 @@ int mui_quad(vec2 pos, vec2 scl, rgbf color)
   vec2_copy(pos, obj.pos);
   vec2_copy(scl, obj.scl);
   vec3_copy(color, obj.color);
-  
+ 
   arrput(obj_arr, obj);
   obj_arr_len++;
   return obj_arr_len -1;
 }
 
-// void mui_group(text_orientation orientation, int len, ...)
-// {
-//   va_list args;
-//   va_start(args, len);
-//   for (u32 i = 0; i < len; ++i)
-//   {
-//     int idx = va_arg(args, int); 
-//   }
-//   va_end(args);
-// }
+void mui_group(mui_group_t* g)
+{
+  ERR_CHECK(g->objs_len > 0, "mui_group_t has no objects in it.\n");
+  ERR_CHECK(!((HAS_FLAG(g->orientation, MUI_LEFT)   && HAS_FLAG(g->orientation, MUI_CENTER)) ||
+              (HAS_FLAG(g->orientation, MUI_LEFT)   && HAS_FLAG(g->orientation, MUI_RIGHT))  ||
+              (HAS_FLAG(g->orientation, MUI_CENTER) && HAS_FLAG(g->orientation, MUI_RIGHT))),
+              "can only have one of MUI_LEFT, MUI_CENTER or MUI_RIGHT");
+
+  vec2 size;
+  vec2 pos;
+  vec2 pos_step;
+
+  size[0] = (g->scl[0] / g->objs_len) - g->margin; 
+  size[1] =  g->scl[1] - g->margin;
+  pos_step[0] = (g->scl[0] / g->objs_len) * 2.0f;
+  pos_step[1] = 0.0f;
+  vec2_copy(g->pos, pos);
+  pos[0] -= pos_step[0] * ((g->objs_len -1) * 0.5f) ;
+
+  for (u32 i = 0; i < g->objs_len; ++i)
+  {
+    mui_obj_t* o = &g->objs[i];
+    if (o->type == MUI_OBJ_QUAD)
+    {
+      mui_quad(pos, size, o->color);
+      vec2_add(pos_step, pos, pos);
+    }
+    else { ERR("NOT IMPLEMENTED YET"); }
+  } 
+}
 

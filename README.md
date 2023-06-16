@@ -138,11 +138,11 @@ main resources:
     - either figure out a way to decode function pointer to names in app, print on ERR()
     - or do it in a file like the tutorial
   - [ ] add [profiling](https://ftp.gnu.org/old-gnu/Manuals/gprof-2.9.1/html_mono/gprof.html), [tutorial](https://www.thegeekstuff.com/2012/08/gprof-tutorial/)
-  - [ ] make most funcs _dbg error checked ? (tracing would make this redundant) 
-    - [ ] use _dbg funcs for materials in assetm ?
-    - [x] make _dbg check a macro to set easy and compile out ?
-      - when compiled out _file & _line cause errors
-      - are _file & _line impacting performance ?
+  - [ ] make most funcs dbg error checked ? (tracing would make this redundant) 
+    - [ ] use dbg funcs for materials in assetm ?
+    - [x] make dbg check a macro to set easy and compile out ?
+      - when compiled out file & line cause errors
+      - are file & line impacting performance ?
     - [ ] state
     - [ ] etc.
   - [ ] go through all files check for unecessary header includes, to remove clutter
@@ -201,7 +201,7 @@ main resources:
       - precompute x, y, z circles for axis aligned, like sphere collider
     - [ ] add profiler [also mentioned](#organization)
   - [ ] controller support ?
-  - [ ] keep_transform when parenting / un-parenting `WIP`
+  - [x] keep_transform when parenting / un-parenting 
 
 ## renderer
   - [ ] blending
@@ -228,7 +228,7 @@ main resources:
     - [ ] shaders
   - [ ] particle system editor
     - seperate ?
-  - [ ] make gui less sh*t
+  - [ ] make gui less shit
   - [ ] ask to save if unsaved changes
     - use operation.c
   - [ ] seperate windows into their own .c files
@@ -303,7 +303,7 @@ main resources:
       - [ ] big
     - [ ] trees
       - [ ] normal
-      - [x] big (f*cked normals)
+      - [x] big (fucked normals)
     - [ ] bush
     - [ ] fence
     - [ ] old hut
@@ -316,9 +316,9 @@ main resources:
   - [x] text (already wrote lib)
   - mui_text_f(0.5f, 0.75f) funcs
   - hook rendering into core
-  - [ ] draw quads 
-    - [ ] scale with screen
-    - [ ] textured quads
+  - [x] draw quads 
+    - [x] scale with screen
+    - [x] textured quads
   - [ ] aligned group hierarchy
     - [ ] centered
     - [ ] left / right
