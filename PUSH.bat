@@ -32,6 +32,7 @@ echo -- global --
   git checkout main
   git add .
   git commit -m %1
+  git pull origin main
   git push origin main
   cd ..\..
   git add .
@@ -43,6 +44,7 @@ echo -- math --
   git checkout main
   git add .
   git commit -m %1
+  git pull origin main
   git push origin main
   cd ..\..
   git add .
@@ -55,6 +57,7 @@ echo -- phys --
   git checkout main
   git add .
   git commit -m %1
+  git pull origin main
   git push origin main
   cd ..\..
   git add .     
@@ -66,6 +69,7 @@ echo -- serialization --
   git checkout main
   git add .
   git commit -m %1
+  git pull origin main
   git push origin main
   cd ..\..
   git add .     
@@ -77,6 +81,7 @@ echo -- text --
   git checkout main
   git add .
   git commit -m %1
+  git pull origin main
   git push origin main
   cd ..\..
   git add .
@@ -86,6 +91,7 @@ echo -- text --
 :: goto push
 git add .
 git commit -m %1
+git pull origin main
 git push origin main
 
 goto jmp_exit
