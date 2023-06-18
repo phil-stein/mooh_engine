@@ -15,6 +15,8 @@ typedef struct
 
 typedef enum
 {
+  // -- general --
+
   MUI_UP     = FLAG(0),
   MUI_MIDDLE = FLAG(1),
   MUI_DOWN   = FLAG(2),
@@ -23,6 +25,12 @@ typedef enum
   MUI_CENTER = FLAG(4),
   MUI_RIGHT  = FLAG(5),
   
+  // -- group --
+
+  MUI_ROW    = FLAG(6),
+  MUI_COLUMN = FLAG(7),
+  MUI_GRID   = FLAG(8),
+
 }mui_orientation_type;
 
 INLINE void P_MUI_ORIENTATION(mui_orientation_type o)     
@@ -108,6 +116,8 @@ typedef struct
 
   mui_orientation_type orientation;
 
+  int max_wrap; // wrap after x mui_obj_t, -1 for no wrap
+
 }mui_group_t;
 #define MUI_GROUP_T_ADD(_group, _obj)  { arrput((_group)->objs, (_obj)); (_group)->objs_len++; }
 
@@ -140,8 +150,9 @@ INLINE void MUI_GROUP_T_INIT(mui_group_t* g, vec2 pos, vec2 scl, f32 margin, mui
   (g)->scl[1]      = (scl)[1];                              
   (g)->margin      = (margin);                              
   (g)->objs        = NULL;                                  
-  (g)->objs_len    = 0;                                  
-  (g)->orientation = (orientation);                       
+  (g)->objs_len    = 0;  
+  (g)->orientation = (orientation);                    
+  (g)->max_wrap    = -1;  // no wrap  
 }
 
 

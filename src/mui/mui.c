@@ -215,14 +215,28 @@ int mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_
 }
 int mui_quad(vec2 pos, vec2 scl, rgbf color)
 { 
-  // example: 
-  // renderer_direct_draw_quad(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), RGB_F(0, 1, 1)); 
   mui_obj_t obj;
   obj.type = MUI_OBJ_QUAD;
   vec2_copy(pos, obj.pos);
   vec2_copy(scl, obj.scl);
   vec3_copy(color, obj.color);
  
+  // orinetation & scaling 
+  // @TODO: 
+  bool scale_by_ratio = false; 
+  int w, h;
+  window_get_size(&w, &h);
+  f32 r_wh = ((f32)w / h);
+  
+  obj.pos[0] *= -1.0f;
+  obj.pos[0] *= r_wh * 4.0f;
+  obj.pos[1] *= 4.0f;
+  
+  obj.scl[0] *= (scale_by_ratio ? r_wh : 1.0f);
+  
+  // r_wh = ((f32)tex->width / tex->height);
+  // obj.scl[0] *= r_wh; 
+  
   arrput(obj_arr, obj);
   obj_arr_len++;
   return obj_arr_len -1;
@@ -239,16 +253,42 @@ void mui_group(mui_group_t* g)
   vec2 size;
   vec2 pos;
   vec2 pos_step;
+  int  wraps = (g->objs_len / g->max_wrap) < 0 ? 1 : (g->objs_len / g->max_wrap);
 
-  size[0] = (g->scl[0] / g->objs_len) - g->margin; 
-  size[1] =  g->scl[1] - g->margin;
-  pos_step[0] = (g->scl[0] / g->objs_len) * 2.0f;
-  pos_step[1] = 0.0f;
-  vec2_copy(g->pos, pos);
-  pos[0] -= pos_step[0] * ((g->objs_len -1) * 0.5f) ;
+  if (HAS_FLAG(g->orientation, MUI_ROW))
+  {
+    size[0] = (g->scl[0] / g->objs_len) - g->margin; 
+    size[1] = (g->scl[1] - g->margin) / wraps;
+    pos_step[0] = (g->scl[0] / g->objs_len) * 0.25f; // / g->objs_len; //  * 2.0f;
+    pos_step[1] = 0.0f;
+    vec2_copy(g->pos, pos);
+    pos[1] *= wraps;
+    pos[0] -= pos_step[0] * ((g->objs_len -1) * 0.5f) ;
+  }
+  else if (HAS_FLAG(g->orientation, MUI_COLUMN))
+  {
+    size[0] =  g->scl[0] - g->margin;
+    size[1] = (g->scl[1] / g->objs_len) - g->margin;
+    pos_step[0] = 0.0f;
+    pos_step[1] = (g->scl[1] / g->objs_len) * 0.5f;
+    vec2_copy(g->pos, pos);
+    pos[1] -= pos_step[1] * ((g->objs_len -1) * 0.5f) ;   
+  }
+  // // if MUI_ROW || MUI_COLUMN && MUI_GRID
+  // if (HAS_FLAG(g->orientation, MUI_GRID))
+  // {
+  // }
+
+  // @TODO: wrap  
 
   for (u32 i = 0; i < g->objs_len; ++i)
   {
+    if (i != 0 && i % g->max_wrap == 0)
+    {
+      pos[1] -= size[1] * 0.25f;
+      pos[0] -= pos_step[0] * g->max_wrap;
+    }
+    
     mui_obj_t* o = &g->objs[i];
     if (o->type == MUI_OBJ_QUAD)
     {

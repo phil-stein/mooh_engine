@@ -193,14 +193,14 @@ void player_ui(entity_t* this)
 {
   // -- circle & ammo --
   { 
-    // texture_t* circle_tex = assetm_get_texture("#internal/circle.png", false);
-    // texture_t* weapon_tex = assetm_get_texture("_icons/kriss_vector_01.png", false);
-    // mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.80f), circle_tex, VEC3(0.75f));
-    // mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.65f), circle_tex, VEC3(0.55f));
+    texture_t* circle_tex = assetm_get_texture("#internal/circle.png", false);
+    texture_t* weapon_tex = assetm_get_texture("_icons/kriss_vector_01.png", false);
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.80f), circle_tex, VEC3(0.75f));
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.65f), circle_tex, VEC3(0.55f));
 
-    // mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2(-0.45f), weapon_tex, VEC3(1.00f));
+    mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2(-0.45f), weapon_tex, VEC3(1.00f));
 
-    // mui_img_tint(VEC2_XY(-0.72f, -0.72f), VEC2( 0.50f), circle_tex, VEC3(0.35f));
+    mui_img_tint(VEC2_XY(-0.72f, -0.72f), VEC2( 0.50f), circle_tex, VEC3(0.35f));
 
     char txt[64];
     SPRINTF(64, txt, "%d|%d", ammo, AMMO_MAX);
