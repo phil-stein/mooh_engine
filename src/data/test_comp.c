@@ -10,6 +10,7 @@
 #include "core/io/assetm.h"
 #include "core/io/save_sys.h"
 #include "core/debug/debug_draw.h"
+#include "core/debug/debug_timer.h"
 #include "math/math_inc.h"
 #include "mui/mui.h"
 
@@ -191,10 +192,13 @@ int ammo = MAX_AMMO;
 
 void player_ui(entity_t* this)
 {
+  TIMER_START("ui");
+
+  texture_t* circle_tex = assetm_get_texture("#internal/circle.png", false);
+  texture_t* weapon_tex = assetm_get_texture("_icons/kriss_vector_01.png", false);
+  
   // -- circle & ammo --
   { 
-    texture_t* circle_tex = assetm_get_texture("#internal/circle.png", false);
-    texture_t* weapon_tex = assetm_get_texture("_icons/kriss_vector_01.png", false);
     mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.80f), circle_tex, VEC3(0.75f));
     mui_img_tint(VEC2_XY(-0.8f, -0.8f),   VEC2( 0.65f), circle_tex, VEC3(0.55f));
 
@@ -206,6 +210,20 @@ void player_ui(entity_t* this)
     SPRINTF(64, txt, "%d|%d", ammo, AMMO_MAX);
     mui_text(VEC2_XY(-0.70f, -0.65f), txt, MUI_CENTER | MUI_UP);
   }
+  // -- inventory --
+  {
+    mui_group_t group;
+    MUI_GROUP_T_INIT(&group, VEC2_XY(0.0f, -0.8f), VEC2_XY(1.75f, 0.5f), 0.0f, MUI_CENTER | MUI_ROW);
+    
+    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_IMG_GROUP(circle_tex, 1.00f, 1.00f, 1.00f));
+    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_IMG_GROUP(circle_tex, 0.75f, 0.75f, 0.75f));
+    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_IMG_GROUP(circle_tex, 0.50f, 0.50f, 0.50f));
+    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_IMG_GROUP(circle_tex, 0.25f, 0.25f, 0.25f));
+    
+    mui_group(&group);
+  }
+
+  TIMER_STOP_PRINT(); // ui
 
   // // -- group --
   // {

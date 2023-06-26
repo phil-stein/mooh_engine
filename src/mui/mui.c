@@ -254,16 +254,23 @@ void mui_group(mui_group_t* g)
   vec2 pos;
   vec2 pos_step;
   int  wraps = (g->objs_len / g->max_wrap) < 0 ? 1 : (g->objs_len / g->max_wrap);
+  wraps += g->objs_len % g->max_wrap; // f.e. for 3 objs 2 max_wrap, would be 1 wrap
+  int objs_len_wrap = g->objs_len + (g->objs_len % g->max_wrap);
+  // P_INT(objs_len_wrap);
+  // P_INT(g->max_wrap);
+  // P_INT(wraps);
 
   if (HAS_FLAG(g->orientation, MUI_ROW))
   {
-    size[0] = (g->scl[0] / g->objs_len) - g->margin; 
-    size[1] = (g->scl[1] - g->margin) / wraps;
-    pos_step[0] = (g->scl[0] / g->objs_len) * 0.25f; // / g->objs_len; //  * 2.0f;
+    f32 length = ( (g->scl[0] / objs_len_wrap) * (f32)wraps);
+    size[0] =  length - g->margin; 
+    size[1] = (g->scl[1]  / (f32)wraps) - g->margin;
+    pos_step[0] = length * 0.25f; 
     pos_step[1] = 0.0f;
     vec2_copy(g->pos, pos);
-    pos[1] *= wraps;
-    pos[0] -= pos_step[0] * ((g->objs_len -1) * 0.5f) ;
+    
+    pos[0] -= pos_step[0] * ((objs_len_wrap -1) * 0.5f);
+    pos[1] += (wraps -1) * ( size[1] / (f32)wraps ) * 0.5f; 
   }
   else if (HAS_FLAG(g->orientation, MUI_COLUMN))
   {
@@ -274,18 +281,13 @@ void mui_group(mui_group_t* g)
     vec2_copy(g->pos, pos);
     pos[1] -= pos_step[1] * ((g->objs_len -1) * 0.5f) ;   
   }
-  // // if MUI_ROW || MUI_COLUMN && MUI_GRID
-  // if (HAS_FLAG(g->orientation, MUI_GRID))
-  // {
-  // }
-
-  // @TODO: wrap  
 
   for (u32 i = 0; i < g->objs_len; ++i)
   {
     if (i != 0 && i % g->max_wrap == 0)
     {
-      pos[1] -= size[1] * 0.25f;
+      // P("wrap");
+      pos[1] -= size[1] * 0.5f;
       pos[0] -= pos_step[0] * g->max_wrap;
     }
     
@@ -293,9 +295,15 @@ void mui_group(mui_group_t* g)
     if (o->type == MUI_OBJ_QUAD)
     {
       mui_quad(pos, size, o->color);
-      vec2_add(pos_step, pos, pos);
     }
-    else { ERR("NOT IMPLEMENTED YET"); }
+    else if (o->type == MUI_OBJ_IMG)
+    {
+      mui_img_complx(pos, size, o->tex, o->color,  false);
+    }
+    else 
+    { ERR("NOT IMPLEMENTED YET"); }
+    
+    vec2_add(pos_step, pos, pos);
   } 
 }
 

@@ -323,6 +323,7 @@ main resources:
     - [ ] centered
     - [ ] left / right
     - [ ] up / down
+  - [ ] batch rendering 
 
 ## game design
   - [ ] game design doc

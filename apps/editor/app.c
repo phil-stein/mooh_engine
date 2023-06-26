@@ -118,33 +118,39 @@ void app_init()
 void app_update()
 {
 
-  // -- group --
-  {
-    // mui_group_t group = MUI_GROUP_T_INIT(0.5f, 0.5f, 0.2f, 0.1f, 0.0f, MUI_CENTER);
-    mui_group_t group;
-    MUI_GROUP_T_INIT(&group, VEC2(0.0f), VEC2_XY(1.0f, 1.0f), 0.0f, MUI_CENTER | MUI_ROW);
-    group.bg_visible = true;
-   
-    mui_obj_t obj0 = MUI_OBJ_T_INIT_QUAD_GROUP(1.0f, 1.0f, 1.0f); 
-    MUI_GROUP_T_ADD(&group, obj0);
-    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.75f, 0.75f, 0.75f));
-    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.50f, 0.50f, 0.50f));
-    // MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.25f, 0.25f, 0.25f));
-    
-    mui_group(&group);
-    
-    MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.25f, 0.25f, 0.25f));
-    group.pos[0] += 0.5f;
-    group.max_wrap = 2;
-    mui_group(&group);
-    
-    // group.orientation = MUI_CENTER | MUI_COLUMN;
-    // group.pos[0] = -0.5f;
-    // mui_group(&group);
-    
-    mui_quad(VEC2_XY(0.0f, 0.0f), VEC2(0.5), VEC3(0.00f));
-    mui_quad(VEC2_XY(1.0f, 1.0f), VEC2(0.5f), VEC3(0.00f));
-  }
+  // // -- group --
+  // {
+  //   // mui_group_t group = MUI_GROUP_T_INIT(0.5f, 0.5f, 0.2f, 0.1f, 0.0f, MUI_CENTER);
+  //   mui_group_t group;
+  //   MUI_GROUP_T_INIT(&group, VEC2(0.0f), VEC2_XY(1.0f, 1.0f), 0.0f, MUI_CENTER | MUI_ROW);
+  //   group.bg_visible = true;
+  //  
+  //   mui_obj_t obj0 = MUI_OBJ_T_INIT_QUAD_GROUP(1.0f, 1.0f, 1.0f); 
+  //   MUI_GROUP_T_ADD(&group, obj0);
+  //   MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.75f, 0.75f, 0.75f));
+  //   MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.50f, 0.50f, 0.50f));
+  //   // MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.25f, 0.25f, 0.25f));
+  //   
+  //   mui_group(&group);
+  //   
+  //   group.pos[1] += 0.75f;
+  //   group.max_wrap = 2;
+  //   mui_group(&group);
+  //   group.pos[1] -= 0.75f;
+  //   
+  //   MUI_GROUP_T_ADD(&group, MUI_OBJ_T_INIT_QUAD_GROUP(0.25f, 0.25f, 0.25f));
+  //   group.pos[0] += 0.5f;
+  //   group.max_wrap = 2;
+  //   mui_group(&group);
+  //   
+  //   group.orientation = MUI_CENTER | MUI_COLUMN;
+  //   group.max_wrap = -1;
+  //   group.pos[0] = -0.5f;
+  //   mui_group(&group);
+  //   
+  //   mui_quad(VEC2_XY(0.0f, 0.0f), VEC2(0.5), VEC3(0.00f));
+  //   mui_quad(VEC2_XY(1.0f, 1.0f), VEC2(0.5f), VEC3(0.00f));
+  // }
 
   // toggle wireframe, esc to quit, etc.
   programm_app_default_logic(core_data);

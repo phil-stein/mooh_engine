@@ -102,6 +102,16 @@ typedef struct
 }
 #define MUI_OBJ_T_INIT_QUAD_GROUP(r, g, b)  (mui_obj_t)MUI_OBJ_T_INIT_QUAD(0, 0,  1, 1,   (r), (g), (b)) 
 
+#define MUI_OBJ_T_INIT_IMG(px, py, sx, sy, _tex, cr, cg, cb) \
+{                                                            \
+  .type  = MUI_OBJ_IMG,                                      \
+  .pos   = { (px), (py) },                                   \
+  .scl   = { (sx), (sy) },                                   \
+  .color = { (cr), (cg), (cb) },                             \
+  .tex   = (_tex),                                           \
+}
+#define MUI_OBJ_T_INIT_IMG_GROUP(_tex, r, g, b)  (mui_obj_t)MUI_OBJ_T_INIT_IMG(0, 0,  1, 1,  (_tex),  (r), (g), (b)) 
+
 typedef struct
 {
   vec2 pos;
