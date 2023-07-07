@@ -105,6 +105,8 @@ main resources:
   - [x] figure out why core_data_init() is taking so long: shaders
     - [ ] shader spir-v ?
   - [ ] undo/redo -> john jackman or some on yt pixeleditor
+  - [ ] [text batch rendering](#in-game ui - mui)
+  - [ ] [mui batch rendering](#in-game ui - mui)
   - [ ] m_lerp(), vec3_lerp() arent working correct see program.c
 
 ## sus amogus
@@ -320,6 +322,7 @@ main resources:
     - [x] scale with screen
     - [x] textured quads
   - [ ] aligned group hierarchy
+    - [x] row / column
     - [ ] centered
     - [ ] left / right
     - [ ] up / down

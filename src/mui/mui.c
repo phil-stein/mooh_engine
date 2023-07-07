@@ -184,34 +184,48 @@ void mui_text(vec2 pos, char* text, mui_orientation_type orientation)
   obj_arr_len++;
 }
 
-int mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_ratio)
+void mui_img_complx(vec2 pos, vec2 scl, texture_t* tex, rgbf tint, bool scale_by_ratio)
+{
+  mui_obj_t obj = MUI_OBJ_T_INIT_IMG(pos[0], pos[1], scl[0], scl[1], tex, tint[0], tint[1], tint[2]);
+  // obj.type = MUI_OBJ_IMG;
+  // vec2_copy(pos, obj.pos);
+  // vec2_copy(scl, obj.scl);
+  // vec3_copy(tint, obj.color);
+  // obj.tex = tex;
+  
+  mui_img_obj(&obj, scale_by_ratio);
+}
+
+void mui_img_obj(mui_obj_t* obj, bool scale_by_ratio)
 {
   // renderer_direct_draw_quad_textured(VEC2(0), 10.0f, VEC2_XY(0, 0), VEC2(1), tex, RGB_F(0, 1, 1)); 
-  mui_obj_t obj;
-  obj.type = MUI_OBJ_IMG;
-  vec2_copy(pos, obj.pos);
-  vec2_copy(scl, obj.scl);
-  vec3_copy(tint, obj.color);
-  obj.tex = tex;
+ 
+  if (!obj->active) { return; }
 
   // orinetation & scaling 
   int w, h;
   window_get_size(&w, &h);
   f32 r_wh = ((f32)w / h);
   
-  obj.pos[0] *= -1.0f;
-  obj.pos[0] *= r_wh * 4.0f;
-  obj.pos[1] *= 4.0f;
+  obj->pos[0] *= -1.0f;
+  obj->pos[0] *= r_wh * 4.0f;
+  obj->pos[1] *= 4.0f;
   
-  obj.scl[0] *= (scale_by_ratio ? r_wh : 1.0f);
+  // obj.scl[0] *= (scale_by_ratio ? r_wh : 1.0f);
+  if (scale_by_ratio)
+  { obj->scl[0] *= r_wh; }
+  else
+  { obj->scl[0] = obj->scl[1]; }
   
-  r_wh = ((f32)tex->width / tex->height);
-  obj.scl[0] *= r_wh;
   
+  r_wh = ((f32)obj->tex->width / obj->tex->height);
+  obj->scl[0] *= r_wh;
 
-  arrput(obj_arr, obj);
+  // flip, otherwise upside down 
+  vec2_negate(obj->scl, obj->scl); 
+
+  arrput(obj_arr, *obj);
   obj_arr_len++;
-  return obj_arr_len -1;
 }
 int mui_quad(vec2 pos, vec2 scl, rgbf color)
 { 
@@ -245,6 +259,8 @@ int mui_quad(vec2 pos, vec2 scl, rgbf color)
 void mui_group(mui_group_t* g)
 {
   ERR_CHECK(g->objs_len > 0, "mui_group_t has no objects in it.\n");
+  ERR_CHECK(HAS_FLAG(g->orientation, MUI_DYNAMIC) || HAS_FLAG(g->orientation, MUI_STATIC),
+            "mui_group_t must have either MUI_DYNAMIC or MUI_STATIC");
   ERR_CHECK(!((HAS_FLAG(g->orientation, MUI_LEFT)   && HAS_FLAG(g->orientation, MUI_CENTER)) ||
               (HAS_FLAG(g->orientation, MUI_LEFT)   && HAS_FLAG(g->orientation, MUI_RIGHT))  ||
               (HAS_FLAG(g->orientation, MUI_CENTER) && HAS_FLAG(g->orientation, MUI_RIGHT))),
@@ -256,6 +272,9 @@ void mui_group(mui_group_t* g)
   int  wraps = (g->objs_len / g->max_wrap) < 0 ? 1 : (g->objs_len / g->max_wrap);
   wraps += g->objs_len % g->max_wrap; // f.e. for 3 objs 2 max_wrap, would be 1 wrap
   int objs_len_wrap = g->objs_len + (g->objs_len % g->max_wrap);
+  
+  int w, h;
+  window_get_size(&w, &h);
   // P_INT(objs_len_wrap);
   // P_INT(g->max_wrap);
   // P_INT(wraps);
@@ -282,8 +301,21 @@ void mui_group(mui_group_t* g)
     pos[1] -= pos_step[1] * ((g->objs_len -1) * 0.5f) ;   
   }
 
+  // @UNSURE: if needed
+  // // calc half width and move to the left
+  // if (HAS_FLAG(g->orientation, MUI_STATIC) && HAS_FLAG(g->orientation, MUI_CENTER))
+  // {
+  //   // f32 width_avg = 0.0f;
+  //   f32 width_total = 0.0f;
+  //   for (u32 i = 0; i < g->objs_len; ++i)
+  //   { width_total += g->objs[i].scl[0]; }
+  //   // width_avg /= g->objs_len;
+  //   // pos[0] -= (width_total * 0.5f) * 0.5f * 0.5f;
+  // }
+
   for (u32 i = 0; i < g->objs_len; ++i)
   {
+    // -- wrap --
     if (i != 0 && i % g->max_wrap == 0)
     {
       // P("wrap");
@@ -291,6 +323,7 @@ void mui_group(mui_group_t* g)
       pos[0] -= pos_step[0] * g->max_wrap;
     }
     
+    // -- draw --
     mui_obj_t* o = &g->objs[i];
     if (o->type == MUI_OBJ_QUAD)
     {
@@ -298,11 +331,24 @@ void mui_group(mui_group_t* g)
     }
     else if (o->type == MUI_OBJ_IMG)
     {
-      mui_img_complx(pos, size, o->tex, o->color,  false);
+      // mui_img_complx(pos, size, o->tex, o->color,  g->scale_by_ratio);
+      
+      // vec2_copy(pos,  o->pos);
+      // vec2_copy(size, o->scl);
+      vec2_add(pos,  o->pos, o->pos);
+      vec2_mul(size, o->scl, o->scl);
+
+      mui_img_obj(o, g->scale_by_ratio);
     }
     else 
     { ERR("NOT IMPLEMENTED YET"); }
-    
+   
+    // account for window width  
+    if (HAS_FLAG(g->orientation, MUI_STATIC))
+    { 
+      f32 ratio_hw = (f32)h / (f32)w;
+      pos_step[0] = -1 * o->scl[0] * ratio_hw * 0.5f; 
+    }
     vec2_add(pos_step, pos, pos);
   } 
 }

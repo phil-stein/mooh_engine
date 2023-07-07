@@ -87,7 +87,7 @@ echo -- text --
   git add .
 
 :: -- main repo --
-echo -- text -- 
+echo -- main -- 
 :: goto push
 git add .
 git commit -m %1
