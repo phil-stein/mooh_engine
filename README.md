@@ -24,8 +24,10 @@ main resources:
 # -- todo --
 
 ## next steps
+  -> `X`   important
+  -> `WIP` work in progress
   - *organization*
-    - [release system](#organization)
+    - [release system](#organization) `X`
     - [rest of organization](#organization) `WIP`
   - *buggs*
     - [all buggs](#buggs)
@@ -38,16 +40,16 @@ main resources:
   - *editor*
     - [undo/redo](#level editor) `WIP`
   - *graphics*
-    - [blending](#renderer)
-    - [cascaded shadows](#renderer)
-    - [ssao](#renderer)
-    - [aa](#renderer)
+    - [blending](#renderer) `X`
+    - [cascaded shadows](#renderer) `X`
+    - [ssao](#renderer) `X`
+    - [aa](#renderer) `X`
     - [bloom](#renderer)
-    - [particle system](#base)
+    - [particle system](#base) `X` 
     - [trail renderer](#base) `WIP`
   - *advanced*
-    - [physics engine](#physics engine)
-    - [audio](#audio system)
+    - [physics engine](#physics engine) `X`
+    - [audio](#audio system) `X`
     - [chunking for ents/phys_objs](#optimizations) 
 
 ## buggs
@@ -134,7 +136,7 @@ main resources:
   - [ ] add icons to exe
     - [ ] texture_view
     - [ ] editor
-  - [ ] make global submodule again, check if phys, serialization are still submodules
+  - [x] make global submodule again, check if phys, serialization are still submodules
   - [ ] remove pos  maybe also cast_shadow, etc. from dir light
   - [ ] add [tracing](https://balau82.wordpress.com/2010/10/06/trace-and-profile-function-calls-with-gcc/)
     - either figure out a way to decode function pointer to names in app, print on ERR()
