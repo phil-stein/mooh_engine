@@ -61,11 +61,8 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
     shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
     shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
     
-    for (int m = 0; m < ent->mesh_count; ++m)
-    {
-      mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh[m]); // [m]
-      DRAW_MESH(mesh);
-    }
+    mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh); // [m]
+    DRAW_MESH(mesh);
   }
 
   // -- draw terrain --
@@ -189,11 +186,8 @@ void renderer_extra_draw_scene_outline()
   else if (e->is_dead || e->mesh < 0 || e->mat < 0) { framebuffer_unbind(); return; } // if no mesh
   else                                                          // if has mesh 
   {
-    for (int m = 0; m < e->mesh_count; ++m)
-    { 
-      mesh = assetm_get_mesh_by_idx(e->mesh[m]); // [m]
-      renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
-    }
+    mesh = assetm_get_mesh_by_idx(e->mesh); // [m]
+    renderer_direct_draw_mesh_textured_mat(e->model, mesh, tex, RGB_F_RGB(1));
   }              
 	
 	framebuffer_unbind();

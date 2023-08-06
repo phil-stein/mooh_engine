@@ -191,9 +191,8 @@ int state_entity_add(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
   vec3_copy(rot,  ent.rot);
   vec3_copy(scl,  ent.scl);
   ent.is_moved        = true; 
-  ent.mesh[0]         = mesh;
-  ent.mat[0]          = mat;
-  ent.mesh_count      = 1;
+  ent.mesh            = mesh;
+  ent.mat             = mat;
   ent.point_light_idx = -1;
   ent.phys_flag       = phys_flag;
   ent.is_grounded     = false; 

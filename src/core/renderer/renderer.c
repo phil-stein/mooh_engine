@@ -194,13 +194,10 @@ void renderer_update()
   
       shader_set_mat4(&core_data->shadow_shader, "model", e->model);
 
-      for (int m = 0; m < e->mesh_count; ++m)
-      {
-        mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh[m]); // [m]
-        DRAW_MESH(mesh); 
-        core_data->draw_calls_total++;
-        core_data->draw_calls_shadow++;
-      }
+      mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh); // [m]
+      DRAW_MESH(mesh); 
+      core_data->draw_calls_total++;
+      core_data->draw_calls_shadow++;
     }
     for (int i = 0; i < core_data->terrain_chunks_len; ++i) 
     { 
@@ -246,62 +243,60 @@ void renderer_update()
       e = &world[i];
       if (e->is_dead || e->mesh < 0 || e->mat < 0) { continue; }
 
-      for (int m = 0; m < e->mesh_count; ++m)
-      {
-        // ---- shader & draw call -----	
-        material_t* mat = assetm_get_material_by_idx(e->mat[m]); // [m]
+      // ---- shader & draw call -----	
+      material_t* mat = assetm_get_material_by_idx(e->mat); // [m]
 
-        // @TODO: do this outside the for-loop
-        shader_t* mat_shader = &core_data->deferred_shader;
-        if (mat->shader >= 0) { mat_shader = assetm_get_shader_by_idx(mat->shader); }
-        shader_use(mat_shader);
-        shader_set_int(mat_shader, "albedo", 0);
-        shader_set_int(mat_shader, "norm", 1);
-        shader_set_int(mat_shader, "roughness", 2);
-        shader_set_int(mat_shader, "metallic", 3);
+      // @TODO: do this outside the for-loop
+      shader_t* mat_shader = &core_data->deferred_shader;
+      if (mat->shader >= 0) { mat_shader = assetm_get_shader_by_idx(mat->shader); }
+      shader_use(mat_shader);
+      shader_set_int(mat_shader, "albedo", 0);
+      shader_set_int(mat_shader, "norm", 1);
+      shader_set_int(mat_shader, "roughness", 2);
+      shader_set_int(mat_shader, "metallic", 3);
 
-        shader_set_vec3(mat_shader, "tint", mat->tint);
-        int tex_idx = 0;
-        _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-        _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
-        
-        _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-        _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
-        
-        _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-        _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
-        
-        _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
-        _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
+      shader_set_vec3(mat_shader, "tint", mat->tint);
+      int tex_idx = 0;
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->albedo)->handle); 
+      
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->normal)->handle); 
+      
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->roughness)->handle); 
+      
+      _glActiveTexture(GL_TEXTURE0 + tex_idx); tex_idx++;
+      _glBindTexture(GL_TEXTURE_2D, assetm_get_texture_by_idx(mat->metallic)->handle);
 
     
-        ERR_CHECK(tex_idx <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_idx);
+      ERR_CHECK(tex_idx <= 31, "bound GL_TEXTURE%d, max: 31\n", tex_idx);
 
-        shader_set_float(mat_shader, "roughness_f", mat->roughness_f);
-        shader_set_float(mat_shader, "metallic_f", mat->metallic_f);
+      shader_set_float(mat_shader, "roughness_f", mat->roughness_f);
+      shader_set_float(mat_shader, "metallic_f", mat->metallic_f);
 
-        vec2 tile; 
-        vec2_copy(mat->tile, tile);
-        if (mat->tile_by_scl) 
-        { 
-          f32 uv_scl = ( e->scl[0] + e->scl[1] + e->scl[2] ) / 3;
-          vec2_mul_f(tile, uv_scl, tile); 
-        }
-        vec2_mul_f(tile, mat->tile_scl, tile);
-        shader_set_vec2(mat_shader, "uv_tile", tile);
-
-        shader_set_mat4(mat_shader, "model", e->model);  // model gets updated in shadow map
-        shader_set_mat4(mat_shader, "view", view);
-        shader_set_mat4(mat_shader, "proj", proj);
-
-        if (mat_shader->set_uniforms_f != NULL) { mat_shader->set_uniforms_f(mat_shader, tex_idx); }
-
-        mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh[m]); // [m]
-
-        DRAW_MESH(mesh);
-        core_data->draw_calls_total++;
-        core_data->draw_calls_deferred++;
+      vec2 tile; 
+      vec2_copy(mat->tile, tile);
+      if (mat->tile_by_scl) 
+      { 
+        f32 uv_scl = ( e->scl[0] + e->scl[1] + e->scl[2] ) / 3;
+        vec2_mul_f(tile, uv_scl, tile); 
       }
+      vec2_mul_f(tile, mat->tile_scl, tile);
+      shader_set_vec2(mat_shader, "uv_tile", tile);
+
+      shader_set_mat4(mat_shader, "model", e->model);  // model gets updated in shadow map
+      shader_set_mat4(mat_shader, "view", view);
+      shader_set_mat4(mat_shader, "proj", proj);
+
+      if (mat_shader->set_uniforms_f != NULL) { mat_shader->set_uniforms_f(mat_shader, tex_idx); }
+
+      mesh_t* mesh = assetm_get_mesh_by_idx(e->mesh); // [m]
+
+      DRAW_MESH(mesh);
+      core_data->draw_calls_total++;
+      core_data->draw_calls_deferred++;
+      
     }
     
     for (int i = 0; i < core_data->terrain_chunks_len; ++i) 

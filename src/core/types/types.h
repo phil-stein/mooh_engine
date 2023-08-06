@@ -97,9 +97,8 @@ typedef struct entity_t
   bool is_moved;  // specifies whether the entity has been moved since last model matrix update, used in 'state_entity_update_global_model()'
 
   // -- visuals --
-  int mesh_count; 
-  int mat[ENTITY_MESH_MAX];  // index for assetm, < 0 = no mat
-  int mesh[ENTITY_MESH_MAX]; // index for assetm, < 0 = no mesh
+  int mat;  // index for assetm, < 0 = no mat
+  int mesh; // index for assetm, < 0 = no mesh
 
   // -- components --
   // entity_comp_flag comp_flag; // components like ENTITY_HAS_POINT_LIGHT
