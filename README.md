@@ -24,7 +24,7 @@ main resources:
 # -- todo --
 
 ## next steps
-  -> `X`   important
+  -> `X`   important <br>
   -> `WIP` work in progress
   - *organization*
     - [release system](#organization) `X`
@@ -37,6 +37,7 @@ main resources:
     - [batch renderer](#optimizations) `WIP`
   - *base*
   - [ui (mui)](#in-game ui - mui) `WIP`
+  - [multiple meshes](#base) `WIP`
   - *editor*
     - [undo/redo](#level editor) `WIP`
   - *graphics*
@@ -206,6 +207,7 @@ main resources:
     - [ ] add profiler [also mentioned](#organization)
   - [ ] controller support ?
   - [x] keep_transform when parenting / un-parenting 
+  - [ ] multiple meshes per entity `WIP`
 
 ## renderer
   - [ ] blending

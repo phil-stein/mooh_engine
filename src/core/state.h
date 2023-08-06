@@ -77,6 +77,13 @@ int state_entity_add(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
 //       scl: scale
 int state_entity_add_empty(vec3 pos, vec3 rot, vec3 scl);
 
+// @DOC: add a mesh and material to an entities array
+//       e:       entity to be modified
+//       mesh:    assetm idx for a mesh
+//       mat:     assetm idx for a material
+//       returns: mat & mesh idx into entity array
+int state_entity_add_mesh(entity_t* e, int mesh, int mat);
+
 // @DOC: remove an entity, aka. mark it dead
 //       id: id of entity to be removed
 //       e:  entity to be removed

@@ -191,8 +191,9 @@ int state_entity_add(vec3 pos, vec3 rot, vec3 scl, int mesh, int mat, s64 tags_f
   vec3_copy(rot,  ent.rot);
   vec3_copy(scl,  ent.scl);
   ent.is_moved        = true; 
-  ent.mesh            = mesh;
-  ent.mat             = mat;
+  ent.mesh[0]         = mesh;
+  ent.mat[0]          = mat;
+  ent.mesh_count      = 1;
   ent.point_light_idx = -1;
   ent.phys_flag       = phys_flag;
   ent.is_grounded     = false; 
@@ -240,6 +241,21 @@ int state_entity_add_empty(vec3 pos, vec3 rot, vec3 scl)
 {
   return state_entity_add(pos, rot, scl, -1, -1, 0, 0, NULL, NULL, NULL, NULL, NULL, -1);
 }
+
+// int state_entity_add_mesh(entity_t* e, int mesh, int mat)
+// {
+//   // continue here
+//   //   - make inline state_add_mesh_id()
+//   //   - test multiple meshes of devil_paladin
+//   //   - test if debug draw still works
+// 
+//   ERR_CHECK(e->mesh_count +1 <= ENTITY_MESH_MAX, "cant add another mesh/material already at maximum of %d.\n", ENTITY_MESH_MAX);
+// 
+//   e->mesh[e->mesh_count] = mesh;
+//   e->mat[e->mesh_count]  = mat;
+//   
+//   return e->mesh_count++;
+// }
 
 int state_entity_duplicate(entity_t* e, vec3 offset)
 {
