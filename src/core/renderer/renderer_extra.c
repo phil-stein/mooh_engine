@@ -55,13 +55,13 @@ void renderer_extra_draw_scene_mouse_pick(mat4 gizmo_model)
 
     // state_entity_update_global_model(i);
 
-    shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ent->id);
+    shader_set_float(&core_data->mouse_pick_shader, "id", (f32)ent->id):\Users\phili\AppData\Local\Temp\611gsN+TJdL._AC_SL1500_.jpg
 
     shader_set_mat4(&core_data->mouse_pick_shader, "model", ent->model);
     shader_set_mat4(&core_data->mouse_pick_shader, "view", view);
     shader_set_mat4(&core_data->mouse_pick_shader, "proj", proj);
     
-    mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh); // [m]
+    mesh_t* mesh = assetm_get_mesh_by_idx(ent->mesh:\Users\phili\AppData\Local\Temp\611gsN+TJdL._AC_SL1500_.jpg
     DRAW_MESH(mesh);
   }
 
