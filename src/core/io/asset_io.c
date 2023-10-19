@@ -157,6 +157,19 @@ void asset_io_convert_texture_dbg(const char* name, const char* _file, const int
   char path[ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12];
   int len = 0;
   SPRINTF(ASSET_PATH_MAX + ASSET_IO_NAME_MAX + 12, path, "%stextures/%s", core_data->asset_path, name);
+
+  // @BUGG: doesnt work 
+  // convert to .tex
+#ifdef EDITOR
+  P("EDITOR_DEFINED");
+  P_STR(path);
+  if (!file_io_check_exists(path)) // .tex
+  {
+    asset_io_convert_texture(name);
+    PF("| converted %s -> .tex\n", name);
+  }
+#endif
+
   buf = (void*)file_io_read_len(path, &len);
   buf_len = len;
   ERR_CHECK(buf != NULL || buf_len != 0, "texture '%s' requested in asset_io_convert_texture(), doesn't exist in the asset folder.\n -> [FILE] '%s', [LINE] %d", name, _file, _line);

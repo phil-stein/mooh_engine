@@ -132,8 +132,10 @@ texture_load_data_t** assetm_get_texture_register_arr_ptr(u32** len)
 
 int assetm_register_texture_for_load(const char* name, bool srgb)
 {  
+  // @BUGG: doesnt work 
   // convert to .tex
-#ifdef EDITOR
+// #ifdef EDITOR
+  P("EDITOR_DEFINED");
   char path[ASSET_PATH_MAX + 1 + 128];
   char name_tex[128];
   STRCPY(name_tex, name);
@@ -141,12 +143,13 @@ int assetm_register_texture_for_load(const char* name, bool srgb)
   name_tex[strlen(name_tex) - 2] = 'e';
   name_tex[strlen(name_tex) - 3] = 't';
   SPRINTF(  ASSET_PATH_MAX + 10 + 128, path, "%stextures/%s", core_data->asset_path, name_tex);
+  P_STR(path);
   if (!file_io_check_exists(path)) // .tex
   {
     asset_io_convert_texture(name);
     PF("| converted %s -> .tex\n", name);
   }
-#endif
+// #endif
 
   texture_t t;
   t.loaded = false;
